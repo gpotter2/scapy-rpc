@@ -1,0 +1,14 @@
+[project]
+name = "scapy-rpc"
+version = "0.0.1"
+requires-python = ">=3.7, <4"
+description = "Scapy RPC definitions"
+classifiers = [
+    "Framework :: Scapy",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+]
+
+[tool.setuptools.packages.find]
+include = [
+    "msrpcs",
+]

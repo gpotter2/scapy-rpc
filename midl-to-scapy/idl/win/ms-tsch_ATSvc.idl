@@ -1,0 +1,69 @@
+ import "ms-dtyp.idl";
+  
+  
+ typedef struct _AT_ENUM {
+     DWORD   JobId;
+     DWORD_PTR   JobTime;
+     DWORD   DaysOfMonth;
+     unsigned char   DaysOfWeek;
+     unsigned char   Flags;
+     wchar_t*  Command;
+ } AT_ENUM, *PAT_ENUM, *LPAT_ENUM;
+  
+ typedef struct _AT_INFO {
+     DWORD_PTR   JobTime;
+     DWORD   DaysOfMonth;
+     unsigned char   DaysOfWeek;
+     unsigned char   Flags;
+     [string] wchar_t*  Command;
+ } AT_INFO, *PAT_INFO, *LPAT_INFO;
+  
+  
+ [
+     uuid(1FF70682-0A51-30E8-076D-740BE8CEE98B),
+     version(1.0),
+ #ifdef __midl
+     ms_union,
+ #endif
+     pointer_default(unique)
+ ]
+ interface atsvc
+ {
+  
+ typedef [handle] const wchar_t* ATSVC_HANDLE;
+  
+ typedef struct _AT_ENUM_CONTAINER {
+     DWORD EntriesRead;
+     [size_is( EntriesRead)] LPAT_ENUM Buffer;
+ } AT_ENUM_CONTAINER, *PAT_ENUM_CONTAINER, *LPAT_ENUM_CONTAINER;
+  
+ NET_API_STATUS
+ NetrJobAdd(
+     [in,string,unique]      ATSVC_HANDLE            ServerName,
+     [in]                    LPAT_INFO               pAtInfo,
+     [out]                   LPDWORD                 pJobId
+     );
+  
+ NET_API_STATUS
+ NetrJobDel(
+     [in,string,unique]      ATSVC_HANDLE            ServerName,
+     [in]                    DWORD                   MinJobId,
+     [in]                    DWORD                   MaxJobId
+     );
+  
+ NET_API_STATUS
+ NetrJobEnum(
+     [in,string,unique]      ATSVC_HANDLE ServerName,
+     [in,out]                LPAT_ENUM_CONTAINER pEnumContainer,
+     [in]                    DWORD PreferedMaximumLength,
+     [out]                   LPDWORD pTotalEntries,
+     [in,out,unique]         LPDWORD pResumeHandle
+     );
+  
+ NET_API_STATUS
+ NetrJobGetInfo(
+     [in,string,unique]      ATSVC_HANDLE            ServerName,
+     [in]                    DWORD                   JobId,
+     [out]                   LPAT_INFO *             ppAtInfo
+     );
+ }
