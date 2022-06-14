@@ -1,0 +1,415 @@
+ import "ms-dtyp.idl";
+  
+ import "ms-tsts_tsdef.h";
+ import "ms-tsts_allproc.h";
+  
+ [
+     uuid(484809d6-4239-471b-b5bc-61df8c23ac48),
+     version(1.0),
+     pointer_default(unique)
+ ]
+  
+ //
+ //  Public rpc interface to the session object
+ //
+  
+ interface TermSrvSession
+ {
+     cpp_quote("#define  WTS_SESSIONSTATE_UNKNOWN    0xFFFFFFFF")
+     cpp_quote("#define  WTS_SESSIONSTATE_LOCK       0x00000000")
+     cpp_quote("#define  WTS_SESSIONSTATE_UNLOCK     0x00000001")
+  
+     typedef [context_handle] void *SESSION_HANDLE;
+  
+     typedef struct _LSMSessionInformation {
+         [string] WCHAR* pszUserName;
+         [string] WCHAR* pszDomain;
+         [string] WCHAR* pszTerminalName;
+         LONG            SessionState;
+         BOOL            DesktopLocked;
+         hyper           ConnectTime;
+         hyper           DisconnectTime;
+         hyper           LogonTime;
+     } LSMSESSIONINFORMATION, 
+         *PLSMSESSIONINFORMATION;
+  
+     typedef struct _LSM_SESSIONINFO_EX_LEVEL1 {
+         LONG            SessionState;
+         LONG            SessionFlags;
+         WCHAR           SessionName[33];
+         WCHAR           DomainName[18];
+         WCHAR           UserName[21];
+         hyper           ConnectTime;
+         hyper           DisconnectTime;
+         hyper           LogonTime;
+         hyper           LastInputTime;
+         ULONG           ProtocolDataSize;
+         [size_is(ProtocolDataSize)]  PBYTE  ProtocolData;                
+     } LSM_SESSIONINFO_EX_LEVEL1, 
+         *PLSM_SESSIONINFO_EX_LEVEL1;
+  
+     typedef [switch_type (DWORD)]  union _LSM_SESSIONINFO_EX {
+         [case(1)]
+           LSM_SESSIONINFO_EX_LEVEL1  LSM_SessionInfo_Level1;
+     } LSM_SESSIONINFO_EX, 
+         *PLSM_SESSIONINFO_EX;
+  
+     typedef struct _LSMSESSIONINFORMATION_EX {
+         DWORD               Level;
+         [switch_is(Level)]  LSM_SESSIONINFO_EX  Data;
+     } LSMSESSIONINFORMATION_EX, 
+         *PLSMSESSIONINFORMATION_EX;
+  
+     //
+     // Per Session specific call
+     HRESULT RpcOpenSession(
+         [in]    handle_t    hBinding,
+         [in]    LONG        SessionId,
+         [out]   SESSION_HANDLE *phSession
+         );
+  
+     HRESULT RpcCloseSession(
+         [in,out] SESSION_HANDLE *phSession
+         );
+  
+     HRESULT RpcConnect(
+         [in]    SESSION_HANDLE  hSession,
+         [in]    LONG            TargetSessionId,
+         [in,string]    WCHAR    *szPassword
+         );
+  
+     HRESULT RpcDisconnect(
+         [in]    SESSION_HANDLE hSession
+         );
+  
+     HRESULT RpcLogoff(
+         [in]    SESSION_HANDLE hSession
+         );
+  
+     HRESULT RpcGetUserName(
+         [in]    SESSION_HANDLE hSession,
+         [out, string]   WCHAR   **pszUserName,
+         [out, string]   WCHAR   **pszDomain
+         );
+  
+     HRESULT RpcGetTerminalName(
+         [in]    SESSION_HANDLE hSession,
+         [out, string]   WCHAR   **pszTerminalName
+         );
+  
+     HRESULT RpcGetState(
+         [in]    SESSION_HANDLE  hSession,
+         [out]   LONG            *plState
+         );
+  
+     HRESULT RpcIsSessionDesktopLocked(
+         [in]    SESSION_HANDLE  hSession
+         );
+  
+     HRESULT RpcShowMessageBox(
+         [in]    SESSION_HANDLE  hSession,
+         [in, string] WCHAR      *szTitle,
+         [in, string] WCHAR      *szMessage,
+         [in]    ULONG           ulStyle,
+         [in]    ULONG           ulTimeout,
+         [out]   ULONG           *pulResponse,
+         [in]    BOOL            bDoNotWait
+         );
+  
+     HRESULT RpcGetTimes(
+         [in]    SESSION_HANDLE  hSession,
+         [out]   hyper           *pConnectTime,
+         [out]   hyper           *pDisconnectTime,
+         [out]   hyper           *pLogonTime
+         );
+  
+     HRESULT RpcGetSessionCounters(
+         [in]    handle_t            hBinding,
+         [in,out, size_is(uEntries)] PTS_COUNTER pCounter,
+         [in]                        ULONG       uEntries
+         );
+  
+     HRESULT RpcGetSessionInformation(
+         [in]    handle_t    hBinding,
+         [in]    LONG        SessionId,
+         [ref, out] PLSMSESSIONINFORMATION pSessionInfo
+         );
+  
+     VOID Opnum13NotUsedOnWire();
+  
+     VOID Opnum14NotUsedOnWire();
+  
+     HRESULT RpcGetLoggedOnCount(
+         [in] handle_t hBinding,
+         [out] ULONG *pUserSessions,
+         [out] ULONG *pDeviceSessions
+         );
+  
+     HRESULT RpcGetSessionType (
+         [in]   handle_t          hBinding,
+         [in]   LONG             *SessionId,
+         [out]  ULONG            *pSessionType
+         );
+  
+     HRESULT RpcGetSessionInformationEx(
+         [in]        handle_t                   hBinding,
+         [in]        LONG                       SessionId,
+         [in]        DWORD                      Level,
+         [ref, out]  PLSMSESSIONINFORMATION_EX  LSMSessionInfoExPtr
+         );
+  
+     VOID Opnum18NotUsedOnWire();
+     VOID Opnum19NotUsedOnWire();
+   }
+
+ //
+ //  notifications
+ //
+  
+ [
+     uuid(11899a43-2b68-4a76-92e3-a3d6ad8c26ce),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface TermSrvNotification
+ {
+     HRESULT RpcWaitForSessionState(
+         [in]        handle_t        hBinding,
+         [in]        LONG            SessionId,
+         [in]        LONG            State,
+         [in]        ULONG           Timeout
+         );
+  
+     typedef [context_handle] void *NOTIFY_HANDLE;
+  
+     HRESULT RpcRegisterAsyncNotification(
+         [in]        handle_t        hBinding,
+         [in]        LONG            SessionId,
+         [in]        TNotificationId Mask,
+         [out]       NOTIFY_HANDLE   *phNotify
+         );
+  
+     HRESULT RpcWaitAsyncNotification(
+         [in]        NOTIFY_HANDLE   hNotify,
+         [out, size_is(, *pEntries)] 
+     PSESSION_CHANGE *SessionChange,
+         [out]       ULONG           *pEntries
+         );
+  
+     HRESULT RpcUnRegisterAsyncNotification(
+         [in,out]    NOTIFY_HANDLE *phNotify
+         );
+ }
+  
+ //
+ // enumerations
+ //
+  
+ [
+     uuid(88143fd0-c28d-4b2b-8fef-8d882f6a9390),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface TermSrvEnumeration
+ {
+     typedef [context_handle] void *ENUM_HANDLE;
+ #define ENUM_LEVEL1          1
+ #define ENUM_LEVEL2          2
+ #define ENUM_LEVEL3          3
+ #define CURRENT_ENUM_LEVEL   2
+  
+     typedef struct _SESSIONENUM_LEVEL1 {
+         LONG    SessionId;
+         LONG    State;
+         WCHAR   Name[33];
+     } SESSIONENUM_LEVEL1, 
+         *PSESSIONENUM_LEVEL1;
+  
+     typedef struct _SESSIONENUM_LEVEL2 {
+         LONG    SessionId;
+         LONG    State;
+         WCHAR   Name[33];
+         ULONG   Source;
+         BOOL    bFullDesktop;
+         GUID    SessionType;
+     } SESSIONENUM_LEVEL2, 
+         *PSESSIONENUM_LEVEL2;
+  
+     typedef struct _SESSIONENUM_LEVEL3 {
+         LONG   SessionId;
+         LONG   State;
+         WCHAR  Name[33];
+         ULONG  Source;
+         BOOL   bFullDesktop;
+         GUID   SessionType;
+         ULONG  ProtoDataSize;
+         [size_is(ProtoDataSize)]UCHAR *  pProtocolData;
+     } SESSIONENUM_LEVEL3, 
+         *PSESSIONENUM_LEVEL3;
+  
+     typedef [switch_type(DWORD)] union _SessionInfo {
+         [case(1)]
+           SESSIONENUM_LEVEL1 SessionEnum_Level1;
+         [case(2)]
+           SESSIONENUM_LEVEL2 SessionEnum_Level2;
+     } SessionInfo, 
+         *PSessionInfo;
+  
+     typedef struct _SESSIONENUM {
+         DWORD               Level;
+         [switch_is(Level)]  SessionInfo Data;
+     } SESSIONENUM, 
+         *PSESSIONENUM;
+  
+     typedef [switch_type(DWORD)]  union  _SessionInfo_Ex {
+         [case(1)]
+           SESSIONENUM_LEVEL1  SessionEnum_Level1;
+         [case(2)]
+           SESSIONENUM_LEVEL2  SessionEnum_Level2;
+         [case(3)]
+           SESSIONENUM_LEVEL3  SessionEnum_Level3;
+     }  SessionInfo_Ex,
+          *PSessionInfo_Ex;
+  
+     typedef  struct  _SESSIONENUM_EX {
+         DWORD                Level;
+         [switch_is(Level)]  SessionInfo_Ex  Data;
+     }  SESSIONENUM_EX,
+          *PSESSIONENUM_EX;
+  
+     #define  UNIFIED_ENUM_LEVEL1           1
+     #define  UNIFIED_ENUM_LEVEL2           2
+     #define  CURRENT_UNIFIED_ENUM_LEVEL    2
+  
+     typedef  struct  _EXECENVDATA_LEVEL1 {
+         LONG        ExecEnvId;
+         LONG        State;
+         WCHAR       SessionName[33];
+     }  EXECENVDATA_LEVEL1,
+          *PEXECENVDATA_LEVEL1;
+  
+     typedef  struct  _EXECENVDATA_LEVEL2 {
+         LONG        ExecEnvId;
+         LONG        State;
+         WCHAR       SessionName[33];
+         LONG        AbsSessionId;
+         WCHAR       HostName[33];
+         WCHAR       UserName[33];
+         WCHAR       DomainName[33];
+         WCHAR       FarmName[33];
+     }  EXECENVDATA_LEVEL2,
+          *PEXECENVDATA_LEVEL2;
+  
+     typedef  [switch_type(DWORD)]  union _ExecEnvData {
+         [case(1)]
+           EXECENVDATA_LEVEL1    ExecEnvEnum_Level1;
+         [case(2)]
+           EXECENVDATA_LEVEL2    ExecEnvEnum_Level2;
+     }  ExecEnvData,
+          *PExecEnvData;
+  
+     typedef  struct  _EXECENVDATA {
+         DWORD                              Level;
+         [switch_is(Level)]  ExecEnvData    Data;
+     }  EXECENVDATA,
+          *PEXECENVDATA;   
+  
+     typedef  struct  _EXECENVDATAEX_LEVEL1 {
+         LONG        ExecEnvId;
+         LONG        State;
+         LONG        AbsSessionId;
+         [string, max_is(256)] LPWSTR       pszSessionName;
+         [string, max_is(256)] LPWSTR       pszHostName;
+         [string, max_is(256)] LPWSTR       pszUserName;
+         [string, max_is(256)] LPWSTR       pszDomainName;
+         [string, max_is(256)] LPWSTR       pszFarmName;
+     }  EXECENVDATAEX_LEVEL1,
+          *PEXECENVDATAEX_LEVEL1;
+  
+     typedef  [switch_type(DWORD)]  union _ExecEnvDataEx {
+         [case(1)]
+           EXECENVDATAEX_LEVEL1    ExecEnvEnum_Level1;
+     }  ExecEnvDataEx,
+          *PExecEnvDataEx;
+  
+     typedef  struct  _EXECENVDATAEX {
+         DWORD                              Level;
+         [switch_is(Level)]  ExecEnvDataEx    Data;
+     }  EXECENVDATAEX,
+          *PEXECENVDATAEX;   
+  
+     HRESULT RpcOpenEnum(
+         [in]        handle_t        hBinding,
+         [out]       ENUM_HANDLE     *phEnum
+         );
+  
+     HRESULT RpcCloseEnum(
+         [in,out]    ENUM_HANDLE     *phEnum
+         );
+  
+     HRESULT RpcFilterByState(
+         [in]        ENUM_HANDLE     hEnum,
+         [in]        LONG            State,
+         [in]        BOOL            bInvert
+         );
+  
+     HRESULT RpcFilterByCallersName(
+         [in]        ENUM_HANDLE     hEnum
+         );
+  
+     HRESULT RpcEnumAddFilter(
+         [in]        ENUM_HANDLE     hEnum,
+         [in]        ENUM_HANDLE     hSubEnum
+         );
+  
+     HRESULT RpcGetEnumResult(
+         [in]        ENUM_HANDLE     hEnum,
+         [out, size_is(,*pEntries)] 
+                     PSESSIONENUM   *ppSessionEnumResult,
+         [in]        DWORD           Level,
+         [out]       ULONG          *pEntries
+         );
+  
+     HRESULT RpcFilterBySessionType(
+         [in]        ENUM_HANDLE    hEnum,
+         [in]        GUID*          pSessionType
+         );
+  
+     VOID Opnum7NotUsedOnWire(void);
+  
+     HRESULT RpcGetSessionIds(
+         [in]        handle_t       hBinding,
+         [in]        SESSION_FILTER Filter,
+         [in, range( 0, 0xFFFF )] 
+                     ULONG          MaxEntries,
+         [out, size_is(,*pcSessionIds)] 
+                     LONG**         pSessionIds,
+         [out]       ULONG*         pcSessionIds
+         );
+  
+     HRESULT RpcGetEnumResultEx(
+         [in]        ENUM_HANDLE    hEnum,
+         [out, size_is(,*pEntries)] 
+                     PSESSIONENUM_EX  *ppSessionEnumResult,        
+         [in]        DWORD          Level,
+         [out]       ULONG          *pEntries
+         );
+  
+     HRESULT RpcGetAllSessions(
+         [in]        handle_t       hBinding,
+         [in, out]   ULONG          *pLevel, 
+         [out, size_is(,*pcEntries)] 
+       PEXECENVDATA   *ppSessionData,
+         [out]       ULONG          *pcEntries
+         );
+  
+     HRESULT RpcGetAllSessionsEx(
+         [in]        handle_t       hBinding,
+         [in]        ULONG          Level, 
+         [out, size_is(,*pcEntries)] 
+       PEXECENVDATAEX   *ppSessionData,
+         [out]       ULONG          *pcEntries
+         );
+  
+ }
+  

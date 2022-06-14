@@ -1,0 +1,189 @@
+ import "ms-dtyp.idl";
+  
+ //
+ //  public access ( local & remote )
+ //
+  
+ [
+     uuid(bde95fdf-eee0-45de-9e12-e5a61cd0d4fe),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface RCMPublic
+ {
+     //static const WCHAR TSRCMRPC_REMOTE_ENDPOINT[] = L"\\pipe\\TermSrv_API_service";
+  
+     typedef struct {
+         USHORT sin_family;
+        [switch(USHORT sin_family)] union _u
+        {
+             [case(2)]
+                 struct {
+                     USHORT sin_port;
+                     ULONG  in_addr;
+                     UCHAR  sin_zero[8];
+                 } ipv4;
+             [case(23)]
+                 struct {
+                     USHORT sin6_port;
+                     ULONG  sin6_flowinfo;
+                     USHORT sin6_addr[8];
+                     ULONG  sin6_scope_id;
+                 } ipv6;
+         } u;
+     } RCM_REMOTEADDRESS, *PRCM_REMOTEADDRESS;
+     typedef WCHAR   LISTENER_NAME[32];
+  
+ #define LST_ENUM_LEVEL1          1
+ #define CURRENT_LST_ENUM_LEVEL   1
+  
+     typedef struct _LISTENERENUM_LEVEL1 {
+         LONG    Id;
+         BOOL    bListening;
+         WCHAR   Name[33];
+     } LISTENERENUM_LEVEL1, *PLISTENERENUM_LEVEL1;
+  
+     typedef [switch_type(DWORD)] union _ListenerInfo {
+         [case(1)]
+         LISTENERENUM_LEVEL1 ListenerEnum_Level1;
+         [default]
+         ;
+     } ListenerInfo, *PListenerInfo;
+  
+     typedef struct _LISTENERENUM {
+         DWORD Level;
+         [switch_is(Level)] ListenerInfo Data;
+     } LISTENERENUM, *PLISTENERENUM;
+  
+     HRESULT RpcGetClientData(
+         [in]    handle_t        hBinding,
+         [in]    ULONG           SessionId,
+         [out, size_is( ,*pOutBuffByteLen )]
+     unsigned char **ppBuff,
+         [out]   ULONG          *pOutBuffByteLen
+         );
+  
+     HRESULT RpcGetConfigData(
+         [in]    handle_t        hBinding,
+         [in]    ULONG           SessionId,
+         [out, size_is( ,*pOutBuffByteLen )]
+     unsigned char **ppBuff,
+         [out]   ULONG  *pOutBuffByteLen
+         );
+     typedef enum {
+         PROTOCOLSTATUS_INFO_BASIC = 0,
+         PROTOCOLSTATUS_INFO_EXTENDED = 1,
+     } PROTOCOLSTATUS_INFO_TYPE;
+  
+     HRESULT RpcGetProtocolStatus(
+         [in]    handle_t        hBinding,
+         [in]    ULONG           SessionId,
+         [in]    PROTOCOLSTATUS_INFO_TYPE    InfoType,
+         [out, size_is( ,*pcbProtoStatus )]
+     unsigned char **ppProtoStatus,
+         [out]   ULONG           *pcbProtoStatus
+         );
+  
+     HRESULT RpcGetLastInputTime(
+         [in]    handle_t        hBinding,
+         [in]    ULONG           SessionId,
+         [out]   hyper           *pLastInputTime
+         );
+  
+     HRESULT RpcGetRemoteAddress(
+         [in]            handle_t        hBinding,
+         [in]            ULONG           SessionId,
+         [out]           PRCM_REMOTEADDRESS pRemoteAddress
+         );
+  
+     VOID Opnum5NotUsedOnWire();
+  
+     VOID Opnum6NotUsedOnWire();
+  
+     VOID Opnum7NotUsedOnWire();
+  
+     HRESULT RpcGetAllListeners(
+         [in]        handle_t        hBinding,
+         [out, size_is(,*pNumListeners)] PLISTENERENUM *ppListeners,
+         [in]        DWORD Level,
+         [out]       ULONG   *pNumListeners
+         );
+  
+     HRESULT RpcGetSessionProtocolLastInputTime(
+         [in]    handle_t        hBinding,
+         [in]    ULONG           SessionId,
+         [in]    PROTOCOLSTATUS_INFO_TYPE    InfoType,
+         [out, size_is( ,*pcbProtoStatus )]
+     unsigned char  **ppProtoStatus,
+         [out]   ULONG           *pcbProtoStatus,
+         [out]   hyper           *pLastInputTime
+         );
+  
+     HRESULT RpcGetUserCertificates(
+         [in] handle_t hBinding,
+         [in] ULONG SessionId,
+         [out] ULONG* pcCerts,
+         [out, size_is(, *pcbCerts)] byte** ppbCerts,
+         [out] ULONG* pcbCerts
+         );
+  
+     typedef enum {
+         QUERY_SESSION_DATA_MODULE = 0,
+         QUERY_SESSION_DATA_WDCONFIG,
+         QUERY_SESSION_DATA_VIRTUALDATA,
+         QUERY_SESSION_DATA_LICENSE,
+         QUERY_SESSION_DATA_DEVICEID,
+         QUERY_SESSION_DATA_LICENSE_VALIDATION
+     } QUERY_SESSION_DATA_TYPE;
+  
+     HRESULT RpcQuerySessionData(
+         [in]       handle_t                hBinding,
+         [in]       ULONG                   SessionId,
+         [in]       QUERY_SESSION_DATA_TYPE type,
+         [in, unique, size_is( cbInputData )] byte* pbInputData,
+         [in, range(0, 8192) ] DWORD        cbInputData,
+         [out, ref, size_is(cbSessionData), length_is(*pcbReturnLength)] 
+     byte*                   pbSessionData,
+         [in, range(0, 8192)] ULONG         cbSessionData,
+         [out, ref] ULONG                  *pcbReturnLength,
+         [out, ref] ULONG                  *pcbRequireBufferSize
+         );
+ };
+  
+ //
+ //  Describe a listener
+ //
+  
+ [
+     uuid(497d95a6-2d27-4bf5-9bbd-a6046957133c),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface RCMListener
+ {
+     typedef [context_handle] void *HLISTENER;
+  
+     HRESULT RpcOpenListener(
+         [in]            handle_t        hBinding,
+         [in,string]     WCHAR           *szListenerName,
+         [out]           HLISTENER       *phListener
+         );
+  
+     HRESULT RpcCloseListener(
+         [in,out]        HLISTENER *phListener
+         );
+  
+     HRESULT RpcStopListener(
+         [in]            HLISTENER       hListener
+         );
+  
+     HRESULT RpcStartListener(
+         [in]            HLISTENER       hListener
+         );
+  
+     HRESULT RpcIsListening(
+         [in]            HLISTENER       hListener,
+         [out]           BOOL            *pbIsListening
+         );
+ }
+  

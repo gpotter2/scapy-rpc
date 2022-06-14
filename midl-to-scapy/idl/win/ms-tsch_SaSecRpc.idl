@@ -1,0 +1,52 @@
+ import "ms-dtyp.idl";
+  
+  
+ [
+     uuid(378E52B0-C0A9-11CF-822D-00AA0051E40F),
+     version(1.0),
+ #ifdef __midl
+     ms_union,
+ #endif // __midl
+     pointer_default(unique)
+ ]
+  
+ interface sasec
+ {
+ #define CNLEN       15                  
+ #define DNLEN       CNLEN               
+ #define UNLEN       256   
+  
+ #define MAX_BUFFER_SIZE (DNLEN+UNLEN+1+1)
+ typedef [handle] const wchar_t* SASEC_HANDLE;
+  
+ HRESULT
+ SASetAccountInformation(
+     [ in, string, unique ]  SASEC_HANDLE Handle,
+     [ in, string ]          const wchar_t*      pwszJobName,
+     [ in, string ]          const wchar_t*      pwszAccount,
+     [ in, string, unique ]  const wchar_t*      pwszPassword,
+     [ in ]                  DWORD        dwJobFlags);
+  
+ HRESULT
+ SASetNSAccountInformation(
+     [ in, string, unique ]  SASEC_HANDLE Handle,
+     [ in, string, unique ]  const wchar_t*      pwszAccount,
+     [ in, string, unique ]  const wchar_t*      pwszPassword);
+  
+  
+ HRESULT
+ SAGetNSAccountInformation(
+     [ in, string, unique ]  SASEC_HANDLE Handle,
+     [ in, range(0, MAX_BUFFER_SIZE) ] DWORD ccBufferSize,
+     [ in, out, size_is(ccBufferSize) ]
+                             wchar_t        wszBuffer[]);
+  
+ HRESULT
+ SAGetAccountInformation(
+     [ in, string, unique ]  SASEC_HANDLE Handle,
+     [ in, string ]          const wchar_t* pwszJobName,
+     [ in, range(0, MAX_BUFFER_SIZE) ] DWORD ccBufferSize,
+     [ in, out, size_is(ccBufferSize) ]
+                             wchar_t wszBuffer[]);
+ }
+  

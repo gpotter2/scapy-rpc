@@ -1,0 +1,67 @@
+ //
+ // Interface for accessing SessionEnv functionality.
+ // Public interface
+ //
+ import "ms-dtyp.idl";
+  
+ typedef  enum 
+ {
+   SHADOW_CONTROL_REQUEST_VIEW = 0,
+   SHADOW_CONTROL_REQUEST_TAKECONTROL,
+   SHADOW_CONTROL_REQUEST_Count
+ } SHADOW_CONTROL_REQUEST;
+  
+ typedef  enum 
+ {
+   SHADOW_PERMISSION_REQUEST_SILENT = 0,
+   SHADOW_PERMISSION_REQUEST_REQUESTPERMISSION,
+   SHADOW_PERMISSION_REQUEST_Count
+ } SHADOW_PERMISSION_REQUEST;
+  
+ typedef  enum 
+ {
+   SHADOW_REQUEST_RESPONSE_ALLOW = 0,
+   SHADOW_REQUEST_RESPONSE_DECLINE,
+   SHADOW_REQUEST_RESPONSE_POLICY_PERMISSION_REQUIRED,
+   SHADOW_REQUEST_RESPONSE_POLICY_DISABLED,
+   SHADOW_REQUEST_RESPONSE_POLICY_VIEW_ONLY,
+   SHADOW_REQUEST_RESPONSE_POLICY_VIEW_ONLY_PERMISSION_REQUIRED,
+   SHADOW_REQUEST_RESPONSE_SESSION_ALREADY_CONTROLLED
+ } SHADOW_REQUEST_RESPONSE;
+  
+ [
+     uuid(1257B580-CE2F-4109-82D6-A9459D0BF6BC),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface SessEnvPublicRpc
+ {
+    //  cpp_quote( "#ifndef _SESSENVPUBLICRPC_ENDPOINT_DEF" )
+    //  cpp_quote( "#define _SESSENVPUBLICRPC_ENDPOINT_DEF" )
+    //  cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_ENDPOINT = L\"\\\\pipe\\\\SessEnvPublicRpc\"; ")
+    //  cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_PROTOCOL_SEQUENCE = L\"ncacn_np\"; ")
+    //  cpp_quote( "#endif // !_SESSENVPUBLICRPC_ENDPOINT_DEF" )
+  
+     // Purpose:
+     //  Create shadow invitation
+     //
+     // Parameters:
+     //
+     //  IN hBinding
+     //  IN TargetSessionId - session ID.
+     //  IN eRequestControl -request control or view only
+     //  IN eRequestPermission -request permission or silent
+     //  OUT pePermission -shadow request or permission request response
+     //  OUT pszInvitation -collab API invitation string
+     //  IN cchInvitation - size of pszInvitation in WCHARs
+     //
+     HRESULT RpcShadow2(
+         [in] handle_t hBinding,
+         [in] ULONG TargetSessionId,
+         [in] SHADOW_CONTROL_REQUEST eRequestControl,
+         [in] SHADOW_PERMISSION_REQUEST eRequestPermission,
+         [out] SHADOW_REQUEST_RESPONSE * pePermission,
+         [out, string, size_is(cchInvitation)] LPWSTR pszInvitation,
+         [in,range(1, 8192)] ULONG cchInvitation
+         );
+  }

@@ -1,0 +1,264 @@
+  import "ms-fax_faxdatatypes.idl";
+  
+ [
+     uuid(ea0a3165-4834-11d2-a6f8-00c04fa346cc),
+     version(4.0),
+     pointer_default(unique)
+ ]
+  
+ interface faxobs
+  
+ {
+  
+ error_status_t
+ FaxObs_ConnectionRefCount(
+     [in] handle_t hBinding,
+     [in, out] PRPC_FAX_SVC_HANDLE Handle,
+     [in] DWORD Connect,
+     [out] LPDWORD CanShare
+     );
+  
+ error_status_t
+ FaxObs_GetVersion(
+    [in] handle_t hBinding,
+    [out] LPDWORD Version
+    );
+  
+ error_status_t
+ FaxObs_GetInstallType(
+    [in] handle_t hBinding,
+    [out] LPDWORD InstallType,
+    [out] LPDWORD InstalledPlatforms,
+    [out] LPDWORD ProductType
+    );
+  
+ error_status_t
+ FaxObs_OpenPort(
+    [in] handle_t hBinding,
+    [in] DWORD DeviceId,
+    [in] DWORD Flags,
+    [out] PRPC_FAX_PORT_HANDLE FaxPortHandle
+    );
+  
+ error_status_t
+ FaxObs_ClosePort(
+    [in,out] PRPC_FAX_PORT_HANDLE FaxPortHandle
+    );
+  
+ error_status_t
+ FaxObs_SendDocument(
+    [in] handle_t hBinding,
+    [in, string, unique] LPCWSTR FileName,
+    [in] const FAX_JOB_PARAMW *JobParams,
+    [out] LPDWORD FaxJobId
+    );
+  
+ error_status_t
+ FaxObs_GetQueueFileName(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(FileNameSize)] LPWSTR FileName,
+    [in] DWORD FileNameSize
+    );
+  
+ error_status_t
+ FaxObs_EnumJobs(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+    [in,out] LPDWORD BufferSize,
+    [out] LPDWORD JobsReturned
+    );
+  
+ error_status_t
+ FaxObs_GetJob(
+    [in] handle_t hBinding,
+    [in] DWORD JobId,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_SetJob(
+    [in] handle_t hBinding,
+    [in] DWORD JobId,
+    [in] DWORD Command,
+    [in] const FAX_JOB_ENTRY *JobEntry
+    );
+  
+ error_status_t
+ FaxObs_GetPageData(
+    [in] handle_t hBinding,
+    [in] DWORD JobId,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+    [in,out] LPDWORD BufferSize,
+    [in,out] LPDWORD ImageWidth,
+    [in,out] LPDWORD ImageHeight
+    );
+  
+ error_status_t
+ FaxObs_GetDeviceStatus(
+    [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE*StatusBuffer,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_Abort(
+    [in] handle_t hBinding,
+    [in] DWORD JobId
+    );
+  
+ error_status_t
+ FaxObs_EnumPorts(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *PortBuffer,
+    [in,out] LPDWORD BufferSize,
+    [out] LPDWORD PortsReturned
+    );
+  
+ error_status_t
+ FaxObs_GetPort(
+    [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *PortBuffer,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_SetPort(
+    [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+    [in] const FAX_PORT_INFO *PortInfo
+    );
+  
+ error_status_t
+ FaxObs_EnumRoutingMethods(
+     [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+     [in, out, unique, size_is(,*RoutingInfoBufferSize)] LPBYTE *RoutingInfoBuffer,
+     [in,out] LPDWORD RoutingInfoBufferSize,
+     [out] LPDWORD PortsReturned
+     );
+  
+ error_status_t
+ FaxObs_EnableRoutingMethod(
+     [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+     [in, string, unique] LPCWSTR RoutingGuid,
+     [in] BOOL Enabled    
+     );
+  
+ error_status_t
+ FaxObs_GetRoutingInfo(
+     [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+     [in, string, unique] LPCWSTR RoutingGuid,
+     [in, out, unique, size_is(,*RoutingInfoBufferSize)] LPBYTE *RoutingInfoBuffer,
+     [in,out] LPDWORD RoutingInfoBufferSize
+     );
+  
+ error_status_t
+ FaxObs_SetRoutingInfo(
+    [in] RPC_FAX_PORT_HANDLE FaxPortHandle,
+    [in, string, unique] LPCWSTR RoutingGuid,
+    [in, unique, size_is(RoutingInfoBufferSize)] const BYTE *RoutingInfoBuffer,
+    [in] DWORD RoutingInfoBufferSize
+    );
+  
+ error_status_t
+ FaxObs_EnumGlobalRoutingInfo(
+     [in] handle_t hBinding,
+     [in, out, unique, size_is(,*RoutingInfoBufferSize)] LPBYTE *RoutingInfoBuffer,
+     [in,out] LPDWORD RoutingInfoBufferSize,
+     [out] LPDWORD MethodsReturned
+     );
+  
+ error_status_t
+ FaxObs_SetGlobalRoutingInfo(
+     [in] handle_t hBinding,
+     [in] const FAX_GLOBAL_ROUTING_INFOW *RoutingInfo
+     );
+  
+ error_status_t
+ FaxObs_GetConfiguration(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_SetConfiguration(
+    [in] handle_t hBinding,
+    [in] const FAX_CONFIGURATIONW *FaxConfig
+    );
+  
+ error_status_t
+ FaxObs_GetLoggingCategories(
+     [in] handle_t hBinding,
+     [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+     [in,out] LPDWORD BufferSize,
+     [in,out] LPDWORD NumberCategories
+     );
+  
+ error_status_t
+ FaxObs_SetLoggingCategories(
+     [in] handle_t hBinding,
+     [in, unique, size_is(BufferSize)] const LPBYTE Buffer,
+     [in] DWORD BufferSize,
+     [in] DWORD NumberCategories
+     );
+  
+ error_status_t
+ FaxObs_GetTapiLocations(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *Buffer,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_SetTapiLocations(
+    [in] handle_t hBinding,
+    [in, unique, size_is(BufferSize)] LPBYTE Buffer,
+    [in] DWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_GetMapiProfiles(
+    [in] handle_t hBinding,
+    [in, out, unique, size_is(,*BufferSize)] LPBYTE *MapiProfiles,
+    [in,out] LPDWORD BufferSize
+    );
+  
+ error_status_t
+ FaxObs_StartClientServer(
+    [in] handle_t hBinding,
+    [in, string, unique] LPCWSTR MachineName,
+    [in, string, unique] LPCWSTR ClientName,
+    [in] ULONG64 Context
+    );
+  
+ void Opnum30NotUsedOnWire(void);
+  
+ error_status_t
+ FaxObs_GetSecurityDescriptor(
+     [in] handle_t hBinding,
+     [in] DWORD Id,
+     [in, out, unique, size_is(,*BufferSize)] LPBYTE * FaxSecurityDescriptor,
+     [in, out] LPDWORD BufferSize
+     );
+  
+ error_status_t
+ FaxObs_SetSecurityDescriptor(
+     [in] handle_t hBinding,
+     [in, unique, size_is(BufferSize)] const LPBYTE FaxSecurityDescriptor,
+     [in] DWORD BufferSize
+     );
+  
+ error_status_t
+ FaxObs_GetSecurityDescriptorCount(
+     [in] handle_t hBinding,
+     [out] LPDWORD Count
+     );
+  
+ error_status_t
+ FaxObs_AccessCheck(
+     [in] handle_t hBinding,
+     [in] DWORD AccessMask,
+     [out] LPDWORD fAccess
+     );
+  
+ }

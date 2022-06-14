@@ -1,0 +1,337 @@
+ import "ms-dtyp.idl";
+  
+ #define FAX_MAX_DEVICES_IN_GROUP          1000  
+       
+ typedef [context_handle] HANDLE RPC_FAX_HANDLE;
+ typedef [ref] RPC_FAX_HANDLE* PRPC_FAX_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_PORT_HANDLE;
+ typedef RPC_FAX_PORT_HANDLE* PRPC_FAX_PORT_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_SVC_HANDLE;
+ typedef RPC_FAX_SVC_HANDLE* PRPC_FAX_SVC_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_MSG_ENUM_HANDLE;
+ typedef RPC_FAX_MSG_ENUM_HANDLE* PRPC_FAX_MSG_ENUM_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_COPY_HANDLE;
+ typedef RPC_FAX_COPY_HANDLE* PRPC_FAX_COPY_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_EVENT_HANDLE;
+ typedef RPC_FAX_EVENT_HANDLE* PRPC_FAX_EVENT_HANDLE;
+  
+ typedef [context_handle] HANDLE RPC_FAX_EVENT_EX_HANDLE;
+ typedef RPC_FAX_EVENT_EX_HANDLE* PRPC_FAX_EVENT_EX_HANDLE;
+  
+ #ifdef SERVER_STUB
+   typedef [range(0, RPC_COPY_BUFFER_SIZE)]    DWORD    RANGED_DWORD;
+   typedef RANGED_DWORD *    LPRANGED_DWORD;
+ #else
+   typedef DWORD *    LPRANGED_DWORD;
+ #endif
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   DWORD dwCoverPageFormat;
+   [string] LPWSTR lpwstrCoverPageFileName;
+   BOOL bServerBased;
+   [string] LPWSTR lpwstrNote;
+   [string] LPWSTR lpwstrSubject;
+ } FAX_COVERPAGE_INFO_EXW, 
+   *PFAX_COVERPAGE_INFO_EXW, 
+   *LPCFAX_COVERPAGE_INFO_EXW;
+  
+ typedef struct {
+     DWORD SizeOfStruct;
+     [string] LPCWSTR RecipientNumber;
+     [string] LPCWSTR RecipientName;
+     [string] LPCWSTR Tsid;
+     [string] LPCWSTR SenderName;
+     [string] LPCWSTR SenderCompany;
+     [string] LPCWSTR SenderDept;
+     [string] LPCWSTR BillingCode;
+     DWORD ScheduleAction;
+     SYSTEMTIME ScheduleTime;
+     DWORD DeliveryReportType;
+     [string] LPCWSTR DeliveryReportAddress;
+     [string] LPCWSTR DocumentName;
+     HCALL CallHandle;
+     DWORD_PTR Reserved[3];
+ } FAX_JOB_PARAMW, *PFAX_JOB_PARAMW;
+  
+ typedef enum 
+ {
+   FAX_DEVICE_RECEIVE_MODE_OFF = 0,
+   FAX_DEVICE_RECEIVE_MODE_AUTO = 1,
+   FAX_DEVICE_RECEIVE_MODE_MANUAL = 2
+ }FAX_ENUM_DEVICE_RECEIVE_MODE;
+  
+ typedef enum
+ {
+     FAX_GROUP_STATUS_ALL_DEV_VALID = 0x00000000,
+     FAX_GROUP_STATUS_EMPTY = 0x00000001,
+     FAX_GROUP_STATUS_ALL_DEV_NOT_VALID = 0x00000002,
+     FAX_GROUP_STATUS_SOME_DEV_NOT_VALID = 0x00000003
+ } FAX_ENUM_GROUP_STATUS;
+  
+ typedef enum
+ {
+     FAX_MESSAGE_FOLDER_INBOX = 0x00000000,
+     FAX_MESSAGE_FOLDER_SENTITEMS = 0x00000001,
+     FAX_MESSAGE_FOLDER_QUEUE = 0x00000002
+ } FAX_ENUM_MESSAGE_FOLDER;
+  
+ typedef enum 
+ {
+   RECIPIENT_PERSONAL_PROF = 1,
+   SENDER_PERSONAL_PROF = 2
+ }FAX_ENUM_PERSONAL_PROF_TYPES;
+  
+ typedef enum
+ {
+     FAX_PRIORITY_TYPE_LOW = 0x00000000,
+     FAX_PRIORITY_TYPE_NORMAL = 0x00000001,
+     FAX_PRIORITY_TYPE_HIGH = 0x00000002
+ } FAX_ENUM_PRIORITY_TYPE;
+  
+ typedef enum 
+ {
+   FAX_SMTP_AUTH_ANONYMOUS = 0,
+   FAX_SMTP_AUTH_BASIC = 1,
+   FAX_SMTP_AUTH_NTLM = 2
+ }FAX_ENUM_SMTP_AUTH_OPTIONS;
+  
+ typedef enum 
+ {
+   PRODUCT_SKU_UNKNOWN = 0x00000000,
+   PRODUCT_SKU_PERSONAL = 0x00000001,
+   PRODUCT_SKU_PROFESSIONAL = 0x00000002,
+   PRODUCT_SKU_SERVER = 0x00000004,
+   PRODUCT_SKU_ADVANCED_SERVER = 0x00000008,
+   PRODUCT_SKU_DATA_CENTER = 0x00000010,
+   PRODUCT_SKU_DESKTOP_EMBEDDED = 0x00000020,
+   PRODUCT_SKU_SERVER_EMBEDDED = 0x00000040,
+   PRODUCT_SKU_WEB_SERVER = 0x00000080
+ }PRODUCT_SKU_TYPE;
+  
+ typedef enum 
+ {
+   FAX_CONFIG_OPTION_ALLOW_PERSONAL_CP = 0x00000000,
+   FAX_CONFIG_OPTION_QUEUE_STATE = 0x00000001,
+   FAX_CONFIG_OPTION_ALLOWED_RECEIPTS = 0x00000002,
+   FAX_CONFIG_OPTION_INCOMING_FAXES_PUBLIC = 0x00000003
+ }FAX_ENUM_CONFIG_OPTION;
+  
+ typedef struct {
+   WORD Hour;
+   WORD Minute;
+ } FAX_TIME, 
+  *PFAX_TIME;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   DWORD dwAllowedReceipts;
+   FAX_ENUM_SMTP_AUTH_OPTIONS SMTPAuthOption;
+   [string] LPWSTR lpwstrReserved;
+   [string] LPWSTR lpwstrSMTPServer;
+   DWORD dwSMTPPort;
+   [string] LPWSTR lpwstrSMTPFrom;
+   [string] LPWSTR lpwstrSMTPUserName;
+   [string] LPWSTR lpwstrSMTPPassword;
+   BOOL bIsToUseForMSRouteThroughEmailMethod;
+ } FAX_RECEIPTS_CONFIGW, 
+   *PFAX_RECEIPTS_CONFIGW;
+  
+ typedef struct {
+    DWORD SizeOfStruct;
+    DWORD Retries;
+    DWORD RetryDelay;
+    DWORD DirtyDays;
+    BOOL Branding;
+    BOOL UseDeviceTsid;
+    BOOL ServerCp;
+    BOOL PauseServerQueue;
+    FAX_TIME StartCheapTime;
+    FAX_TIME StopCheapTime;
+    BOOL ArchiveOutgoingFaxes;
+    [string] LPCWSTR ArchiveDirectory;
+    [string] LPCWSTR ProfileName;
+ } FAX_CONFIGURATIONW, 
+   *PFAX_CONFIGURATIONW;
+  
+ typedef struct {
+   DWORD SizeOfStruct;
+   DWORD Priority;
+   [string] LPCWSTR Guid;
+   [string] LPCWSTR FriendlyName;
+   [string] LPCWSTR FunctionName;
+   [string] LPCWSTR ExtensionImageName;
+   [string] LPCWSTR ExtensionFriendlyName;
+ } FAX_GLOBAL_ROUTING_INFOW,
+   *PFAX_GLOBAL_ROUTING_INFOW;
+  
+ typedef struct {
+  
+         DWORD                   dwSizeOfStruct;
+         DWORD                   dwScheduleAction;
+         SYSTEMTIME              tmSchedule;
+         DWORD                   dwReceiptDeliveryType;
+         [string] LPWSTR                  lpwstrReceiptDeliveryAddress;
+         FAX_ENUM_PRIORITY_TYPE  Priority;
+         HCALL                   hCall;
+         DWORD_PTR               dwReserved[4];
+         [string] LPWSTR                  lpwstrDocumentName;
+         DWORD                   dwPageCount;
+ } FAX_JOB_PARAM_EXW, 
+   *PFAX_JOB_PARAM_EXW, 
+   *LPCFAX_JOB_PARAM_EXW;
+  
+ typedef struct {
+  
+     DWORD                                      dwSizeOfStruct;
+     [string] LPWSTR                            lpwstrGroupName;
+     [range(0,FAX_MAX_DEVICES_IN_GROUP)]DWORD   dwNumDevices;
+     [unique, size_is(dwNumDevices)] LPDWORD    lpdwDevices;
+     FAX_ENUM_GROUP_STATUS                      Status;
+ } RPC_FAX_OUTBOUND_ROUTING_GROUPW,
+   *PRPC_FAX_OUTBOUND_ROUTING_GROUPW;
+  
+ typedef struct {
+    DWORD                           SizeOfStruct;
+    DWORD                           DeviceId;
+    DWORD                           State;
+    DWORD                           Flags;
+    DWORD                           Rings;
+    DWORD                           Priority;
+    [string] LPCWSTR                DeviceName;
+    [string] LPCWSTR                Tsid;
+    [string] LPCWSTR                Csid;
+ }  FAX_PORT_INFO,
+   *PFAX_PORT_INFO;
+  
+ typedef
+ [switch_type(int)]
+ union {
+     [case(0)]
+         DWORD               dwDeviceId;
+     [default]
+         [string] LPWSTR     lpwstrGroupName;
+ } FAX_RULE_DESTINATION;
+  
+ typedef enum {
+   FAX_RULE_STATUS_VALID = 0x00000000,
+   FAX_RULE_STATUS_EMPTY_GROUP = 0x00000001,
+   FAX_RULE_STATUS_ALL_GROUP_DEV_NOT_VALID = 0x00000002,
+   FAX_RULE_STATUS_SOME_GROUP_DEV_NOT_VALID = 0x00000003,
+   FAX_RULE_STATUS_BAD_DEVICE = 0x00000004
+ } FAX_ENUM_RULE_STATUS;
+  
+ typedef struct {
+     DWORD                                        dwSizeOfStruct;
+     DWORD                                        dwAreaCode;
+     DWORD                                        dwCountryCode;
+     [string] LPWSTR                          lpwstrCountryName;
+     [switch_is(bUseGroup)]            FAX_RULE_DESTINATION  Destination;
+     BOOL                                            bUseGroup;
+ } RPC_FAX_OUTBOUND_ROUTING_RULEW,
+   *RPC_PFAX_OUTBOUND_ROUTING_RULEW;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   BOOL bValid;
+   WORD wMajorVersion;
+   WORD wMinorVersion;
+   WORD wMajorBuildNumber;
+   WORD wMinorBuildNumber;
+   DWORD dwFlags;
+ } FAX_VERSION, 
+  *PFAX_VERSION;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   BOOL bAllowPersonalCP;
+   BOOL bUseDeviceTSID;
+   DWORD dwRetries;
+   DWORD dwRetryDelay;
+   FAX_TIME dtDiscountStart;
+   FAX_TIME dtDiscountEnd;
+   DWORD dwAgeLimit;
+   BOOL bBranding;
+ } FAX_OUTBOX_CONFIG, 
+  *PFAX_OUTBOX_CONFIG;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   BOOL bLogIncoming;
+   BOOL bLogOutgoing;
+   [string] LPWSTR lpwstrDBPath;
+ } FAX_ACTIVITY_LOGGING_CONFIGW, 
+  *PFAX_ACTIVITY_LOGGING_CONFIGW;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   DWORD dwDeviceID;
+   [string] LPCWSTR lpcwstrDeviceName;
+   [string] LPWSTR lpwstrDescription;
+   [string] LPCWSTR lpcwstrProviderName;
+   [string] LPCWSTR lpcwstrProviderGUID;
+   BOOL bSend;
+   FAX_ENUM_DEVICE_RECEIVE_MODE ReceiveMode;
+   DWORD dwStatus;
+   DWORD dwRings;
+   [string] LPWSTR lpwstrCsid;
+   [string] LPWSTR lpwstrTsid;
+ } FAX_PORT_INFO_EXW, 
+  *PFAX_PORT_INFO_EXW;
+  
+ typedef struct {
+   DWORD dwSizeOfStruct;
+   DWORD dwIncomingMessages;
+   DWORD dwRoutingMessages;
+   DWORD dwOutgoingMessages;
+   DWORD dwDelegatedOutgoingMessages;
+   DWORD dwQueuedMessages;
+   DWORD dwErrorEvents;
+   DWORD dwWarningEvents;
+   DWORD dwInformationEvents;
+ } FAX_SERVER_ACTIVITY, 
+  *PFAX_SERVER_ACTIVITY;
+  
+ typedef struct {
+   [string] LPCWSTR lpcwstrRecipients;
+   [string] LPCWSTR lpcwstrSenderName;
+   [string] LPCWSTR lpcwstrSenderFaxNumber;
+   [string] LPCWSTR lpcwstrSubject;
+   BOOL bHasCoverPage;
+ } FAX_REASSIGN_INFO, 
+  *PFAX_REASSIGN_INFO;
+  
+ typedef struct  {
+   DWORD dwValidityMask;
+   DWORD dwMsgFlags;
+ } FAX_MESSAGE_PROPS, 
+  *PFAX_MESSAGE_PROPS;
+  
+ typedef struct {
+   DWORD SizeOfStruct;
+   DWORD JobId;
+   LPCWSTR UserName;
+   DWORD JobType;
+   DWORD QueueStatus;
+   DWORD Status;
+   DWORD Size;
+   DWORD PageCount;
+   LPCWSTR RecipientNumber;
+   LPCWSTR RecipientName;
+   LPCWSTR Tsid;
+   LPCWSTR SenderName;
+   LPCWSTR SenderCompany;
+   LPCWSTR SenderDept;
+   LPCWSTR BillingCode;
+   DWORD ScheduleAction;
+   SYSTEMTIME ScheduleTime;
+   DWORD DeliveryReportType;
+   LPCWSTR DeliveryReportAddress;
+   LPCWSTR DocumentName;
+ } FAX_JOB_ENTRY, 
+  *PFAX_JOB_ENTRY;

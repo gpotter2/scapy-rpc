@@ -1,0 +1,52 @@
+// This is from [MS-RPCE] and [C706] Appendix Q
+[
+    uuid(afa8bd80-7d8a-11c9-bef4-08002b102989), version(1.0)
+]
+interface mgmt
+{
+    import "rpctypes.idl";
+
+    /*
+    *RPC__MGMT_INQ_IF_IDS
+    */
+    void rpc__mgmt_inq_if_ids(
+        [in] handle_t binding_handle,
+        [out] rpc_if_id_vector_p_t *if_id_vector,
+        [out] error_status_t *status
+    );
+    /*
+    *RPC__MGMT_INQ_STATS
+    */
+    void rpc_mgmt_inq_stats(
+        [in] handle_t binding_handle,
+        [in, out] StatisticsCount* count,
+        [out, size_is(*count)] unsigned long statistics[],
+        [out] error_status_t* status
+    );
+
+    /*
+    *RPC__MGMT_IS_SERVER_LISTENING
+    */
+    boolean32 rpc__mgmt_is_server_listening(
+        [in] handle_t binding_handle,
+        [out] error_status_t *status
+    );
+    /*
+    *RPC__MGMT_STOP_SERVER_LISTENING
+    */
+    void rpc__mgmt_stop_server_listening(
+        [in] handle_t binding_handle,
+        [out] error_status_t *status
+    );
+    /*
+    *RPC__MGMT_INQ_PRINC_NAME
+    */
+    void rpc_mgmt_inq_princ_name(
+        [in] handle_t binding_handle,
+        [in] unsigned long authn_proto,
+        [in, range(0, 4096)] unsigned long princ_name_size,
+        [out, string, size_is(princ_name_size)] 
+        char princ_name[],
+        [out] error_status_t* status
+    );
+}

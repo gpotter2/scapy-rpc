@@ -1,0 +1,10 @@
+*.pyc
+*.egg-info
+.vscode
+parser.out
+
+# Custom
+midl-to-scapy/idl/custom
+ms_lsad_full.py
+ms_keyiso.py
+ms_rasrpc.py

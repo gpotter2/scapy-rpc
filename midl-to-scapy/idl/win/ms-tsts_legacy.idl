@@ -1,0 +1,409 @@
+ import "ms-dtyp.idl";
+  
+ import "ms-tsts_allproc.h";
+  
+ typedef UINT *        UINT_PTR;
+  
+//  static const WCHAR TSRPC_LEGACY_REMOTE_ENDPOINT[] = 
+//  L"\\pipe\\Ctx_WinStation_API_service";
+  
+ typedef [context_handle] void *SERVER_HANDLE;
+  
+ [
+     uuid(5ca4a760-ebb1-11cf-8611-00a0245420ed),
+     version(1.0),
+     pointer_default(unique)
+ ]
+ interface IcaApi
+ {
+  
+     typedef [range(0, 0x8000)] ULONG BOUNDED_ULONG;
+  
+     BOOLEAN RpcWinStationOpenServer(
+         [in]   handle_t      hBinding,
+         [out]  DWORD         *pResult,
+         [out]  SERVER_HANDLE *phServer
+         );
+  
+     BOOLEAN RpcWinStationCloseServer(
+         [in]   SERVER_HANDLE hServer,
+         [out]  DWORD        *pResult
+         );
+  
+     BOOLEAN RpcIcaServerPing(
+         [in]   SERVER_HANDLE hServer,
+         [out]  DWORD        *pResult
+         );
+  
+     BOOLEAN RpcWinStationEnumerate(
+         [in]      SERVER_HANDLE  hServer,
+         [out]     DWORD         *pResult,
+         [in,out]  PULONG         pEntries,
+         [in,out,unique,size_is(*pByteCount)]
+     PCHAR          pLogonId,
+         [in,out]  PULONG         pByteCount,
+         [in,out]  PULONG         pIndex
+         );
+  
+     BOOLEAN RpcWinStationRename(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in,size_is(NameOldSize)] 
+                    PWCHAR        pWinStationNameOld,
+         [in,range(0, 256)]
+                    DWORD         NameOldSize,
+         [in,size_is(NameNewSize)]
+                    PWCHAR        pWinStationNameNew,
+         [in,range(0, 256)]
+                    DWORD         NameNewSize
+         );
+  
+     BOOLEAN RpcWinStationQueryInformation(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       DWORD         WinStationInformationClass,
+         [in,out,unique,size_is(WinStationInformationLength)]
+                    PCHAR         pWinStationInformation,
+         [in, range( 0, 0x8000)]
+                    DWORD         WinStationInformationLength,
+         [out]      DWORD         *pReturnLength
+         );
+  
+     BOOLEAN RpcWinStationSetInformation(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       DWORD         WinStationInformationClass,
+         [in,out,unique,size_is(WinStationInformationLength)]
+                    PCHAR         pWinStationInformation,
+         [in, range( 0, 0x8000)]
+                    DWORD         WinStationInformationLength
+         );
+  
+     BOOLEAN RpcWinStationSendMessage(
+         [in]       SERVER_HANDLE  hServer,
+         [out]      DWORD          *pResult,
+         [in]       DWORD          LogonId,
+         [in,size_is(TitleLength)] PWCHAR pTitle,
+         [in, range( 0, 1024 )]
+                    DWORD          TitleLength,
+         [in,size_is(MessageLength)]
+                    PWCHAR         pMessage,
+         [in, range( 0, 1024 )]
+                    DWORD          MessageLength,
+         [in]       DWORD          Style,
+         [in]       DWORD          Timeout,
+         [out]      DWORD          *pResponse,
+         [in]       BOOLEAN        DoNotWait
+         );
+  
+     BOOLEAN RpcLogonIdFromWinStationName(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in,size_is(NameSize)]
+                    PWCHAR        pWinStationName,
+         [in, range( 0, 256 )]
+                    DWORD         NameSize,
+         [out]      DWORD         *pLogonId
+         );
+  
+     BOOLEAN RpcWinStationNameFromLogonId(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LoginId,
+         [in,out,size_is(NameSize)]
+                    PWCHAR        pWinStationName,
+         [in, range( 0, 256 )]
+                    DWORD         NameSize
+         );
+  
+     BOOLEAN RpcWinStationConnect(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         ClientLogonId,
+         [in]       DWORD         ConnectLogonId,
+         [in]       DWORD         TargetLogonId,
+         [in,size_is(PasswordSize)] PWCHAR pPassword,
+         [in, range(0, 1024)]
+                    DWORD         PasswordSize,
+         [in]       BOOLEAN       Wait
+         );
+  
+     void Opnum11NotUsedOnWire(void);
+  
+     void Opnum12NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationDisconnect(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       BOOLEAN       bWait
+         );
+  
+     BOOLEAN RpcWinStationReset(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       BOOLEAN       bWait
+         );
+  
+     BOOLEAN RpcWinStationShutdownSystem(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         ClientLogonId,
+         [in]       DWORD         ShutdownFlags
+         );
+  
+     BOOLEAN RpcWinStationWaitSystemEvent(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         EventMask,
+         [out]      DWORD         *pEventFlags
+         );
+  
+     BOOLEAN RpcWinStationShadow(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in,unique,size_is(NameSize)] PWCHAR pTargetServerName,
+         [in, range( 0, 1024)]       DWORD         NameSize,
+         [in]       DWORD         TargetLogonId,
+         [in]       BYTE          HotKeyVk,
+         [in]       USHORT        HotkeyModifiers
+         );
+  
+     void Opnum18NotUsedOnWire(void);
+  
+     void Opnum19NotUsedOnWire(void);
+  
+     void Opnum20NotUsedOnWire(void);
+  
+     void Opnum21NotUsedOnWire(void);
+  
+     void Opnum22NotUsedOnWire(void);
+  
+     void Opnum23NotUsedOnWire(void);
+  
+     void Opnum24NotUsedOnWire(void);
+  
+     void Opnum25NotUsedOnWire(void);
+  
+     void Opnum26NotUsedOnWire(void);
+  
+     void Opnum27NotUsedOnWire(void);
+  
+     void Opnum28NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationBreakPoint(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       BOOLEAN       KernelFlag
+         );
+  
+     BOOLEAN RpcWinStationReadRegistry(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult
+         );
+  
+     void Opnum31NotUsedOnWire(void);
+  
+     void Opnum32NotUsedOnWire(void);
+  
+     void Opnum33NotUsedOnWire(void);
+  
+     BOOLEAN OldRpcWinStationEnumerateProcesses(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [out,size_is(ByteCount)] 
+                    PBYTE         pProcessBuffer,
+         [in, range( 0, 0x8000 )]
+                    DWORD         ByteCount
+         );
+  
+     void Opnum35NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationEnumerateProcesses(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [out,size_is(ByteCount)] 
+                    PBYTE         pProcessBuffer,
+         [in, range( 0, 0x8000 )]
+                    DWORD         ByteCount
+         );
+  
+     BOOLEAN RpcWinStationTerminateProcess(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         ProcessId,
+         [in]       DWORD         ExitCode
+         );
+  
+     void Opnum38NotUsedOnWire(void);
+  
+     void Opnum39NotUsedOnWire(void);
+  
+     void Opnum40NotUsedOnWire(void);
+  
+     void Opnum41NotUsedOnWire(void);
+  
+     void Opnum42NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationGetAllProcesses(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       ULONG         Level,   
+         [in, out]  BOUNDED_ULONG           *pNumberOfProcesses,
+         [out, size_is(,*pNumberOfProcesses)]
+                    PTS_ALL_PROCESSES_INFO  *ppTsAllProcessesInfo
+         );
+  
+     BOOLEAN RpcWinStationGetProcessSid(
+         [in]       SERVER_HANDLE hServer,
+         [in]       DWORD         dwUniqueProcessId,
+         [in]       LARGE_INTEGER ProcessStartTime,
+         [out]      LONG          *pResult,
+         [in,out,unique,size_is(dwSidSize)]
+                    PBYTE         pProcessUserSid,
+         [in, range( 0, 1024 )]
+                    DWORD         dwSidSize,
+         [in,out]   DWORD         *pdwSizeNeeded
+         );
+  
+     BOOLEAN RpcWinStationGetTermSrvCountersValue(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in, range( 0, 0x1000 )]
+                    DWORD         dwEntries,
+         [in,out, size_is(dwEntries)] 
+                    PTS_COUNTER   pCounter
+         );      
+  
+     BOOLEAN RpcWinStationReInitializeSecurity(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult
+         );       
+  
+     void Opnum47NotUsedOnWire(void);
+  
+     void Opnum48NotUsedOnWire(void);
+  
+     void Opnum49NotUsedOnWire(void);
+  
+     void Opnum50NotUsedOnWire(void);
+  
+     void Opnum51NotUsedOnWire(void);
+  
+     void Opnum52NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationGetLanAdapterName(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in, range( 0, 0x1000 )]
+                    DWORD         PdNameSize,
+         [in,size_is(PdNameSize)] PWCHAR pPdName,
+         [in, range( 0, 1024) ]
+                    ULONG         LanAdapter,   
+         [out]      ULONG         *pLength,
+         [out, size_is(,*pLength)]
+                    PWCHAR        *ppLanAdapter
+         );
+  
+     void Opnum54NotUsedOnWire(void);
+  
+     void Opnum55NotUsedOnWire(void);
+  
+     void Opnum56NotUsedOnWire(void);
+  
+     void Opnum57NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationUpdateSettings(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         SettingsClass,
+         [in]       DWORD         SettingsParameters
+         );
+  
+     BOOLEAN RpcWinStationShadowStop(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         LogonId,
+         [in]       BOOLEAN       bWait
+         );
+  
+     BOOLEAN RpcWinStationCloseServerEx(
+         [in, out]  SERVER_HANDLE *phServer,
+         [out]      DWORD        *pResult
+         );
+  
+     BOOLEAN RpcWinStationIsHelpAssistantSession(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD*        pResult,
+         [in]       ULONG         SessionId
+         );
+  
+     BOOLEAN RpcWinStationGetMachinePolicy(
+         [in]       SERVER_HANDLE hServer,
+         [in,out,size_is(bufferSize)] 
+                    PBYTE         pPolicy,
+         [in, range( 0, 0x8000 )] 
+                    ULONG         bufferSize
+         );
+  
+     void Opnum63NotUsedOnWire(void);
+  
+     void Opnum64NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationCheckLoopBack(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         ClientLogonId,
+         [in]       DWORD         TargetLogonId,
+         [in,size_is(NameSize)]
+                    PWCHAR        pTargetServerName,
+         [in, range( 0, 1024 )]
+                    DWORD         NameSize
+         );
+  
+     BOOLEAN RpcConnectCallback(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       DWORD         TimeOut,
+         [in]       ULONG         AddressType,
+         [in,size_is(AddressSize)] PBYTE pAddress,
+         [in, range( 0, 0x1000 )]
+                    ULONG         AddressSize
+         );
+  
+     void Opnum67NotUsedOnWire(void);
+  
+     void Opnum68NotUsedOnWire(void);
+  
+     void Opnum69NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationGetAllProcesses_NT6(
+         [in]       SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in]       ULONG         Level,   
+         [in, out]  BOUNDED_ULONG *pNumberOfProcesses,
+         [out, size_is(,*pNumberOfProcesses)]
+                    PTS_ALL_PROCESSES_INFO_NT6  *ppTsAllProcessesInfo
+         );
+  
+     void Opnum71NotUsedOnWire(void);
+  
+     void Opnum72NotUsedOnWire(void);
+  
+     void Opnum73NotUsedOnWire(void);
+  
+     void Opnum74NotUsedOnWire(void);
+  
+     BOOLEAN RpcWinStationOpenSessionDirectory(
+         [in]                     SERVER_HANDLE hServer,
+         [out]      DWORD         *pResult,
+         [in, string, max_is(64)]
+                    PWCHAR        pszServerName
+         );
+ }
+  

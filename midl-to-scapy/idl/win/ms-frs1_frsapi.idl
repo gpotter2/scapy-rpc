@@ -1,0 +1,77 @@
+ import "ms-dtyp.idl";
+  
+ [
+     uuid (D049B186-814F-11D1-9A3C-00C04FC9B232), version(1.1),
+     pointer_default (unique)
+ ] interface NtFrsApi
+  
+ {
+ // This method is not used over the wire
+     unsigned long Opnum0NotUsedOnWire(
+     void
+     );
+  
+ // This method is not used over the wire
+     unsigned long Opnum1NotUsedOnWire(
+         void
+         );
+  
+ // This method is not used over the wire
+     unsigned long Opnum2NotUsedOnWire(
+         void
+         );
+  
+ // This method is not used over the wire
+     unsigned long Opnum3NotUsedOnWire(
+         void
+         );
+  
+     unsigned long NtFrsApi_Rpc_Set_DsPollingIntervalW(
+         [in] handle_t Handle,
+         [in] unsigned long UseShortInterval,
+         [in] unsigned long LongInterval,
+         [in] unsigned long ShortInterval
+         );
+  
+     unsigned long NtFrsApi_Rpc_Get_DsPollingIntervalW(
+         [in] handle_t Handle,
+         [out] unsigned long *Interval,
+         [out] unsigned long *LongInterval,
+         [out] unsigned long *ShortInterval
+         );
+  
+     // This method is not used over the wire
+     unsigned long Opnum6NotUsedOnWire(
+     void
+         );
+  
+     unsigned long NtFrsApi_Rpc_InfoW(
+         [in] handle_t Handle,
+         [in, range(0,65536)] unsigned long BlobSize,
+         [in, out, size_is(BlobSize), unique] unsigned char *Blob
+         );
+  
+     unsigned long NtFrsApi_Rpc_IsPathReplicated(
+        [in] handle_t Handle,
+        [in, string, unique] PWCHAR Path,
+        [in] unsigned long ReplicaSetTypeOfInterest,
+        [out] unsigned long *Replicated,
+        [out] unsigned long *Primary,
+        [out] unsigned long *Root,
+        [out] GUID  *ReplicaSetGuid
+        );
+  
+     unsigned long NtFrsApi_Rpc_WriterCommand(
+        [in] handle_t Handle,
+        [in] unsigned long Command
+        );
+     
+     unsigned long NtFrsApi_Rpc_ForceReplication(
+        [in] handle_t Handle,
+        [in, unique] GUID *ReplicaSetGuid,
+        [in, unique] GUID *CxtionGuid,
+        [in, string, unique] PWCHAR ReplicaSetName,
+        [in, string, unique] PWCHAR PartnerDnsName
+        );
+  }
+  

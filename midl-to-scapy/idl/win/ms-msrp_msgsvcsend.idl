@@ -1,0 +1,19 @@
+ import "ms-dtyp.idl";
+  
+  
+ [ uuid (5a7b91f8-ff00-11d0-a9b2-00c04fb6e6fc),
+   version(1.0),
+   pointer_default(unique)
+ ]
+ interface msgsvcsend
+ {
+     error_status_t 
+     NetrSendMessage(
+         [in]         handle_t hRpcBinding,
+         [in, string] LPSTR    From,
+         [in, string] LPSTR    To,
+         [in, string] LPSTR    Text
+         );
+ }
+  
+  

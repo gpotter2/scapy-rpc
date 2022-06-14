@@ -1,0 +1,23 @@
+ import "ms-dtyp.idl";
+  
+ import "ms-tsts_allproc.h";
+  
+  
+ [
+     uuid(53b46b02-c73b-4a3e-8dee-b16b80672fc0),
+     version(1.0),
+     pointer_default(unique)
+ ]
+  
+ interface TSVIPPublic
+  
+ {
+     HRESULT  RpcGetSessionIP(
+         [in]        handle_t       hBinding,
+         [in]        USHORT         Family,
+         [in]        DWORD          SessionId,
+         [ref, out]  TSVIPSession   *ppVIPSession
+     );
+ }
+  
+  
