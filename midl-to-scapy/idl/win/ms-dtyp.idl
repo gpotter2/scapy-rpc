@@ -99,26 +99,26 @@ typedef unsigned short wchar_t;
   *PEVENT_DESCRIPTOR,
   *PCEVENT_DESCRIPTOR;
   
- typedef struct _EVENT_HEADER {
-   USHORT           Size;
-   USHORT           HeaderType;
-   USHORT           Flags;
-   USHORT           EventProperty;
-   ULONG            ThreadId;
-   ULONG            ProcessId;
-   LARGE_INTEGER    TimeStamp;
-   GUID             ProviderId;
-   EVENT_DESCRIPTOR EventDescriptor;
-   union {
-     struct {
-       ULONG KernelTime;
-       ULONG UserTime;
-     };
-     ULONG64 ProcessorTime;
-   };
-   GUID             ActivityId;
- } EVENT_HEADER, 
-  *PEVENT_HEADER;
+//  typedef struct _EVENT_HEADER {
+//    USHORT           Size;
+//    USHORT           HeaderType;
+//    USHORT           Flags;
+//    USHORT           EventProperty;
+//    ULONG            ThreadId;
+//    ULONG            ProcessId;
+//    LARGE_INTEGER    TimeStamp;
+//    GUID             ProviderId;
+//    EVENT_DESCRIPTOR EventDescriptor;
+//    union {
+//      struct {
+//        ULONG KernelTime;
+//        ULONG UserTime;
+//      };
+//      ULONG64 ProcessorTime;
+//    };
+//    GUID             ActivityId;
+//  } EVENT_HEADER, 
+//   *PEVENT_HEADER;
   
  typedef DWORD LCID;
   
@@ -223,26 +223,26 @@ typedef unsigned short wchar_t;
  } MANDATORY_INFORMATION, 
   *PMANDATORY_INFORMATION;
   
- typedef struct _CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE {
-   DWORD Length;
-   BYTE OctetString[];
- } CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE, 
-  *PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE;
+//  typedef struct _CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE {
+//    DWORD Length;
+//    BYTE OctetString[];
+//  } CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE, 
+//   *PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE;
   
- typedef struct _CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1 {
-   DWORD Name;
-   WORD ValueType;
-   WORD Reserved;
-   DWORD Flags;
-   DWORD ValueCount;
-   union {
-     PLONG64 pInt64[];
-     PDWORD64 pUint64[];
-     PWSTR ppString[];
-     PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE pOctetString[];
-   } Values;
- } CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1, 
-  *PCLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1;
+//  typedef struct _CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1 {
+//    DWORD Name;
+//    WORD ValueType;
+//    WORD Reserved;
+//    DWORD Flags;
+//    DWORD ValueCount;
+//    union {
+//      PLONG64 pInt64[];
+//      PDWORD64 pUint64[];
+//      PWSTR ppString[];
+//      PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_RELATIVE pOctetString[];
+//    } Values;
+//  } CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1, 
+//   *PCLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1;
   
   
  typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION;

@@ -209,7 +209,7 @@
  typedef struct {
      TRKSVR_MESSAGE_TYPE MessageType;
      TRKSVR_MESSAGE_PRIORITY Priority;
-     [switch_is(MessageType)] union {
+     [switch_is(MessageType), switch_type(TRKSVR_MESSAGE_TYPE)] union {
          [case (old_SEARCH)]
              old_TRKSVR_CALL_SEARCH old_Search; // Unused
          [case (MOVE_NOTIFICATION)]

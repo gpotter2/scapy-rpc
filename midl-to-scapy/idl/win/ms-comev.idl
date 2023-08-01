@@ -366,7 +366,7 @@
  ]
  interface IEventSystemInitialize : IUnknown
  {
-    HRESULT SetCOMCatalogBehaviour(BOOL bRetainSubKeys);
+    HRESULT SetCOMCatalogBehaviour([in] BOOL bRetainSubKeys);
  }; 
   
   

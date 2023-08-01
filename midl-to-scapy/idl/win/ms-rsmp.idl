@@ -291,9 +291,9 @@
      DWORD       dwAsyncState;               // reserved - do not use
  #ifdef __midl
      NTMS_HANDLE hEvent;                     // reserved - do not use
- #else
-     PVOID      hEvent;                     // reserved - do not use
- #endif                                      
+//  #else
+//      PVOID      hEvent;                     // reserved - do not use
+//  #endif                                      
      BOOL        bOnStateChange;             // indicate to signal on every status change or not; false will signal only completion
  } NTMS_ASYNC_IO, *LPNTMS_ASYNC_IO;
   
@@ -301,9 +301,9 @@
      DWORD              dwSize;        
  #ifdef __midl
      [ptr]  LPNTMS_ASYNC_IO lpReserved;
- #else
-     LPVOID lpReserved;
- #endif
+//  #else
+//      LPVOID lpReserved;
+//  #endif
  } NTMS_MOUNT_INFORMATION, *LPNTMS_MOUNT_INFORMATION;
   
  typedef struct _NTMS_CHANGERINFORMATIONA {
@@ -601,7 +601,7 @@
      DWORD                       dwOperationalState;
      char                        szName[64];
      char                        szDescription[127];
-     [switch_is(dwType)] union {
+     [switch_is(dwType), switch_type(NTMS_LIBRARYINFORMATION)] union {
          [case(NTMS_DRIVE)]           NTMS_DRIVEINFORMATIONA Drive;
          [case(NTMS_DRIVE_TYPE)]      NTMS_DRIVETYPEINFORMATIONA DriveType;
          [case(NTMS_LIBRARY)]         NTMS_LIBRARYINFORMATION Library;
@@ -631,7 +631,7 @@
      DWORD                       dwOperationalState;
      [string] wchar_t            szName[64];
      [string] wchar_t            szDescription[127];
-     [switch_is(dwType)] union {
+     [switch_is(dwType), switch_type(NTMS_LIBRARYINFORMATION)] union {
          [case(NTMS_DRIVE)]           NTMS_DRIVEINFORMATIONW Drive;
          [case(NTMS_DRIVE_TYPE)]      NTMS_DRIVETYPEINFORMATIONW DriveType;
          [case(NTMS_LIBRARY)]         NTMS_LIBRARYINFORMATION Library;
@@ -1374,13 +1374,13 @@
   
  };
   
-//  [
-//      uuid(D61A27C6-8F53-11D0-BFA0-00A024151983),
-//      helpstring("Removable Storage Manager Class"),
-//  ]
-//  coclass  CNtmsSvr
-//  {
-//      [default]  interface  INtmsSession1;
-//  };
+ [
+     uuid(D61A27C6-8F53-11D0-BFA0-00A024151983),
+     helpstring("Removable Storage Manager Class"),
+ ]
+ coclass  CNtmsSvr
+ {
+     [default]  interface  INtmsSession1;
+ };
   
   

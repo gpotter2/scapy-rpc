@@ -1,11 +1,11 @@
  import "ms-dtyp.idl";
   
- #include "ms-tsts_allproc.h"
+ import "ms-tsts_allproc.h";
   
  typedef UINT *        UINT_PTR;
   
- static const WCHAR TSRPC_LEGACY_REMOTE_ENDPOINT[] = 
- L"\\pipe\\Ctx_WinStation_API_service";
+//  static const WCHAR TSRPC_LEGACY_REMOTE_ENDPOINT[] = 
+//  L"\\pipe\\Ctx_WinStation_API_service";
   
  typedef [context_handle] void *SERVER_HANDLE;
   

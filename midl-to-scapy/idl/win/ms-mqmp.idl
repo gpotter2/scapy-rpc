@@ -17,16 +17,7 @@
  // following types:
  //   DWORD
  //   GUID
-  
-  
- [
-   uuid(fdb3a030-065f-11d1-bb9b-00a024ea5525),
-   version(1.0),
-   pointer_default(unique)
- ]
- interface qmcomm
- {
-  
+
  typedef struct CACCreateRemoteCursor {
    DWORD hCursor;
    DWORD srv_hACQueue;
@@ -41,7 +32,7 @@
   
  typedef struct CACTransferBufferV1 {
    [range(0,2)] DWORD uTransferType;
-   [switch_is(uTransferType)] union {
+   [switch_is(uTransferType), switch_type(TRANSFER_TYPE)] union {
      [case(CACTB_SEND)] 
        struct {
        QUEUE_FORMAT* pAdminQueueFormat;
@@ -139,6 +130,15 @@
    unsigned char* pbLastInXact;
    OBJECTID** ppXactID;
  } CACTransferBufferV2;
+  
+ [
+   uuid(fdb3a030-065f-11d1-bb9b-00a024ea5525),
+   version(1.0),
+   pointer_default(unique)
+ ]
+ interface qmcomm
+ {
+
   
  typedef struct OBJECT_FORMAT {
    [range(1,2)] DWORD ObjType;

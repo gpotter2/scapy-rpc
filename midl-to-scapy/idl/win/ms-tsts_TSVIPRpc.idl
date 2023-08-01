@@ -1,6 +1,6 @@
  import "ms-dtyp.idl";
   
- #include "ms-tsts_allproc.h"
+ import "ms-tsts_allproc.h";
   
   
  [

@@ -1,6 +1,6 @@
  import "ms-oaut.idl";
   
- midl_pragma warning (disable: 2400)
+ //midl_pragma warning (disable: 2400)
   
  [
   uuid(0EAC4842-8763-11cf-A743-00AA00A3F00D)

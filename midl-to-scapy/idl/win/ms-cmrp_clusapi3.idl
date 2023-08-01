@@ -1,10 +1,11 @@
     import "ms-dtyp.idl";
     
+    #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF
+
     [
         uuid(b97db8b2-4c63-11cf-bff6-08002be23f2f), 
         version(3.0)
     ]
-    #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF
   
     interface clusapi
     {
@@ -1428,7 +1429,6 @@
          [case(DiskIdGuid)] GUID DiskGuid;
     };
     } CLUSDSK_DISKID, *PCLUSDSK_DISKID;
-    }
     error_status_t
     Opnum158NotUsedOnWire(void);
   
@@ -1694,3 +1694,4 @@ error_status_t
           error_status_t Opnum263Reserved(void);
           // not used on wire
           error_status_t Opnum264NotUsedOnWire(void);
+    }

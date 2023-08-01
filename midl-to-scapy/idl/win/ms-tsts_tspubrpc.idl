@@ -1,7 +1,7 @@
  import "ms-dtyp.idl";
   
- #include "ms-tsts_tsdef.h"
- #include "ms-tsts_allproc.h"
+ import "ms-tsts_tsdef.h";
+ import "ms-tsts_allproc.h";
   
  [
      uuid(484809d6-4239-471b-b5bc-61df8c23ac48),
@@ -157,11 +157,11 @@
          [in]        DWORD                      Level,
          [ref, out]  PLSMSESSIONINFORMATION_EX  LSMSessionInfoExPtr
          );
- }
   
      VOID Opnum18NotUsedOnWire();
      VOID Opnum19NotUsedOnWire();
-  
+   }
+
  //
  //  notifications
  //

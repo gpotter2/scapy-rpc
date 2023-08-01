@@ -198,7 +198,7 @@
  typedef struct
  {
      unsigned short      rdcChunkerAlgorithm;
-     [switch_is(rdcChunkerAlgorithm)] union
+     [switch_is(rdcChunkerAlgorithm), switch_type(RDC_CHUNKER_ALGORITHM)] union
      {
          [case(RDC_FILTERGENERIC)] FRS_RDC_PARAMETERS_GENERIC filterGeneric;
          [case(RDC_FILTERMAX)]     FRS_RDC_PARAMETERS_FILTERMAX filterMax;

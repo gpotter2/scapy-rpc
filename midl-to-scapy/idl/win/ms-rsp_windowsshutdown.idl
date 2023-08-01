@@ -1,3 +1,5 @@
+import "ms-dtyp.idl";
+
  typedef struct _REG_UNICODE_STRING {
      unsigned short Length;
      unsigned short MaximumLength;

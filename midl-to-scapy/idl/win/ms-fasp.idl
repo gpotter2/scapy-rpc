@@ -1,8 +1,8 @@
  import "ms-dtyp.idl";
   
- cpp_quote("#ifndef __FIREWALL_H_")
- cpp_quote("#define FW_CURRENT_BINARY_VERSION (FW_VERSION(2,31))")
- cpp_quote("#define FW_CURRENT_SCHEMA_VERSION (FW_VERSION(2,31))")
+//  cpp_quote("#ifndef __FIREWALL_H_")
+//  cpp_quote("#define FW_CURRENT_BINARY_VERSION (FW_VERSION(2,31))")
+//  cpp_quote("#define FW_CURRENT_SCHEMA_VERSION (FW_VERSION(2,31))")
   
  /***********************************************************************
   *                                                                     *
@@ -3035,13 +3035,13 @@
   
   
   
- cpp_quote("#endif //__FIREWALL_H_")
+//  cpp_quote("#endif //__FIREWALL_H_")
   
   
- cpp_quote("#define MIDL_user_allocate MIDL_fw_allocate")
- cpp_quote("#define MIDL_user_free MIDL_fw_free")
- cpp_quote("void  * __RPC_USER MIDL_fw_allocate(size_t size);")
- cpp_quote("void __RPC_USER MIDL_fw_free(void  * );")
+//  cpp_quote("#define MIDL_user_allocate MIDL_fw_allocate")
+//  cpp_quote("#define MIDL_user_free MIDL_fw_free")
+//  cpp_quote("void  * __RPC_USER MIDL_fw_allocate(size_t size);")
+//  cpp_quote("void __RPC_USER MIDL_fw_free(void  * );")
   
   
  [

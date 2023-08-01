@@ -1,6 +1,6 @@
 // This is from [MS-RPCE] and [C706] Appendix N
 
-import "../ms/ms-dtyp.idl";
+import "../win/ms-dtyp.idl";
 
 // [MS-RPCE] 2.2.1.1.1
 

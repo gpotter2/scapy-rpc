@@ -10,7 +10,7 @@
   
  #endif
   
- #define SAFEARRAY(type) SAFEARRAY
+ //#define SAFEARRAY(type) SAFEARRAY
   
  [
      object,
@@ -51,7 +51,7 @@
  pointer_default(unique)
  ]
  interface IServicedComponentInfo : IUnknown{
- HRESULT GetComponentInfo([in,out] int* infoMask, [out] SAFEARRAY(BSTR)* infoArray);
+ HRESULT GetComponentInfo([in,out] int* infoMask, [out] SAFEARRAY* infoArray);
  };
   
   

@@ -14,7 +14,7 @@
  interface IAppHostConstantValue;
  interface IAppHostConfigManager;
   
- #define SAFEARRAY(x) SAFEARRAY
+ //#define SAFEARRAY(x) SAFEARRAY
   
  [
    object,

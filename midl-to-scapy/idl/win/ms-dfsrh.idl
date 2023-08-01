@@ -1,6 +1,6 @@
  import "ms-oaut.idl";
   
- #define SAFEARRAY(datatype) SAFEARRAY*
+ //#define SAFEARRAY(datatype) SAFEARRAY*
   
  [
      uuid(9009D654-250B-4e0d-9AB0-ACB63134F69F)

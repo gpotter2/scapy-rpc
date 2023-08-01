@@ -155,7 +155,8 @@ typedef  enum tagUpdateServiceOption
 {
      usoNonVolatileService = 0x00000001,
 } UpdateServiceOption;
-typedef DECIMAL DECIMAL;
+
+//typedef DECIMAL DECIMAL;
  
  
 interface ICategoryCollection;

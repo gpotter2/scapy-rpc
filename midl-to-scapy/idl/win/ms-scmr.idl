@@ -955,7 +955,6 @@
      [in]    DWORD                   dwInfoLevel,
      [out]   SC_RPC_CONFIG_INFOW  *  pInfo
      );
- }
   
  void Opnum57NotUsedOnWire(void);
  void Opnum58NotUsedOnWire(void);
@@ -1004,3 +1003,4 @@
      [in] DWORD DesiredAccess,
      [out] LPSC_RPC_HANDLE ScmHandle
  );
+ }
