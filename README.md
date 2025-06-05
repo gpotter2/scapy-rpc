@@ -8,7 +8,7 @@ This repo contains two sub-projects:
 
 A **Microsoft Interface Definition Language** (MIDL) parser that creates [Scapy](https://github.com/secdev/scapy) code, to interact with [MS-RPC](https://docs.microsoft.com/en-us/windows/win32/rpc) interfaces.
 
-![](vid/compilation_midl.mp4)
+https://github.com/user-attachments/assets/044fb364-2a53-4ad7-97c9-e3c8e0c970fc
 
 1. get your hands on the IDL file for an interface.
     - grab it from the section "Full IDL" from official documentations
