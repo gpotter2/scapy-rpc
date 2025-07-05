@@ -299,9 +299,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_UI1)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI1)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_UI1)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI1)
+                        ),
                     ),
                 ),
                 (
@@ -309,9 +312,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_UI2)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI2)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_UI2)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI2)
+                        ),
                     ),
                 ),
                 (
@@ -319,9 +325,9 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_I4)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_I4)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_I4)),
+                        (lambda _, val: val.tag == (VARENUM.VT_VECTOR | VARENUM.VT_I4)),
                     ),
                 ),
                 (
@@ -329,9 +335,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_UI4)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI4)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_UI4)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI4)
+                        ),
                     ),
                 ),
                 (
@@ -339,9 +348,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_UI8)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI8)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_UI8)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_UI8)
+                        ),
                     ),
                 ),
                 (
@@ -349,9 +361,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_CLSID)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_CLSID)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_CLSID)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_CLSID)
+                        ),
                     ),
                 ),
                 (
@@ -359,9 +374,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_LPWSTR)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_LPWSTR)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_LPWSTR)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_LPWSTR)
+                        ),
                     ),
                 ),
                 (
@@ -369,9 +387,12 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
-                            == (pkt.VT_VECTOR | pkt.VT_VARIANT)
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_VARIANT)
                         ),
-                        (lambda _, val: val.tag == (pkt.VT_VECTOR | pkt.VT_VARIANT)),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VECTOR | VARENUM.VT_VARIANT)
+                        ),
                     ),
                 ),
             ],

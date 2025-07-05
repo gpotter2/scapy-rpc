@@ -1,0 +1,22 @@
+diff --git a/midl-to-scapy/idl/win/ms-oaut.idl b/midl-to-scapy/idl/win/ms-oaut.idl
+index 4ffa474..2819d3c 100644
+--- a/midl-to-scapy/idl/win/ms-oaut.idl
++++ b/midl-to-scapy/idl/win/ms-oaut.idl
+@@ -265,7 +265,7 @@
+      USHORT wReserved1;
+      USHORT wReserved2;
+      USHORT wReserved3;
+-     [switch_type(ULONG), switch_is(vt)] 
++     [switch_type(tagVARENUM), switch_is(vt)] 
+      union {
+          [case(VT_I8)]
+            LONGLONG llVal;
+@@ -420,7 +420,7 @@
+  } HYPER_SIZEDARR;
+   
+  typedef union _wireSAFEARRAY_UNION
+-     switch(unsigned long sfType) u {
++     switch_type(tagSF_TYPE) u {
+      case SF_BSTR:      SAFEARR_BSTR     BstrStr;
+      case SF_UNKNOWN:   SAFEARR_UNKNOWN  UnknownStr;
+      case SF_DISPATCH:  SAFEARR_DISPATCH DispatchStr;

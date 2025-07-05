@@ -1,0 +1,22 @@
+diff --git a/midl-to-scapy/idl/win/ms-ioi.idl b/midl-to-scapy/idl/win/ms-ioi.idl
+index 326fab1..adb8637 100644
+--- a/midl-to-scapy/idl/win/ms-ioi.idl
++++ b/midl-to-scapy/idl/win/ms-ioi.idl
+@@ -10,7 +10,7 @@
+   
+  #endif
+   
+- #define SAFEARRAY(type) SAFEARRAY
++ //#define SAFEARRAY(type) SAFEARRAY
+   
+  [
+      object,
+@@ -51,7 +51,7 @@
+  pointer_default(unique)
+  ]
+  interface IServicedComponentInfo : IUnknown{
+- HRESULT GetComponentInfo([in,out] int* infoMask, [out] SAFEARRAY(BSTR)* infoArray);
++ HRESULT GetComponentInfo([in,out] int* infoMask, [out] SAFEARRAY* infoArray);
+  };
+   
+   

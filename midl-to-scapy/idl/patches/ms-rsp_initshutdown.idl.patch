@@ -1,0 +1,10 @@
+diff --git a/midl-to-scapy/idl/win/ms-rsp_initshutdown.idl b/midl-to-scapy/idl/win/ms-rsp_initshutdown.idl
+index 7eb2f9a..bb8a9d3 100644
+--- a/midl-to-scapy/idl/win/ms-rsp_initshutdown.idl
++++ b/midl-to-scapy/idl/win/ms-rsp_initshutdown.idl
+@@ -1,3 +1,5 @@
++import "ms-dtyp.idl";
++
+  typedef struct _REG_UNICODE_STRING {
+      unsigned short Length;
+      unsigned short MaximumLength;

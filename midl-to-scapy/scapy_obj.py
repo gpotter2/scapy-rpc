@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
 """
 Scapy pseudo-field definitions and converters.
 """
@@ -56,6 +60,8 @@ def _lkp(attrs, name):
 def _rec_rslv_arithm(ar, env=None, getattr=False, prefix="pkt."):
     if isinstance(ar, int):
         return "%d" % ar
+    elif isinstance(ar, str):
+        return ar
     elif isinstance(ar, tuple):
         if ar[0] == "binop":
             return "(%s %s %s)" % (
@@ -94,8 +100,8 @@ def _rec_rslv_arithm(ar, env=None, getattr=False, prefix="pkt."):
             if is_builtin(typespec):
                 typ = BUILTIN_TYPES[typespec[-1]]
             else:
-                # A l'arrache.. à résoudre avant :(
-                typ = {"wchar_t": "H", "GUID": "QQ", "BIND_INFO_BLOB": 16}[typespec[-1]]
+                # A l'arrache.. arrive dans des #define
+                typ = {"WCHAR": "H", "wchar_t": "H"}[typespec[-1]]
             sr = struct.calcsize(typ[0] if isinstance(typ, tuple) else typ)
             return "%s" % sr
     assert False, "Unknown arithmetic expression %s" % repr(ar)

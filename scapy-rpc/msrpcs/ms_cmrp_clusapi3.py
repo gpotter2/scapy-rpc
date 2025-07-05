@@ -2496,12 +2496,21 @@ class ApiChangeResourceGroupEx_Response(NDRPacket):
     fields_desc = [NDRIntField("rpc_status", 0)]
 
 
-class Opnum185Reserved_Request(NDRPacket):
-    fields_desc = []
+class ApiClusterNativeUpdateControl_Request(NDRPacket):
+    fields_desc = [
+        NDRByteField("inBuffer", 0),
+        NDRIntField("inBufferSize", 0),
+        NDRIntField("outBufferSize", 0),
+    ]
 
 
-class Opnum185Reserved_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
+class ApiClusterNativeUpdateControl_Response(NDRPacket):
+    fields_desc = [
+        NDRByteField("outBuffer", 0),
+        NDRIntField("lpBytesReturned", 0),
+        NDRIntField("lpBytesNeeded", 0),
+        NDRIntField("rpc_status", 0),
+    ]
 
 
 class Opnum186Reserved_Request(NDRPacket):
@@ -3363,7 +3372,9 @@ CLUSAPI_OPNUMS = {
     182: DceRpcOp(ApiChangeCsvStateEx_Request, ApiChangeCsvStateEx_Response),
     183: DceRpcOp(ApiAddGroupToGroupSetEx_Request, ApiAddGroupToGroupSetEx_Response),
     184: DceRpcOp(ApiChangeResourceGroupEx_Request, ApiChangeResourceGroupEx_Response),
-    185: DceRpcOp(Opnum185Reserved_Request, Opnum185Reserved_Response),
+    185: DceRpcOp(
+        ApiClusterNativeUpdateControl_Request, ApiClusterNativeUpdateControl_Response
+    ),
     186: DceRpcOp(Opnum186Reserved_Request, Opnum186Reserved_Response),
     187: DceRpcOp(Opnum187Reserved_Request, Opnum187Reserved_Response),
     188: DceRpcOp(Opnum188Reserved_Request, Opnum188Reserved_Response),

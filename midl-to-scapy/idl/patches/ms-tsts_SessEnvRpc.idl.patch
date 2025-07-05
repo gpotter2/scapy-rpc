@@ -1,0 +1,21 @@
+diff --git a/midl-to-scapy/idl/win/ms-tsts_SessEnvRpc.idl b/midl-to-scapy/idl/win/ms-tsts_SessEnvRpc.idl
+index 0cd2a73..9dea0d2 100644
+--- a/midl-to-scapy/idl/win/ms-tsts_SessEnvRpc.idl
++++ b/midl-to-scapy/idl/win/ms-tsts_SessEnvRpc.idl
+@@ -36,11 +36,11 @@
+  ]
+  interface SessEnvPublicRpc
+  {
+-     cpp_quote( "#ifndef _SESSENVPUBLICRPC_ENDPOINT_DEF" )
+-     cpp_quote( "#define _SESSENVPUBLICRPC_ENDPOINT_DEF" )
+-     cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_ENDPOINT = L\"\\\\pipe\\\\SessEnvPublicRpc\"; ")
+-     cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_PROTOCOL_SEQUENCE = L\"ncacn_np\"; ")
+-     cpp_quote( "#endif // !_SESSENVPUBLICRPC_ENDPOINT_DEF" )
++    //  cpp_quote( "#ifndef _SESSENVPUBLICRPC_ENDPOINT_DEF" )
++    //  cpp_quote( "#define _SESSENVPUBLICRPC_ENDPOINT_DEF" )
++    //  cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_ENDPOINT = L\"\\\\pipe\\\\SessEnvPublicRpc\"; ")
++    //  cpp_quote( "static LPCWSTR SESSENVPUBLICRPC_PROTOCOL_SEQUENCE = L\"ncacn_np\"; ")
++    //  cpp_quote( "#endif // !_SESSENVPUBLICRPC_ENDPOINT_DEF" )
+   
+      // Purpose:
+      //  Create shadow invitation

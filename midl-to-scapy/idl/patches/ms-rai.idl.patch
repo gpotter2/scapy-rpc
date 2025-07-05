@@ -1,0 +1,20 @@
+diff --git a/midl-to-scapy/idl/win/ms-rai.idl b/midl-to-scapy/idl/win/ms-rai.idl
+index 96b5924..7632f06 100644
+--- a/midl-to-scapy/idl/win/ms-rai.idl
++++ b/midl-to-scapy/idl/win/ms-rai.idl
+@@ -1,5 +1,5 @@
+  import "ms-oaut.idl";
+- #define SAFEARRAY(type) SAFEARRAY
++ //#define SAFEARRAY(type) SAFEARRAY
+  #define DISPID_PCH_BASE                           0x08010000
+  #define DISPID_PCH_BASE_COL                       (DISPID_PCH_BASE + 0x0000) 
+  #define DISPID_PCH_HELPSVC_BASE                   0x08000000
+@@ -131,7 +131,7 @@
+      [id(1), helpstring("method GetNoviceUserInfo")] HRESULT GetNoviceUserInfo(
+       [in,out] LPWSTR * szName);
+      [id(2), helpstring("method GetSessionInfo")] HRESULT GetSessionInfo(
+-      [in,out] SAFEARRAY(BSTR) * UserNames, [in,out] INT * Count);
++      [in,out] SAFEARRAY * UserNames, [in,out] INT * Count);
+  };
+      
+  [

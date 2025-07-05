@@ -1,0 +1,58 @@
+diff --git a/midl-to-scapy/idl/win/ms-dhcpm.idl b/midl-to-scapy/idl/win/ms-dhcpm.idl
+index c397615..3f13401 100644
+--- a/midl-to-scapy/idl/win/ms-dhcpm.idl
++++ b/midl-to-scapy/idl/win/ms-dhcpm.idl
+@@ -1,6 +1,5 @@
+      import "ms-dtyp.idl";
+       
+-      #define LPWSTR [string] wchar_t*
+       typedef [handle] LPWSTR DHCP_SRV_HANDLE;
+       typedef DWORD DHCP_IP_ADDRESS, *PDHCP_IP_ADDRESS, *LPDHCP_IP_ADDRESS;
+       typedef DWORD DHCP_IP_MASK;
+@@ -31,8 +30,8 @@
+          DhcpIpRangesBootpOnly,
+      } DHCP_SUBNET_ELEMENT_TYPE, *LPDHCP_SUBNET_ELEMENT_TYPE;
+      
+-      #define ELEMENT_MASK(E) ((((E) <= DhcpIpRangesBootpOnly) \
+-          && (DhcpIpRangesDhcpOnly <= (E)))?(0):(E))
++    //   #define E ((((E) <= DhcpIpRangesBootpOnly) \
++    //   && (DhcpIpRangesDhcpOnly <= (E)))?(0):(E))
+        
+       typedef enum _DHCP_FORCE_FLAG 
+       {
+@@ -131,7 +130,7 @@
+       
+       typedef struct _DHCP_SUBNET_ELEMENT_DATA {
+           DHCP_SUBNET_ELEMENT_TYPE ElementType;
+-          [switch_is(ELEMENT_MASK(ElementType)), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
++          [switch_is(ElementType), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
+           union _DHCP_SUBNET_ELEMENT_UNION {
+               [case(DhcpIpRanges)] DHCP_IP_RANGE *IpRange;
+               [case(DhcpSecondaryHosts)] DHCP_HOST_INFO *SecondaryHost;
+@@ -386,7 +385,7 @@
+       
+       typedef struct _DHCP_SUBNET_ELEMENT_DATA_V4 {
+           DHCP_SUBNET_ELEMENT_TYPE ElementType;
+-          [switch_is(ELEMENT_MASK(ElementType)), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
++          [switch_is(ElementType), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
+           union _DHCP_SUBNET_ELEMENT_UNION_V4 {
+               [case(DhcpIpRanges)] DHCP_IP_RANGE *IpRange;
+               [case(DhcpSecondaryHosts)]  DHCP_HOST_INFO *SecondaryHost;
+@@ -716,7 +715,7 @@
+       
+       typedef struct _DHCP_SUBNET_ELEMENT_DATA_V5 {
+           DHCP_SUBNET_ELEMENT_TYPE ElementType;
+-          [switch_is(ELEMENT_MASK(ElementType)), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
++          [switch_is(ElementType), switch_type(DHCP_SUBNET_ELEMENT_TYPE)]
+           union _DHCP_SUBNET_ELEMENT_UNION_V5 {
+               [case(DhcpIpRanges)] DHCP_BOOTP_IP_RANGE *IpRange;
+               [case(DhcpSecondaryHosts)] DHCP_HOST_INFO *SecondaryHost;
+@@ -848,7 +847,7 @@
+       
+       typedef struct _DHCP_SUBNET_ELEMENT_DATA_V6 {
+           DHCP_SUBNET_ELEMENT_TYPE_V6 ElementType;
+-          [switch_is(ELEMENT_MASK(ElementType)), switch_type(DHCP_SUBNET_ELEMENT_TYPE_V6)]
++          [switch_is(ElementType), switch_type(DHCP_SUBNET_ELEMENT_TYPE_V6)]
+           union _DHCP_SUBNET_ELEMENT_UNION_V6 {
+               [case(Dhcpv6IpRanges)] DHCP_IP_RANGE_V6      *IpRange;
+               [case(Dhcpv6ReservedIps)] DHCP_IP_RESERVATION_V6 *ReservedIp;

@@ -1,0 +1,12 @@
+diff --git a/midl-to-scapy/idl/win/ms-dfsrh.idl b/midl-to-scapy/idl/win/ms-dfsrh.idl
+index 585e512..7f61438 100644
+--- a/midl-to-scapy/idl/win/ms-dfsrh.idl
++++ b/midl-to-scapy/idl/win/ms-dfsrh.idl
+@@ -1,6 +1,6 @@
+  import "ms-oaut.idl";
+   
+- #define SAFEARRAY(datatype) SAFEARRAY*
++ //#define SAFEARRAY(datatype) SAFEARRAY*
+   
+  [
+      uuid(9009D654-250B-4e0d-9AB0-ACB63134F69F)

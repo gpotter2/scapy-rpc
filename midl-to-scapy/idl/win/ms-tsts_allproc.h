@@ -1,5 +1,3 @@
- import "ms-dtyp.idl";
- 
  #ifndef TS_ALLPROC_ALREADY_SET
  #define TS_ALLPROC_ALREADY_SET
   
@@ -35,11 +33,11 @@
  typedef struct _TS_UNICODE_STRING {
      USHORT Length;
      USHORT MaximumLength;
- #ifdef __midl
+// #ifdef __midl
      [size_is(MaximumLength),length_is(Length)]PWSTR  Buffer;
- #else
-//      PWSTR  Buffer;
-//  #endif
+// #else
+//     PWSTR  Buffer;
+// #endif
  } TS_UNICODE_STRING;
   
   
@@ -77,11 +75,11 @@
  typedef struct _TS_ALL_PROCESSES_INFO {
      PTS_SYS_PROCESS_INFORMATION pTsProcessInfo;
      DWORD                           SizeOfSid;
- #ifdef __midl
+// #ifdef __midl
      [size_is(SizeOfSid)] PBYTE      pSid;
-//  #else
-//      PBYTE                           pSid;
-//  #endif
+// #else
+//     PBYTE                           pSid;
+// #endif
  } 
  TS_ALL_PROCESSES_INFO, *PTS_ALL_PROCESSES_INFO;
   
@@ -94,11 +92,11 @@
  typedef struct _NT6_TS_UNICODE_STRING {
      USHORT Length;
      USHORT MaximumLength;
- #ifdef __midl
+// #ifdef __midl
      [size_is(MaximumLength / 2),length_is(Length / 2)]PWSTR  Buffer;
-//  #else
-//      PWSTR  Buffer;
-//  #endif
+// #else
+//     PWSTR  Buffer;
+// #endif
  } NT6_TS_UNICODE_STRING;
   
   
@@ -136,11 +134,11 @@
  typedef struct _TS_ALL_PROCESSES_INFO_NT6 {
      PTS_SYS_PROCESS_INFORMATION_NT6 pTsProcessInfo;
      DWORD                           SizeOfSid;
- #ifdef __midl
+// #ifdef __midl
      [size_is(SizeOfSid)] PBYTE      pSid;
-//  #else
-//      PBYTE                           pSid;
-//  #endif
+// #else
+//     PBYTE                           pSid;
+// #endif
  } 
  TS_ALL_PROCESSES_INFO_NT6, *PTS_ALL_PROCESSES_INFO_NT6;
   
@@ -165,8 +163,8 @@
  #define  TSVIP_MAX_ADAPTER_ADDRESS_LENGTH  16
   
  typedef  struct  _TSVIP_SOCKADDR {
-//  #ifdef __midl
-     [switch(short type)] union _u
+// #ifdef __midl
+     [switch(unsigned short sin_family)] union _u
      {
       [case(2)]                       // AF_INET
          struct {
@@ -182,23 +180,23 @@
              ULONG   sin6_scope_id;
          }  ipv6;
      } u;
-//  #else
-//      USHORT  sin_family;
-//      union
-//      {
-//          struct  {
-//              USHORT  sin_port;
-//              ULONG   in_addr;
-//              UCHAR   sin_zero[8];
-//          }  ipv4;
-//          struct {
-//              USHORT  sin6_port;
-//              ULONG   sin6_flowinfo;
-//              USHORT  sin6_addr[8];
-//              ULONG   sin6_scope_id;
-//          }  ipv6;
-//      }  u;
-//  #endif
+// #else
+//     USHORT  sin_family;
+//     union
+//     {
+//         struct  {
+//             USHORT  sin_port;
+//             ULONG   in_addr;
+//             UCHAR   sin_zero[8];
+//         }  ipv4;
+//         struct {
+//             USHORT  sin6_port;
+//             ULONG   sin6_flowinfo;
+//             USHORT  sin6_addr[8];
+//             ULONG   sin6_scope_id;
+//         }  ipv6;
+//     }  u;
+// #endif
  }  TSVIP_SOCKADDR,
     *PTSVIP_SOCKADDR;
   
@@ -206,15 +204,15 @@
      DWORD             dwVersion;   //Structure version
      TSVIP_SOCKADDR    IPAddress;    //IPv4 is in network byte order.
      ULONG             PrefixOrSubnetMask;    //IPv4 is a mask in network byte order,
- #ifdef  __midl                                //IPv6 is prefix length.
+// #ifdef  __midl                                //IPv6 is prefix length.
      [range(0, TSVIP_MAX_ADAPTER_ADDRESS_LENGTH)]  
        UINT            PhysicalAddressLength;
      [length_is(PhysicalAddressLength)] 
        BYTE  PhysicalAddress[TSVIP_MAX_ADAPTER_ADDRESS_LENGTH];
-//  #else
-//      UINT              PhysicalAddressLength;
-//      BYTE              PhysicalAddress[TSVIP_MAX_ADAPTER_ADDRESS_LENGTH];
-//  #endif
+// #else
+//     UINT              PhysicalAddressLength;
+//     BYTE              PhysicalAddress[TSVIP_MAX_ADAPTER_ADDRESS_LENGTH];
+// #endif
      ULONG             LeaseExpires;
      ULONG             T1;
      ULONG             T2;
@@ -229,3 +227,5 @@
     *PTSVIPSession;    
   
  //NBD   end
+  
+  

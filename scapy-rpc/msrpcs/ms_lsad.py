@@ -4328,6 +4328,8 @@ class LSA_FOREST_TRUST_RECORD_TYPE(IntEnum):
     ForestTrustTopLevelName = 0
     ForestTrustTopLevelNameEx = 1
     ForestTrustDomainInfo = 2
+    ForestTrustBinaryInfo = 3
+    ForestTrustScannerInfo = 4
     ForestTrustRecordTypeLast = ForestTrustDomainInfo
 
 
@@ -4335,6 +4337,17 @@ class LSA_FOREST_TRUST_DOMAIN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRPacketField("DnsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("NetbiosName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+    ]
+
+
+class LSA_FOREST_TRUST_SCANNER_INFO(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID), deferred=True
+        ),
         NDRPacketField("DnsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("NetbiosName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
     ]
@@ -4394,6 +4407,23 @@ class PLSA_FOREST_TRUST_RECORD(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustDomainInfo
+                        ),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "ForestTrustData",
+                        LSA_FOREST_TRUST_SCANNER_INFO(),
+                        LSA_FOREST_TRUST_SCANNER_INFO,
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ForestTrustType", None)
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustScannerInfo
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustScannerInfo
                         ),
                     ),
                 ),
@@ -4604,6 +4634,389 @@ class LsarOpenPolicy3_Response(NDRPacket):
     ]
 
 
+class PLSA_FOREST_TRUST_RECORD2(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRIntField("Flags", 0),
+        NDRInt3264EnumField("ForestTrustType", 0, LSA_FOREST_TRUST_RECORD_TYPE),
+        NDRPacketField("Time", LARGE_INTEGER(), LARGE_INTEGER),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField(
+                        "ForestTrustData", RPC_UNICODE_STRING(), RPC_UNICODE_STRING
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ForestTrustType", None)
+                            in [
+                                LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustTopLevelName,
+                                LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustTopLevelNameEx,
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustTopLevelName,
+                                LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustTopLevelNameEx,
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "ForestTrustData",
+                        LSA_FOREST_TRUST_DOMAIN_INFO(),
+                        LSA_FOREST_TRUST_DOMAIN_INFO,
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ForestTrustType", None)
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustDomainInfo
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustDomainInfo
+                        ),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "ForestTrustData",
+                        LSA_FOREST_TRUST_BINARY_DATA(),
+                        LSA_FOREST_TRUST_BINARY_DATA,
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ForestTrustType", None)
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustBinaryInfo
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustBinaryInfo
+                        ),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "ForestTrustData",
+                        LSA_FOREST_TRUST_SCANNER_INFO(),
+                        LSA_FOREST_TRUST_SCANNER_INFO,
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ForestTrustType", None)
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustScannerInfo
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == LSA_FOREST_TRUST_RECORD_TYPE.ForestTrustScannerInfo
+                        ),
+                    ),
+                ),
+            ],
+            StrFixedLenField("ForestTrustData", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "I"),
+        ),
+    ]
+
+
+class PLSA_FOREST_TRUST_INFORMATION2(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("RecordCount", None, size_of="Entries"),
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "Entries",
+                [],
+                PLSA_FOREST_TRUST_RECORD2,
+                size_is=lambda pkt: pkt.RecordCount,
+                ptr_pack=True,
+            ),
+            deferred=True,
+        ),
+    ]
+
+
+class LsarQueryForestTrustInformation2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField("TrustedDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRInt3264EnumField("HighestRecordType", 0, LSA_FOREST_TRUST_RECORD_TYPE),
+    ]
+
+
+class LsarQueryForestTrustInformation2_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField(
+                "ForestTrustInfo2",
+                PLSA_FOREST_TRUST_INFORMATION2(),
+                PLSA_FOREST_TRUST_INFORMATION2,
+            )
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class LsarSetForestTrustInformation2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField("TrustedDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRInt3264EnumField("HighestRecordType", 0, LSA_FOREST_TRUST_RECORD_TYPE),
+        NDRPacketField(
+            "ForestTrustInfo2",
+            PLSA_FOREST_TRUST_INFORMATION2(),
+            PLSA_FOREST_TRUST_INFORMATION2,
+        ),
+        NDRByteField("CheckOnly", 0),
+    ]
+
+
+class LsarSetForestTrustInformation2_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField(
+                "CollisionInfo",
+                PLSA_FOREST_TRUST_COLLISION_INFORMATION(),
+                PLSA_FOREST_TRUST_COLLISION_INFORMATION,
+            )
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class LsarOpenPolicyWithCreds_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField(
+            "ObjectAttributes", PLSAPR_OBJECT_ATTRIBUTES(), PLSAPR_OBJECT_ATTRIBUTES
+        ),
+        NDRIntField("DesiredAccess", 0),
+        NDRIntField("InVersion", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField(
+                        "OutRevisionInfo",
+                        LSAPR_REVISION_INFO_V1(),
+                        LSAPR_REVISION_INFO_V1,
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "InVersion", None) == 1),
+                        (lambda _, val: val.tag == 1),
+                    ),
+                )
+            ],
+            StrFixedLenField("OutRevisionInfo", "", length=0),
+            align=(4, 4),
+            switch_fmt=("L", "L"),
+        ),
+    ]
+
+
+class LsarOpenPolicyWithCreds_Response(NDRPacket):
+    fields_desc = [
+        NDRIntField("OutVersion", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField(
+                        "OutRevisionInfo",
+                        LSAPR_REVISION_INFO_V1(),
+                        LSAPR_REVISION_INFO_V1,
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "OutVersion", None) == 1),
+                        (lambda _, val: val.tag == 1),
+                    ),
+                )
+            ],
+            StrFixedLenField("OutRevisionInfo", "", length=0),
+            align=(4, 4),
+            switch_fmt=("L", "L"),
+        ),
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRIntField("status", 0),
+    ]
+
+
+class PLSAPR_AES_CIPHER_VALUE(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        StrFixedLenField("AuthData", "", length=64),
+        StrFixedLenField("Salt", "", length=16),
+        NDRIntField("cbCipher", None, size_of="Cipher"),
+        NDRFullPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
+            deferred=True,
+        ),
+    ]
+
+
+class LsarOpenSecret2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField(
+            "EncryptedSecretName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+        ),
+        NDRIntField("DesiredAccess", 0),
+    ]
+
+
+class LsarOpenSecret2_Response(NDRPacket):
+    fields_desc = [
+        NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
+        NDRIntField("status", 0),
+    ]
+
+
+class LsarCreateSecret2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField(
+            "EncryptedSecretName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+        ),
+        NDRIntField("DesiredAccess", 0),
+    ]
+
+
+class LsarCreateSecret2_Response(NDRPacket):
+    fields_desc = [
+        NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
+        NDRIntField("status", 0),
+    ]
+
+
+class LsarSetSecret2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
+        NDRFullPointerField(
+            NDRPacketField(
+                "EncryptedCurrentValue",
+                PLSAPR_AES_CIPHER_VALUE(),
+                PLSAPR_AES_CIPHER_VALUE,
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "EncryptedOldValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+            )
+        ),
+    ]
+
+
+class LsarSetSecret2_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class LsarQuerySecret2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedCurrentValue",
+                    PLSAPR_AES_CIPHER_VALUE(),
+                    PLSAPR_AES_CIPHER_VALUE,
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedOldValue",
+                    PLSAPR_AES_CIPHER_VALUE(),
+                    PLSAPR_AES_CIPHER_VALUE,
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
+        ),
+    ]
+
+
+class LsarQuerySecret2_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedCurrentValue",
+                    PLSAPR_AES_CIPHER_VALUE(),
+                    PLSAPR_AES_CIPHER_VALUE,
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedOldValue",
+                    PLSAPR_AES_CIPHER_VALUE(),
+                    PLSAPR_AES_CIPHER_VALUE,
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class LsarStorePrivateData2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField(
+            "EncryptedKeyName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+            )
+        ),
+    ]
+
+
+class LsarStorePrivateData2_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class LsarRetrievePrivateData2_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField(
+            "EncryptedKeyName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+                )
+            )
+        ),
+    ]
+
+
+class LsarRetrievePrivateData2_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
+                )
+            )
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
 LSARPC_OPNUMS = {
     0: DceRpcOp(LsarClose_Request, LsarClose_Response),
     # 1: Opnum1NotUsedOnWire,
@@ -4790,6 +5203,22 @@ LSARPC_OPNUMS = {
         LsarCreateTrustedDomainEx3_Request, LsarCreateTrustedDomainEx3_Response
     ),
     130: DceRpcOp(LsarOpenPolicy3_Request, LsarOpenPolicy3_Response),
+    # 131: Opnum131NotUsedOnWire,
+    132: DceRpcOp(
+        LsarQueryForestTrustInformation2_Request,
+        LsarQueryForestTrustInformation2_Response,
+    ),
+    133: DceRpcOp(
+        LsarSetForestTrustInformation2_Request, LsarSetForestTrustInformation2_Response
+    ),
+    # 134: Opnum134NotUsedOnWire,
+    135: DceRpcOp(LsarOpenPolicyWithCreds_Request, LsarOpenPolicyWithCreds_Response),
+    136: DceRpcOp(LsarOpenSecret2_Request, LsarOpenSecret2_Response),
+    137: DceRpcOp(LsarCreateSecret2_Request, LsarCreateSecret2_Response),
+    138: DceRpcOp(LsarSetSecret2_Request, LsarSetSecret2_Response),
+    139: DceRpcOp(LsarQuerySecret2_Request, LsarQuerySecret2_Response),
+    140: DceRpcOp(LsarStorePrivateData2_Request, LsarStorePrivateData2_Response),
+    141: DceRpcOp(LsarRetrievePrivateData2_Request, LsarRetrievePrivateData2_Response),
 }
 register_dcerpc_interface(
     name="lsarpc",

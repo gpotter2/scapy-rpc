@@ -136,12 +136,24 @@ class WitnessrRegisterEx_Response(NDRPacket):
     ]
 
 
+class WitnessrUnRegisterEx_Request(NDRPacket):
+    fields_desc = [NDRPacketField("ppContext", NDRContextHandle(), NDRContextHandle)]
+
+
+class WitnessrUnRegisterEx_Response(NDRPacket):
+    fields_desc = [
+        NDRPacketField("ppContext", NDRContextHandle(), NDRContextHandle),
+        NDRIntField("status", 0),
+    ]
+
+
 WITNESS_OPNUMS = {
     0: DceRpcOp(WitnessrGetInterfaceList_Request, WitnessrGetInterfaceList_Response),
     1: DceRpcOp(WitnessrRegister_Request, WitnessrRegister_Response),
     2: DceRpcOp(WitnessrUnRegister_Request, WitnessrUnRegister_Response),
     3: DceRpcOp(WitnessrAsyncNotify_Request, WitnessrAsyncNotify_Response),
     4: DceRpcOp(WitnessrRegisterEx_Request, WitnessrRegisterEx_Response),
+    5: DceRpcOp(WitnessrUnRegisterEx_Request, WitnessrUnRegisterEx_Response),
 }
 register_dcerpc_interface(
     name="Witness",

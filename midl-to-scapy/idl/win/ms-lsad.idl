@@ -18,7 +18,9 @@
  //
  // Start of common types.
  //
-  
+
+#define MAX_CIPHER_SIZE ( 2 * ( ( 64 * 1024 ) + 8 ) )
+
  typedef [context_handle] void * LSAPR_HANDLE;
   
  typedef unsigned char SECURITY_CONTEXT_TRACKING_MODE,
@@ -197,6 +199,8 @@
      ForestTrustTopLevelName = 0,
      ForestTrustTopLevelNameEx = 1,
      ForestTrustDomainInfo = 2,
+     ForestTrustBinaryInfo = 3,
+     ForestTrustScannerInfo = 4,
      ForestTrustRecordTypeLast = ForestTrustDomainInfo
  } LSA_FOREST_TRUST_RECORD_TYPE;
   
@@ -212,7 +216,13 @@
      LSA_UNICODE_STRING NetbiosName;
  } LSA_FOREST_TRUST_DOMAIN_INFO, 
  *PLSA_FOREST_TRUST_DOMAIN_INFO;
-  
+
+ typedef struct _LSA_FOREST_TRUST_SCANNER_INFO {
+    PRPC_SID DomainSid;
+    LSA_UNICODE_STRING DnsName;
+    LSA_UNICODE_STRING NetbiosName;
+ } LSA_FOREST_TRUST_SCANNER_INFO, * PLSA_FOREST_TRUST_SCANNER_INFO;
+
  typedef struct _LSA_FOREST_TRUST_RECORD {
      unsigned long Flags;
      LSA_FOREST_TRUST_RECORD_TYPE ForestTrustType;
@@ -226,15 +236,39 @@
              LSA_UNICODE_STRING TopLevelName;
          [case( ForestTrustDomainInfo )]
              LSA_FOREST_TRUST_DOMAIN_INFO DomainInfo;
+         [case( ForestTrustScannerInfo )]
+             LSA_FOREST_TRUST_SCANNER_INFO ScannerInfo;
          [default] LSA_FOREST_TRUST_BINARY_DATA Data;
      } ForestTrustData;
  } LSA_FOREST_TRUST_RECORD, *PLSA_FOREST_TRUST_RECORD;
-  
+
+ typedef struct _LSA_FOREST_TRUST_RECORD2 {
+    unsigned long Flags;
+    LSA_FOREST_TRUST_RECORD_TYPE ForestTrustType;
+    LARGE_INTEGER Time;
+    [switch_type(LSA_FOREST_TRUST_RECORD_TYPE), switch_is(ForestTrustType)]
+    union {
+           [case( ForestTrustTopLevelName, ForestTrustTopLevelNameEx )]
+                  LSA_UNICODE_STRING TopLevelName;
+           [case( ForestTrustDomainInfo )]
+                  LSA_FOREST_TRUST_DOMAIN_INFO DomainInfo;
+           [case( ForestTrustBinaryInfo )]
+                  LSA_FOREST_TRUST_BINARY_DATA BinaryData;
+           [case( ForestTrustScannerInfo )]
+                  LSA_FOREST_TRUST_SCANNER_INFO ScannerInfo;
+    } ForestTrustData;
+ } LSA_FOREST_TRUST_RECORD2, * PLSA_FOREST_TRUST_RECORD2;
+
  typedef struct _LSA_FOREST_TRUST_INFORMATION {
      [range(0,4000)] unsigned long RecordCount;
      [size_is( RecordCount )] PLSA_FOREST_TRUST_RECORD * Entries;
  } LSA_FOREST_TRUST_INFORMATION, *PLSA_FOREST_TRUST_INFORMATION;
-  
+
+ typedef struct _LSA_FOREST_TRUST_INFORMATION2 {
+    [range(0, 4000)] unsigned long RecordCount;
+    [size_is(RecordCount)] PLSA_FOREST_TRUST_RECORD2* Entries;
+ } LSA_FOREST_TRUST_INFORMATION2, * PLSA_FOREST_TRUST_INFORMATION2;
+
  typedef enum _LSA_FOREST_TRUST_COLLISION_RECORD_TYPE {
      CollisionTdo = 0,
      CollisionXref,
@@ -299,7 +333,14 @@
      [size_is(MaximumLength), length_is(Length)]
          unsigned char *Buffer;
  } LSAPR_CR_CIPHER_VALUE, *PLSAPR_CR_CIPHER_VALUE;
-  
+
+ typedef struct _LSAPR_AES_CIPHER_VALUE {
+     UCHAR                                   AuthData[64];
+     UCHAR                                   Salt[16];
+     [range(0, MAX_CIPHER_SIZE)] ULONG       cbCipher;
+     [size_is(cbCipher)] PUCHAR              Cipher;
+} LSAPR_AES_CIPHER_VALUE, *PLSAPR_AES_CIPHER_VALUE;
+
  typedef struct _LSAPR_TRUSTED_ENUM_BUFFER {
      unsigned long EntriesRead;
      [size_is(EntriesRead)] PLSAPR_TRUST_INFORMATION Information;
@@ -1299,6 +1340,96 @@ typedef [handle] LPWSTR PLSAPR_SERVER_NAME, *PPLSAPR_SERVER_NAME;
      [out] [switch_is(*OutVersion)] LSAPR_REVISION_INFO* OutRevisionInfo,
      [out] LSAPR_HANDLE*                                 PolicyHandle
     );
- 
+
+ // Opnum 131
+ void Opnum131NotUsedOnWire(void);
+  
+ // Opnum 132
+ NTSTATUS 
+ LsarQueryForestTrustInformation2(
+     [in] LSAPR_HANDLE                       PolicyHandle,
+     [in] PLSA_UNICODE_STRING                TrustedDomainName,
+     [in] LSA_FOREST_TRUST_RECORD_TYPE              HighestRecordType,
+     [out] PLSA_FOREST_TRUST_INFORMATION2*   ForestTrustInfo2
+     );
+  
+ // Opnum 133
+ NTSTATUS LsarSetForestTrustInformation2(
+     [in] LSAPR_HANDLE                              PolicyHandle,
+     [in] PLSA_UNICODE_STRING                       TrustedDomainName,
+     [in] LSA_FOREST_TRUST_RECORD_TYPE                     HighestRecordType,
+     [in] PLSA_FOREST_TRUST_INFORMATION2                   ForestTrustInfo2,
+     [in] unsigned char                             CheckOnly,
+     [out] PLSA_FOREST_TRUST_COLLISION_INFORMATION*  CollisionInfo
+     );
+  
+ // Opnum 134
+ void Opnum134NotUsedOnWire(void);
+  
+ // Opnum 135
+ NTSTATUS
+ LsarOpenPolicyWithCreds(
+     [in] handle_t                                       BindingHandle,
+     [in] PLSAPR_OBJECT_ATTRIBUTES                       ObjectAttributes,
+     [in] ACCESS_MASK                                    DesiredAccess,
+     [in] ULONG                                          InVersion,
+     [in] [switch_is(InVersion)] LSAPR_REVISION_INFO*    InRevisionInfo,
+     [out] ULONG*                                        OutVersion,
+     [out] [switch_is(*OutVersion)] LSAPR_REVISION_INFO* OutRevisionInfo,
+     [out] LSAPR_HANDLE*                                 PolicyHandle
+     );
+
+  
+ // Opnum 136
+ NTSTATUS
+ LsarOpenSecret2(
+     [in] LSAPR_HANDLE          PolicyHandle,
+     [in] PLSAPR_AES_CIPHER_VALUE      EncryptedSecretName,
+     [in] ACCESS_MASK           DesiredAccess,
+     [out] LSAPR_HANDLE         *SecretHandle
+     );
+  
+ // Opnum 137
+ NTSTATUS
+ LsarCreateSecret2(
+     [in] LSAPR_HANDLE          PolicyHandle,
+     [in] PLSAPR_AES_CIPHER_VALUE      EncryptedSecretName,
+     [in] ACCESS_MASK           DesiredAccess,
+     [out] LSAPR_HANDLE         *SecretHandle
+     );
+  
+ // Opnum 138
+ NTSTATUS
+ LsarSetSecret2(
+     [in] LSAPR_HANDLE                 SecretHandle,
+     [in, unique] PLSAPR_AES_CIPHER_VALUE EncryptedCurrentValue,
+     [in, unique] PLSAPR_AES_CIPHER_VALUE EncryptedOldValue
+     );
+  
+ // Opnum 139
+ NTSTATUS
+ LsarQuerySecret2(
+     [in] LSAPR_HANDLE                       SecretHandle,
+     [in, out, unique] PLSAPR_AES_CIPHER_VALUE      *EncryptedCurrentValue,
+     [in, out, unique] PLARGE_INTEGER        CurrentValueSetTime,
+     [in, out, unique] PLSAPR_AES_CIPHER_VALUE      *EncryptedOldValue,
+     [in, out, unique] PLARGE_INTEGER        OldValueSetTime
+     );
+  
+ // Opnum 140
+ NTSTATUS
+ LsarStorePrivateData2(
+     [in] LSAPR_HANDLE                 PolicyHandle,
+     [in] PLSAPR_AES_CIPHER_VALUE            EncryptedKeyName,
+     [in,unique] PLSAPR_AES_CIPHER_VALUE     EncryptedData
+     );
+  
+ // Opnum 141
+ NTSTATUS
+ LsarRetrievePrivateData2(
+     [in] LSAPR_HANDLE                       PolicyHandle,
+     [in] PLSAPR_AES_CIPHER_VALUE                   EncryptedKeyName,
+     [in, out, unique] PLSAPR_AES_CIPHER_VALUE      *EncryptedData
+    );
 
  }

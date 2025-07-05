@@ -1,0 +1,1153 @@
+diff --git a/midl-to-scapy/idl/win/ms-fsrm.idl b/midl-to-scapy/idl/win/ms-fsrm.idl
+index 474d1ef..5a580db 100644
+--- a/midl-to-scapy/idl/win/ms-fsrm.idl
++++ b/midl-to-scapy/idl/win/ms-fsrm.idl
+@@ -1,7 +1,7 @@
+  import "ms-dtyp.idl";
+  import "ms-oaut.idl";
+   
+- #define SAFEARRAY(VARIANT) SAFEARRAY
++ //#define SAFEARRAY(VARIANT) SAFEARRAY
+   
+  typedef GUID FSRM_OBJECT_ID;
+   
+@@ -348,7 +348,7 @@
+  FSRM_DISPID_IS_PROPERTY |
+  FSRM_DISPID_METHOD_NUM_MASK;
+   
+- #define FSRM_PROPERTY(x) x | FSRM_DISPID_IS_PROPERTY
++// #define FSRM_PROPERTY(x) x | FSRM_DISPID_IS_PROPERTY
+   
+  const DISPID FSRM_DISPID_FEATURE_GENERAL        = 0x01000000;
+  const DISPID FSRM_DISPID_FEATURE_QUOTA          = 0x02000000;
+@@ -398,13 +398,13 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmObject : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_OBJECT | 0x01))]
++ {    [propget, id(FSRM_DISPID_OBJECT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Id([out, retval] FSRM_OBJECT_ID *id);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_OBJECT | 0x02))]
++     [propget, id(FSRM_DISPID_OBJECT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Description([out, retval] BSTR *description);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_OBJECT | 0x02))]
++     [propput, id(FSRM_DISPID_OBJECT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Description([in] BSTR description);
+   
+      [id(FSRM_DISPID_OBJECT | 0x01)]
+@@ -431,10 +431,10 @@
+         [in] long index,
+         [out, retval] VARIANT *item);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_COLLECTION | 0x01))]
++     [propget, id(FSRM_DISPID_COLLECTION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Count([out, retval] long *count);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_COLLECTION | 0x02))]
++     [propget, id(FSRM_DISPID_COLLECTION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT State([out, retval] FsrmCollectionState *state);
+   
+      [id(FSRM_DISPID_COLLECTION | 0x01)]
+@@ -495,16 +495,16 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmAction : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Id([out, retval] FSRM_OBJECT_ID *id);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION | 0x02))]
++     [propget, id(FSRM_DISPID_ACTION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ActionType([out, retval] FsrmActionType *actionType);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION | 0x03))]
++     [propget, id(FSRM_DISPID_ACTION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RunLimitInterval([out, retval] long *minutes);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION | 0x03))]
++     [propput, id(FSRM_DISPID_ACTION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RunLimitInterval([in] long minutes);
+   
+      [id(FSRM_DISPID_ACTION | 0x01)]
+@@ -518,46 +518,46 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmActionEmail : IFsrmAction
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailFrom([out, retval] BSTR *mailFrom);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x01))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailFrom([in] BSTR mailFrom);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x02))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailReplyTo([out, retval] BSTR *mailReplyTo);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x02))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailReplyTo([in] BSTR mailReplyTo);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x03))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([out, retval] BSTR *mailTo);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x03))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([in] BSTR mailTo);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x04))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailCc([out, retval] BSTR *mailCc);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x04))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailCc([in] BSTR mailCc);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x05))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailBcc([out, retval] BSTR *mailBcc);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x05))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailBcc([in] BSTR mailBcc);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x06))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailSubject([out, retval] BSTR *mailSubject);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x06))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailSubject([in] BSTR mailSubject);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x07))]
++     [propget, id(FSRM_DISPID_ACTION_EMAIL | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MessageText([out, retval] BSTR *messageText);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL | 0x07))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MessageText([in] BSTR messageText);
+  };
+   
+@@ -568,11 +568,11 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmActionEmail2 : IFsrmActionEmail
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL2 | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION_EMAIL2 | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT AttachmentFileListSize([out, retval]
+  long *attachmentFileListSize);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EMAIL2 | 0x01))]
++     [propput, id(FSRM_DISPID_ACTION_EMAIL2 | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT AttachmentFileListSize([in] long attachmentFileListSize);
+  };
+   
+@@ -583,16 +583,16 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmActionReport : IFsrmAction
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_REPORT | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION_REPORT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ReportTypes([out, retval] SAFEARRAY(VARIANT)
+  *reportTypes);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_REPORT | 0x01))]
++     [propput, id(FSRM_DISPID_ACTION_REPORT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ReportTypes([in] SAFEARRAY(VARIANT) reportTypes);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_REPORT | 0x02))]
++     [propget, id(FSRM_DISPID_ACTION_REPORT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([out, retval] BSTR *mailTo);
+-      [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_REPORT | 0x02))]
++      [propput, id(FSRM_DISPID_ACTION_REPORT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([in] BSTR mailTo);
+  };
+   
+@@ -603,16 +603,16 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmActionEventLog : IFsrmAction
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EVENTLOG | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION_EVENTLOG | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT EventType([out, retval] FsrmEventType *eventType);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EVENTLOG | 0x01))]
++     [propput, id(FSRM_DISPID_ACTION_EVENTLOG | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT EventType([in] FsrmEventType eventType);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EVENTLOG | 0x02))]
++     [propget, id(FSRM_DISPID_ACTION_EVENTLOG | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MessageText([out, retval] BSTR *messageText);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_EVENTLOG | 0x02))]
++     [propput, id(FSRM_DISPID_ACTION_EVENTLOG | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MessageText([in] BSTR messageText);
+  };
+   
+@@ -623,47 +623,47 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmActionCommand : IFsrmAction
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x01))]
++ {    [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ExecutablePath([out, retval] BSTR *executablePath);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x01))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ExecutablePath([in] BSTR executablePath);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x02))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Arguments([out, retval] BSTR *arguments);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x02))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Arguments([in] BSTR arguments);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x03))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Account([out, retval] FsrmAccountType *account);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x03))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Account([in] FsrmAccountType account);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x04))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT WorkingDirectory([out, retval] BSTR *workingDirectory);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x04))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT WorkingDirectory([in] BSTR workingDirectory);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x05))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MonitorCommand([out, retval] VARIANT_BOOL
+  *monitorCommand);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x05))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MonitorCommand([in] VARIANT_BOOL monitorCommand);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x06))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT KillTimeOut([out, retval] long *minutes);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x06))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT KillTimeOut([in] long minutes);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x07))]
++     [propget, id(FSRM_DISPID_ACTION_COMMAND | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LogResult([out, retval] VARIANT_BOOL *logResults);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_ACTION_COMMAND | 0x07))]
++     [propput, id(FSRM_DISPID_ACTION_COMMAND | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LogResult([in] VARIANT_BOOL logResults);
+  };
+   
+@@ -674,37 +674,37 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmSetting : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x01))]
++ {    [propget, id(FSRM_DISPID_SETTING | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT SmtpServer([out,retval] BSTR *smtpServer);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x01))]
++     [propput, id(FSRM_DISPID_SETTING | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT SmtpServer([in] BSTR smtpServer);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x02))]
++     [propget, id(FSRM_DISPID_SETTING | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailFrom([out,retval] BSTR *mailFrom);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x02))]
++     [propput, id(FSRM_DISPID_SETTING | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailFrom([in] BSTR mailFrom);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x03))]
++     [propget, id(FSRM_DISPID_SETTING | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT AdminEmail([out,retval] BSTR *adminEmail);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x03))]
++     [propput, id(FSRM_DISPID_SETTING | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT AdminEmail([in] BSTR adminEmail);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x04))]
++     [propget, id(FSRM_DISPID_SETTING | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT DisableCommandLine([out,retval] VARIANT_BOOL
+  *disableCommandLine);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x04))]
++     [propput, id(FSRM_DISPID_SETTING | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT DisableCommandLine([in] VARIANT_BOOL
+  disableCommandLine);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x05))]
++     [propget, id(FSRM_DISPID_SETTING | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT EnableScreeningAudit([out,retval] VARIANT_BOOL
+  *enableScreeningAudit);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_SETTING | 0x05))]
++     [propput, id(FSRM_DISPID_SETTING | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT EnableScreeningAudit([in] VARIANT_BOOL
+  enableScreeningAudit);
+   
+@@ -742,11 +742,11 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmDerivedObjectsResult : IDispatch
+- { [propget, id(FSRM_PROPERTY(FSRM_DISPID_DERIVEDOBJECTSRESULT | 0x01))]
++ { [propget, id(FSRM_DISPID_DERIVEDOBJECTSRESULT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+   HRESULT DerivedObjects([out, retval] IFsrmCollection
+   **derivedObjects);
+   
+-  [propget, id(FSRM_PROPERTY(FSRM_DISPID_DERIVEDOBJECTSRESULT | 0x02))]
++  [propget, id(FSRM_DISPID_DERIVEDOBJECTSRESULT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+   HRESULT Results([out, retval] IFsrmCollection **results);
+  };
+   
+@@ -813,36 +813,36 @@
+      pointer_default(unique)
+  ]
+  interface IFsrmPropertyDefinition : IFsrmObject
+- {[propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x01))]
++ {[propget, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Name([out, retval] BSTR *name);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x01))]
++ [propput, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Name([in] BSTR name);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x02))]
++ [propget, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Type([out, retval] FsrmPropertyDefinitionType *type);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x02))]
++ [propput, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Type([in] FsrmPropertyDefinitionType type);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x03))]
++ [propget, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT PossibleValues([out, retval] SAFEARRAY(VARIANT)
+  *possibleValues);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x03))]
++ [propput, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT PossibleValues([in] SAFEARRAY(VARIANT) possibleValues);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x04))]
++ [propget, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT ValueDescriptions([out, retval] SAFEARRAY(VARIANT)
+  *valueDescriptions);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x04))]
++ [propput, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT ValueDescriptions([in] SAFEARRAY(VARIANT) valueDescriptions);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x05))]
++ [propget, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Parameters([out, retval] SAFEARRAY(VARIANT) *parameters);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION | 0x05))]
++ [propput, id(FSRM_DISPID_PROPERTY_DEFINITION | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Parameters ([in] SAFEARRAY(VARIANT) parameters);
+  };
+   
+@@ -859,21 +859,21 @@
+      // Properties
+      //
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x01)), helpstring("This property contains the flags for the property definition")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x01 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the flags for the property definition")]
+      HRESULT PropertyDefinitionFlags([out, retval] long *propertyDefinitionFlags);
+   
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x02)), helpstring("This property is the display name of the property definition")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x02 | FSRM_DISPID_IS_PROPERTY), helpstring("This property is the display name of the property definition")]
+      HRESULT DisplayName([out, retval] BSTR *name);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x02)), helpstring("This property is the display name of the property definition")]
++     [propput, id(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x02 | FSRM_DISPID_IS_PROPERTY), helpstring("This property is the display name of the property definition")]
+      HRESULT DisplayName([in] BSTR name);
+   
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x03)), helpstring("This property contains the object types the property definition can apply to")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x03 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the object types the property definition can apply to")]
+      HRESULT AppliesTo([out, retval] long *appliesTo);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x04)), helpstring("This property contains the possible value definitions of the property definition")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION2 | 0x04 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the possible value definitions of the property definition")]
+      HRESULT ValueDefinitions([out, retval] IFsrmCollection **valueDefinitions);
+  };
+   
+@@ -890,16 +890,16 @@
+      // Properties
+      //
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x01)), helpstring("This property contains the name of the property definition value")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x01 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the name of the property definition value")]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x02)), helpstring("This property contains the display name of the property definition value")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x02 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the display name of the property definition value")]
+      HRESULT DisplayName([out, retval] BSTR *displayName);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x03)), helpstring("This property contains the description of the property definition value")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x03 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the description of the property definition value")]
+      HRESULT Description([out, retval] BSTR *description);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x04)), helpstring("This property contains the unique ID of the property definition value")]
++     [propget, id(FSRM_DISPID_PROPERTY_DEFINITION_VALUE | 0x04 | FSRM_DISPID_IS_PROPERTY), helpstring("This property contains the unique ID of the property definition value")]
+      HRESULT UniqueID([out, retval] BSTR *uniqueID);
+  };
+   
+@@ -910,16 +910,16 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmProperty : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY | 0x01))]
++ {    [propget, id(FSRM_DISPID_PROPERTY | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY | 0x02))]
++     [propget, id(FSRM_DISPID_PROPERTY | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Value([out, retval] BSTR *value);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY | 0x03))]
++     [propget, id(FSRM_DISPID_PROPERTY | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Sources([out, retval] SAFEARRAY(VARIANT) *sources);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY | 0x04))]
++     [propget, id(FSRM_DISPID_PROPERTY | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT PropertyFlags([out, retval] long *flags);
+  };
+   
+@@ -930,42 +930,42 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmRule : IFsrmObject
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x01))]
++ {    [propget, id(FSRM_DISPID_RULE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x01))]
++     [propput, id(FSRM_DISPID_RULE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([in] BSTR name);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x02))]
++     [propget, id(FSRM_DISPID_RULE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RuleType([out, retval] FsrmRuleType *ruleType);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x03))]
++     [propget, id(FSRM_DISPID_RULE | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ModuleDefinitionName([out, retval] BSTR
+  *moduleDefinitionName);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x03))]
++     [propput, id(FSRM_DISPID_RULE | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ModuleDefinitionName([in] BSTR moduleDefinitionName);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x04))]
++     [propget, id(FSRM_DISPID_RULE | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NamespaceRoots([out, retval] SAFEARRAY(VARIANT)
+  *namespaceRoots);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x04))]
++     [propput, id(FSRM_DISPID_RULE | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NamespaceRoots([in] SAFEARRAY(VARIANT) namespaceRoots);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x05))]
++     [propget, id(FSRM_DISPID_RULE | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RuleFlags([out, retval] long *ruleFlags);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x05))]
++     [propput, id(FSRM_DISPID_RULE | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RuleFlags([in] long ruleFlags);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x06))]
++     [propget, id(FSRM_DISPID_RULE | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Parameters([out, retval] SAFEARRAY(VARIANT) *parameters);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x06))]
++     [propput, id(FSRM_DISPID_RULE | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Parameters([in] SAFEARRAY(VARIANT) parameters);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_RULE | 0x07))]
++     [propget, id(FSRM_DISPID_RULE | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LastModified([out, retval] DATE *lastModified);
+  };
+   
+@@ -976,23 +976,23 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmClassificationRule : IFsrmRule
+- {[propget, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x01))]
++ {[propget, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT ExecutionOption([out, retval] FsrmExecutionOption
+  *executionOption);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x01))]
++ [propput, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT ExecutionOption([in] FsrmExecutionOption executionOption);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x02))]
++ [propget, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT PropertyAffected([out, retval] BSTR *property);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x02))]
++ [propput, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT PropertyAffected([in] BSTR property);
+   
+- [propget, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x03))]
++ [propget, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Value([out, retval] BSTR *value);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFICATION_RULE | 0x03))]
++ [propput, id(FSRM_DISPID_CLASSIFICATION_RULE | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+  HRESULT Value([in] BSTR value);
+  };
+   
+@@ -1006,29 +1006,29 @@
+  {    
+   
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x01))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT ModuleClsid([out, retval] BSTR* moduleClsid);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x01))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT ModuleClsid([in] BSTR moduleClsid);
+   
+      [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION
+  | 0x02))]
+      HRESULT Name([out, retval] BSTR *name);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x02))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Name([in] BSTR name);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x03))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Company([out, retval] BSTR* company);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x03))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Company([in] BSTR company);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x04))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x04 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Version([out, retval] BSTR* version);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x04))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x04 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Version([in] BSTR version);
+   
+      [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION
+@@ -1041,31 +1041,31 @@
+      HRESULT Enabled([out, retval] VARIANT_BOOL *enabled);
+   
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x06))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x06 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Enabled([in] VARIANT_BOOL enabled);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x07))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x07 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT NeedsFileContent([out, retval] VARIANT_BOOL* needsFileContent);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x07))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x07 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT NeedsFileContent([in] VARIANT_BOOL needsFileContent);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x08))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x08 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Account([out, retval] FsrmAccountType* retrievalAccount);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x08))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x08 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Account([in] FsrmAccountType retrievalAccount);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x09))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x09 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT SupportedExtensions([out, retval] SAFEARRAY(VARIANT)* supportedExtensions);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x09))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0x09 | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT SupportedExtensions([in] SAFEARRAY(VARIANT) supportedExtensions);
+      
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0xA))] 
++     [propget, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0xA | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Parameters([out, retval] SAFEARRAY(VARIANT)* parameters);
+      
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0xA))] 
++     [propput, id(FSRM_DISPID_PIPELINE_MODULE_DEFINITION | 0xA | FSRM_DISPID_IS_PROPERTY)] 
+      HRESULT Parameters([in] SAFEARRAY(VARIANT) parameters);
+  };
+   
+@@ -1082,13 +1082,13 @@
+   HRESULT PropertiesAffected([out, retval] SAFEARRAY(VARIANT)
+   *propertiesAffected);
+   
+-  [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x01))] 
++  [propput, id(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)] 
+   HRESULT PropertiesAffected([in] SAFEARRAY(VARIANT) propertiesAffected);
+   
+-  [propget, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x02))] 
++  [propget, id(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)] 
+   HRESULT PropertiesUsed([out, retval] SAFEARRAY(VARIANT)* propertiesUsed);
+   
+-  [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x02))] 
++  [propput, id(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)] 
+   HRESULT PropertiesUsed([in] SAFEARRAY(VARIANT) propertiesUsed);
+   
+  [propget, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION
+@@ -1096,7 +1096,7 @@
+   HRESULT NeedsExplicitValue([out, retval] VARIANT_BOOL
+   *needsExplicitValue);
+   
+- [propput, id(FSRM_PROPERTY(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x03))]
++ [propput, id(FSRM_DISPID_CLASSIFIER_MODULE_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+   HRESULT NeedsExplicitValue([in] VARIANT_BOOL needsExplicitValue);
+  };
+   
+@@ -1260,32 +1260,32 @@
+      pointer_default(unique)
+  ] interface IFsrmStorageModuleDefinition : IFsrmPipelineModuleDefinition
+  {  
+-    [propget, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x01))] HRESULT
++    [propget, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)] HRESULT
+     Capabilities(
+        [out, retval] FsrmStorageModuleCaps* capabilities
+     );
+   
+-    [propput, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x01))]
++    [propput, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+     HRESULT Capabilities(
+        [in] FsrmStorageModuleCaps capabilities
+     );
+   
+-    [propget, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x02))]
++    [propget, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+     HRESULT StorageType(
+        [out, retval] FsrmStorageModuleType* storageType
+     );
+   
+-    [propput, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x02))]
++    [propput, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+     HRESULT StorageType(
+        [in] FsrmStorageModuleType storageType
+     );
+   
+-    [propget, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x03))]
++    [propget, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+     HRESULT UpdatesFileContent(
+        [out, retval] VARIANT_BOOL* updatesFileContent
+     );
+   
+-    [propput, id(FSRM_PROPERTY(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x03))]
++    [propput, id(FSRM_DISPID_STORAGE_MODULE_DEFINITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+     HRESULT UpdatesFileContent (
+        [in] VARIANT_BOOL updatesFileContent
+     );
+@@ -1337,19 +1337,19 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmQuotaBase : IFsrmObject
+- {   [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_BASE | 0x01))]
++ {   [propget, id(FSRM_DISPID_QUOTA_BASE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaLimit([out, retval] VARIANT *quotaLimit);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_BASE | 0x01))]
++     [propput, id(FSRM_DISPID_QUOTA_BASE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaLimit([in] VARIANT quotaLimit);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_BASE | 0x02))]
++     [propget, id(FSRM_DISPID_QUOTA_BASE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaFlags([out, retval] long *quotaFlags);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_BASE | 0x02))]
++     [propput, id(FSRM_DISPID_QUOTA_BASE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaFlags([in] long quotaFlags);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_BASE | 0x03))]
++     [propget, id(FSRM_DISPID_QUOTA_BASE | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Thresholds([out, retval] SAFEARRAY(VARIANT) *thresholds);
+   
+      [id(FSRM_DISPID_QUOTA_BASE | 0x01)]
+@@ -1382,19 +1382,19 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmQuotaObject : IFsrmQuotaBase
+- {   [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_OBJECT | 0x01))]
++ {   [propget, id(FSRM_DISPID_QUOTA_OBJECT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Path([out, retval] BSTR *path);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_OBJECT | 0x02))]
++     [propget, id(FSRM_DISPID_QUOTA_OBJECT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT UserSid([out, retval] BSTR *userSid);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_OBJECT | 0x03))]
++     [propget, id(FSRM_DISPID_QUOTA_OBJECT | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT UserAccount([out, retval] BSTR *userAccount);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_OBJECT | 0x04))]
++     [propget, id(FSRM_DISPID_QUOTA_OBJECT | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT SourceTemplateName([out, retval] BSTR *quotaTemplateName);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_OBJECT | 0x05))]
++     [propget, id(FSRM_DISPID_QUOTA_OBJECT | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MatchesSourceTemplate([out, retval] VARIANT_BOOL
+  *matches);
+   
+@@ -1409,13 +1409,13 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmQuota : IFsrmQuotaObject
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA | 0x01))]
++ {    [propget, id(FSRM_DISPID_QUOTA | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaUsed([out, retval] VARIANT *used);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA | 0x02))]
++     [propget, id(FSRM_DISPID_QUOTA | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaPeakUsage([out, retval] VARIANT *peakUsage);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA | 0x03))]
++     [propget, id(FSRM_DISPID_QUOTA | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT QuotaPeakUsageTime([out, retval] DATE *peakUsageDateTime);
+   
+      [id(FSRM_DISPID_QUOTA | 0x01)]
+@@ -1432,10 +1432,10 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmAutoApplyQuota : IFsrmQuotaObject
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_AUTOAPPLYQUOTA | 0x01))]
++ {    [propget, id(FSRM_DISPID_AUTOAPPLYQUOTA | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ExcludeFolders([out, retval] SAFEARRAY(VARIANT) *folders);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_AUTOAPPLYQUOTA | 0x01))]
++     [propput, id(FSRM_DISPID_AUTOAPPLYQUOTA | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ExcludeFolders([in] SAFEARRAY(VARIANT) folders);
+   
+      [id(FSRM_DISPID_AUTOAPPLYQUOTA | 0x01)]
+@@ -1453,11 +1453,11 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmQuotaManager : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_MANAGER | 0x01))]
++ {    [propget, id(FSRM_DISPID_QUOTA_MANAGER | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ActionVariables([out, retval] SAFEARRAY(VARIANT)
+  *variables);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_MANAGER | 0x02))]
++     [propget, id(FSRM_DISPID_QUOTA_MANAGER | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ActionVariableDescriptions([out, retval]
+  SAFEARRAY(VARIANT) *descriptions);
+   
+@@ -1541,10 +1541,10 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmQuotaTemplate : IFsrmQuotaBase
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_TEMPLATE | 0x01))]
++ {    [propget, id(FSRM_DISPID_QUOTA_TEMPLATE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_QUOTA_TEMPLATE | 0x01))]
++     [propput, id(FSRM_DISPID_QUOTA_TEMPLATE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([in] BSTR name);
+   
+      [id(FSRM_DISPID_QUOTA_TEMPLATE | 0x01)]
+@@ -1707,42 +1707,42 @@
+    oleautomation
+  ]interface IFsrmReportJob : IFsrmObject {
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x01))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Task([out, retval] BSTR *taskName);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x01))]
++     [propput, id(FSRM_DISPID_REPORT_JOB | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Task([in] BSTR taskName);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x02))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NamespaceRoots([out, retval] SAFEARRAY(VARIANT)
+  *namespaceRoots);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x02))]
++     [propput, id(FSRM_DISPID_REPORT_JOB | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NamespaceRoots([in] SAFEARRAY(VARIANT) namespaceRoots);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x03))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Formats([out, retval] SAFEARRAY(VARIANT) *formats);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x03))]
++     [propput, id(FSRM_DISPID_REPORT_JOB | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Formats([in] SAFEARRAY(VARIANT) formats);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x04))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([out, retval] BSTR *mailTo);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x04))]
++     [propput, id(FSRM_DISPID_REPORT_JOB | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MailTo([in] BSTR mailTo);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x05))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT RunningStatus([out, retval] FsrmReportRunningStatus
+  *runningStatus);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x06))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LastRun([out, retval] DATE *lastRun);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x07))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LastError([out, retval] BSTR *lastError);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT_JOB | 0x08))]
++     [propget, id(FSRM_DISPID_REPORT_JOB | 0x08 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LastGeneratedInDirectory([out, retval] BSTR *path);
+   
+      [id(FSRM_DISPID_REPORT_JOB | 0x01)]
+@@ -1773,22 +1773,22 @@
+    oleautomation
+  ]interface IFsrmReport : IDispatch {
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x01))]
++     [propget, id(FSRM_DISPID_REPORT | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Type([out, retval] FsrmReportType *reportType);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x02))]
++     [propget, id(FSRM_DISPID_REPORT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x02))]
++     [propput, id(FSRM_DISPID_REPORT | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([in] BSTR name);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x03))]
++     [propget, id(FSRM_DISPID_REPORT | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Description([out, retval] BSTR *description);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x03))]
++     [propput, id(FSRM_DISPID_REPORT | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Description([in] BSTR description);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_REPORT | 0x04))]
++     [propget, id(FSRM_DISPID_REPORT | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT LastGeneratedFileNamePrefix([out, retval] BSTR *prefix);
+   
+      [id(FSRM_DISPID_REPORT | 0x01)]
+@@ -1838,10 +1838,10 @@
+    dual,
+    oleautomation
+  ]interface IFsrmFileManagementJobManager : IDispatch
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB_MANAGER | 0x01))]
++ {    [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB_MANAGER | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ActionVariables([out, retval] SAFEARRAY(VARIANT) *variables);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB_MANAGER | 0x02))]
++     [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB_MANAGER | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT ActionVariableDescriptions([out, retval] SAFEARRAY(VARIANT) *descriptions);
+   
+      [id(FSRM_DISPID_FILE_MANAGEMENT_JOB_MANAGER | 0x1)]
+@@ -1875,130 +1875,130 @@
+   
+      const DATE FsrmDateNotSpecified = ((DATE) -1);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x01))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Name([out, retval] BSTR *name);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x01))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Name([in] BSTR name);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x02))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT NamespaceRoots([out, retval] SAFEARRAY(VARIANT)
+    *namespaceRoots);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x02))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT NamespaceRoots([in] SAFEARRAY(VARIANT) namespaceRoots);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x03))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Enabled([out, retval] VARIANT_BOOL *enabled);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x03))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Enabled([in] VARIANT_BOOL enabled);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x04))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT OperationType([out, retval] FsrmFileManagementType
+    *operationType);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x04))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT OperationType([in] FsrmFileManagementType operationType);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x05))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT ExpirationDirectory([out, retval] BSTR
+    *expirationDirectory);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x05))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT ExpirationDirectory([in] BSTR expirationDirectory);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x06))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x06 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT CustomAction([out, retval] IFsrmActionCommand **action);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x07))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x07 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Notifications([out, retval] SAFEARRAY(VARIANT)
+    *notifications);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x08))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x08 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Logging([out, retval] long *loggingFlags);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x08))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x08 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Logging([in] long loggingFlags);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x09))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x09 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT ReportEnabled([out, retval] VARIANT_BOOL *reportEnabled);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x09))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x09 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT ReportEnabled([in] VARIANT_BOOL reportEnabled);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0a))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0a | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Formats([out, retval] SAFEARRAY(VARIANT) *formats);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0a))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0a | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Formats([in] SAFEARRAY(VARIANT) formats);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0b))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0b | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT MailTo([out, retval] BSTR *mailTo);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0b))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0b | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT MailTo([in] BSTR mailTo);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0c))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0c | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileCreated([out, retval] long *daysSinceCreation);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0c))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0c | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileCreated([in] long daysSinceCreation);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0d))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0d | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileLastAccessed([out, retval] long
+    *daysSinceAccess);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0d))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0d | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileLastAccessed([in] long daysSinceAccess);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0e))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0e | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileLastModified([out, retval] long
+    *daysSinceModify);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0e))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0e | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT DaysSinceFileLastModified([in] long daysSinceModify);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0f))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x0f | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT PropertyConditions([out, retval] IFsrmCollection
+    **propertyConditions);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x10))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x10 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT FromDate([out, retval] DATE *fromDate);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x10))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x10 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT FromDate([in] DATE fromDate);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x11))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x11 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Task([out, retval] BSTR *taskName);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x11))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x11 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Task([in] BSTR taskName);
+   
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x12))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x12 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Parameters([out, retval] SAFEARRAY(VARIANT) *parameters);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x12))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x12 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Parameters([in] SAFEARRAY(VARIANT) parameters);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x13))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x13 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT RunningStatus([out, retval] FsrmReportRunningStatus
+    *runningStatus);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x14))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x14 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT LastError([out, retval] BSTR *lastError);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x15))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x15 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT LastReportPathWithoutExtension([out, retval] BSTR* path);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x16))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x16 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT LastRun([out, retval] DATE *lastRun);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x17))]
++   [propget, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x17 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT FileNamePattern([out, retval] BSTR *fileNamePattern);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x17))]
++   [propput, id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x17 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT FileNamePattern([in] BSTR *fileNamePattern);
+   
+    [id(FSRM_DISPID_FILE_MANAGEMENT_JOB | 0x01)]
+@@ -2052,22 +2052,22 @@
+    oleautomation
+  ]interface IFsrmPropertyCondition : IDispatch {
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x01))]
++   [propget, id(FSRM_DISPID_PROPERTY_CONDITION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Name([out, retval] BSTR *name);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x01))]
++   [propput, id(FSRM_DISPID_PROPERTY_CONDITION | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Name([in] BSTR name);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x02))]
++   [propget, id(FSRM_DISPID_PROPERTY_CONDITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Type([out, retval] FsrmPropertyConditionType *type);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x02))]
++   [propput, id(FSRM_DISPID_PROPERTY_CONDITION | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Type([in] FsrmPropertyConditionType type);
+   
+-   [propget, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x03))]
++   [propget, id(FSRM_DISPID_PROPERTY_CONDITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Value([out, retval] BSTR *value);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_PROPERTY_CONDITION | 0x03))]
++   [propput, id(FSRM_DISPID_PROPERTY_CONDITION | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT Value([in] BSTR value);
+   
+    [id(FSRM_DISPID_PROPERTY_CONDITION | 0x01)]
+@@ -2120,23 +2120,23 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmFileGroup : IFsrmObject
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x01))]
++ {    [propget, id(FSRM_DISPID_FILEGROUP | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([out, retval] BSTR *name);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x01))]
++     [propput, id(FSRM_DISPID_FILEGROUP | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Name([in] BSTR name);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x02))]
++     [propget, id(FSRM_DISPID_FILEGROUP | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Members([out, retval] IFsrmMutableCollection **members);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x02))]
++     [propput, id(FSRM_DISPID_FILEGROUP | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Members([in] IFsrmMutableCollection *members);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x03))]
++     [propget, id(FSRM_DISPID_FILEGROUP | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NonMembers([out, retval] IFsrmMutableCollection
+  **nonMembers);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP | 0x03))]
++     [propput, id(FSRM_DISPID_FILEGROUP | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT NonMembers([in] IFsrmMutableCollection *nonMembers);
+  };
+   
+@@ -2147,10 +2147,10 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmFileGroupImported : IFsrmFileGroup
+- {  [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP_IMPORTED | 0x01))]
++ {  [propget, id(FSRM_DISPID_FILEGROUP_IMPORTED | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT OverwriteOnCommit([out, retval] VARIANT_BOOL *overwrite);
+   
+-   [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILEGROUP_IMPORTED | 0x01))]
++   [propput, id(FSRM_DISPID_FILEGROUP_IMPORTED | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+    HRESULT OverwriteOnCommit([in] VARIANT_BOOL overwrite);
+  };
+   
+@@ -2194,17 +2194,17 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmFileScreenBase : IFsrmObject
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN_BASE | 0x01))]
++ {    [propget, id(FSRM_DISPID_FILESCREEN_BASE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT BlockedFileGroups([out, retval] IFsrmMutableCollection
+  **blockList);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN_BASE | 0x01))]
++     [propput, id(FSRM_DISPID_FILESCREEN_BASE | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT BlockedFileGroups([in] IFsrmMutableCollection *blockList);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN_BASE | 0x02))]
++     [propget, id(FSRM_DISPID_FILESCREEN_BASE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT FileScreenFlags([out, retval] long *fileScreenFlags);
+   
+-     [propput, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN_BASE | 0x02))]
++     [propput, id(FSRM_DISPID_FILESCREEN_BASE | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT FileScreenFlags([in] long fileScreenFlags);
+   
+      [id(FSRM_DISPID_FILESCREEN_BASE | 0x01)]
+@@ -2223,21 +2223,21 @@
+   
+      pointer_default(unique)
+  ]interface IFsrmFileScreen : IFsrmFileScreenBase
+- {    [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN | 0x01))]
++ {    [propget, id(FSRM_DISPID_FILESCREEN | 0x01 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT Path([out, retval] BSTR *path);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN | 0x02))]
++     [propget, id(FSRM_DISPID_FILESCREEN | 0x02 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT SourceTemplateName([out, retval] BSTR
+  *fileScreenTemplateName);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN | 0x03))]
++     [propget, id(FSRM_DISPID_FILESCREEN | 0x03 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT MatchesSourceTemplate([out, retval] VARIANT_BOOL
+  *matches);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN | 0x04))]
++     [propget, id(FSRM_DISPID_FILESCREEN | 0x04 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT UserSid([out, retval] BSTR *userSid);
+   
+-     [propget, id(FSRM_PROPERTY(FSRM_DISPID_FILESCREEN | 0x05))]
++     [propget, id(FSRM_DISPID_FILESCREEN | 0x05 | FSRM_DISPID_IS_PROPERTY)]
+      HRESULT UserAccount([out, retval] BSTR *userAccount);
+   
+      [id(FSRM_DISPID_FILESCREEN | 0x01)]

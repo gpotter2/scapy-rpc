@@ -1,0 +1,13 @@
+diff --git a/midl-to-scapy/idl/win/ms-comev.idl b/midl-to-scapy/idl/win/ms-comev.idl
+index ff41ad6..487aa3f 100644
+--- a/midl-to-scapy/idl/win/ms-comev.idl
++++ b/midl-to-scapy/idl/win/ms-comev.idl
+@@ -366,7 +366,7 @@
+  ]
+  interface IEventSystemInitialize : IUnknown
+  {
+-    HRESULT SetCOMCatalogBehaviour(BOOL bRetainSubKeys);
++    HRESULT SetCOMCatalogBehaviour([in] BOOL bRetainSubKeys);
+  }; 
+   
+   

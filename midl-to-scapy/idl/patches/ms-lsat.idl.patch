@@ -1,0 +1,24 @@
+diff --git a/midl-to-scapy/idl/win/ms-lsat.idl b/midl-to-scapy/idl/win/ms-lsat.idl
+index 2c23a25..29eef0f 100644
+--- a/midl-to-scapy/idl/win/ms-lsat.idl
++++ b/midl-to-scapy/idl/win/ms-lsat.idl
+@@ -1,5 +1,9 @@
+  import "ms-dtyp.idl";
+   
++ typedef struct _LSAPR_SID_INFORMATION {
++     PRPC_SID Sid;
++ } LSAPR_SID_INFORMATION, *PLSAPR_SID_INFORMATION;
++
+  [
+      uuid(12345778-1234-ABCD-EF00-0123456789AB),
+      version(0.0),
+@@ -124,9 +128,6 @@
+      LsapLookupRODCReferralToFullDC
+  } LSAP_LOOKUP_LEVEL, *PLSAP_LOOKUP_LEVEL;
+   
+- typedef struct _LSAPR_SID_INFORMATION {
+-     PRPC_SID Sid;
+- } LSAPR_SID_INFORMATION, *PLSAPR_SID_INFORMATION;
+   
+  typedef struct _LSAPR_SID_ENUM_BUFFER {
+      [range(0, 20480)] unsigned long Entries;

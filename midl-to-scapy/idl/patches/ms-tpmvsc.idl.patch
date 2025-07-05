@@ -1,0 +1,66 @@
+diff --git a/midl-to-scapy/idl/win/ms-tpmvsc.idl b/midl-to-scapy/idl/win/ms-tpmvsc.idl
+index df10c71..02d5133 100644
+--- a/midl-to-scapy/idl/win/ms-tpmvsc.idl
++++ b/midl-to-scapy/idl/win/ms-tpmvsc.idl
+@@ -1,5 +1,4 @@
+- import "oaidl.idl";
+- import "ocidl.idl";
++ import "ms-dtyp.idl";
+   
+  typedef [v1_enum] enum TPMVSC_ATTESTATION_TYPE
+  {
+@@ -174,29 +173,29 @@
+      );
+  }
+   
+- [
+-     uuid(1C60A923-2D86-46AA-928A-E7F3E37577AF)
+- ]
+- library TpmVirtualSmartCardManagers
+- {
+-     [
+-         uuid(16A18E86-7F6E-4C20-AD89-4FFC0DB7A96A)
+-     ]
+-     coclass TpmVirtualSmartCardManager
+-     {
+-         [default] interface ITpmVirtualSmartCardManager;
+-         interface ITpmVirtualSmartCardManager2;
+-         interface ITpmVirtualSmartCardManager3;
+-     }
+-  
+-     [
+-         uuid(152EA2A8-70DC-4C59-8B2A-32AA3CA0DCAC)
+-     ]
+-     coclass RemoteTpmVirtualSmartCardManager
+-     {
+-         [default] interface ITpmVirtualSmartCardManager;
+-         interface ITpmVirtualSmartCardManager2;
+-         interface ITpmVirtualSmartCardManager3;
+-     }
+- };
++// [
++//     uuid(1C60A923-2D86-46AA-928A-E7F3E37577AF)
++// ]
++// library TpmVirtualSmartCardManagers
++// {
++//     [
++//         uuid(16A18E86-7F6E-4C20-AD89-4FFC0DB7A96A)
++//     ]
++//     coclass TpmVirtualSmartCardManager
++//     {
++//         [default] interface ITpmVirtualSmartCardManager;
++//         interface ITpmVirtualSmartCardManager2;
++//         interface ITpmVirtualSmartCardManager3;
++//     }
++//  
++//     [
++//         uuid(152EA2A8-70DC-4C59-8B2A-32AA3CA0DCAC)
++//     ]
++//     coclass RemoteTpmVirtualSmartCardManager
++//     {
++//         [default] interface ITpmVirtualSmartCardManager;
++//         interface ITpmVirtualSmartCardManager2;
++//         interface ITpmVirtualSmartCardManager3;
++//     }
++// };
+   

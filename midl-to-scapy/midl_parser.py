@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
 """
 Parse Microsoft Interface Definition Language (MIDL)
 """
@@ -215,7 +219,11 @@ def p_macro(p):
         p[0] = ("macro", (p[2],))
     elif len(p) == 5:
         # ifdef xxxx
-        p[0] = ("macro", (p[2], p[3]))
+        if p[2] == "include":
+            # We alias #include to import
+            p[0] = ("import", p[3])
+        else:
+            p[0] = ("macro", (p[2], p[3]))
     elif len(p) == 6:
         # define x y
         p[0] = ("macro", (p[2], ("id", p[3]), p[4], []))

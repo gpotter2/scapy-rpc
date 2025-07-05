@@ -5268,6 +5268,32 @@ class SamrUnicodeChangePasswordUser4_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
+class SamrValidateComputerAccountReuseAttempt_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("ServerHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField("ComputerSid", PRPC_SID(), PRPC_SID),
+    ]
+
+
+class SamrValidateComputerAccountReuseAttempt_Response(NDRPacket):
+    fields_desc = [NDRSignedIntField("Result", 0), NDRIntField("status", 0)]
+
+
+class SamrAccountIsDelegatedManagedServiceAccount_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("ServerHandle", NDRContextHandle(), NDRContextHandle),
+        NDRPacketField("AccountName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
+    ]
+
+
+class SamrAccountIsDelegatedManagedServiceAccount_Response(NDRPacket):
+    fields_desc = [
+        NDRByteField("Result", 0),
+        NDRByteField("Authorized", 0),
+        NDRIntField("status", 0),
+    ]
+
+
 SAMR_OPNUMS = {
     0: DceRpcOp(SamrConnect_Request, SamrConnect_Response),
     1: DceRpcOp(SamrCloseHandle_Request, SamrCloseHandle_Response),
@@ -5390,6 +5416,16 @@ SAMR_OPNUMS = {
     # 72: Opnum72NotUsedOnWire,
     73: DceRpcOp(
         SamrUnicodeChangePasswordUser4_Request, SamrUnicodeChangePasswordUser4_Response
+    ),
+    74: DceRpcOp(
+        SamrValidateComputerAccountReuseAttempt_Request,
+        SamrValidateComputerAccountReuseAttempt_Response,
+    ),
+    # 75: Opnum75NotUsedOnWire,
+    # 76: Opnum76NotUsedOnWire,
+    77: DceRpcOp(
+        SamrAccountIsDelegatedManagedServiceAccount_Request,
+        SamrAccountIsDelegatedManagedServiceAccount_Response,
     ),
 }
 register_dcerpc_interface(

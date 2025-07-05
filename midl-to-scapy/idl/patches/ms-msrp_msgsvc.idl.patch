@@ -1,0 +1,54 @@
+diff --git a/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl b/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl
+index c1662d9..70d67f6 100644
+--- a/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl
++++ b/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl
+@@ -1,10 +1,10 @@
+  import "ms-dtyp.idl";
+   
+- #if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)
+-     #define NET_API_FUNCTION    __stdcall
+- #else
+-     #define NET_API_FUNCTION
+- #endif
++//  #if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)
++//      #define NET_API_FUNCTION    __stdcall
++//  #else
++//      #define NET_API_FUNCTION
++//  #endif
+   
+  [ uuid(17FDD703-1827-4E34-79D4-24A55C53BB37),
+      version(1.0),
+@@ -54,13 +54,13 @@
+      } MSG_INFO, *PMSG_INFO, *LPMSG_INFO;
+   
+   
+-     NET_API_STATUS NET_API_FUNCTION
++     NET_API_STATUS //NET_API_FUNCTION
+      NetrMessageNameAdd (
+          [in,string,unique] MSGSVC_HANDLE  ServerName,
+          [in,string]        wchar_t*       MsgName
+          );
+   
+-     NET_API_STATUS NET_API_FUNCTION
++     NET_API_STATUS //NET_API_FUNCTION
+      NetrMessageNameEnum (
+          [in,string,unique] MSGSVC_HANDLE      ServerName,
+          [in,out]           LPMSG_ENUM_STRUCT  InfoStruct,
+@@ -69,7 +69,7 @@
+          [in,out,unique]    LPDWORD            ResumeHandle
+          );
+   
+-     NET_API_STATUS NET_API_FUNCTION
++     NET_API_STATUS //NET_API_FUNCTION
+      NetrMessageNameGetInfo (
+          [in,string,unique] MSGSVC_HANDLE    ServerName,
+          [in,string]        wchar_t*         MsgName,
+@@ -77,7 +77,7 @@
+          [out, switch_is(Level)] LPMSG_INFO  InfoStruct
+          );
+   
+-     NET_API_STATUS NET_API_FUNCTION
++     NET_API_STATUS //NET_API_FUNCTION
+      NetrMessageNameDel (
+          [in,string,unique]  MSGSVC_HANDLE ServerName,
+          [in,string]         wchar_t*      MsgName

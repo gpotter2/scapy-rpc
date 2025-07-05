@@ -1,0 +1,22 @@
+diff --git a/midl-to-scapy/idl/win/ms-dmrp_dmintf3.idl b/midl-to-scapy/idl/win/ms-dmrp_dmintf3.idl
+index d5bab86..69b4c3c 100644
+--- a/midl-to-scapy/idl/win/ms-dmrp_dmintf3.idl
++++ b/midl-to-scapy/idl/win/ms-dmrp_dmintf3.idl
+@@ -29,7 +29,7 @@
+      boolean         isUpgradeable;
+      boolean         maySwitchStyle;
+      PARTITIONSTYLE  partitionStyle;
+-     [switch_is(partitionStyle)] union {
++     [switch_is(partitionStyle), switch_type(_PARTITIONSTYLE)] union {
+          [case(PARTITIONSTYLE_MBR)] struct {
+              unsigned long   signature;
+              
+@@ -73,7 +73,7 @@
+      LONGLONG        length;
+      REGIONTYPE      regionType;
+      PARTITIONSTYLE partitionStyle;
+-     [switch_is(partitionStyle)] union {
++     [switch_is(partitionStyle), switch_type(_PARTITIONSTYLE)] union {
+          [case(PARTITIONSTYLE_MBR)] struct {
+              unsigned long   partitionType;
+              boolean isActive;

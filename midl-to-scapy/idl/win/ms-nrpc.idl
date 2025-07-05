@@ -8,6 +8,9 @@
   
  interface logon
  {
+    typedef RPC_UNICODE_STRING UNICODE_STRING;
+    typedef PRPC_UNICODE_STRING PUNICODE_STRING;
+
      typedef struct _STRING{
          USHORT Length;
          USHORT MaximumLength;
@@ -78,15 +81,15 @@
        *PNLPR_QUOTA_LIMITS;
   
      typedef struct _NETLOGON_DELTA_USER{
-         RPC_UNICODE_STRING UserName;
-         RPC_UNICODE_STRING FullName;
+         UNICODE_STRING UserName;
+         UNICODE_STRING FullName;
          ULONG UserId;
          ULONG PrimaryGroupId;
-         RPC_UNICODE_STRING HomeDirectory;
-         RPC_UNICODE_STRING HomeDirectoryDrive;
-         RPC_UNICODE_STRING ScriptPath;
-         RPC_UNICODE_STRING AdminComment;
-         RPC_UNICODE_STRING WorkStations;
+         UNICODE_STRING HomeDirectory;
+         UNICODE_STRING HomeDirectoryDrive;
+         UNICODE_STRING ScriptPath;
+         UNICODE_STRING AdminComment;
+         UNICODE_STRING WorkStations;
          OLD_LARGE_INTEGER LastLogon;
          OLD_LARGE_INTEGER LastLogoff;
          NLPR_LOGON_HOURS LogonHours;
@@ -100,18 +103,18 @@
          UCHAR NtPasswordPresent;
          UCHAR LmPasswordPresent;
          UCHAR PasswordExpired;
-         RPC_UNICODE_STRING UserComment;
-         RPC_UNICODE_STRING Parameters;
+         UNICODE_STRING UserComment;
+         UNICODE_STRING Parameters;
          USHORT CountryCode;
          USHORT CodePage;
          NLPR_USER_PRIVATE_INFO PrivateData;
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING ProfilePath;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING ProfilePath;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -120,17 +123,17 @@
        *PNETLOGON_DELTA_USER;
   
      typedef struct _NETLOGON_DELTA_GROUP{
-         RPC_UNICODE_STRING Name;
+         UNICODE_STRING Name;
          ULONG RelativeId;
          ULONG Attributes;
-         RPC_UNICODE_STRING AdminComment;
+         UNICODE_STRING AdminComment;
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -150,15 +153,15 @@
        *PNETLOGON_DELTA_GROUP_MEMBER;
   
      typedef struct _NETLOGON_DELTA_ALIAS{
-         RPC_UNICODE_STRING Name;
+         UNICODE_STRING Name;
          ULONG RelativeId;
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING Comment;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING Comment;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -176,8 +179,8 @@
        *PNETLOGON_DELTA_ALIAS_MEMBER;
   
      typedef struct _NETLOGON_DELTA_DOMAIN{
-         RPC_UNICODE_STRING DomainName;
-         RPC_UNICODE_STRING OemInformation;
+         UNICODE_STRING DomainName;
+         UNICODE_STRING OemInformation;
          OLD_LARGE_INTEGER ForceLogoff;
          USHORT MinPasswordLength;
          USHORT PasswordHistoryLength;
@@ -188,10 +191,10 @@
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DomainLockoutInformation;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DomainLockoutInformation;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG PasswordProperties;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -200,12 +203,12 @@
        *PNETLOGON_DELTA_DOMAIN;
   
      typedef struct _NETLOGON_DELTA_RENAME_GROUP{
-         RPC_UNICODE_STRING OldName;
-         RPC_UNICODE_STRING NewName;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING OldName;
+         UNICODE_STRING NewName;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -214,12 +217,12 @@
        *PNETLOGON_DELTA_RENAME_GROUP;
   
     typedef struct _NETLOGON_DELTA_RENAME_USER{
-         RPC_UNICODE_STRING OldName;
-         RPC_UNICODE_STRING NewName;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING OldName;
+         UNICODE_STRING NewName;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -228,12 +231,12 @@
        *PNETLOGON_DELTA_RENAME_USER;
   
     typedef struct _NETLOGON_DELTA_RENAME_ALIAS{
-         RPC_UNICODE_STRING OldName;
-         RPC_UNICODE_STRING NewName;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING OldName;
+         UNICODE_STRING NewName;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -248,7 +251,7 @@
          ULONG MaximumAuditEventCount;
          [size_is(MaximumAuditEventCount + 1)] 
               ULONG * EventAuditingOptions;
-         RPC_UNICODE_STRING PrimaryDomainName;
+         UNICODE_STRING PrimaryDomainName;
          PRPC_SID PrimaryDomainSid;
          NLPR_QUOTA_LIMITS QuotaLimits;
          OLD_LARGE_INTEGER ModifiedId;
@@ -256,10 +259,10 @@
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -268,17 +271,17 @@
        *PNETLOGON_DELTA_POLICY;
   
      typedef struct _NETLOGON_DELTA_TRUSTED_DOMAINS{
-         RPC_UNICODE_STRING DomainName;
+         UNICODE_STRING DomainName;
          ULONG NumControllerEntries;
          [size_is(NumControllerEntries)] 
-              PRPC_UNICODE_STRING ControllerNames;
+              PUNICODE_STRING ControllerNames;
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG TrustedPosixOffset;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -291,16 +294,16 @@
          ULONG PrivilegeControl;
          [size_is(PrivilegeEntries)] 
               ULONG * PrivilegeAttributes;
-         [size_is(PrivilegeEntries)] PRPC_UNICODE_STRING PrivilegeNames;
+         [size_is(PrivilegeEntries)] PUNICODE_STRING PrivilegeNames;
          NLPR_QUOTA_LIMITS QuotaLimits;
          ULONG SystemAccessFlags;
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -316,10 +319,10 @@
          SECURITY_INFORMATION SecurityInformation;
          ULONG SecuritySize;
          [size_is(SecuritySize)] UCHAR * SecurityDescriptor;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -329,10 +332,10 @@
   
      typedef struct _NETLOGON_DELTA_DELETE_GROUP{
          [string] wchar_t * AccountName;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -342,10 +345,10 @@
   
      typedef struct _NETLOGON_DELTA_DELETE_USER{
          [string] wchar_t * AccountName;
-         RPC_UNICODE_STRING DummyString1;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DummyString1;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -457,11 +460,11 @@
        *PNETLOGON_DELTA_ENUM_ARRAY;
   
      typedef struct _NETLOGON_LOGON_IDENTITY_INFO{
-         RPC_UNICODE_STRING LogonDomainName;
+         UNICODE_STRING LogonDomainName;
          ULONG ParameterControl;
          OLD_LARGE_INTEGER Reserved;
-         RPC_UNICODE_STRING UserName;
-         RPC_UNICODE_STRING Workstation;
+         UNICODE_STRING UserName;
+         UNICODE_STRING Workstation;
      } NETLOGON_LOGON_IDENTITY_INFO, 
        *PNETLOGON_LOGON_IDENTITY_INFO;
   
@@ -479,7 +482,8 @@
          NetlogonGenericInformation = 4,
          NetlogonInteractiveTransitiveInformation = 5,
          NetlogonNetworkTransitiveInformation = 6,
-         NetlogonServiceTransitiveInformation = 7
+         NetlogonServiceTransitiveInformation = 7,
+         NetlogonTicketLogonInformation = 8
      } NETLOGON_LOGON_INFO_CLASS;
   
      typedef struct _NETLOGON_SERVICE_INFO{
@@ -503,11 +507,24 @@
   
      typedef struct _NETLOGON_GENERIC_INFO{
          NETLOGON_LOGON_IDENTITY_INFO Identity;
-         RPC_UNICODE_STRING PackageName;
+         UNICODE_STRING PackageName;
          ULONG DataLength;
          [size_is(DataLength)] UCHAR * LogonData;
      } NETLOGON_GENERIC_INFO, 
        *PNETLOGON_GENERIC_INFO;
+
+    typedef struct _NETLOGON_TICKET_LOGON_INFO{
+        // Guessed from [MS-APDS] sect 2.2.2.1
+        USHORT CriticalOptions;
+        USHORT ComputerDomainOptions;
+        USHORT TransitOptions;
+        USHORT KerberosOptions;
+        ULONG ServiceTicketLength;
+        [size_is(ServiceTicketLength)] UCHAR * ServiceTicket;
+        ULONG AdditionalTicketLength;
+        [size_is(AdditionalTicketLength)] UCHAR * AdditionalTicket;
+    } NETLOGON_TICKET_LOGON_INFO,
+      *PNETLOGON_TICKET_LOGON_INFO;
   
      typedef [switch_type(NETLOGON_LOGON_INFO_CLASS)] union 
           _NETLOGON_LEVEL{
@@ -525,6 +542,8 @@
              PNETLOGON_NETWORK_INFO LogonNetworkTransitive;
          [case(NetlogonGenericInformation)]
              PNETLOGON_GENERIC_INFO LogonGeneric;
+         [case(NetlogonTicketLogonInformation)]
+             PNETLOGON_TICKET_LOGON_INFO LogonTicket;
          [default]
              ;
      } NETLOGON_LEVEL, 
@@ -536,7 +555,8 @@
          NetlogonValidationSamInfo2 = 3,
          NetlogonValidationGenericInfo = 4,
          NetlogonValidationGenericInfo2 = 5,
-         NetlogonValidationSamInfo4 = 6
+         NetlogonValidationSamInfo4 = 6,
+         NetlogonValidationTicketLogon = 7
      } NETLOGON_VALIDATION_INFO_CLASS;
   
      typedef struct _GROUP_MEMBERSHIP{
@@ -563,12 +583,12 @@
          OLD_LARGE_INTEGER PasswordLastSet;
          OLD_LARGE_INTEGER PasswordCanChange;
          OLD_LARGE_INTEGER PasswordMustChange;
-         RPC_UNICODE_STRING EffectiveName;
-         RPC_UNICODE_STRING FullName;
-         RPC_UNICODE_STRING LogonScript;
-         RPC_UNICODE_STRING ProfilePath;
-         RPC_UNICODE_STRING HomeDirectory;
-         RPC_UNICODE_STRING HomeDirectoryDrive;
+         UNICODE_STRING EffectiveName;
+         UNICODE_STRING FullName;
+         UNICODE_STRING LogonScript;
+         UNICODE_STRING ProfilePath;
+         UNICODE_STRING HomeDirectory;
+         UNICODE_STRING HomeDirectoryDrive;
          USHORT LogonCount;
          USHORT BadPasswordCount;
          ULONG UserId;
@@ -577,8 +597,8 @@
          [size_is(GroupCount)] PGROUP_MEMBERSHIP GroupIds;
          ULONG UserFlags;
          USER_SESSION_KEY UserSessionKey;
-         RPC_UNICODE_STRING LogonServer;
-         RPC_UNICODE_STRING LogonDomainName;
+         UNICODE_STRING LogonServer;
+         UNICODE_STRING LogonDomainName;
          PRPC_SID LogonDomainId;
          ULONG ExpansionRoom[10];
      } NETLOGON_VALIDATION_SAM_INFO, 
@@ -591,12 +611,12 @@
          OLD_LARGE_INTEGER PasswordLastSet;
          OLD_LARGE_INTEGER PasswordCanChange;
          OLD_LARGE_INTEGER PasswordMustChange;
-         RPC_UNICODE_STRING EffectiveName;
-         RPC_UNICODE_STRING FullName;
-         RPC_UNICODE_STRING LogonScript;
-         RPC_UNICODE_STRING ProfilePath;
-         RPC_UNICODE_STRING HomeDirectory;
-         RPC_UNICODE_STRING HomeDirectoryDrive;
+         UNICODE_STRING EffectiveName;
+         UNICODE_STRING FullName;
+         UNICODE_STRING LogonScript;
+         UNICODE_STRING ProfilePath;
+         UNICODE_STRING HomeDirectory;
+         UNICODE_STRING HomeDirectoryDrive;
          USHORT LogonCount;
          USHORT BadPasswordCount;
          ULONG UserId;
@@ -605,8 +625,8 @@
          [size_is(GroupCount)] PGROUP_MEMBERSHIP GroupIds;
          ULONG UserFlags;
          USER_SESSION_KEY UserSessionKey;
-         RPC_UNICODE_STRING LogonServer;
-         RPC_UNICODE_STRING LogonDomainName;
+         UNICODE_STRING LogonServer;
+         UNICODE_STRING LogonDomainName;
          PRPC_SID LogonDomainId;
          ULONG ExpansionRoom[10];
          ULONG SidCount;
@@ -627,12 +647,12 @@
          OLD_LARGE_INTEGER PasswordLastSet;
          OLD_LARGE_INTEGER PasswordCanChange;
          OLD_LARGE_INTEGER PasswordMustChange;
-         RPC_UNICODE_STRING EffectiveName;
-         RPC_UNICODE_STRING FullName;
-         RPC_UNICODE_STRING LogonScript;
-         RPC_UNICODE_STRING ProfilePath;
-         RPC_UNICODE_STRING HomeDirectory;
-         RPC_UNICODE_STRING HomeDirectoryDrive;
+         UNICODE_STRING EffectiveName;
+         UNICODE_STRING FullName;
+         UNICODE_STRING LogonScript;
+         UNICODE_STRING ProfilePath;
+         UNICODE_STRING HomeDirectory;
+         UNICODE_STRING HomeDirectoryDrive;
          unsigned short LogonCount;
          unsigned short BadPasswordCount;
          unsigned long UserId;
@@ -641,8 +661,8 @@
         [size_is(GroupCount)] PGROUP_MEMBERSHIP GroupIds;
          unsigned long UserFlags;
          USER_SESSION_KEY UserSessionKey;
-         RPC_UNICODE_STRING LogonServer;
-         RPC_UNICODE_STRING LogonDomainName;
+         UNICODE_STRING LogonServer;
+         UNICODE_STRING LogonDomainName;
          PRPC_SID LogonDomainId;
          unsigned char LMKey[8];
          ULONG UserAccountControl;
@@ -653,20 +673,38 @@
          ULONG Reserved4[1];
          unsigned long SidCount;
         [size_is(SidCount)] PNETLOGON_SID_AND_ATTRIBUTES ExtraSids;
-         RPC_UNICODE_STRING DnsLogonDomainName;
-         RPC_UNICODE_STRING Upn;
-         RPC_UNICODE_STRING ExpansionString1;
-         RPC_UNICODE_STRING ExpansionString2;
-         RPC_UNICODE_STRING ExpansionString3;
-         RPC_UNICODE_STRING ExpansionString4;
-         RPC_UNICODE_STRING ExpansionString5;
-         RPC_UNICODE_STRING ExpansionString6;
-         RPC_UNICODE_STRING ExpansionString7;
-         RPC_UNICODE_STRING ExpansionString8;
-         RPC_UNICODE_STRING ExpansionString9;
-         RPC_UNICODE_STRING ExpansionString10;
+         UNICODE_STRING DnsLogonDomainName;
+         UNICODE_STRING Upn;
+         UNICODE_STRING ExpansionString1;
+         UNICODE_STRING ExpansionString2;
+         UNICODE_STRING ExpansionString3;
+         UNICODE_STRING ExpansionString4;
+         UNICODE_STRING ExpansionString5;
+         UNICODE_STRING ExpansionString6;
+         UNICODE_STRING ExpansionString7;
+         UNICODE_STRING ExpansionString8;
+         UNICODE_STRING ExpansionString9;
+         UNICODE_STRING ExpansionString10;
      } NETLOGON_VALIDATION_SAM_INFO4,
      *PNETLOGON_VALIDATION_SAM_INFO4;
+
+    typedef struct _NETLOGON_VALIDATION_TICKET_LOGON{
+        UCHAR A;
+        UCHAR B;
+        UCHAR C;
+        UCHAR D;
+        USHORT SourceInformation;
+        USHORT TransitInformation;
+        ULONG KerberosStatus;
+        ULONG NetlogonStatus;
+        PNETLOGON_VALIDATION_SAM_INFO4 UserInformation;
+        PNETLOGON_VALIDATION_SAM_INFO4 DeviceInformation;
+        ULONG UserClaimsLength;
+        [size_is(UserClaimsLength)] UCHAR * UserClaims;
+        ULONG DeviceClaimsLength;
+        [size_is(DeviceClaimsLength)] UCHAR * DeviceClaims;
+    } NETLOGON_VALIDATION_TICKET_LOGON,
+    *PNETLOGON_VALIDATION_TICKET_LOGON;
   
      typedef [switch_type(enum _NETLOGON_VALIDATION_INFO_CLASS)] union 
           _NETLOGON_VALIDATION{
@@ -678,6 +716,8 @@
              PNETLOGON_VALIDATION_GENERIC_INFO2 ValidationGeneric2;
          [case(NetlogonValidationSamInfo4)]
              PNETLOGON_VALIDATION_SAM_INFO4 ValidationSam4;
+         [case(NetlogonValidationTicketLogon)]
+             PNETLOGON_VALIDATION_TICKET_LOGON ValidationTicket;
          [default]
              ;
      } NETLOGON_VALIDATION, 
@@ -761,15 +801,15 @@
        *PNETLOGON_LSA_POLICY_INFO;
   
      typedef struct _NETLOGON_ONE_DOMAIN_INFO{
-         RPC_UNICODE_STRING DomainName;
-         RPC_UNICODE_STRING DnsDomainName;
-         RPC_UNICODE_STRING DnsForestName;
+         UNICODE_STRING DomainName;
+         UNICODE_STRING DnsDomainName;
+         UNICODE_STRING DnsForestName;
          GUID DomainGuid;
          PRPC_SID DomainSid;
-         RPC_UNICODE_STRING TrustExtension;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING TrustExtension;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG DummyLong1;
          ULONG DummyLong2;
          ULONG DummyLong3;
@@ -783,10 +823,10 @@
          [size_is(TrustedDomainCount)] 
               PNETLOGON_ONE_DOMAIN_INFO TrustedDomains;
          NETLOGON_LSA_POLICY_INFO LsaPolicy;
-         RPC_UNICODE_STRING DnsHostNameInDs;
-         RPC_UNICODE_STRING DummyString2;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING DnsHostNameInDs;
+         UNICODE_STRING DummyString2;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG WorkstationFlags;
          ULONG SupportedEncTypes;
          ULONG DummyLong3;
@@ -809,10 +849,10 @@
          [string] wchar_t * Dummy2;
          [string] wchar_t * Dummy3;
          [string] wchar_t * Dummy4;
-         RPC_UNICODE_STRING OsVersion;
-         RPC_UNICODE_STRING OsName;
-         RPC_UNICODE_STRING DummyString3;
-         RPC_UNICODE_STRING DummyString4;
+         UNICODE_STRING OsVersion;
+         UNICODE_STRING OsName;
+         UNICODE_STRING DummyString3;
+         UNICODE_STRING DummyString4;
          ULONG WorkstationFlags;
          ULONG KerberosSupportedEncryptionTypes;
          ULONG DummyLong3;
@@ -835,7 +875,7 @@
   
      typedef struct _NL_SITE_NAME_ARRAY{
          ULONG EntryCount;
-         [size_is(EntryCount)] PRPC_UNICODE_STRING SiteNames;
+         [size_is(EntryCount)] PUNICODE_STRING SiteNames;
      } NL_SITE_NAME_ARRAY, 
        *PNL_SITE_NAME_ARRAY;
   
@@ -859,8 +899,8 @@
   
      typedef struct _NL_SITE_NAME_EX_ARRAY{
          ULONG EntryCount;
-         [size_is(EntryCount)] PRPC_UNICODE_STRING SiteNames;
-         [size_is(EntryCount)] PRPC_UNICODE_STRING SubnetNames;
+         [size_is(EntryCount)] PUNICODE_STRING SiteNames;
+         [size_is(EntryCount)] PUNICODE_STRING SubnetNames;
      } NL_SITE_NAME_EX_ARRAY, 
        *PNL_SITE_NAME_EX_ARRAY;
   
@@ -869,7 +909,7 @@
          [size_is(UlongEntryCount)] ULONG * UlongData;
          ULONG UnicodeStringEntryCount;
          [size_is(UnicodeStringEntryCount)] 
-              PRPC_UNICODE_STRING UnicodeStringData;
+              PUNICODE_STRING UnicodeStringData;
      } NL_GENERIC_RPC_DATA, 
        *PNL_GENERIC_RPC_DATA;
   
@@ -912,6 +952,8 @@
        union _NETLOGON_CAPABILITIES {
        [case(1)] 
          ULONG ServerCapabilities;
+       [case(2)] 
+         ULONG RequestedFlags;
      } NETLOGON_CAPABILITIES, 
       *PNETLOGON_CAPABILITIES;
   
@@ -977,13 +1019,13 @@
          ForestTrustRecordTypeLast = ForestTrustDomainInfo
      } LSA_FOREST_TRUST_RECORD_TYPE;
   
-     typedef RPC_UNICODE_STRING LSA_RPC_UNICODE_STRING,   
-     *PLSA_RPC_UNICODE_STRING;
+     typedef UNICODE_STRING LSA_UNICODE_STRING,   
+     *PLSA_UNICODE_STRING;
   
      typedef struct _LSA_FOREST_TRUST_DOMAIN_INFO{
          PRPC_SID Sid;
-         LSA_RPC_UNICODE_STRING DnsName;
-         LSA_RPC_UNICODE_STRING NetbiosName;
+         LSA_UNICODE_STRING DnsName;
+         LSA_UNICODE_STRING NetbiosName;
      } LSA_FOREST_TRUST_DOMAIN_INFO, 
        *PLSA_FOREST_TRUST_DOMAIN_INFO;
   
@@ -1001,7 +1043,7 @@
               switch_is( ForestTrustType )] union {
          [case( ForestTrustTopLevelName,
                 ForestTrustTopLevelNameEx )] 
-              LSA_RPC_UNICODE_STRING TopLevelName;
+              LSA_UNICODE_STRING TopLevelName;
          [case( ForestTrustDomainInfo )] 
               LSA_FOREST_TRUST_DOMAIN_INFO DomainInfo;
          [default] LSA_FOREST_TRUST_BINARY_DATA Data;
@@ -1279,7 +1321,7 @@
          [in] PNETLOGON_AUTHENTICATOR Authenticator,
          [in, out] PNETLOGON_AUTHENTICATOR ReturnAuthenticator,
          [in] DWORD QueryLevel,
-         [out, switch_is(QueryLevel)] PNETLOGON_CAPABILITIES ServerCapabilities
+         [out, switch_is(QueryLevel)] PNETLOGON_CAPABILITIES Capabilities
      );
   
      // Opnum 22
@@ -1633,4 +1675,15 @@
          [in,out,ref] [switch_is(*pdwOutVersion)]
                NL_OUT_CHAIN_SET_CLIENT_ATTRIBUTES *pmsgOut
          );
+  
+ // Opnum 59
+ NTSTATUS
+ NetrServerAuthenticateKerberos (
+     [in,unique,string] LOGONSRV_HANDLE PrimaryName,
+     [in,string] wchar_t * AccountName,
+     [in] NETLOGON_SECURE_CHANNEL_TYPE AccountType,
+     [in, string] wchar_t * ComputerName,
+     [in,out] PULONG NegotiateFlags,
+     [out] PULONG AccountRid
+     );
  }

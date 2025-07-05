@@ -1,0 +1,36 @@
+diff --git a/midl-to-scapy/idl/win/ms-par.idl b/midl-to-scapy/idl/win/ms-par.idl
+index e665a77..e1256b9 100644
+--- a/midl-to-scapy/idl/win/ms-par.idl
++++ b/midl-to-scapy/idl/win/ms-par.idl
+@@ -603,7 +603,7 @@
+   
+  typedef struct _RPC_BIDI_DATA {
+      DWORD dwBidiType;
+-     [switch_is(dwBidiType)] union {
++     [switch_is(dwBidiType), switch_type(BIDI_TYPE)] union {
+      [case(BIDI_NULL, BIDI_BOOL)]
+          int bData;
+      [case(BIDI_INT)]
+@@ -866,7 +866,7 @@
+   
+  typedef struct {
+      RPC_EPrintPropertyType ePropertyType;
+-     [switch_is(ePropertyType)] union {
++     [switch_is(ePropertyType), switch_type(RPC_EPrintPropertyType)] union {
+          [case(kRpcPropertyTypeString)] [string] wchar_t *propertyString;
+          [case(kRpcPropertyTypeInt32)]  LONG              propertyInt32;
+          [case(kRpcPropertyTypeInt64)]  LONGLONG          propertyInt64;
+@@ -1501,7 +1501,6 @@
+     [in, string, unique]    wchar_t*           pDatatype,
+     [in]                    DEVMODE_CONTAINER* pDevModeContainer
+  );
+- }
+   
+  DWORD
+  RpcAsyncGetJobNamedPropertyValue(
+@@ -1539,3 +1538,4 @@
+      [in, ref] RPC_BranchOfficeJobDataContainer *pBranchOfficeJobDataContainer
+      );
+   
++}
+\ No newline at end of file

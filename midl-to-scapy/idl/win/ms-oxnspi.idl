@@ -1,4 +1,4 @@
- import "../win/ms-dtyp.idl";
+ import "ms-dtyp.idl";
   
  typedef long NTSTATUS;
  typedef unsigned long DWORD;

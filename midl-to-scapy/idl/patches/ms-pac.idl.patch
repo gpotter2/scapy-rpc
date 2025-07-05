@@ -1,0 +1,32 @@
+diff --git a/midl-to-scapy/idl/win/ms-pac.idl b/midl-to-scapy/idl/win/ms-pac.idl
+index e511a14..614b4b4 100644
+--- a/midl-to-scapy/idl/win/ms-pac.idl
++++ b/midl-to-scapy/idl/win/ms-pac.idl
+@@ -107,10 +107,10 @@
+      WCHAR Name[1];
+  } PAC_CLIENT_INFO, *PPAC_CLIENT_INFO;
+   
+- typedef struct _PAC_SIGNATURE_DATA {
+-     ULONG SignatureType;
+-     UCHAR Signature[ANYSIZE_ARRAY];  // size is from the PAC_INFO_BUFFER - sizeof(ULONG)
+- } PAC_SIGNATURE_DATA, *PPAC_SIGNATURE_DATA;
++// typedef struct _PAC_SIGNATURE_DATA {
++//     ULONG SignatureType;
++//     UCHAR Signature[ANYSIZE_ARRAY];  // size is from the PAC_INFO_BUFFER - sizeof(ULONG)
++// } PAC_SIGNATURE_DATA, *PPAC_SIGNATURE_DATA;
+   
+  typedef struct _S4U_DELEGATION_INFO {
+      RPC_UNICODE_STRING S4U2proxyTarget;
+@@ -147,8 +147,8 @@
+      PCLAIMS_SET_METADATA Claims;
+  } PAC_DEVICE_CLAIMS_INFO, *PPAC_DEVICE_CLAIMS_INFO;
+   
+- typedef struct _PAC_ATTRIBUTES_INFO {
+-     ULONG FlagsLength;                // specified in bits
+-     ULONG Flags[ANYSIZE_ARRAY];
+- } PAC_ATTRIBUTES_INFO, *PPAC_ATTRIBUTES_INFO;
++// typedef struct _PAC_ATTRIBUTES_INFO {
++//     ULONG FlagsLength;                // specified in bits
++//     ULONG Flags[ANYSIZE_ARRAY];
++// } PAC_ATTRIBUTES_INFO, *PPAC_ATTRIBUTES_INFO;
+   

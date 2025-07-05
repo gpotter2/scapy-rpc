@@ -32,9 +32,7 @@ class Poke_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
         NDRConfVarStrLenField("pszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField(
-            "pszHostName", "", size_is=lambda pkt: (pkt.MAX_COMPUTERNAME_LENGTH + 1)
-        ),
+        NDRConfVarStrLenField("pszHostName", "", size_is=lambda pkt: (15 + 1)),
         NDRConfVarStrLenField("pszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH),
         NDRIntField("dwcbSizeOfBlob", None, size_of="rguchBlob"),
         NDRConfStrLenField("rguchBlob", "", size_is=lambda pkt: pkt.dwcbSizeOfBlob),
@@ -71,9 +69,7 @@ class BuildContext_Request(NDRPacket):
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
         NDRPacketField("BindVersionSet", BIND_VERSION_SET(), BIND_VERSION_SET),
         NDRConfVarStrLenField("pszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField(
-            "pszHostName", "", size_is=lambda pkt: (pkt.MAX_COMPUTERNAME_LENGTH + 1)
-        ),
+        NDRConfVarStrLenField("pszHostName", "", size_is=lambda pkt: (15 + 1)),
         NDRConfVarStrLenField("pszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH),
         NDRConfVarStrLenField("pszGuidIn", "", size_is=lambda pkt: pkt.GUID_LENGTH),
         NDRConfVarStrLenField("pszGuidOut", "", size_is=lambda pkt: pkt.GUID_LENGTH),
@@ -159,9 +155,7 @@ class PokeW_Request(NDRPacket):
         NDRConfVarStrLenFieldUtf16(
             "pwszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszHostName", "", size_is=lambda pkt: (pkt.MAX_COMPUTERNAME_LENGTH + 1)
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszHostName", "", size_is=lambda pkt: (15 + 1)),
         NDRConfVarStrLenFieldUtf16(
             "pwszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH
         ),
@@ -181,9 +175,7 @@ class BuildContextW_Request(NDRPacket):
         NDRConfVarStrLenFieldUtf16(
             "pwszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszHostName", "", size_is=lambda pkt: (pkt.MAX_COMPUTERNAME_LENGTH + 1)
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszHostName", "", size_is=lambda pkt: (15 + 1)),
         NDRConfVarStrLenFieldUtf16(
             "pwszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH
         ),

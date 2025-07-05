@@ -1,4 +1,4 @@
- import "ms-adts_Claims.idl";
+ import "ms-adts-claims.idl";
   
  typedef struct _RPC_SID *PISID;
   
@@ -39,7 +39,7 @@
  }USER_SESSION_KEY;
   
  typedef struct _KERB_VALIDATION_INFO {
-     FILETIME LogonTime;            
+     FILETIME LogonTime;
      FILETIME LogoffTime;
      FILETIME KickOffTime;
      FILETIME PasswordLastSet;
@@ -109,7 +109,7 @@
   
 // typedef struct _PAC_SIGNATURE_DATA {
 //     ULONG SignatureType;
-//     UCHAR Signature[ANYSIZE_ARRAY];     // size is from the PAC_INFO_BUFFER - sizeof(ULONG)
+//     UCHAR Signature[ANYSIZE_ARRAY];  // size is from the PAC_INFO_BUFFER - sizeof(ULONG)
 // } PAC_SIGNATURE_DATA, *PPAC_SIGNATURE_DATA;
   
  typedef struct _S4U_DELEGATION_INFO {
@@ -148,7 +148,7 @@
  } PAC_DEVICE_CLAIMS_INFO, *PPAC_DEVICE_CLAIMS_INFO;
   
 // typedef struct _PAC_ATTRIBUTES_INFO {
-//     ULONG FlagsLength;                  // specified in bits
+//     ULONG FlagsLength;                // specified in bits
 //     ULONG Flags[ANYSIZE_ARRAY];
 // } PAC_ATTRIBUTES_INFO, *PPAC_ATTRIBUTES_INFO;
   

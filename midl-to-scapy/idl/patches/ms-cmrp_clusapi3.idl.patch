@@ -1,0 +1,51 @@
+diff --git a/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl b/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl
+index 7ab6d1b..0e2eeae 100644
+--- a/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl
++++ b/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl
+@@ -1,10 +1,11 @@
+     import "ms-dtyp.idl";
+     
++    #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF
++
+     [
+         uuid(b97db8b2-4c63-11cf-bff6-08002be23f2f), 
+         version(3.0)
+     ]
+-    #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF
+   
+     interface clusapi
+     {
+@@ -1428,7 +1429,6 @@
+          [case(DiskIdGuid)] GUID DiskGuid;
+     };
+     } CLUSDSK_DISKID, *PCLUSDSK_DISKID;
+-    }
+     error_status_t
+     Opnum158NotUsedOnWire(void);
+   
+@@ -1615,13 +1615,13 @@ error_status_t
+  error_status_t
+           ApiClusterNativeUpdateControl(
+               [in] handle_t  IDL_handle,
+-              [in] __RPC__in_ecount_full_opt(inBufferSize) UCHAR* inBuffer,
+-              [in] __RPC__in DWORD inBufferSize,
+-              [out] __RPC__out_ecount_part(outBufferSize, *lpBytesReturned) UCHAR* outBuffer,
+-              [in] __RPC__in DWORD outBufferSize,
+-              [out] __RPC__out LPDWORD lpBytesReturned,
+-              [out] __RPC__out LPDWORD lpBytesNeeded,
+-              [out] __RPC__out error_status_t *rpc_status
++              [in] UCHAR* inBuffer,
++              [in] DWORD inBufferSize,
++              [out] UCHAR* outBuffer,
++              [in] DWORD outBufferSize,
++              [out] LPDWORD lpBytesReturned,
++              [out] LPDWORD lpBytesNeeded,
++              [out] error_status_t *rpc_status
+           );
+            
+           // reserved opnums
+@@ -1705,3 +1705,4 @@ error_status_t
+           error_status_t Opnum263Reserved(void);
+           // not used on wire
+           error_status_t Opnum264NotUsedOnWire(void);
++    }

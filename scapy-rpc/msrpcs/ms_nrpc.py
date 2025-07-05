@@ -126,6 +126,7 @@ class NETLOGON_LOGON_INFO_CLASS(IntEnum):
     NetlogonInteractiveTransitiveInformation = 5
     NetlogonNetworkTransitiveInformation = 6
     NetlogonServiceTransitiveInformation = 7
+    NetlogonTicketLogonInformation = 8
 
 
 class RPC_UNICODE_STRING(NDRPacket):
@@ -245,6 +246,30 @@ class PNETLOGON_GENERIC_INFO(NDRPacket):
     ]
 
 
+class PNETLOGON_TICKET_LOGON_INFO(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRShortField("CriticalOptions", 0),
+        NDRShortField("ComputerDomainOptions", 0),
+        NDRShortField("TransitOptions", 0),
+        NDRShortField("KerberosOptions", 0),
+        NDRIntField("ServiceTicketLength", None, size_of="ServiceTicket"),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "ServiceTicket", "", size_is=lambda pkt: pkt.ServiceTicketLength
+            ),
+            deferred=True,
+        ),
+        NDRIntField("AdditionalTicketLength", None, size_of="AdditionalTicket"),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "AdditionalTicket", "", size_is=lambda pkt: pkt.AdditionalTicketLength
+            ),
+            deferred=True,
+        ),
+    ]
+
+
 class NETLOGON_VALIDATION_INFO_CLASS(IntEnum):
     NetlogonValidationUasInfo = 1
     NetlogonValidationSamInfo = 2
@@ -252,6 +277,7 @@ class NETLOGON_VALIDATION_INFO_CLASS(IntEnum):
     NetlogonValidationGenericInfo = 4
     NetlogonValidationGenericInfo2 = 5
     NetlogonValidationSamInfo4 = 6
+    NetlogonValidationTicketLogon = 7
 
 
 class PGROUP_MEMBERSHIP(NDRPacket):
@@ -471,6 +497,50 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
     ]
 
 
+class PNETLOGON_VALIDATION_TICKET_LOGON(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRByteField("A", 0),
+        NDRByteField("B", 0),
+        NDRByteField("C", 0),
+        NDRByteField("D", 0),
+        NDRShortField("SourceInformation", 0),
+        NDRShortField("TransitInformation", 0),
+        NDRIntField("KerberosStatus", 0),
+        NDRIntField("NetlogonStatus", 0),
+        NDRFullPointerField(
+            NDRPacketField(
+                "UserInformation",
+                PNETLOGON_VALIDATION_SAM_INFO4(),
+                PNETLOGON_VALIDATION_SAM_INFO4,
+            ),
+            deferred=True,
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "DeviceInformation",
+                PNETLOGON_VALIDATION_SAM_INFO4(),
+                PNETLOGON_VALIDATION_SAM_INFO4,
+            ),
+            deferred=True,
+        ),
+        NDRIntField("UserClaimsLength", None, size_of="UserClaims"),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "UserClaims", "", size_is=lambda pkt: pkt.UserClaimsLength
+            ),
+            deferred=True,
+        ),
+        NDRIntField("DeviceClaimsLength", None, size_of="DeviceClaims"),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "DeviceClaims", "", size_is=lambda pkt: pkt.DeviceClaimsLength
+            ),
+            deferred=True,
+        ),
+    ]
+
+
 class NetrLogonSamLogon_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("LogonServer", "")),
@@ -623,6 +693,25 @@ class NetrLogonSamLogon_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "LogonInformation",
+                            PNETLOGON_TICKET_LOGON_INFO(),
+                            PNETLOGON_TICKET_LOGON_INFO,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "LogonLevel", None)
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("LogonInformation", "", length=0),
             align=(2, 8),
@@ -716,6 +805,25 @@ class NetrLogonSamLogon_Response(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationSamInfo4
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ValidationInformation",
+                            PNETLOGON_VALIDATION_TICKET_LOGON(),
+                            PNETLOGON_VALIDATION_TICKET_LOGON,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ValidationLevel", None)
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
                         ),
                     ),
                 ),
@@ -878,6 +986,25 @@ class NetrLogonSamLogoff_Request(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == NETLOGON_LOGON_INFO_CLASS.NetlogonGenericInformation
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "LogonInformation",
+                            PNETLOGON_TICKET_LOGON_INFO(),
+                            PNETLOGON_TICKET_LOGON_INFO,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "LogonLevel", None)
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
                         ),
                     ),
                 ),
@@ -2613,14 +2740,21 @@ class NetrLogonGetCapabilities_Response(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRIntField("ServerCapabilities", 0),
+                    NDRIntField("Capabilities", 0),
                     (
                         (lambda pkt: getattr(pkt, "QueryLevel", None) == 1),
                         (lambda _, val: val.tag == 1),
                     ),
-                )
+                ),
+                (
+                    NDRIntField("Capabilities", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "QueryLevel", None) == 2),
+                        (lambda _, val: val.tag == 2),
+                    ),
+                ),
             ],
-            StrFixedLenField("ServerCapabilities", "", length=0),
+            StrFixedLenField("Capabilities", "", length=0),
             align=(4, 4),
             switch_fmt=("L", "L"),
         ),
@@ -3367,6 +3501,25 @@ class NetrLogonSamLogonEx_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "LogonInformation",
+                            PNETLOGON_TICKET_LOGON_INFO(),
+                            PNETLOGON_TICKET_LOGON_INFO,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "LogonLevel", None)
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("LogonInformation", "", length=0),
             align=(2, 8),
@@ -3454,6 +3607,25 @@ class NetrLogonSamLogonEx_Response(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationSamInfo4
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ValidationInformation",
+                            PNETLOGON_VALIDATION_TICKET_LOGON(),
+                            PNETLOGON_VALIDATION_TICKET_LOGON,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ValidationLevel", None)
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
                         ),
                     ),
                 ),
@@ -3836,6 +4008,25 @@ class NetrLogonSamLogonWithFlags_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "LogonInformation",
+                            PNETLOGON_TICKET_LOGON_INFO(),
+                            PNETLOGON_TICKET_LOGON_INFO,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "LogonLevel", None)
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_LOGON_INFO_CLASS.NetlogonTicketLogonInformation
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("LogonInformation", "", length=0),
             align=(2, 8),
@@ -3930,6 +4121,25 @@ class NetrLogonSamLogonWithFlags_Response(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationSamInfo4
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ValidationInformation",
+                            PNETLOGON_VALIDATION_TICKET_LOGON(),
+                            PNETLOGON_VALIDATION_TICKET_LOGON,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "ValidationLevel", None)
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == NETLOGON_VALIDATION_INFO_CLASS.NetlogonValidationTicketLogon
                         ),
                     ),
                 ),
@@ -4194,6 +4404,24 @@ class NetrChainSetClientAttributes_Response(NDRPacket):
     ]
 
 
+class NetrServerAuthenticateKerberos_Request(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("PrimaryName", "")),
+        NDRConfVarStrNullFieldUtf16("AccountName", ""),
+        NDRInt3264EnumField("AccountType", 0, NETLOGON_SECURE_CHANNEL_TYPE),
+        NDRConfVarStrNullFieldUtf16("ComputerName", ""),
+        NDRIntField("NegotiateFlags", 0),
+    ]
+
+
+class NetrServerAuthenticateKerberos_Response(NDRPacket):
+    fields_desc = [
+        NDRIntField("NegotiateFlags", 0),
+        NDRIntField("AccountRid", 0),
+        NDRIntField("status", 0),
+    ]
+
+
 LOGON_OPNUMS = {
     0: DceRpcOp(NetrLogonUasLogon_Request, NetrLogonUasLogon_Response),
     1: DceRpcOp(NetrLogonUasLogoff_Request, NetrLogonUasLogoff_Response),
@@ -4270,6 +4498,9 @@ LOGON_OPNUMS = {
     ),
     49: DceRpcOp(
         NetrChainSetClientAttributes_Request, NetrChainSetClientAttributes_Response
+    ),
+    50: DceRpcOp(
+        NetrServerAuthenticateKerberos_Request, NetrServerAuthenticateKerberos_Response
     ),
 }
 register_dcerpc_interface(

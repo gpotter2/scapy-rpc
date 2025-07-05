@@ -2,6 +2,7 @@
 *.egg-info
 .vscode
 parser.out
+dist/
 
 # Custom
 midl-to-scapy/idl/custom

@@ -1611,9 +1611,20 @@ error_status_t
             [ in ] ULONGLONG flags,
   [ out ] error_status_t *rpc_status
           );
+ 
+ error_status_t
+          ApiClusterNativeUpdateControl(
+              [in] handle_t  IDL_handle,
+              [in] UCHAR* inBuffer,
+              [in] DWORD inBufferSize,
+              [out] UCHAR* outBuffer,
+              [in] DWORD outBufferSize,
+              [out] LPDWORD lpBytesReturned,
+              [out] LPDWORD lpBytesNeeded,
+              [out] error_status_t *rpc_status
+          );
            
           // reserved opnums
-          error_status_t Opnum185Reserved(void);
           error_status_t Opnum186Reserved(void);
           error_status_t Opnum187Reserved(void);
           error_status_t Opnum188Reserved(void);

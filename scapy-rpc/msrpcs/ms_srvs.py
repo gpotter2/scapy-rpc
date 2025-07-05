@@ -1383,7 +1383,7 @@ class LPSERVER_INFO_101(NDRPacket):
         ),
         NDRIntField("sv101_version_major", 0),
         NDRIntField("sv101_version_minor", 0),
-        NDRIntField("sv101_type", 0),
+        NDRIntField("sv101_version_type", 0),
         NDRFullPointerField(
             NDRConfVarStrNullFieldUtf16("sv101_comment", ""), deferred=True
         ),

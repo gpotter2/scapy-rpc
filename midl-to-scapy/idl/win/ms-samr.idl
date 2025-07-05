@@ -417,13 +417,27 @@
  } SAMPR_ALIAS_INFO_BUFFER, *PSAMPR_ALIAS_INFO_BUFFER;
   
  typedef struct _SAMPR_ENCRYPTED_USER_PASSWORD {
-     unsigned char Buffer[ (256 * 2) + 4 ];
- } SAMPR_ENCRYPTED_USER_PASSWORD, *PSAMPR_ENCRYPTED_USER_PASSWORD;
+     unsigned char Buffer[(256 * 2) + 4];
+ } SAMPR_ENCRYPTED_USER_PASSWORD,
+   *PSAMPR_ENCRYPTED_USER_PASSWORD;
+  
+ typedef struct _SAMPR_USER_PASSWORD {
+     wchar_t Buffer[256];
+     unsigned long Length;
+ } SAMPR_USER_PASSWORD,
+   *PSAMPR_USER_PASSWORD;
   
  typedef struct _SAMPR_ENCRYPTED_USER_PASSWORD_NEW {
-     unsigned char Buffer[ (256 * 2) + 4 + 16];
+     unsigned char Buffer[(256 * 2) + 4 + 16];
  } SAMPR_ENCRYPTED_USER_PASSWORD_NEW,
-   *PSAMPR_ENCRYPTED_USER_PASSWORD_NEW;
+  *PSAMPR_ENCRYPTED_USER_PASSWORD_NEW;
+ 
+typedef struct _SAMPR_USER_PASSWORD_NEW {
+     WCHAR Buffer[256];
+     ULONG Length;
+     UCHAR ClearSalt[16];
+ } SAMPR_USER_PASSWORD_NEW,
+   *PSAMPR_USER_PASSWORD_NEW;
   
  typedef struct _USER_PRIMARY_GROUP_INFORMATION {
      unsigned long PrimaryGroupId;
@@ -1392,10 +1406,10 @@
      );
   
  // Opnum 68
- void Opnum68NotUsedOnWire(void);
+     void Opnum68NotUsedOnWire(void);
   
  // Opnum 69
- void Opnum69NotUsedOnWire(void);
+     void Opnum69NotUsedOnWire(void);
 
  // Opnum 70
     void Opnum70NotUsedOnWire(void);
@@ -1413,6 +1427,31 @@
         [in,unique]         PRPC_UNICODE_STRING             ServerName,
         [in]                PRPC_UNICODE_STRING             UserName,
         [in]                PSAMPR_ENCRYPTED_PASSWORD_AES   EncryptedPassword
-     ); }
+     ); 
+ 
+// opnum 74
+   NTSTATUS
+    SamrValidateComputerAccountReuseAttempt(
+         [in]  SAMPR_HANDLE ServerHandle,
+         [in]  PRPC_SID   ComputerSid, 
+         [out] BOOL*      Result
+     );
+ 
+// opnum 75
+    void Opnum75NotUsedOnWire(void);
+ 
+// opnum 76
+    void Opnum76NotUsedOnWire(void);
+ 
+// opnum 77
+    NTSTATUS
+    SamrAccountIsDelegatedManagedServiceAccount(
+        [in]  SAMPR_HANDLE ServerHandle,
+        [in]  PRPC_UNICODE_STRING AccountName,
+        [out] BOOLEAN*  Result,
+        [out] BOOLEAN*  Authorized
+        );
+ 
+}
 
   

@@ -1,0 +1,101 @@
+diff --git a/midl-to-scapy/idl/win/ms-pla.idl b/midl-to-scapy/idl/win/ms-pla.idl
+index 204c94b..8431716 100644
+--- a/midl-to-scapy/idl/win/ms-pla.idl
++++ b/midl-to-scapy/idl/win/ms-pla.idl
+@@ -1,6 +1,6 @@
+  import "ms-dtyp.idl";
+  import "ms-oaut.idl";
+- #define SAFEARRAY(item) SAFEARRAY 
++// #define SAFEARRAY(item) SAFEARRAY 
+   
+   typedef byte BYTE;
+   
+@@ -145,8 +145,8 @@
+          [propput] HRESULT DisplayName([in]BSTR DisplayName);
+          [propget] HRESULT DisplayNameUnresolved([out, retval] BSTR *name);
+   
+-         [propget] HRESULT Keywords([out, retval] SAFEARRAY(BSTR) * keywords);
+-         [propput] HRESULT Keywords([in]SAFEARRAY(BSTR) keywords);
++         [propget] HRESULT Keywords([out, retval] SAFEARRAY * keywords);
++         [propput] HRESULT Keywords([in]SAFEARRAY keywords);
+   
+          [propget] HRESULT LatestOutputLocation([out, retval]BSTR* path);
+          [propput] HRESULT LatestOutputLocation([in]BSTR path);
+@@ -372,8 +372,8 @@
+          [propget] HRESULT DataSourceName([out, retval]BSTR* dsn);
+          [propput] HRESULT DataSourceName([in]BSTR dsn);
+   
+-         [propget] HRESULT PerformanceCounters([out, retval]SAFEARRAY(BSTR)* counters);
+-         [propput] HRESULT PerformanceCounters([in]SAFEARRAY(BSTR) counters);
++         [propget] HRESULT PerformanceCounters([out, retval]SAFEARRAY* counters);
++         [propput] HRESULT PerformanceCounters([in]SAFEARRAY counters);
+   
+          [propget] HRESULT LogFileFormat([out, retval]FileFormat* format);
+          [propput] HRESULT LogFileFormat([in]FileFormat format);
+@@ -402,17 +402,17 @@
+          [propget] HRESULT FileMaxTotalSize([out, retval] unsigned long* size);
+          [propput] HRESULT FileMaxTotalSize([in] unsigned long size);
+   
+-         [propget] HRESULT Files([out, retval] SAFEARRAY(BSTR) *Files);
+-         [propput] HRESULT Files([in] SAFEARRAY(BSTR) Files);
++         [propget] HRESULT Files([out, retval] SAFEARRAY *Files);
++         [propput] HRESULT Files([in] SAFEARRAY Files);
+   
+-         [propget] HRESULT ManagementQueries([out, retval] SAFEARRAY(BSTR) *Queries);
+-         [propput] HRESULT ManagementQueries([in] SAFEARRAY(BSTR) Queries);
++         [propget] HRESULT ManagementQueries([out, retval] SAFEARRAY *Queries);
++         [propput] HRESULT ManagementQueries([in] SAFEARRAY Queries);
+   
+          [propget] HRESULT QueryNetworkAdapters([out, retval] VARIANT_BOOL *network);
+          [propput] HRESULT QueryNetworkAdapters([in] VARIANT_BOOL network);
+   
+-         [propget] HRESULT RegistryKeys([out, retval] SAFEARRAY(BSTR) *query);
+-         [propput] HRESULT RegistryKeys([in] SAFEARRAY(BSTR) query);
++         [propget] HRESULT RegistryKeys([out, retval] SAFEARRAY *query);
++         [propput] HRESULT RegistryKeys([in] SAFEARRAY query);
+   
+          [propget] HRESULT RegistryMaxRecursiveDepth([out, retval] unsigned long* depth);
+          [propput] HRESULT RegistryMaxRecursiveDepth([in] unsigned long depth);
+@@ -428,8 +428,8 @@
+      ]
+      interface IAlertDataCollector : IDataCollector
+      {
+-         [propget] HRESULT AlertThresholds([out, retval]SAFEARRAY(BSTR)* alerts);
+-         [propput] HRESULT AlertThresholds([in]SAFEARRAY(BSTR) alerts);
++         [propget] HRESULT AlertThresholds([out, retval]SAFEARRAY* alerts);
++         [propput] HRESULT AlertThresholds([in]SAFEARRAY alerts);
+   
+          [propget] HRESULT EventLog([out, retval]VARIANT_BOOL* log);
+          [propput] HRESULT EventLog([in]VARIANT_BOOL log);
+@@ -541,14 +541,14 @@
+          [propget] HRESULT LogFilePath([out, retval]BSTR* logfilepath);
+          [propput] HRESULT LogFilePath([in]BSTR logfilepath);
+   
+-         [propget] HRESULT IncludeModules([out, retval]SAFEARRAY(BSTR)* includemodules);
+-         [propput] HRESULT IncludeModules([in]SAFEARRAY(BSTR) includemodules);
++         [propget] HRESULT IncludeModules([out, retval]SAFEARRAY* includemodules);
++         [propput] HRESULT IncludeModules([in]SAFEARRAY includemodules);
+   
+-         [propget] HRESULT IncludeApis([out, retval]SAFEARRAY(BSTR)* includeapis);
+-         [propput] HRESULT IncludeApis([in]SAFEARRAY(BSTR) includeapis);
++         [propget] HRESULT IncludeApis([out, retval]SAFEARRAY* includeapis);
++         [propput] HRESULT IncludeApis([in]SAFEARRAY includeapis);
+   
+-         [propget] HRESULT ExcludeApis([out, retval]SAFEARRAY(BSTR)* excludeapis);
+-         [propput] HRESULT ExcludeApis([in]SAFEARRAY(BSTR) excludeapis);
++         [propget] HRESULT ExcludeApis([out, retval]SAFEARRAY* excludeapis);
++         [propput] HRESULT ExcludeApis([in]SAFEARRAY excludeapis);
+      };
+   
+      [
+@@ -575,8 +575,8 @@
+          [propget] HRESULT FilterType([out, retval] ULONG *pulType);
+          [propput] HRESULT FilterType([in] ULONG ulType);
+   
+-         [propget] HRESULT FilterData([out, retval] SAFEARRAY(BYTE)*ppData);
+-         [propput] HRESULT FilterData([in] SAFEARRAY(BYTE) pData);
++         [propget] HRESULT FilterData([out, retval] SAFEARRAY*ppData);
++         [propput] HRESULT FilterData([in] SAFEARRAY pData);
+   
+          HRESULT Query([in] BSTR bstrName, [in, unique] BSTR bstrServer);
+          HRESULT Resolve([in] IDispatch* pFrom);

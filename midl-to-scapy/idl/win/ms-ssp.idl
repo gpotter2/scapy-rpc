@@ -1,5 +1,5 @@
- import "../win/ms-rpce.idl";
- import "../win/ms-dtyp.idl";
+ import "ms-rpce.idl";
+ import "ms-dtyp.idl";
 
  const unsigned long MAX_MASTER_SECRET_BYTES=16;
  typedef [range(MAX_MASTER_SECRET_BYTES,MAX_MASTER_SECRET_BYTES)] unsigned long SizeOfMasterSecretInBytes;

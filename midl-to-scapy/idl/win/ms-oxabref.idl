@@ -1,4 +1,4 @@
- import "../win/ms-dtyp.idl";
+ import "ms-dtyp.idl";
  [ uuid (1544f5e0-613c-11d1-93df-00c04fd7bd09),
    version(1.0),
    pointer_default(unique)]

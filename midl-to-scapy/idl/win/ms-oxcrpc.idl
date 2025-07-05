@@ -1,5 +1,5 @@
- import "../win/ms-rpce.idl";
- import "../win/ms-dtyp.idl";
+ import "ms-rpce.idl";
+ import "ms-dtyp.idl";
   
  typedef [context_handle] void * CXH;
  typedef [context_handle] void * ACXH;
@@ -12,20 +12,20 @@
    pointer_default(unique)]
  interface emsmdb
  {
- long Opnum0Reserved(
+ long __stdcall Opnum0Reserved(
  );
   
- long EcDoDisconnect(
+ long __stdcall EcDoDisconnect(
  [in, out, ref] CXH * pcxh
  );
   
- long Opnum2Reserved(
+ long __stdcall Opnum2Reserved(
  );
   
- long Opnum3Reserved(
+ long __stdcall Opnum3Reserved(
  );
   
- long EcRRegisterPushNotification(
+ long __stdcall EcRRegisterPushNotification(
  [in, out, ref] CXH * pcxh,
  [in] unsigned long iRpc,
  [in, size_is(cbContext)]unsigned char rgbContext[],
@@ -36,23 +36,23 @@
  [out] unsigned long *hNotification
  );
   
- long Opnum5Reserved(
+ long __stdcall Opnum5Reserved(
  );
   
- long EcDummyRpc(
+ long __stdcall EcDummyRpc(
  [in] handle_t hBinding
  );
   
- long Opnum7Reserved(
+ long __stdcall Opnum7Reserved(
  );
   
- long Opnum8Reserved(
+ long __stdcall Opnum8Reserved(
  );
   
- long Opnum9Reserved(
+ long __stdcall Opnum9Reserved(
  );
   
- long EcDoConnectEx(
+ long __stdcall EcDoConnectEx(
  [in] handle_t hBinding,
  [out, ref] CXH * pcxh,
  [in, string] unsigned char * szUserDN,
@@ -80,7 +80,7 @@
  [in, out] SMALL_RANGE_ULONG *pcbAuxOut
  );
   
- long EcDoRpcExt2(
+ long __stdcall EcDoRpcExt2(
  [in, out, ref] CXH * pcxh,
  [in, out] unsigned long *pulFlags,
  [in, size_is(cbIn)] unsigned char rgbIn[],
@@ -94,13 +94,13 @@
  [out] unsigned long *pulTransTime
  );
   
- long Opnum12Reserved(
+ long __stdcall Opnum12Reserved(
  );
   
- long Opnum13Reserved(
+ long __stdcall Opnum13Reserved(
  );
   
- long EcDoAsyncConnectEx(
+ long __stdcall EcDoAsyncConnectEx(
  [in] CXH cxh,
  [out, ref] ACXH * pacxh
  );
@@ -112,7 +112,7 @@
    pointer_default(unique)]
  interface asyncemsmdb
  {
- long EcDoAsyncWaitEx(
+ long __stdcall EcDoAsyncWaitEx(
  [in] ACXH acxh,
  [in] unsigned long ulFlagsIn,
  [out] unsigned long *pulFlagsOut

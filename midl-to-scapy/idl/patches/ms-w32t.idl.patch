@@ -1,0 +1,10 @@
+diff --git a/midl-to-scapy/idl/win/ms-w32t.idl b/midl-to-scapy/idl/win/ms-w32t.idl
+index 7bf01a9..7999699 100644
+--- a/midl-to-scapy/idl/win/ms-w32t.idl
++++ b/midl-to-scapy/idl/win/ms-w32t.idl
+@@ -1,3 +1,5 @@
++ import "ms-dtyp.idl";
++
+  typedef struct {
+      unsigned __int32 ulSize;
+      unsigned __int32 ulResolveAttempts;

@@ -34,74 +34,6 @@ from scapy.layers.dcerpc import (
 )
 
 
-class DNS_RPC_TYPEID(IntEnum):
-    DNSSRV_TYPEID_ANY = -1
-    DNSSRV_TYPEID_NULL = 0
-    DNSSRV_TYPEID_DWORD = 1
-    DNSSRV_TYPEID_LPSTR = 2
-    DNSSRV_TYPEID_LPWSTR = 3
-    DNSSRV_TYPEID_IPARRAY = 4
-    DNSSRV_TYPEID_BUFFER = 5
-    DNSSRV_TYPEID_SERVER_INFO_W2K = 6
-    DNSSRV_TYPEID_STATS = 7
-    DNSSRV_TYPEID_FORWARDERS_W2K = 8
-    DNSSRV_TYPEID_ZONE_W2K = 9
-    DNSSRV_TYPEID_ZONE_INFO_W2K = 10
-    DNSSRV_TYPEID_ZONE_SECONDARIES_W2K = 11
-    DNSSRV_TYPEID_ZONE_DATABASE_W2K = 12
-    DNSSRV_TYPEID_ZONE_TYPE_RESET_W2K = 13
-    DNSSRV_TYPEID_ZONE_CREATE_W2K = 14
-    DNSSRV_TYPEID_NAME_AND_PARAM = 15
-    DNSSRV_TYPEID_ZONE_LIST_W2K = 16
-    DNSSRV_TYPEID_ZONE_RENAME = 17
-    DNSSRV_TYPEID_ZONE_EXPORT = 18
-    DNSSRV_TYPEID_SERVER_INFO_DOTNET = 19
-    DNSSRV_TYPEID_FORWARDERS_DOTNET = 20
-    DNSSRV_TYPEID_ZONE = 21
-    DNSSRV_TYPEID_ZONE_INFO_DOTNET = 22
-    DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET = 23
-    DNSSRV_TYPEID_ZONE_DATABASE = 24
-    DNSSRV_TYPEID_ZONE_TYPE_RESET_DOTNET = 25
-    DNSSRV_TYPEID_ZONE_CREATE_DOTNET = 26
-    DNSSRV_TYPEID_ZONE_LIST = 27
-    DNSSRV_TYPEID_DP_ENUM = 28
-    DNSSRV_TYPEID_DP_INFO = 29
-    DNSSRV_TYPEID_DP_LIST = 30
-    DNSSRV_TYPEID_ENLIST_DP = 31
-    DNSSRV_TYPEID_ZONE_CHANGE_DP = 32
-    DNSSRV_TYPEID_ENUM_ZONES_FILTER = 33
-    DNSSRV_TYPEID_ADDRARRAY = 34
-    DNSSRV_TYPEID_SERVER_INFO = 35
-    DNSSRV_TYPEID_ZONE_INFO = 36
-    DNSSRV_TYPEID_FORWARDERS = 37
-    DNSSRV_TYPEID_ZONE_SECONDARIES = 38
-    DNSSRV_TYPEID_ZONE_TYPE_RESET = 39
-    DNSSRV_TYPEID_ZONE_CREATE = 40
-    DNSSRV_TYPEID_IP_VALIDATE = 41
-    DNSSRV_TYPEID_AUTOCONFIGURE = 42
-    DNSSRV_TYPEID_UTF8_STRING_LIST = 43
-    DNSSRV_TYPEID_UNICODE_STRING_LIST = 44
-    DNSSRV_TYPEID_SKD = 45
-    DNSSRV_TYPEID_SKD_LIST = 46
-    DNSSRV_TYPEID_SKD_STATE = 47
-    DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR = 48
-    DNSSRV_TYPEID_TRUST_POINT_LIST = 49
-    DNSSRV_TYPEID_TRUST_ANCHOR_LIST = 50
-    DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS = 51
-    DNSSRV_TYPEID_ZONE_SCOPE_ENUM = 52
-    DNSSRV_TYPEID_ZONE_STATS = 53
-    DNSSRV_TYPEID_ZONE_SCOPE_CREATE = 54
-    DNSSRV_TYPEID_ZONE_SCOPE_INFO = 55
-    DNSSRV_TYPEID_SCOPE_ENUM = 56
-    DNSSRV_TYPEID_CLIENT_SUBNET_RECORD = 57
-    DNSSRV_TYPEID_POLICY = 58
-    DNSSRV_TYPEID_POLICY_NAME = 59
-    DNSSRV_TYPEID_POLICY_ENUM = 60
-    DNSSRV_TYPEID_RRL = 61
-    DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE = 62
-    DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM = 63
-
-
 class PIP4_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["AddrArray"]
@@ -1672,9 +1604,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -1682,9 +1614,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -1692,9 +1624,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -1702,9 +1634,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -1714,12 +1646,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -1729,9 +1658,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -1745,12 +1674,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -1760,9 +1686,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -1774,12 +1700,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -1789,12 +1712,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -1806,12 +1726,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -1825,11 +1742,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -1844,11 +1761,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -1863,12 +1780,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -1880,12 +1794,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -1897,12 +1808,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -1916,11 +1824,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -1935,11 +1843,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -1950,9 +1858,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -1966,11 +1874,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -1985,11 +1893,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -2002,12 +1910,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -2021,11 +1926,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -2038,12 +1943,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -2057,12 +1959,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -2072,12 +1971,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -2087,12 +1983,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -2102,12 +1995,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -2119,12 +2009,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -2136,12 +2023,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -2155,11 +2039,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -2170,12 +2054,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -2187,12 +2068,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -2206,12 +2084,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -2223,12 +2098,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -2242,11 +2114,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -2259,12 +2131,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -2276,12 +2145,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -2293,12 +2159,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -2312,11 +2175,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -2331,11 +2194,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -2346,9 +2209,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -2358,12 +2221,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -2375,12 +2235,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -2394,11 +2251,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -2413,11 +2270,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -2432,11 +2289,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -2451,11 +2308,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -2470,12 +2327,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -2487,12 +2341,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -2506,11 +2357,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -2525,12 +2376,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -2544,12 +2392,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -2563,11 +2408,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -2578,9 +2423,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -2592,12 +2437,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -2611,12 +2453,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -2628,9 +2467,9 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -2644,11 +2483,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -2663,11 +2502,11 @@ class R_DnssrvOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -2701,9 +2540,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -2711,9 +2550,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -2721,9 +2560,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -2731,9 +2570,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -2743,12 +2582,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -2758,9 +2594,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -2774,12 +2610,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -2789,9 +2622,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -2803,12 +2636,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -2818,12 +2648,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -2835,12 +2662,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -2854,11 +2678,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -2873,11 +2697,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -2892,12 +2716,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -2909,12 +2730,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -2926,12 +2744,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -2945,11 +2760,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -2964,11 +2779,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -2979,9 +2794,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -2995,11 +2810,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -3014,11 +2829,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -3031,12 +2846,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -3050,11 +2862,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -3067,12 +2879,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -3086,12 +2895,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -3101,12 +2907,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -3116,12 +2919,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -3131,12 +2931,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -3148,12 +2945,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -3165,12 +2959,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -3184,11 +2975,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -3199,12 +2990,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -3216,12 +3004,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -3235,12 +3020,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -3252,12 +3034,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -3271,11 +3050,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -3288,12 +3067,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -3305,12 +3081,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -3322,12 +3095,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -3341,11 +3111,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -3360,11 +3130,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -3375,9 +3145,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -3387,12 +3157,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -3404,12 +3171,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -3423,11 +3187,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -3442,11 +3206,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -3461,11 +3225,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -3480,11 +3244,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -3499,12 +3263,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -3516,12 +3277,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -3535,11 +3293,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -3554,12 +3312,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -3573,12 +3328,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -3592,11 +3344,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -3607,9 +3359,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -3621,12 +3373,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -3640,12 +3389,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -3657,9 +3403,9 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -3673,11 +3419,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -3692,11 +3438,11 @@ class R_DnssrvQuery_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -3722,9 +3468,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -3732,9 +3478,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -3742,9 +3488,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -3752,9 +3498,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -3764,12 +3510,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -3779,9 +3522,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -3795,12 +3538,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -3810,9 +3550,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -3824,12 +3564,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -3839,12 +3576,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -3856,12 +3590,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -3875,11 +3606,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -3894,11 +3625,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -3913,12 +3644,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -3930,12 +3658,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -3947,12 +3672,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -3966,11 +3688,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -3985,11 +3707,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -4000,9 +3722,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -4016,11 +3738,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -4035,11 +3757,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -4052,12 +3774,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -4071,11 +3790,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -4088,12 +3807,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -4107,12 +3823,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -4122,12 +3835,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -4137,12 +3847,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -4152,12 +3859,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -4169,12 +3873,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -4186,12 +3887,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -4205,11 +3903,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -4220,12 +3918,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -4237,12 +3932,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -4256,12 +3948,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -4273,12 +3962,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -4292,11 +3978,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -4309,12 +3995,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -4326,12 +4009,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -4343,12 +4023,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -4362,11 +4039,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -4381,11 +4058,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -4396,9 +4073,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -4408,12 +4085,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -4425,12 +4099,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -4444,11 +4115,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -4463,11 +4134,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -4482,11 +4153,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -4501,11 +4172,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -4520,12 +4191,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -4537,12 +4205,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -4556,11 +4221,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -4575,12 +4240,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -4594,12 +4256,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -4613,11 +4272,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -4628,9 +4287,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -4642,12 +4301,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -4661,12 +4317,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -4678,9 +4331,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -4694,11 +4347,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -4713,11 +4366,11 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -4739,9 +4392,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -4749,9 +4402,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -4759,9 +4412,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -4769,9 +4422,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -4781,12 +4434,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -4796,9 +4446,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -4812,12 +4462,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -4827,9 +4474,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -4841,12 +4488,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -4856,12 +4500,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -4873,12 +4514,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -4892,11 +4530,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -4911,11 +4549,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -4930,12 +4568,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -4947,12 +4582,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -4964,12 +4596,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -4983,11 +4612,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -5002,11 +4631,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -5017,9 +4646,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -5033,11 +4662,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -5052,11 +4681,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -5069,12 +4698,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -5088,11 +4714,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -5105,12 +4731,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -5124,12 +4747,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -5139,12 +4759,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -5154,12 +4771,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -5169,12 +4783,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -5186,12 +4797,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -5203,12 +4811,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -5222,11 +4827,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -5237,12 +4842,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -5254,12 +4856,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -5273,12 +4872,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -5290,12 +4886,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -5309,11 +4902,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -5326,12 +4919,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -5343,12 +4933,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -5360,12 +4947,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -5379,11 +4963,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -5398,11 +4982,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -5413,9 +4997,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -5425,12 +5009,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -5442,12 +5023,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -5461,11 +5039,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -5480,11 +5058,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -5499,11 +5077,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -5518,11 +5096,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -5537,12 +5115,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -5554,12 +5129,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -5573,11 +5145,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -5592,12 +5164,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -5611,12 +5180,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -5630,11 +5196,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -5645,9 +5211,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -5659,12 +5225,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -5678,12 +5241,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -5695,9 +5255,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -5711,11 +5271,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -5730,11 +5290,11 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -5819,9 +5379,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -5829,9 +5389,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -5839,9 +5399,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -5849,9 +5409,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -5861,12 +5421,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -5876,9 +5433,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -5892,12 +5449,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -5907,9 +5461,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -5921,12 +5475,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -5936,12 +5487,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -5953,12 +5501,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -5972,11 +5517,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -5991,11 +5536,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -6010,12 +5555,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -6027,12 +5569,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -6044,12 +5583,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -6063,11 +5599,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -6082,11 +5618,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -6097,9 +5633,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -6113,11 +5649,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -6132,11 +5668,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -6149,12 +5685,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -6168,11 +5701,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -6185,12 +5718,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -6204,12 +5734,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -6219,12 +5746,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -6234,12 +5758,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -6249,12 +5770,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -6266,12 +5784,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -6283,12 +5798,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -6302,11 +5814,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -6317,12 +5829,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -6334,12 +5843,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -6353,12 +5859,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -6370,12 +5873,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -6389,11 +5889,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -6406,12 +5906,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -6423,12 +5920,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -6440,12 +5934,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -6459,11 +5950,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -6478,11 +5969,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -6493,9 +5984,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -6505,12 +5996,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -6522,12 +6010,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -6541,11 +6026,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -6560,11 +6045,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -6579,11 +6064,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -6598,11 +6083,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -6617,12 +6102,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -6634,12 +6116,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -6653,11 +6132,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -6672,12 +6151,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -6691,12 +6167,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -6710,11 +6183,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -6725,9 +6198,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -6739,12 +6212,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -6758,12 +6228,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -6775,9 +6242,9 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -6791,11 +6258,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -6810,11 +6277,11 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -6850,9 +6317,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -6860,9 +6327,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -6870,9 +6337,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -6880,9 +6347,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -6892,12 +6359,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -6907,9 +6371,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -6923,12 +6387,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -6938,9 +6399,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -6952,12 +6413,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -6967,12 +6425,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -6984,12 +6439,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -7003,11 +6455,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -7022,11 +6474,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -7041,12 +6493,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -7058,12 +6507,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -7075,12 +6521,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -7094,11 +6537,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -7113,11 +6556,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -7128,9 +6571,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -7144,11 +6587,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -7163,11 +6606,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -7180,12 +6623,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -7199,11 +6639,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -7216,12 +6656,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -7235,12 +6672,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -7250,12 +6684,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -7265,12 +6696,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -7280,12 +6708,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -7297,12 +6722,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -7314,12 +6736,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -7333,11 +6752,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -7348,12 +6767,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -7365,12 +6781,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -7384,12 +6797,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -7401,12 +6811,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -7420,11 +6827,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -7437,12 +6844,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -7454,12 +6858,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -7471,12 +6872,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -7490,11 +6888,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -7509,11 +6907,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -7524,9 +6922,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -7536,12 +6934,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -7553,12 +6948,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -7572,11 +6964,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -7591,11 +6983,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -7610,11 +7002,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -7629,11 +7021,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -7648,12 +7040,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -7665,12 +7054,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -7684,11 +7070,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -7703,12 +7089,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -7722,12 +7105,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -7741,11 +7121,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -7756,9 +7136,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -7770,12 +7150,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -7789,12 +7166,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -7806,9 +7180,9 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -7822,11 +7196,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -7841,11 +7215,11 @@ class R_DnssrvQuery2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -7873,9 +7247,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -7883,9 +7257,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -7893,9 +7267,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -7903,9 +7277,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -7915,12 +7289,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -7930,9 +7301,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -7946,12 +7317,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -7961,9 +7329,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -7975,12 +7343,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -7990,12 +7355,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -8007,12 +7369,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -8026,11 +7385,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -8045,11 +7404,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -8064,12 +7423,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -8081,12 +7437,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -8098,12 +7451,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -8117,11 +7467,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -8136,11 +7486,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -8151,9 +7501,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -8167,11 +7517,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -8186,11 +7536,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -8203,12 +7553,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -8222,11 +7569,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -8239,12 +7586,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -8258,12 +7602,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -8273,12 +7614,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -8288,12 +7626,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -8303,12 +7638,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -8320,12 +7652,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -8337,12 +7666,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -8356,11 +7682,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -8371,12 +7697,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -8388,12 +7711,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -8407,12 +7727,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -8424,12 +7741,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -8443,11 +7757,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -8460,12 +7774,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -8477,12 +7788,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -8494,12 +7802,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -8513,11 +7818,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -8532,11 +7837,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -8547,9 +7852,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -8559,12 +7864,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -8576,12 +7878,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -8595,11 +7894,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -8614,11 +7913,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -8633,11 +7932,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -8652,11 +7951,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -8671,12 +7970,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -8688,12 +7984,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -8707,11 +8000,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -8726,12 +8019,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -8745,12 +8035,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -8764,11 +8051,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -8779,9 +8066,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -8793,12 +8080,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -8812,12 +8096,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -8829,9 +8110,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -8845,11 +8126,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -8864,11 +8145,11 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -8890,9 +8171,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -8900,9 +8181,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -8910,9 +8191,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -8920,9 +8201,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -8932,12 +8213,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -8947,9 +8225,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -8963,12 +8241,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -8978,9 +8253,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -8992,12 +8267,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -9007,12 +8279,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -9024,12 +8293,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -9043,11 +8309,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -9062,11 +8328,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -9081,12 +8347,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -9098,12 +8361,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -9115,12 +8375,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -9134,11 +8391,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -9153,11 +8410,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -9168,9 +8425,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -9184,11 +8441,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -9203,11 +8460,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -9220,12 +8477,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -9239,11 +8493,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -9256,12 +8510,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -9275,12 +8526,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -9290,12 +8538,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -9305,12 +8550,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -9320,12 +8562,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -9337,12 +8576,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -9354,12 +8590,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -9373,11 +8606,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -9388,12 +8621,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -9405,12 +8635,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -9424,12 +8651,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -9441,12 +8665,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -9460,11 +8681,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -9477,12 +8698,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -9494,12 +8712,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -9511,12 +8726,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -9530,11 +8742,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -9549,11 +8761,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -9564,9 +8776,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -9576,12 +8788,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -9593,12 +8802,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -9612,11 +8818,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -9631,11 +8837,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -9650,11 +8856,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -9669,11 +8875,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -9688,12 +8894,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -9705,12 +8908,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -9724,11 +8924,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -9743,12 +8943,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -9762,12 +8959,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -9781,11 +8975,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -9796,9 +8990,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -9810,12 +9004,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -9829,12 +9020,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -9846,9 +9034,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -9862,11 +9050,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -9881,11 +9069,11 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -10003,9 +9191,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -10013,9 +9201,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -10023,9 +9211,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -10033,9 +9221,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -10045,12 +9233,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -10060,9 +9245,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -10076,12 +9261,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -10091,9 +9273,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -10105,12 +9287,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -10120,12 +9299,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -10137,12 +9313,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -10156,11 +9329,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -10175,11 +9348,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -10194,12 +9367,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -10211,12 +9381,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -10228,12 +9395,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -10247,11 +9411,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -10266,11 +9430,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -10281,9 +9445,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -10297,11 +9461,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -10316,11 +9480,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -10333,12 +9497,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -10352,11 +9513,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -10369,12 +9530,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -10388,12 +9546,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -10403,12 +9558,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -10418,12 +9570,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -10433,12 +9582,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -10450,12 +9596,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -10467,12 +9610,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -10486,11 +9626,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -10501,12 +9641,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -10518,12 +9655,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -10537,12 +9671,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -10554,12 +9685,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -10573,11 +9701,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -10590,12 +9718,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -10607,12 +9732,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -10624,12 +9746,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -10643,11 +9762,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -10662,11 +9781,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -10677,9 +9796,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -10689,12 +9808,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -10706,12 +9822,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -10725,11 +9838,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -10744,11 +9857,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -10763,11 +9876,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -10782,11 +9895,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -10801,12 +9914,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -10818,12 +9928,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -10837,11 +9944,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -10856,12 +9963,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -10875,12 +9979,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -10894,11 +9995,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -10909,9 +10010,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -10923,12 +10024,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -10942,12 +10040,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -10959,9 +10054,9 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -10975,11 +10070,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -10994,11 +10089,11 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -11035,9 +10130,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -11045,9 +10140,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -11055,9 +10150,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -11065,9 +10160,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -11077,12 +10172,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -11092,9 +10184,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -11108,12 +10200,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -11123,9 +10212,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -11137,12 +10226,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -11152,12 +10238,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -11169,12 +10252,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -11188,11 +10268,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -11207,11 +10287,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -11226,12 +10306,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -11243,12 +10320,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -11260,12 +10334,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -11279,11 +10350,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -11298,11 +10369,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -11313,9 +10384,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -11329,11 +10400,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -11348,11 +10419,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -11365,12 +10436,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -11384,11 +10452,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -11401,12 +10469,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -11420,12 +10485,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -11435,12 +10497,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -11450,12 +10509,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -11465,12 +10521,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -11482,12 +10535,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -11499,12 +10549,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -11518,11 +10565,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -11533,12 +10580,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -11550,12 +10594,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -11569,12 +10610,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -11586,12 +10624,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -11605,11 +10640,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -11622,12 +10657,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -11639,12 +10671,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -11656,12 +10685,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -11675,11 +10701,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -11694,11 +10720,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -11709,9 +10735,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -11721,12 +10747,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -11738,12 +10761,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -11757,11 +10777,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -11776,11 +10796,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -11795,11 +10815,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -11814,11 +10834,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -11833,12 +10853,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -11850,12 +10867,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -11869,11 +10883,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -11888,12 +10902,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -11907,12 +10918,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -11926,11 +10934,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -11941,9 +10949,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -11955,12 +10963,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -11974,12 +10979,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -11991,9 +10993,9 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -12007,11 +11009,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -12026,11 +11028,11 @@ class R_DnssrvQuery3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -12061,9 +11063,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -12071,9 +11073,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -12081,9 +11083,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -12091,9 +11093,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -12103,12 +11105,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -12118,9 +11117,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -12134,12 +11133,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -12149,9 +11145,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -12163,12 +11159,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -12178,12 +11171,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -12195,12 +11185,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -12214,11 +11201,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -12233,11 +11220,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -12252,12 +11239,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -12269,12 +11253,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -12286,12 +11267,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -12305,11 +11283,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -12324,11 +11302,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -12339,9 +11317,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -12355,11 +11333,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -12374,11 +11352,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -12391,12 +11369,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -12410,11 +11385,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -12427,12 +11402,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -12446,12 +11418,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -12461,12 +11430,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -12476,12 +11442,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -12491,12 +11454,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -12508,12 +11468,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -12525,12 +11482,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -12544,11 +11498,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -12559,12 +11513,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -12576,12 +11527,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -12595,12 +11543,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -12612,12 +11557,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -12631,11 +11573,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -12648,12 +11590,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -12665,12 +11604,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -12682,12 +11618,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -12701,11 +11634,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -12720,11 +11653,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -12735,9 +11668,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -12747,12 +11680,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -12764,12 +11694,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -12783,11 +11710,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -12802,11 +11729,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -12821,11 +11748,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -12840,11 +11767,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -12859,12 +11786,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -12876,12 +11800,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -12895,11 +11816,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -12914,12 +11835,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -12933,12 +11851,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -12952,11 +11867,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -12967,9 +11882,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -12981,12 +11896,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -13000,12 +11912,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -13017,9 +11926,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -13033,11 +11942,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -13052,11 +11961,11 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -13078,9 +11987,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -13088,9 +11997,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -13098,9 +12007,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -13108,9 +12017,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -13120,12 +12029,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -13135,9 +12041,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -13151,12 +12057,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -13166,9 +12069,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -13180,12 +12083,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -13195,12 +12095,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -13212,12 +12109,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -13231,11 +12125,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -13250,11 +12144,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -13269,12 +12163,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -13286,12 +12177,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -13303,12 +12191,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -13322,11 +12207,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -13341,11 +12226,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -13356,9 +12241,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -13372,11 +12257,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -13391,11 +12276,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -13408,12 +12293,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -13427,11 +12309,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -13444,12 +12326,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -13463,12 +12342,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -13478,12 +12354,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -13493,12 +12366,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -13508,12 +12378,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -13525,12 +12392,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -13542,12 +12406,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -13561,11 +12422,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -13576,12 +12437,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -13593,12 +12451,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -13612,12 +12467,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -13629,12 +12481,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -13648,11 +12497,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -13665,12 +12514,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -13682,12 +12528,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -13699,12 +12542,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -13718,11 +12558,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -13737,11 +12577,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -13752,9 +12592,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -13764,12 +12604,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -13781,12 +12618,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -13800,11 +12634,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -13819,11 +12653,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -13838,11 +12672,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -13857,11 +12691,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -13876,12 +12710,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -13893,12 +12724,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -13912,11 +12740,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -13931,12 +12759,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -13950,12 +12775,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -13969,11 +12791,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -13984,9 +12806,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -13998,12 +12820,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -14017,12 +12836,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -14034,9 +12850,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -14050,11 +12866,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -14069,11 +12885,11 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -14106,9 +12922,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -14116,9 +12932,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -14126,9 +12942,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -14136,9 +12952,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -14148,12 +12964,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -14163,9 +12976,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -14179,12 +12992,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -14194,9 +13004,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -14208,12 +13018,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -14223,12 +13030,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -14240,12 +13044,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -14259,11 +13060,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -14278,11 +13079,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -14297,12 +13098,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -14314,12 +13112,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -14331,12 +13126,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -14350,11 +13142,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -14369,11 +13161,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -14384,9 +13176,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -14400,11 +13192,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -14419,11 +13211,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -14436,12 +13228,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -14455,11 +13244,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -14472,12 +13261,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -14491,12 +13277,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -14506,12 +13289,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -14521,12 +13301,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -14536,12 +13313,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -14553,12 +13327,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -14570,12 +13341,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -14589,11 +13357,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -14604,12 +13372,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -14621,12 +13386,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -14640,12 +13402,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -14657,12 +13416,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -14676,11 +13432,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -14693,12 +13449,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -14710,12 +13463,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -14727,12 +13477,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -14746,11 +13493,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -14765,11 +13512,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -14780,9 +13527,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -14792,12 +13539,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -14809,12 +13553,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -14828,11 +13569,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -14847,11 +13588,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -14866,11 +13607,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -14885,11 +13626,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -14904,12 +13645,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -14921,12 +13659,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -14940,11 +13675,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -14959,12 +13694,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -14978,12 +13710,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -14997,11 +13726,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -15012,9 +13741,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -15026,12 +13755,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -15045,12 +13771,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -15062,9 +13785,9 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -15078,11 +13801,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -15097,11 +13820,11 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),
@@ -15141,9 +13864,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL
+                            == DWORD.DNSSRV_TYPEID_NULL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_NULL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NULL),
                     ),
                 ),
                 (
@@ -15151,9 +13874,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD
+                            == DWORD.DNSSRV_TYPEID_DWORD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_DWORD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DWORD),
                     ),
                 ),
                 (
@@ -15161,9 +13884,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR
+                            == DWORD.DNSSRV_TYPEID_LPSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPSTR),
                     ),
                 ),
                 (
@@ -15171,9 +13894,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR
+                            == DWORD.DNSSRV_TYPEID_LPWSTR
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_LPWSTR),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_LPWSTR),
                     ),
                 ),
                 (
@@ -15183,12 +13906,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
+                            == DWORD.DNSSRV_TYPEID_IPARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IPARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IPARRAY),
                     ),
                 ),
                 (
@@ -15198,9 +13918,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER
+                            == DWORD.DNSSRV_TYPEID_BUFFER
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_BUFFER),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_BUFFER),
                     ),
                 ),
                 (
@@ -15214,12 +13934,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO_W2K),
                     ),
                 ),
                 (
@@ -15229,9 +13946,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS
+                            == DWORD.DNSSRV_TYPEID_STATS
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_STATS),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_STATS),
                     ),
                 ),
                 (
@@ -15243,12 +13960,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS_W2K),
                     ),
                 ),
                 (
@@ -15258,12 +13972,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_W2K),
                     ),
                 ),
                 (
@@ -15275,12 +13986,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO_W2K),
                     ),
                 ),
                 (
@@ -15294,11 +14002,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_W2K
                         ),
                     ),
                 ),
@@ -15313,11 +14021,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE_W2K
                         ),
                     ),
                 ),
@@ -15332,12 +14040,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE_W2K),
                     ),
                 ),
                 (
@@ -15349,12 +14054,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
+                            == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_NAME_AND_PARAM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_NAME_AND_PARAM),
                     ),
                 ),
                 (
@@ -15366,12 +14068,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST_W2K
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST_W2K),
                     ),
                 ),
                 (
@@ -15385,11 +14084,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -15404,11 +14103,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS_DOTNET
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS_DOTNET
                         ),
                     ),
                 ),
@@ -15419,9 +14118,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE
+                            == DWORD.DNSSRV_TYPEID_ZONE
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE),
                     ),
                 ),
                 (
@@ -15435,11 +14134,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO_DOTNET
                         ),
                     ),
                 ),
@@ -15454,11 +14153,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES_DOTNET
                         ),
                     ),
                 ),
@@ -15471,12 +14170,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
+                            == DWORD.DNSSRV_TYPEID_ZONE_DATABASE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_DATABASE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_DATABASE),
                     ),
                 ),
                 (
@@ -15490,11 +14186,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE_DOTNET
                         ),
                     ),
                 ),
@@ -15507,12 +14203,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
+                            == DWORD.DNSSRV_TYPEID_ZONE_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_LIST),
                     ),
                 ),
                 (
@@ -15526,12 +14219,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
+                            == DWORD.DNSSRV_TYPEID_ZONE_EXPORT
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_EXPORT
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_EXPORT),
                     ),
                 ),
                 (
@@ -15541,12 +14231,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
+                            == DWORD.DNSSRV_TYPEID_DP_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_INFO),
                     ),
                 ),
                 (
@@ -15556,12 +14243,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
+                            == DWORD.DNSSRV_TYPEID_DP_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_ENUM),
                     ),
                 ),
                 (
@@ -15571,12 +14255,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
+                            == DWORD.DNSSRV_TYPEID_DP_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_DP_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_DP_LIST),
                     ),
                 ),
                 (
@@ -15588,12 +14269,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
+                            == DWORD.DNSSRV_TYPEID_ENLIST_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENLIST_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ENLIST_DP),
                     ),
                 ),
                 (
@@ -15605,12 +14283,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
+                            == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CHANGE_DP
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CHANGE_DP),
                     ),
                 ),
                 (
@@ -15624,11 +14299,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ENUM_ZONES_FILTER
+                            == DWORD.DNSSRV_TYPEID_ENUM_ZONES_FILTER
                         ),
                     ),
                 ),
@@ -15639,12 +14314,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
+                            == DWORD.DNSSRV_TYPEID_ADDRARRAY
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ADDRARRAY
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ADDRARRAY),
                     ),
                 ),
                 (
@@ -15656,12 +14328,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
+                            == DWORD.DNSSRV_TYPEID_SERVER_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SERVER_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SERVER_INFO),
                     ),
                 ),
                 (
@@ -15675,12 +14344,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_CREATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_CREATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_CREATE),
                     ),
                 ),
                 (
@@ -15692,12 +14358,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
+                            == DWORD.DNSSRV_TYPEID_FORWARDERS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_FORWARDERS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_FORWARDERS),
                     ),
                 ),
                 (
@@ -15711,11 +14374,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SECONDARIES
+                            == DWORD.DNSSRV_TYPEID_ZONE_SECONDARIES
                         ),
                     ),
                 ),
@@ -15728,12 +14391,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
+                            == DWORD.DNSSRV_TYPEID_IP_VALIDATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_IP_VALIDATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_IP_VALIDATE),
                     ),
                 ),
                 (
@@ -15745,12 +14405,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_INFO),
                     ),
                 ),
                 (
@@ -15762,12 +14419,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
+                            == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_AUTOCONFIGURE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_AUTOCONFIGURE),
                     ),
                 ),
                 (
@@ -15781,11 +14435,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UTF8_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UTF8_STRING_LIST
                         ),
                     ),
                 ),
@@ -15800,11 +14454,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_UNICODE_STRING_LIST
+                            == DWORD.DNSSRV_TYPEID_UNICODE_STRING_LIST
                         ),
                     ),
                 ),
@@ -15815,9 +14469,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD
+                            == DWORD.DNSSRV_TYPEID_SKD
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD),
                     ),
                 ),
                 (
@@ -15827,12 +14481,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
+                            == DWORD.DNSSRV_TYPEID_SKD_LIST
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_LIST
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_LIST),
                     ),
                 ),
                 (
@@ -15844,12 +14495,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
+                            == DWORD.DNSSRV_TYPEID_SKD_STATE
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SKD_STATE
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SKD_STATE),
                     ),
                 ),
                 (
@@ -15863,11 +14511,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
+                            == DWORD.DNSSRV_TYPEID_SIGNING_VALIDATION_ERROR
                         ),
                     ),
                 ),
@@ -15882,11 +14530,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_POINT_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_POINT_LIST
                         ),
                     ),
                 ),
@@ -15901,11 +14549,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
+                            == DWORD.DNSSRV_TYPEID_TRUST_ANCHOR_LIST
                         ),
                     ),
                 ),
@@ -15920,11 +14568,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
+                            == DWORD.DNSSRV_TYPEID_ZONE_SIGNING_SETTINGS
                         ),
                     ),
                 ),
@@ -15939,12 +14587,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -15956,12 +14601,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
+                            == DWORD.DNSSRV_TYPEID_ZONE_STATS
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_STATS
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_STATS),
                     ),
                 ),
                 (
@@ -15975,11 +14617,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_CREATE
                         ),
                     ),
                 ),
@@ -15994,12 +14636,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
+                            == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_ZONE_SCOPE_INFO
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_ZONE_SCOPE_INFO),
                     ),
                 ),
                 (
@@ -16013,12 +14652,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
+                            == DWORD.DNSSRV_TYPEID_SCOPE_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_SCOPE_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_SCOPE_ENUM),
                     ),
                 ),
                 (
@@ -16032,11 +14668,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
+                            == DWORD.DNSSRV_TYPEID_CLIENT_SUBNET_RECORD
                         ),
                     ),
                 ),
@@ -16047,9 +14683,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY
+                            == DWORD.DNSSRV_TYPEID_POLICY
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY),
                     ),
                 ),
                 (
@@ -16061,12 +14697,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
+                            == DWORD.DNSSRV_TYPEID_POLICY_NAME
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_NAME
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_NAME),
                     ),
                 ),
                 (
@@ -16080,12 +14713,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
+                            == DWORD.DNSSRV_TYPEID_POLICY_ENUM
                         ),
-                        (
-                            lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_POLICY_ENUM
-                        ),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_POLICY_ENUM),
                     ),
                 ),
                 (
@@ -16097,9 +14727,9 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL
+                            == DWORD.DNSSRV_TYPEID_RRL
                         ),
-                        (lambda _, val: val.tag == DNS_RPC_TYPEID.DNSSRV_TYPEID_RRL),
+                        (lambda _, val: val.tag == DWORD.DNSSRV_TYPEID_RRL),
                     ),
                 ),
                 (
@@ -16113,11 +14743,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE
                         ),
                     ),
                 ),
@@ -16132,11 +14762,11 @@ class R_DnssrvQuery4_Response(NDRPacket):
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeId", None)
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                         (
                             lambda _, val: val.tag
-                            == DNS_RPC_TYPEID.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                            == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
                         ),
                     ),
                 ),

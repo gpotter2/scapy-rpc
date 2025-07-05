@@ -1,0 +1,52 @@
+diff --git a/midl-to-scapy/idl/win/ms-rsmp.idl b/midl-to-scapy/idl/win/ms-rsmp.idl
+index c0dfe3c..1fb0c21 100644
+--- a/midl-to-scapy/idl/win/ms-rsmp.idl
++++ b/midl-to-scapy/idl/win/ms-rsmp.idl
+@@ -289,21 +289,21 @@
+      DWORD       dwOperationType;            // reserved - do not use
+      DWORD       dwResult;                   // reserved - do not use
+      DWORD       dwAsyncState;               // reserved - do not use
+- #ifdef __midl
++// #ifdef __midl
+      NTMS_HANDLE hEvent;                     // reserved - do not use
+- #else
+-     PVOID      hEvent;                     // reserved - do not use
+- #endif                                      
++// #else
++//   PVOID      hEvent;                      // reserved - do not use
++// #endif                                      
+      BOOL        bOnStateChange;             // indicate to signal on every status change or not; false will signal only completion
+  } NTMS_ASYNC_IO, *LPNTMS_ASYNC_IO;
+   
+  typedef struct _NTMS_MOUNT_INFORMATION {
+      DWORD              dwSize;        
+- #ifdef __midl
++// #ifdef __midl
+      [ptr]  LPNTMS_ASYNC_IO lpReserved;
+- #else
+-     LPVOID lpReserved;
+- #endif
++// #else
++//     LPVOID lpReserved;
++// #endif
+  } NTMS_MOUNT_INFORMATION, *LPNTMS_MOUNT_INFORMATION;
+   
+  typedef struct _NTMS_CHANGERINFORMATIONA {
+@@ -601,7 +601,7 @@
+      DWORD                       dwOperationalState;
+      char                        szName[64];
+      char                        szDescription[127];
+-     [switch_is(dwType)] union {
++     [switch_is(dwType), switch_type(NTMS_LIBRARYINFORMATION)] union {
+          [case(NTMS_DRIVE)]           NTMS_DRIVEINFORMATIONA Drive;
+          [case(NTMS_DRIVE_TYPE)]      NTMS_DRIVETYPEINFORMATIONA DriveType;
+          [case(NTMS_LIBRARY)]         NTMS_LIBRARYINFORMATION Library;
+@@ -631,7 +631,7 @@
+      DWORD                       dwOperationalState;
+      [string] wchar_t            szName[64];
+      [string] wchar_t            szDescription[127];
+-     [switch_is(dwType)] union {
++     [switch_is(dwType), switch_type(NTMS_LIBRARYINFORMATION)] union {
+          [case(NTMS_DRIVE)]           NTMS_DRIVEINFORMATIONW Drive;
+          [case(NTMS_DRIVE_TYPE)]      NTMS_DRIVETYPEINFORMATIONW DriveType;
+          [case(NTMS_LIBRARY)]         NTMS_LIBRARYINFORMATION Library;

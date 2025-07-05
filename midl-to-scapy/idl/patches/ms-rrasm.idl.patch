@@ -1,0 +1,238 @@
+diff --git a/midl-to-scapy/idl/win/ms-rrasm.idl b/midl-to-scapy/idl/win/ms-rrasm.idl
+index 2e7288c..79e16cb 100644
+--- a/midl-to-scapy/idl/win/ms-rrasm.idl
++++ b/midl-to-scapy/idl/win/ms-rrasm.idl
+@@ -858,12 +858,12 @@
+  FILTER_DESCRIPTOR_V6, *PFILTER_DESCRIPTOR_V6;
+   
+   
+- typedef struct _GLOBAL_INFO
+- {
+-     IN OUT BOOL     bFilteringOn;
+-     IN OUT DWORD    dwLoggingLevel;
+- }
+- GLOBAL_INFO, *PGLOBAL_INFO;
++//  typedef struct _GLOBAL_INFO
++//  {
++//      IN OUT BOOL     bFilteringOn;
++//      IN OUT DWORD    dwLoggingLevel;
++//  }
++//  GLOBAL_INFO, *PGLOBAL_INFO;
+   
+  typedef struct _INTERFACE_ROUTE_INFO
+  {
+@@ -902,45 +902,45 @@
+   
+   
+   
+- typedef struct _PROTOCOL_METRIC
+- {
+-     IN OUT DWORD   dwProtocolId;
+-     IN OUT DWORD   dwMetric;
+- }
+- PROTOCOL_METRIC, *PPROTOCOL_METRIC;
++//  typedef struct _PROTOCOL_METRIC
++//  {
++//      IN OUT DWORD   dwProtocolId;
++//      IN OUT DWORD   dwMetric;
++//  }
++//  PROTOCOL_METRIC, *PPROTOCOL_METRIC;
+   
+   
+- typedef struct _PRIORITY_INFO
+- {
+-     IN OUT DWORD           dwNumProtocols;
+-     IN OUT PROTOCOL_METRIC ppmProtocolMetric[1];   
+- }
+- PRIORITY_INFO, *PPRIORITY_INFO;
++//  typedef struct _PRIORITY_INFO
++//  {
++//      IN OUT DWORD           dwNumProtocols;
++//      IN OUT PROTOCOL_METRIC ppmProtocolMetric[1];   
++//  }
++//  PRIORITY_INFO, *PPRIORITY_INFO;
+   
+   
+- typedef struct _PROTOCOL_METRIC_EX
+- {
+-     IN OUT DWORD   dwProtocolId;
+-     IN OUT DWORD   dwSubProtocolId;
+-     IN OUT DWORD   dwMetric;
+- }PROTOCOL_METRIC_EX, *PPROTOCOL_METRIC_EX;
++//  typedef struct _PROTOCOL_METRIC_EX
++//  {
++//      IN OUT DWORD   dwProtocolId;
++//      IN OUT DWORD   dwSubProtocolId;
++//      IN OUT DWORD   dwMetric;
++//  }PROTOCOL_METRIC_EX, *PPROTOCOL_METRIC_EX;
+   
+- typedef struct _PRIORITY_INFO_EX
+- {
+-     IN OUT DWORD           dwNumProtocols;
+-     IN OUT PROTOCOL_METRIC_EX ppmProtocolMetric[1];
+- }PRIORITY_INFO_EX, *PPRIORITY_INFO_EX;
++//  typedef struct _PRIORITY_INFO_EX
++//  {
++//      IN OUT DWORD           dwNumProtocols;
++//      IN OUT PROTOCOL_METRIC_EX ppmProtocolMetric[1];
++//  }PRIORITY_INFO_EX, *PPRIORITY_INFO_EX;
+   
+   
+- typedef struct _RTR_DISC_INFO
+- {
+-     IN OUT WORD             wMaxAdvtInterval;
+-     IN OUT WORD             wMinAdvtInterval;
+-     IN OUT WORD             wAdvtLifetime;
+-     IN OUT BOOL             bAdvertise;
+-     IN OUT LONG             lPrefLevel;
+- }
+- RTR_DISC_INFO, *PRTR_DISC_INFO;
++//  typedef struct _RTR_DISC_INFO
++//  {
++//      IN OUT WORD             wMaxAdvtInterval;
++//      IN OUT WORD             wMinAdvtInterval;
++//      IN OUT WORD             wAdvtLifetime;
++//      IN OUT BOOL             bAdvertise;
++//      IN OUT LONG             lPrefLevel;
++//  }
++//  RTR_DISC_INFO, *PRTR_DISC_INFO;
+   
+   
+  #define MAX_GROUP_LEN  64
+@@ -975,11 +975,11 @@
+   
+   
+   
+- typedef struct _INTERFACE_STATUS_INFO
+- {
+-     IN  OUT DWORD   dwAdminStatus;
+- }
+- INTERFACE_STATUS_INFO, *PINTERFACE_STATUS_INFO;
++//  typedef struct _INTERFACE_STATUS_INFO
++//  {
++//      IN  OUT DWORD   dwAdminStatus;
++//  }
++//  INTERFACE_STATUS_INFO, *PINTERFACE_STATUS_INFO;
+   
+   
+   
+@@ -1901,11 +1901,11 @@
+   
+   
+   
+- typedef struct _MPR_FILTER_0
+- {
+-     IN BOOL fEnable;
+- }
+- MPR_FILTER_0, *PMPR_FILTER_0;
++//  typedef struct _MPR_FILTER_0
++//  {
++//      IN BOOL fEnable;
++//  }
++//  MPR_FILTER_0, *PMPR_FILTER_0;
+   
+   
+   
+@@ -2034,20 +2034,20 @@
+   
+   
+   
+- typedef union _IPX_MIB_INDEX {
+-     IF_TABLE_INDEX InterfaceTableIndex;
+-     ROUTING_TABLE_INDEX RoutingTableIndex;
+-     STATIC_ROUTES_TABLE_INDEX StaticRoutesTableIndex;
+-     SERVICES_TABLE_INDEX ServicesTableIndex;
+-     STATIC_SERVICES_TABLE_INDEX StaticServicesTableIndex;
+- } IPX_MIB_INDEX, *PIPX_MIB_INDEX;
++//  typedef union _IPX_MIB_INDEX {
++//      IF_TABLE_INDEX InterfaceTableIndex;
++//      ROUTING_TABLE_INDEX RoutingTableIndex;
++//      STATIC_ROUTES_TABLE_INDEX StaticRoutesTableIndex;
++//      SERVICES_TABLE_INDEX ServicesTableIndex;
++//      STATIC_SERVICES_TABLE_INDEX StaticServicesTableIndex;
++//  } IPX_MIB_INDEX, *PIPX_MIB_INDEX;
+   
+   
+   
+- typedef struct _IPX_MIB_GET_INPUT_DATA {
+-     ULONG TableId;
+-     IPX_MIB_INDEX MibIndex;
+- } IPX_MIB_GET_INPUT_DATA, *PIPX_MIB_GET_INPUT_DATA;
++//  typedef struct _IPX_MIB_GET_INPUT_DATA {
++//      ULONG TableId;
++//      IPX_MIB_INDEX MibIndex;
++//  } IPX_MIB_GET_INPUT_DATA, *PIPX_MIB_GET_INPUT_DATA;
+   
+   
+   
+@@ -2120,18 +2120,18 @@
+  } IPX_SERVICE, *PIPX_SERVICE;
+   
+   
+- typedef union _IPX_MIB_ROW {
+-     IPX_INTERFACE Interface;
+-     IPX_ROUTE Route;
+-     IPX_SERVICE Service;
+- } IPX_MIB_ROW, *PIPX_MIB_ROW;
++//  typedef union _IPX_MIB_ROW {
++//      IPX_INTERFACE Interface;
++//      IPX_ROUTE Route;
++//      IPX_SERVICE Service;
++//  } IPX_MIB_ROW, *PIPX_MIB_ROW;
+   
+   
+   
+- typedef struct _IPX_MIB_SET_INPUT_DATA {
+-     ULONG TableId;
+-     IPX_MIB_ROW  MibRow;
+- } IPX_MIB_SET_INPUT_DATA, *PIPX_MIB_SET_INPUT_DATA;
++//  typedef struct _IPX_MIB_SET_INPUT_DATA {
++//      ULONG TableId;
++//      IPX_MIB_ROW  MibRow;
++//  } IPX_MIB_SET_INPUT_DATA, *PIPX_MIB_SET_INPUT_DATA;
+   
+   
+   
+@@ -2625,24 +2625,24 @@
+      ULONG IdleTime;       // in seconds
+  } IP_NAT_SESSION_MAPPING, *PIP_NAT_SESSION_MAPPING;
+   
+- typedef struct _IP_NAT_ENUMERATE_SESSION_MAPPINGS {
+-     IN ULONG Index;
+-     IN OUT ULONG EnumerateContext[4];
+-     OUT ULONG EnumerateCount;
+-     OUT ULONG EnumerateTotalHint;
+-     OUT IP_NAT_SESSION_MAPPING EnumerateTable[1];
+- } IP_NAT_ENUMERATE_SESSION_MAPPINGS, *PIP_NAT_ENUMERATE_SESSION_MAPPINGS;
+-  
+- typedef struct _IP_NAT_INTERFACE_STATISTICS {
+-     OUT ULONG TotalMappings;
+-     OUT ULONG InboundMappings;
+-     OUT ULONG64 BytesForward;
+-     OUT ULONG64 BytesReverse;
+-     OUT ULONG64 PacketsForward;
+-     OUT ULONG64 PacketsReverse;
+-     OUT ULONG64 RejectsForward;
+-     OUT ULONG64 RejectsReverse;
+- } IP_NAT_INTERFACE_STATISTICS, *PIP_NAT_INTERFACE_STATISTICS;
++//  typedef struct _IP_NAT_ENUMERATE_SESSION_MAPPINGS {
++//      IN ULONG Index;
++//      IN OUT ULONG EnumerateContext[4];
++//      OUT ULONG EnumerateCount;
++//      OUT ULONG EnumerateTotalHint;
++//      OUT IP_NAT_SESSION_MAPPING EnumerateTable[1];
++//  } IP_NAT_ENUMERATE_SESSION_MAPPINGS, *PIP_NAT_ENUMERATE_SESSION_MAPPINGS;
++  
++//  typedef struct _IP_NAT_INTERFACE_STATISTICS {
++//      OUT ULONG TotalMappings;
++//      OUT ULONG InboundMappings;
++//      OUT ULONG64 BytesForward;
++//      OUT ULONG64 BytesReverse;
++//      OUT ULONG64 PacketsForward;
++//      OUT ULONG64 PacketsReverse;
++//      OUT ULONG64 RejectsForward;
++//      OUT ULONG64 RejectsReverse;
++//  } IP_NAT_INTERFACE_STATISTICS, *PIP_NAT_INTERFACE_STATISTICS;
+   
+  typedef struct _IP_DNS_PROXY_MIB_QUERY {
+      ULONG Oid;

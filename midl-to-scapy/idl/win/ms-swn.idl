@@ -56,6 +56,9 @@
          [in] [string] [unique] LPWSTR ClientComputerName,
          [in] ULONG Flags,
          [in] ULONG KeepAliveTimeout);
+     DWORD WitnessrUnRegisterEx(
+         [in] handle_t Handle,
+         [in, out] PPCONTEXT_HANDLE ppContext);
  };
   
   

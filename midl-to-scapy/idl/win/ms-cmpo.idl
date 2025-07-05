@@ -58,13 +58,11 @@
         HRESULT Poke (
           [in] handle_t hBinding,
           [in] SESSION_RANK sRank,
-          // Scapy note: those are CLEARLY conformant arrays (empty []) and the C706 CLEARLY
-          // say: 'Conformant arrays have one of the attributes min_is, max_is, or size_is'
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char  pszCalleeUuid[],
-          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1), max_is(MAX_COMPUTERNAME_LENGTH+1)] 
+          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1)] 
                unsigned char pszHostName[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char pszUuidString[],
           [in, range(sizeof(BIND_INFO_BLOB),sizeof(BIND_INFO_BLOB))] 
                DWORD   dwcbSizeOfBlob,
@@ -75,15 +73,15 @@
           [in] handle_t hBinding,
           [in] SESSION_RANK sRank,
           [in] BIND_VERSION_SET BindVersionSet,
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char  pszCalleeUuid[],
-          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1), max_is(MAX_COMPUTERNAME_LENGTH+1)] 
+          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1)] 
                unsigned char pszHostName[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char pszUuidString[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char pszGuidIn[],
-          [in, out, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, out, string, range(GUID_LENGTH, GUID_LENGTH)] 
                unsigned char pszGuidOut[],
           [in, out] BOUND_VERSION_SET *   pBoundVersionSet,
           [in, range(sizeof(BIND_INFO_BLOB), sizeof(BIND_INFO_BLOB))] 
@@ -117,11 +115,11 @@
         HRESULT PokeW (
           [in] handle_t hBinding,
           [in] SESSION_RANK sRank,
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t pwszCalleeUuid[],
-          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1), max_is(MAX_COMPUTERNAME_LENGTH+1)] 
+          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1)] 
                wchar_t pwszHostName[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t pwszUuidString[],
           [in, range(sizeof(BIND_INFO_BLOB), sizeof(BIND_INFO_BLOB))] 
                DWORD dwcbSizeOfBlob,
@@ -132,15 +130,15 @@
           [in] handle_t hBinding,
           [in] SESSION_RANK sRank,
           [in] BIND_VERSION_SET BindVersionSet,
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t  pwszCalleeUuid[],
-          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1), max_is(MAX_COMPUTERNAME_LENGTH+1)] 
+          [in, string, range(1, MAX_COMPUTERNAME_LENGTH+1)] 
                wchar_t pwszHostName[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t pwszUuidString[],
-          [in, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t pwszGuidIn[],
-          [in,out, string, range(GUID_LENGTH, GUID_LENGTH), size_is(GUID_LENGTH)] 
+          [in,out, string, range(GUID_LENGTH, GUID_LENGTH)] 
                wchar_t pwszGuidOut[],
           [in, out] BOUND_VERSION_SET *pBoundVersionSet,
           [in, range(sizeof(BIND_INFO_BLOB), sizeof(BIND_INFO_BLOB))] 

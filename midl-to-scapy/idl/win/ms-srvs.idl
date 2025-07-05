@@ -430,28 +430,6 @@
       *PSHARE_INFO,
       *LPSHARE_INFO;
   
-  
-  
-     typedef struct _SERVER_INFO_100 
-     {
-          DWORD sv100_platform_id;
-          [string] wchar_t* sv100_name;
-     } SERVER_INFO_100,
-      *PSERVER_INFO_100,
-      *LPSERVER_INFO_100;
-  
-     typedef struct _SERVER_INFO_101 
-     {
-          DWORD sv101_platform_id;
-          [string] wchar_t* sv101_name;
-          DWORD sv101_version_major;
-          DWORD sv101_version_minor;
-          DWORD sv101_type;
-          [string] wchar_t* sv101_comment;
-     } SERVER_INFO_101,
-      *PSERVER_INFO_101,
-      *LPSERVER_INFO_101;
-  
      typedef struct _SERVER_INFO_102
      {
           DWORD sv102_platform_id;

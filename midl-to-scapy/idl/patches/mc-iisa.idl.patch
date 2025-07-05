@@ -1,0 +1,13 @@
+diff --git a/midl-to-scapy/idl/win/mc-iisa.idl b/midl-to-scapy/idl/win/mc-iisa.idl
+index 8791118..9c9279c 100644
+--- a/midl-to-scapy/idl/win/mc-iisa.idl
++++ b/midl-to-scapy/idl/win/mc-iisa.idl
+@@ -14,7 +14,7 @@
+  interface IAppHostConstantValue;
+  interface IAppHostConfigManager;
+   
+- #define SAFEARRAY(x) SAFEARRAY
++ //#define SAFEARRAY(x) SAFEARRAY
+   
+  [
+    object,

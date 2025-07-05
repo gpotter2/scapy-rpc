@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
 """
 Convert the syntax tree from PLY based on the parsed MIDL file to a class-based syntax tree
 """
@@ -306,6 +310,9 @@ class Compiler:
             return BuiltinType(self, decl, ["void"], idl_attrs)
         assert all(x[0] in "id" for x in typespec), "Invalid typespec %s" % typespec
         typespec = [x[1] for x in typespec]
+        # Strip __stdcall
+        if typespec[-1] == "__stdcall":
+            typespec.pop(-1)
         # Normal
         if decl[0] == "array":
             return ArrayType(self, decl, typespec, idl_attrs)
@@ -436,7 +443,7 @@ class Compiler:
             elif e[0] == "func":
                 func = self.build_func(e)
                 ienv[func.name] = func
-            elif e[0] == "import":
+            elif e[0] == "import" or e[0] == "#include":
                 # Find file in the same folder as current file
                 pth = os.path.join(os.path.dirname(fname), e[1])
                 # Parse it and update the environment

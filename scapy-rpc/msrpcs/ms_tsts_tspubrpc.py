@@ -299,6 +299,27 @@ class RpcGetSessionInformationEx_Response(NDRPacket):
     ]
 
 
+class GUID(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("Data1", 0),
+        NDRShortField("Data2", 0),
+        NDRShortField("Data3", 0),
+        StrFixedLenField("Data4", "", length=8),
+    ]
+
+
+class RpcGetActivityId_Request(NDRPacket):
+    fields_desc = [NDRPacketField("hSession", NDRContextHandle(), NDRContextHandle)]
+
+
+class RpcGetActivityId_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("pActivityId", GUID(), GUID)),
+        NDRIntField("status", 0),
+    ]
+
+
 TERMSRVSESSION_OPNUMS = {
     0: DceRpcOp(RpcOpenSession_Request, RpcOpenSession_Response),
     1: DceRpcOp(RpcCloseSession_Request, RpcCloseSession_Response),
@@ -321,7 +342,9 @@ TERMSRVSESSION_OPNUMS = {
         RpcGetSessionInformationEx_Request, RpcGetSessionInformationEx_Response
     ),
     # 18: Opnum18NotUsedOnWire,
-    # 19: Opnum19NotUsedOnWire
+    # 19: Opnum19NotUsedOnWire,
+    # 20: Opnum20NotUsedOnWire,
+    21: DceRpcOp(RpcGetActivityId_Request, RpcGetActivityId_Response),
 }
 register_dcerpc_interface(
     name="TermSrvSession",
@@ -465,16 +488,6 @@ class SESSIONENUM_LEVEL1(NDRPacket):
         NDRSignedIntField("SessionId", 0),
         NDRSignedIntField("State", 0),
         StrFixedLenFieldUtf16("Name", "", length=33 * 2),
-    ]
-
-
-class GUID(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [
-        NDRIntField("Data1", 0),
-        NDRShortField("Data2", 0),
-        NDRShortField("Data3", 0),
-        StrFixedLenField("Data4", "", length=8),
     ]
 
 

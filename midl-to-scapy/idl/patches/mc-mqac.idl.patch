@@ -1,0 +1,77 @@
+diff --git a/midl-to-scapy/idl/win/mc-mqac.idl b/midl-to-scapy/idl/win/mc-mqac.idl
+index 0091443..e420a33 100644
+--- a/midl-to-scapy/idl/win/mc-mqac.idl
++++ b/midl-to-scapy/idl/win/mc-mqac.idl
+@@ -82,7 +82,10 @@
+  }
+   
+  interface IConnectionPointContainer; // forward declaration
+-  
++
++ typedef IConnectionPoint * PCONNECTIONPOINT;
++ typedef IConnectionPoint * LPCONNECTIONPOINT;
++
+  [
+      object,
+      uuid(B196B286-BAB4-101A-B69C-00AA00341D07),
+@@ -90,8 +93,7 @@
+  ]
+  interface IConnectionPoint : IUnknown
+  {
+-     typedef IConnectionPoint * PCONNECTIONPOINT;
+-     typedef IConnectionPoint * LPCONNECTIONPOINT;
++
+      HRESULT GetConnectionInterface(
+          [out] IID * pIID
+      );
+@@ -1711,24 +1713,24 @@
+      interface IMSMQEvent3 : IMSMQEvent2 {
+      }
+   
+-     [
+-         uuid(D7D6E078-DCCD-11d0-AA4B-0060970DEBAE),
+-         hidden
+-     ]
+-     dispinterface _DMSMQEventEvents {
+-         properties:
+-         methods:
+-             [id(0)]
+-             void Arrived(
+-               [in] IDispatch *Queue,
+-               [in] long Cursor);
++    //  [
++    //      uuid(D7D6E078-DCCD-11d0-AA4B-0060970DEBAE),
++    //      hidden
++    //  ]
++    //  dispinterface _DMSMQEventEvents {
++    //      properties:
++    //      methods:
++    //          [id(0)]
++    //          void Arrived(
++    //            [in] IDispatch *Queue,
++    //            [in] long Cursor);
+   
+-             [id(1)]
+-             void ArrivedError(
+-               [in] IDispatch *Queue,
+-               [in] long ErrorCode,
+-               [in] long Cursor);
+-     };
++    //          [id(1)]
++    //          void ArrivedError(
++    //            [in] IDispatch *Queue,
++    //            [in] long ErrorCode,
++    //            [in] long Cursor);
++    //  };
+   
+      [
+          uuid(D7D6E07A-DCCD-11d0-AA4B-0060970DEBAE)
+@@ -1738,7 +1740,7 @@
+          interface IMSMQEvent2;
+          [default] interface IMSMQEvent3;
+          interface IMSMQPrivateEvent;
+-         [default, source] dispinterface _DMSMQEventEvents;
++         //  [default, source] dispinterface _DMSMQEventEvents;
+      };
+   
+      [

@@ -3215,9 +3215,7 @@ class Format_Response(NDRPacket):
 
 class AddAccessPath_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "pwszPath", "", size_is=lambda pkt: (pkt.MAX_PATH - 1)
-        )
+        NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
     ]
 
 
@@ -3244,9 +3242,7 @@ class PVDS_REPARSE_POINT_PROP(NDRPacket):
     fields_desc = [
         NDRPacketField("SourceVolumeId", GUID(), GUID),
         NDRFullPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pwszPath", "", size_is=lambda pkt: (pkt.MAX_PATH - 1)
-            ),
+            NDRConfStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1)),
             deferred=True,
         ),
     ]
@@ -3274,9 +3270,7 @@ class QueryReparsePoints_Response(NDRPacket):
 
 class DeleteAccessPath_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "pwszPath", "", size_is=lambda pkt: (pkt.MAX_PATH - 1)
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1)),
         NDRSignedIntField("bForce", 0),
     ]
 

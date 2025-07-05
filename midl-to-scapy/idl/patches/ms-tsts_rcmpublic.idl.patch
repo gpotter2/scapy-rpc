@@ -1,0 +1,36 @@
+diff --git a/midl-to-scapy/idl/win/ms-tsts_rcmpublic.idl b/midl-to-scapy/idl/win/ms-tsts_rcmpublic.idl
+index 5c72db9..6616ffa 100644
+--- a/midl-to-scapy/idl/win/ms-tsts_rcmpublic.idl
++++ b/midl-to-scapy/idl/win/ms-tsts_rcmpublic.idl
+@@ -11,25 +11,26 @@
+  ]
+  interface RCMPublic
+  {
+-     static const WCHAR TSRCMRPC_REMOTE_ENDPOINT[] = L"\\pipe\\TermSrv_API_service";
++     //static const WCHAR TSRCMRPC_REMOTE_ENDPOINT[] = L"\\pipe\\TermSrv_API_service";
+   
+      typedef struct {
+          USHORT sin_family;
+-         union switch (USHORT sin_family) {
+-             case 2:
++        [switch(USHORT sin_family)] union _u
++        {
++             [case(2)]
+                  struct {
+                      USHORT sin_port;
+                      ULONG  in_addr;
+                      UCHAR  sin_zero[8];
+                  } ipv4;
+-             case 23:
++             [case(23)]
+                  struct {
+                      USHORT sin6_port;
+                      ULONG  sin6_flowinfo;
+                      USHORT sin6_addr[8];
+                      ULONG  sin6_scope_id;
+                  } ipv6;
+-         };
++         } u;
+      } RCM_REMOTEADDRESS, *PRCM_REMOTEADDRESS;
+      typedef WCHAR   LISTENER_NAME[32];
+   

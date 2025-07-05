@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
 """
 Convert a MIDL AST into Scapy pseudo-packets, and perform
 the names resolution.
@@ -74,11 +78,27 @@ class Resolver:
         res = []
         for attr in idl_attributes:
             if attr[0] == "call":
-                if attr[1] in ["uuid", "version", "pointer_default", "endpoint", "helpstring"]:
+                if attr[1] in [
+                    "uuid",
+                    "version",
+                    "pointer_default",
+                    "endpoint",
+                    "helpstring",
+                ]:
                     res.append((attr[1], attr[2][0]))
                 else:
                     assert False, "Unknown interface idl_attribute: %s" % repr(attr)
-            elif attr[0] == "id" and attr[1] in ["ms_union", "object", "dual", "local", "restricted", "oleautomation", "nonextensible", "odl", "hidden"]:
+            elif attr[0] == "id" and attr[1] in [
+                "ms_union",
+                "object",
+                "dual",
+                "local",
+                "restricted",
+                "oleautomation",
+                "nonextensible",
+                "odl",
+                "hidden",
+            ]:
                 res.append(attr[1])
             else:
                 assert False, "Unknown interface idl_attribute: %s" % repr(attr)
@@ -96,7 +116,10 @@ class Resolver:
         ):
             if not func.in_args and len(func.out_args) == 1:
                 # Function has no in nor out arguments
-                if re.match(r"^((Opnum\d+(NotUsedOnWire|NotImplemented))|(Lsar_LSA_.._\d+))$", func.name):
+                if re.match(
+                    r"^((Opnum\d+(NotUsedOnWire|NotImplemented))|(Lsar_LSA_.._\d+))$",
+                    func.name,
+                ):
                     # Function should be skipped.
                     interface_opnums[i] = func.name
                     continue
@@ -116,6 +139,50 @@ class Resolver:
             )
         )
 
+    def _resolve_arithm_values(self, x, env):
+        """
+        Resolve any global constants in an arithmetic value.
+        """
+        if isinstance(x, int):
+            return x
+        if x[0] in ["binop", "if"]:
+            return x[:2] + (
+                self._resolve_arithm_values(x[2], env),
+                self._resolve_arithm_values(x[3], env),
+            )
+        elif x[0] in ["cast", "monop"]:
+            return x[:2] + (
+                self._resolve_arithm_values(x[2], env),
+            )
+        elif x[0] == "call" and x[1] == "sizeof":
+            assert all(x[0] == "id" for x in x[2]), "Unknown sizeof type"
+            typespec = [x[1] for x in x[2]]
+            if is_builtin(typespec):
+                typ = BUILTIN_TYPES[typespec[-1]]
+                return struct.calcsize(typ[0])
+            else:
+                typ2 = self.resolve_type(typespec[-1], env)
+                if isinstance(typ2, CustomType):
+                    return typ2.sz * 8
+                else:
+                    # FIXME for structures... I just hardcoded the few
+                    if typ2.name == "BIND_INFO_BLOB":
+                        return 16
+                    elif typ2.name == "GUID":
+                        return 16
+                    elif typ2.name == "wchar_t":
+                        return 2
+                    raise Exception("Unimplemented: size for " + typ2.name)
+        elif x[0] == "id":
+            # Try to resolve a global value. If it fails, it's probably
+            # a local value.
+            if x[1] in env:
+                return self._resolve_arithm_values(env[x[1]], env)
+            else:
+                return x
+        else:
+            return x
+
     def resolve_idl_attributes(self, idl_attributes, env):
         """Resolve idl_attributes"""
         res = []
@@ -125,6 +192,13 @@ class Resolver:
                     continue
                 res.append(attr[1])
             elif attr[0] == "call":
+                if attr[1] == "range":
+                    # Alias range to a max_is, only if it already has already
+                    # signs of a conformant value.
+                    if ("id", "string") in idl_attributes:
+                        attr = (attr[0], "max_is", attr[2][1:])
+                    else:
+                        continue
                 if attr[1] in [
                     "switch_is",
                     "length_is",
@@ -133,15 +207,39 @@ class Resolver:
                     "case",
                 ]:
                     assert isinstance(attr[2], list)
-                    assert all((isinstance(x, int) or x[0] in ["id", "ptr"] or x[0] in ["binop", "monop", "cast", "if", "call"]) for x in attr[2]), repr(attr[2])
+                    assert all(
+                        (
+                            isinstance(x, int)
+                            or x[0] in ["id", "ptr"]
+                            or x[0] in ["binop", "monop", "cast", "if", "call"]
+                        )
+                        for x in attr[2]
+                    ), repr(attr[2])
+                    # Process the value of the call
+                    value = []
+                    for x in attr[2]:
+                        if isinstance(x, int) or x[0] in [
+                            "binop",
+                            "monop",
+                            "cast",
+                            "if",
+                            "call",
+                        ]:
+                            value.append(("arithm_expr", self._resolve_arithm_values(x, env)))
+                        elif x[0] == "id" and attr[1] != "case":
+                            if attr[1] in env:
+                                # In env: should be resolved and converted to an arithmetic value
+                                # (or operation)
+                                value.append(("arithm_expr", self._resolve_arithm_values(x, env)))
+                            else:
+                                # Most likely a relative value (e.g. size_is = pkt.otherField)
+                                value.append(x[1])
+                        else:
+                            value.append(x[1])
                     res.append(
                         (
-                            attr[1], 
-                            [
-                                (("arithm_expr", x) if (isinstance(x, int) or x[0] in ["binop", "monop", "cast", "if", "call"])
-                                 else x[1])
-                                 for x in attr[2]
-                            ]
+                            attr[1],
+                            value,
                         )
                     )
                 elif attr[1] in ["switch_type", "switch"]:
@@ -158,7 +256,12 @@ class Resolver:
                         ), "Unknown typespec in switch_type %s" % repr(typespec)
                         t = ("custom", self.resolve_type(typespec[0], env))
                     res.append(("switch_type", t))
-                elif attr[1] in ["iid_is", "helpstring", "id", "defaultvalue", "range"]:  # ignore
+                elif attr[1] in [
+                    "iid_is",
+                    "helpstring",
+                    "id",
+                    "defaultvalue",
+                ]:  # ignore
                     pass
                 else:
                     assert False, "Unknown call attr: %s" % repr(attr)
@@ -185,12 +288,7 @@ class Resolver:
             # It's an interface. Resovling it as a type should instead return a pointer
             # to a MInterfacePointer
             return self.make_field(
-                CustomType(
-                    None,
-                    ("id", type),
-                    ["MInterfacePointer"],
-                    []
-                ),
+                CustomType(None, ("id", type), ["MInterfacePointer"], []),
                 env,
                 toplevel=toplevel,
             )
@@ -205,12 +303,7 @@ class Resolver:
             # It's an interface. Resovling it as a type should instead return a pointer
             # to a MInterfacePointer
             return self.make_field(
-                CustomType(
-                    None,
-                    ("id", arg.name),
-                    ["MInterfacePointer"],
-                    []
-                ),
+                CustomType(None, ("id", arg.name), ["MInterfacePointer"], []),
                 env,
                 toplevel=toplevel,
             )
@@ -239,8 +332,8 @@ class Resolver:
                 new_ptr_lvl += new_arg.ptr_lvl
             # Welcome to [C706] 4.2.21. IF, <BUNCH OF CONDITIONS>
             if (
-                not subfld and
-                arg.TYPE != Types.ARRAY
+                not subfld
+                and arg.TYPE != Types.ARRAY
                 and arg.ptr_lvl
                 and any(x[0] in ("size_is", "max_is", "min_is") for x in idl_attributes)
             ):
@@ -259,9 +352,26 @@ class Resolver:
                 else:
                     # "If a structure field is a pointer ... then it is a pointer to an array of data."
                     new_ptr_lvl = 1
-                    if not any(x[1] in ("ref", "unique", "ptr") for x in arg.idl_attributes if x[0] == "id"):
-                        arg.idl_attributes.append(("id", self.current_interface.pointer_default if self.current_interface else "unique"))
-                arg.idl_attributes = [x for x in arg.idl_attributes if x[0] != "call" or x[1] not in ("size_is", "max_is", "min_is")]
+                    if not any(
+                        x[1] in ("ref", "unique", "ptr")
+                        for x in arg.idl_attributes
+                        if x[0] == "id"
+                    ):
+                        arg.idl_attributes.append(
+                            (
+                                "id",
+                                (
+                                    self.current_interface.pointer_default
+                                    if self.current_interface
+                                    else "unique"
+                                ),
+                            )
+                        )
+                arg.idl_attributes = [
+                    x
+                    for x in arg.idl_attributes
+                    if x[0] != "call" or x[1] not in ("size_is", "max_is", "min_is")
+                ]
                 newarg.subtype = arg
                 arg = newarg
             arg.ptr_lvl = new_ptr_lvl
@@ -355,8 +465,12 @@ class Resolver:
                 raise RecursionError(arg.struct_name)
 
             def proc_f(v):
-                field = self.make_field(v, env, strct_types=strct_types + [arg.struct_name])
-                if isinstance(field, ScapyStruct) and not isinstance(field, (ScapyUnion, ScapyEnum)):
+                field = self.make_field(
+                    v, env, strct_types=strct_types + [arg.struct_name]
+                )
+                if isinstance(field, ScapyStruct) and not isinstance(
+                    field, (ScapyUnion, ScapyEnum)
+                ):
                     # Weird bizarre case where you just throw an struct inside a struct
                     struct_name = "%s%s" % (field.name, arg.struct_name)
                     field.name = struct_name
@@ -412,18 +526,38 @@ class Resolver:
 
             def proc_f(i, v):
                 # special handling: case is a #define'd value: switch_type is native and case is an ID
-                if any(x[0] == "switch_type" and x[1][0] == "native" for x in idl_attributes) and any(isinstance(x, tuple) and x[0] == "call" and x[1] == "case" and isinstance(x[2][0], tuple) and x[2][0][0] == "id" for x in v.idl_attributes):
+                if any(
+                    x[0] == "switch_type" and x[1][0] == "native"
+                    for x in idl_attributes
+                ) and any(
+                    isinstance(x, tuple)
+                    and x[0] == "call"
+                    and x[1] == "case"
+                    and isinstance(x[2][0], tuple)
+                    and x[2][0][0] == "id"
+                    for x in v.idl_attributes
+                ):
                     i, caseval = next(
-                        (i, x[2][0]) for (i, x) in enumerate(v.idl_attributes)
+                        (i, x[2][0])
+                        for (i, x) in enumerate(v.idl_attributes)
                         if isinstance(x, tuple) and x[0] == "call" and x[1] == "case"
                     )
                     from scapy_obj import _rec_rslv_arithm
-                    v.idl_attributes[i] = ("call", "case", [_rec_rslv_arithm(caseval, env)])
+
+                    v.idl_attributes[i] = (
+                        "call",
+                        "case",
+                        [_rec_rslv_arithm(caseval, env)],
+                    )
                 try:
-                    field = self.make_field(v, env, strct_types=strct_types + [arg.struct_name])
+                    field = self.make_field(
+                        v, env, strct_types=strct_types + [arg.struct_name]
+                    )
                 except RecursionError as e:
                     raise RecursionError(*e.args + (arg.name,))
-                if isinstance(field, ScapyStruct) and not isinstance(field, (ScapyUnion, ScapyEnum)):
+                if isinstance(field, ScapyStruct) and not isinstance(
+                    field, (ScapyUnion, ScapyEnum)
+                ):
                     # Weird bizarre case where you just throw an struct inside an union
                     struct_name = field.name + "_sub%s" % i
                     field.name = struct_name
@@ -462,7 +596,10 @@ class Resolver:
                         assert False, "Unknown enum key: %s" % val[1]
                 elif isinstance(val, tuple) and val[0] == "binop":
                     from scapy_obj import _rec_rslv_arithm
-                    val = _rec_rslv_arithm(val, env, prefix="").replace(arg.name + ".", "")
+
+                    val = _rec_rslv_arithm(val, env, prefix="").replace(
+                        arg.name + ".", ""
+                    )
                 enums[key] = val
 
             return ScapyEnum(

@@ -1,7 +1,7 @@
  import "ms-dtyp.idl";
   
- import "ms-tsts_tsdef.h";
- import "ms-tsts_allproc.h";
+ #include "ms-tsts_tsdef.h"
+ #include "ms-tsts_allproc.h"
   
  [
      uuid(484809d6-4239-471b-b5bc-61df8c23ac48),
@@ -122,6 +122,7 @@
          [out]   hyper           *pDisconnectTime,
          [out]   hyper           *pLogonTime
          );
+     
   
      HRESULT RpcGetSessionCounters(
          [in]    handle_t            hBinding,
@@ -160,8 +161,15 @@
   
      VOID Opnum18NotUsedOnWire();
      VOID Opnum19NotUsedOnWire();
-   }
-
+     VOID Opnum20NotUsedOnWire();
+  
+     HRESULT RpcGetActivityId(
+         [in]    SESSION_HANDLE  hSession,
+         [out, ref] GUID*             *pActivityId   
+         );
+ }
+  
+  
  //
  //  notifications
  //

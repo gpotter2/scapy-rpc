@@ -1,0 +1,38 @@
+diff --git a/midl-to-scapy/idl/win/ms-mqds.idl b/midl-to-scapy/idl/win/ms-mqds.idl
+index 57dbb98..4de5610 100644
+--- a/midl-to-scapy/idl/win/ms-mqds.idl
++++ b/midl-to-scapy/idl/win/ms-mqds.idl
+@@ -43,15 +43,7 @@
+      [range(0,128)] unsigned long cCol;
+      [size_is(cCol)] MQSORTKEY  *aCol;
+  } MQSORTSET; 
+-  
+- [
+- version(1.0),
+- uuid(77df7a80-f298-11d0-8358-00a024c480a8),
+- pointer_default(unique)
+- ]
+-  
+- interface dscomm
+- {
++
+  /*==================================================
+   Structures
+  ===================================================*/
+@@ -77,6 +69,16 @@
+  typedef [context_handle] void * PCONTEXT_HANDLE_DELETE_TYPE;
+  typedef [ref] PCONTEXT_HANDLE_DELETE_TYPE 
+                *PPCONTEXT_HANDLE_DELETE_TYPE;
++
++ [
++ version(1.0),
++ uuid(77df7a80-f298-11d0-8358-00a024c480a8),
++ pointer_default(unique)
++ ]
++  
++ interface dscomm
++ {
++
+   
+  /*=======================================================================
+   MQDS API

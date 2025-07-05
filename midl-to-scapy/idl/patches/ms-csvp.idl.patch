@@ -1,0 +1,63 @@
+diff --git a/midl-to-scapy/idl/win/ms-csvp.idl b/midl-to-scapy/idl/win/ms-csvp.idl
+index 8325d02..ec9a705 100644
+--- a/midl-to-scapy/idl/win/ms-csvp.idl
++++ b/midl-to-scapy/idl/win/ms-csvp.idl
+@@ -1,5 +1,5 @@
+  import "ms-oaut.idl";
+-    #define SAFEARRAY(type) SAFEARRAY
++    //#define SAFEARRAY(type) SAFEARRAY
+     
+     typedef enum _CPREP_DISKID_ENUM {
+         CprepIdSignature = 0x00000000,
+@@ -10,7 +10,7 @@
+     
+     typedef struct _CPREP_DISKID {
+         CPREP_DISKID_ENUM       DiskIdType;
+-        [switch_is(DiskIdType)] union {
++        [switch_is(DiskIdType), switch_type(_CPREP_DISKID_ENUM)] union {
+             [case(CprepIdSignature)]    unsigned long DiskSignature;
+             [case(CprepIdGuid)]         GUID          DiskGuid;
+             [case(CprepIdNumber)]       unsigned long DeviceNumber;
+@@ -393,7 +393,7 @@
+       ClusterLogTypeHealth = 1,
+       ClusterLogTypeClusterSet = 2,
+       ClusterLogTypeNetwork = 3,
+-      ClusterLogType = 4
++      ClusterLogTypeOther = 4
+    } ClusterLogType;
+     
+     typedef enum CLUSTER_CERTTYPE {
+@@ -584,7 +584,6 @@
+           [in] ClusterLogExFlag flags,
+           [out] BSTR* LogFilePath
+         );
+-    };
+     
+         HRESULT GenerateClusterSetLog(
+           [in] ULONG SpanMinutes,
+@@ -601,7 +600,7 @@
+     
+         HRESULT ExportClusterPerformanceHistory(
+           [in] BSTR Pattern,
+-          [in] BSTER StreamName,
++          [in] BSTR* StreamName,
+           [in] ClusterLogExFlag flags,
+           [out] BSTR* LogFilePath
+         );
+@@ -643,14 +642,14 @@
+         pointer_default(unique)
+     ]
+     interface IClusterLogEx3 : IClusterLogEx2{
+-        HRESULT GenerateLogEx2 {
++        HRESULT GenerateLogEx2(
+           [ in ] ClusterLogType Type, 
+           [ in ] ULONG SpanMinutes,
+           [ in ] ClusterLogExFlag flags,
+           [ out ] BSTR* LongFilePath,
+           [ in ] BOOL NoCollate,
+           [ out ] BSTR* SemicolonSeperatedLogFilesPath
+-        };
++        );
+     };
+   
+     [

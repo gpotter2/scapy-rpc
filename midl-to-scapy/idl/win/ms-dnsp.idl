@@ -1912,7 +1912,7 @@
      LPWSTR      ScopeArray[1];
  } DNS_RPC_ENUM_SCOPE_LIST,  *PDNS_RPC_ENUM_SCOPE_LIST;
   
- typedef [switch_type(DNS_RPC_TYPEID)] union _DnssrvSrvRpcUnion
+ typedef [switch_type(DWORD)] union _DnssrvSrvRpcUnion
  {
      [case(DNSSRV_TYPEID_NULL)]      PBYTE       Null;
   

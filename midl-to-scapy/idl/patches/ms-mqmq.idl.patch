@@ -1,0 +1,22 @@
+diff --git a/midl-to-scapy/idl/win/ms-mqmq.idl b/midl-to-scapy/idl/win/ms-mqmq.idl
+index e4f1db3..79e41ef 100644
+--- a/midl-to-scapy/idl/win/ms-mqmq.idl
++++ b/midl-to-scapy/idl/win/ms-mqmq.idl
+@@ -103,7 +103,7 @@
+      UCHAR   wReserved1;
+      UCHAR   wReserved2;
+      ULONG   wReserved3;
+-     [switch_is(vt)] union
++     [switch_is(vt), switch_type(VARENUM)] union
+      {
+          [case (VT_EMPTY, VT_NULL)];
+          [case (VT_I1)]              CHAR            cVal;
+@@ -160,7 +160,7 @@
+    unsigned char m_qft;
+    unsigned char m_SuffixAndFlags;
+    unsigned short m_reserved;
+-   [switch_is(m_qft)] union {
++   [switch_is(m_qft), switch_type(__QUEUE_FORMAT_TYPE)] union {
+      [case(QUEUE_FORMAT_TYPE_UNKNOWN)] 
+        ; // No member is set. Selected when an m_qft value
+          // of 0 is returned.
