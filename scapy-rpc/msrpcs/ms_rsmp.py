@@ -1,4 +1,8 @@
-### ms-rsmp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-rsmp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IUnknown (v0.0): 00000000-0000-0000-C000-000000000046

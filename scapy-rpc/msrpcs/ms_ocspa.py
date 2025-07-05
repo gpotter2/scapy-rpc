@@ -1,4 +1,8 @@
-### ms-ocspa.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-ocspa.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IOCSPAdminD (v0.0): 784b693d-95f3-420b-8126-365c098659f2

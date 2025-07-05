@@ -1,4 +1,8 @@
-### ms-coma.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-coma.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - ICatalogSession (v0.0): 182C40FA-32E4-11D0-818B-00A0C9231C29

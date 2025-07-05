@@ -1,4 +1,8 @@
-### ms-dnsp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-dnsp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - DnsServer (v5.0): 50abc2a4-574d-40b3-9d66-ee4fd5fba076

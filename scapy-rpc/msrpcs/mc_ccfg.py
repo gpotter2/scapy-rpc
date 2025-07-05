@@ -1,4 +1,8 @@
-### mc-ccfg.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# mc-ccfg.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IClusCfgAsyncEvictCleanup (v0.0): 52C80B95-C1AD-4240-8D89-72E9FA84025E

@@ -1,4 +1,8 @@
-### ms-wkst.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-wkst.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - wkssvc (v1.0): 6BFFD098-A112-3610-9833-46C3F87E345A

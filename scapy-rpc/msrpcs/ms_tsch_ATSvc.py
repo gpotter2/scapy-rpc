@@ -1,4 +1,8 @@
-### ms-tsch_ATSvc.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-tsch_ATSvc.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - atsvc (v1.0): 1FF70682-0A51-30E8-076D-740BE8CEE98B

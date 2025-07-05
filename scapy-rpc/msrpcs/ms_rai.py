@@ -1,4 +1,8 @@
-### ms-rai.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-rai.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IPCHCollection (v0.0): 833E4100-AFF7-4AC3-AAC2-9F24C1457BCE

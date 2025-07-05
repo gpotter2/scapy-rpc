@@ -1,4 +1,8 @@
-### ms-rprn.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-rprn.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - winspool (v1.0): 12345678-1234-ABCD-EF00-0123456789AB

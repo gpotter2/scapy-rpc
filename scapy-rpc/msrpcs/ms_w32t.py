@@ -1,4 +1,8 @@
-### ms-w32t.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-w32t.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - W32Time (v4.1): 8fb6d884-2388-11d0-8c35-00c04fda2795

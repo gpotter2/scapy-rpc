@@ -1,4 +1,8 @@
-### ms-capr.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-capr.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - lsacap (v1.0): afc07e2e-311c-4435-808c-c483ffeec7c9

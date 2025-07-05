@@ -1,4 +1,8 @@
-### ms-scmr.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-scmr.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - svcctl (v2.0): 367ABB81-9844-35F1-AD32-98F038001003

@@ -1,4 +1,8 @@
-### ms-adtg.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-adtg.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IDataFactory (v0.0): 0EAC4842-8763-11cf-A743-00AA00A3F00D

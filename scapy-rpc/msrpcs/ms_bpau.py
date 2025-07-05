@@ -1,4 +1,8 @@
-### ms-bpau.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-bpau.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - BitsPeerAuth (v1.0): e3d0d746-d2af-40fd-8a7a-0d7078bb7092

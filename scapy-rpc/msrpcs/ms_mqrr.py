@@ -1,4 +1,8 @@
-### ms-mqrr.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-mqrr.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - RemoteRead (v1.0): 1a9134dd-7b39-45ba-ad88-44d01ca47f28

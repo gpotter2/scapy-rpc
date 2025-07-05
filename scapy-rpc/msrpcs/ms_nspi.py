@@ -1,4 +1,8 @@
-### ms-nspi.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-nspi.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - nspi (v56.0): F5CC5A18-4264-101A-8C59-08002B2F8426

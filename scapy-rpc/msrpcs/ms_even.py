@@ -1,4 +1,8 @@
-### ms-even.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-even.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - eventlog (v0.0): 82273FDC-E32A-18C3-3F78-827929DC23EA

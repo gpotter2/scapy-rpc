@@ -1,4 +1,8 @@
-### ms-comev.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-comev.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IEventObjectCollection (v0.0): f89ac270-d4eb-11d1-b682-00805fc79216

@@ -1,4 +1,8 @@
-### mc-iisa.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# mc-iisa.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IAppHostMethod (v0.0): 7883ca1c-1112-4447-84c3-52fbeb38069d

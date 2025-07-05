@@ -1,4 +1,8 @@
-### ms-tsch_SaSecRpc.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-tsch_SaSecRpc.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - sasec (v1.0): 378E52B0-C0A9-11CF-822D-00AA0051E40F

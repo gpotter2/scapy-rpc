@@ -1,4 +1,8 @@
-### ms-fsrm.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-fsrm.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IFsrmObject (v0.0): 22bcef93-4a3f-4183-89f9-2f8b8a628aee

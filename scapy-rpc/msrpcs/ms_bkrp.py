@@ -1,4 +1,8 @@
-### ms-bkrp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-bkrp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - BackupKey (v1.0): 3dde7c30-165d-11d1-ab8f-00805f14db40

@@ -1,4 +1,8 @@
-### ms-uamg.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-uamg.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - ICategoryCollection (v0.0): 3a56bfb8-576c-43f7-9335-fe4838fd7e37

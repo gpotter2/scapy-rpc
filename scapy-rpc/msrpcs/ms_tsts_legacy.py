@@ -1,4 +1,8 @@
-### ms-tsts_legacy.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-tsts_legacy.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IcaApi (v1.0): 5ca4a760-ebb1-11cf-8611-00a0245420ed

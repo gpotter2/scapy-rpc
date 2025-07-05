@@ -1,4 +1,8 @@
-### ms-raa.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-raa.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - authzr (v0.0): 0b1c2170-5732-4e0e-8cd3-d9b16f3b84d7

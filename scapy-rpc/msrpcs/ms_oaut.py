@@ -1,4 +1,8 @@
-### ms-oaut.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-oaut.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IDispatch (v0.0): 00020400-0000-0000-C000-000000000046

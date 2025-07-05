@@ -1,4 +1,8 @@
-### ms-raiw_winsif.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-raiw_winsif.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - winsif (v1.0): 45F52C28-7F9F-101A-B52B-08002B2EFABE

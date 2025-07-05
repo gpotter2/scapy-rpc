@@ -1,4 +1,8 @@
-### ms-srvs.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-srvs.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - srvsvc (v3.0): 4B324FC8-1670-01D3-1278-5A47BF6EE188

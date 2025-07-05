@@ -1,4 +1,8 @@
-### ms-tsts_TSVIPRpc.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-tsts_TSVIPRpc.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - TSVIPPublic (v1.0): 53b46b02-c73b-4a3e-8dee-b16b80672fc0

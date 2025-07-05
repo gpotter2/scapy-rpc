@@ -1,4 +1,8 @@
-### ms-irp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-irp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - inetinfo (v2.0): 82ad4280-036b-11cf-972c-00aa006887b0

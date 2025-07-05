@@ -1,4 +1,8 @@
-### ms-swn.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-swn.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - Witness (v1.1): ccd8c074-d0e5-4a40-92b4-d074faa6ba28

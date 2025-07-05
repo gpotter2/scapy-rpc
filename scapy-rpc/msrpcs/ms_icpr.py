@@ -1,4 +1,8 @@
-### ms-icpr.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-icpr.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - ICertPassage (v0.0): 91ae6020-9e3c-11cf-8d7c-00aa00c091be

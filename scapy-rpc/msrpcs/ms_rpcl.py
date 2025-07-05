@@ -1,4 +1,8 @@
-### ms-rpcl.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-rpcl.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - LocToLoc (v1.0): e33c0cc4-0482-101a-bc0c-02608c6ba218

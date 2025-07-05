@@ -1,4 +1,8 @@
-### ms-fsrvp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-fsrvp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - FileServerVssAgent (v1.0): A8E0653C-2744-4389-A61D-7373DF8B2292

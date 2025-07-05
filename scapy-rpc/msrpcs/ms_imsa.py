@@ -1,4 +1,8 @@
-### ms-imsa.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-imsa.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IMSAdminBaseW (v0.0): 70B51430-B6CA-11d0-B9B9-00A0C922E750

@@ -1,4 +1,8 @@
-### ms-msrp_msgsvcsend.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-msrp_msgsvcsend.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - msgsvcsend (v1.0): 5a7b91f8-ff00-11d0-a9b2-00c04fb6e6fc

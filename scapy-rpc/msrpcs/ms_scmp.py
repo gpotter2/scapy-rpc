@@ -1,4 +1,8 @@
-### ms-scmp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-scmp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IVssSnapshotMgmt (v0.0): FA7DF749-66E7-4986-A27F-E2F04AE53772

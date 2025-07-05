@@ -1,4 +1,8 @@
-### ms-tsts_rcmpublic.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-tsts_rcmpublic.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - RCMPublic (v1.0): bde95fdf-eee0-45de-9e12-e5a61cd0d4fe

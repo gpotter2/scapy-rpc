@@ -1,4 +1,8 @@
-### ms-comt.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-comt.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IGetTrackingData (v0.0): B60040E0-BCF3-11D1-861D-0080C729264D

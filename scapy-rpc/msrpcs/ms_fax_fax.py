@@ -1,4 +1,8 @@
-### ms-fax_fax.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-fax_fax.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - fax (v4.0): ea0a3165-4834-11d2-a6f8-00c04fa346cc

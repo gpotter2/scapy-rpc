@@ -1,4 +1,8 @@
-### ms-lsat.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-lsat.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - lsarpc (v0.0): 12345778-1234-ABCD-EF00-0123456789AB

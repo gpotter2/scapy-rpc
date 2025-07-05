@@ -1,4 +1,8 @@
-### ms-mqmr.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-mqmr.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - qmmgmt (v1.0): 41208ee0-e970-11d1-9b9e-00e02c064c39

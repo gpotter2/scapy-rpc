@@ -1,4 +1,8 @@
-### ms-even6.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-even6.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - IEventService (v1.0): f6beaff7-1e19-4fbb-9f8f-b89e2018337c

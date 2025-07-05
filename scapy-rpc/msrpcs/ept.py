@@ -1,4 +1,8 @@
-### ept.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ept.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - ept (v3.0): e1af8308-5d1f-11c9-91a4-08002b14a0fa

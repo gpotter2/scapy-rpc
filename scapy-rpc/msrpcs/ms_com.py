@@ -1,4 +1,8 @@
-### ms-com.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-com.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - ITransactionStream (v0.0): 97199110-DB2E-11d1-A251-0000F805CA53

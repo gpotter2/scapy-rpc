@@ -1,4 +1,8 @@
-### ms-rsp_initshutdown.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-rsp_initshutdown.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - InitShutdown (v1.0): 894de0c0-0d55-11d3-a322-00c04fa321a1

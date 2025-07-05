@@ -1,4 +1,8 @@
-### ms-oxcrpc.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-oxcrpc.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - emsmdb (v0.81): A4F1DB00-CA47-1067-B31F-00DD010662DA

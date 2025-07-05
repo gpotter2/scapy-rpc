@@ -1,4 +1,8 @@
-### ms-mqqp.idl
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
+# ms-mqqp.idl compiled on 05/07/2025
 """
 RPC definitions for the following interfaces:
 - qm2qm (v1.0): 1088a980-eae5-11d0-8d9b-00a02453c337
