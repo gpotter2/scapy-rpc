@@ -27,6 +27,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRInt3264Field,
@@ -45,9 +46,8 @@ class PDIM_INFORMATION_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwBufferSize", None, size_of="pBuffer"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pBuffer", "", size_is=lambda pkt: pkt.dwBufferSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pBuffer", "", size_is=lambda pkt: pkt.dwBufferSize)
         ),
     ]
 
@@ -185,19 +185,17 @@ class PDIM_INTERFACE_CONTAINER(NDRPacket):
     fields_desc = [
         NDRIntField("fGetInterfaceInfo", 0),
         NDRIntField("dwInterfaceInfoSize", None, size_of="pInterfaceInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pInterfaceInfo", "", size_is=lambda pkt: pkt.dwInterfaceInfoSize
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("fGetGlobalInfo", 0),
         NDRIntField("dwGlobalInfoSize", None, size_of="pGlobalInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pGlobalInfo", "", size_is=lambda pkt: pkt.dwGlobalInfoSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -452,18 +450,16 @@ class PDIM_MIB_ENTRY_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwMibInEntrySize", None, size_of="pMibInEntry"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pMibInEntry", "", size_is=lambda pkt: pkt.dwMibInEntrySize
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwMibOutEntrySize", None, size_of="pMibOutEntry"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pMibOutEntry", "", size_is=lambda pkt: pkt.dwMibOutEntrySize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -788,9 +784,8 @@ class CERT_BLOB_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbData", None, size_of="pbData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData)
         ),
     ]
 
@@ -804,14 +799,13 @@ class IKEV2_TUNNEL_CONFIG_PARAMS_1(NDRPacket):
         NDRIntField("dwSaDataSizeForRenegotiation", 0),
         NDRIntField("dwConfigOptions", 0),
         NDRIntField("dwTotalCertificates", None, size_of="certificateNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "certificateNames",
                 [],
                 CERT_BLOB_1,
                 size_is=lambda pkt: pkt.dwTotalCertificates,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -915,24 +909,22 @@ class IKEV2_TUNNEL_CONFIG_PARAMS_2(NDRPacket):
         NDRIntField("dwSaDataSizeForRenegotiation", 0),
         NDRIntField("dwConfigOptions", 0),
         NDRIntField("dwTotalCertificates", None, size_of="certificateNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "certificateNames",
                 [],
                 CERT_BLOB_1,
                 size_is=lambda pkt: pkt.dwTotalCertificates,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("machineCertificateName", CERT_BLOB_1(), CERT_BLOB_1),
         NDRIntField("dwEncryptionType", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "customPolicy",
                 ROUTER_CUSTOM_IKEv2_POLICY_0(),
                 ROUTER_CUSTOM_IKEv2_POLICY_0,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -991,9 +983,8 @@ class CERT_EKU_1(NDRPacket):
     fields_desc = [
         NDRIntField("dwSize", None, size_of="pwszEKU"),
         NDRSignedIntField("IsEKUOID", 0),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pwszEKU", "", size_is=lambda pkt: pkt.dwSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pwszEKU", "", size_is=lambda pkt: pkt.dwSize)
         ),
     ]
 
@@ -1007,31 +998,28 @@ class IKEV2_TUNNEL_CONFIG_PARAMS_3(NDRPacket):
         NDRIntField("dwSaDataSizeForRenegotiation", 0),
         NDRIntField("dwConfigOptions", 0),
         NDRIntField("dwTotalCertificates", None, size_of="certificateNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "certificateNames",
                 [],
                 CERT_BLOB_1,
                 size_is=lambda pkt: pkt.dwTotalCertificates,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("machineCertificateName", CERT_BLOB_1(), CERT_BLOB_1),
         NDRIntField("dwEncryptionType", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "customPolicy",
                 ROUTER_CUSTOM_IKEv2_POLICY_0(),
                 ROUTER_CUSTOM_IKEv2_POLICY_0,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwTotalEkus", None, size_of="certificateEKUs"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "certificateEKUs", [], CERT_EKU_1, size_is=lambda pkt: pkt.dwTotalEkus
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("machineCertificateHash", CERT_BLOB_1(), CERT_BLOB_1),
     ]
@@ -1070,13 +1058,12 @@ class L2TP_TUNNEL_CONFIG_PARAMS_1(NDRPacket):
         NDRIntField("dwEncryptionType", 0),
         NDRIntField("dwSaLifeTime", 0),
         NDRIntField("dwSaDataSizeForRenegotiation", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "customPolicy",
                 PROUTER_CUSTOM_L2TP_POLICY_0(),
                 PROUTER_CUSTOM_L2TP_POLICY_0,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1315,13 +1302,12 @@ class RAS_CONNECTION_EX_1_IDL(NDRPacket):
                     ((lambda pkt: None == 1), (lambda _, val: val.tag == 1)),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ProjectionInfo",
                             PIKEV2_PROJECTION_INFO_1(),
                             PIKEV2_PROJECTION_INFO_1,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     ((lambda pkt: None == 2), (lambda _, val: val.tag == 2)),
                 ),
@@ -1572,13 +1558,12 @@ class ROUTER_IKEv2_IF_CUSTOM_CONFIG_0(NDRPacket):
         NDRIntField("dwSaLifeTime", 0),
         NDRIntField("dwSaDataSize", 0),
         NDRPacketField("certificateName", CERT_BLOB_1(), CERT_BLOB_1),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "customPolicy",
                 PROUTER_CUSTOM_IKEv2_POLICY_0(),
                 PROUTER_CUSTOM_IKEv2_POLICY_0,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1602,13 +1587,12 @@ class ROUTER_IKEv2_IF_CUSTOM_CONFIG_1(NDRPacket):
         NDRIntField("dwSaLifeTime", 0),
         NDRIntField("dwSaDataSize", 0),
         NDRPacketField("certificateName", CERT_BLOB_1(), CERT_BLOB_1),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "customPolicy",
                 PROUTER_CUSTOM_IKEv2_POLICY_0(),
                 PROUTER_CUSTOM_IKEv2_POLICY_0,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("certificateHash", CERT_BLOB_1(), CERT_BLOB_1),
     ]
@@ -1932,38 +1916,28 @@ class LPRASRPC_PBUSER(NDRPacket):
         NDRSignedIntField("fPopupOnTopWhenRedialing", 0),
         NDRSignedIntField("fExpandAutoDialQuery", 0),
         NDRIntField("dwCallbackMode", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pCallbacks", LPRASRPC_CALLBACKLIST(), LPRASRPC_CALLBACKLIST
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pCallbacks", LPRASRPC_CALLBACKLIST(), LPRASRPC_CALLBACKLIST)
         ),
         StrFixedLenFieldUtf16("pszLastCallbackByCaller", "", length=129 * 2),
         NDRIntField("dwPhonebookMode", 0),
         StrFixedLenFieldUtf16("pszPersonalFile", "", length=260 * 2),
         StrFixedLenFieldUtf16("pszAlternatePath", "", length=260 * 2),
-        NDRFullPointerField(
-            NDRPacketField("pPhonebooks", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pPhonebooks", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST)
         ),
-        NDRFullPointerField(
-            NDRPacketField("pAreaCodes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pAreaCodes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST)
         ),
         NDRSignedIntField("fUseAreaAndCountry", 0),
-        NDRFullPointerField(
-            NDRPacketField("pPrefixes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pPrefixes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST)
         ),
-        NDRFullPointerField(
-            NDRPacketField("pSuffixes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pSuffixes", LPRASRPC_STRINGLIST(), LPRASRPC_STRINGLIST)
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pLocations", LPRASRPC_LOCATIONLIST(), LPRASRPC_LOCATIONLIST
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pLocations", LPRASRPC_LOCATIONLIST(), LPRASRPC_LOCATIONLIST)
         ),
         NDRIntField("dwXPhonebook", 0),
         NDRIntField("dwYPhonebook", 0),

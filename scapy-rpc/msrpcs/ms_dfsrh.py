@@ -102,8 +102,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -126,8 +125,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -139,8 +137,7 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 

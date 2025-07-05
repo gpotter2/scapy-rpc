@@ -16,6 +16,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -40,14 +41,13 @@ class PWITNESS_INTERFACE_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumberOfInterfaces", None, size_of="InterfaceInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "InterfaceInfo",
                 [PWITNESS_INTERFACE_INFO()],
                 PWITNESS_INTERFACE_INFO,
                 size_is=lambda pkt: pkt.NumberOfInterfaces,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -97,9 +97,8 @@ class PRESP_ASYNC_NOTIFY(NDRPacket):
         NDRIntField("MessageType", 0),
         NDRIntField("Length", None, size_of="MessageBuffer"),
         NDRIntField("NumberOfMessages", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("MessageBuffer", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("MessageBuffer", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 

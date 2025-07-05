@@ -15,7 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRIntEnumField,
     NDRIntField,
     NDRPacketField,
@@ -94,14 +94,13 @@ class old_TRKSVR_CALL_SEARCH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cSearch", None, size_of="pSearches"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pSearches",
                 [],
                 old_TRK_FILE_TRACKING_INFORMATION,
                 size_is=lambda pkt: pkt.cSearch,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -113,32 +112,27 @@ class TRKSVR_CALL_MOVE_NOTIFICATION(NDRPacket):
         NDRIntField("cProcessed", 0),
         NDRSignedIntField("seq", 0),
         NDRSignedIntField("fForceSeqNumber", 0),
-        NDRFullPointerField(
-            NDRPacketField("pvolid", CVolumeId(), CVolumeId), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRPacketField("pvolid", CVolumeId(), CVolumeId)),
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgobjidCurrent", [], CObjId, size_is=lambda pkt: pkt.cNotifications
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgdroidBirth",
                 [],
                 CDomainRelativeObjId,
                 size_is=lambda pkt: pkt.cNotifications,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgdroidNew",
                 [],
                 CDomainRelativeObjId,
                 size_is=lambda pkt: pkt.cNotifications,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -147,21 +141,19 @@ class TRKSVR_CALL_REFRESH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cSources", None, size_of="adroidBirth"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "adroidBirth",
                 [],
                 CDomainRelativeObjId,
                 size_is=lambda pkt: pkt.cSources,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cVolumes", None, size_of="avolid"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "avolid", [], CVolumeId, size_is=lambda pkt: pkt.cVolumes
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -206,11 +198,10 @@ class TRKSVR_CALL_SYNC_VOLUMES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cVolumes", None, size_of="pVolumes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pVolumes", [], TRKSVR_SYNC_VOLUME, size_is=lambda pkt: pkt.cVolumes
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -219,21 +210,19 @@ class TRKSVR_CALL_DELETE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cdroidBirth", None, size_of="adroidBirth"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "adroidBirth",
                 [],
                 CDomainRelativeObjId,
                 size_is=lambda pkt: pkt.cdroidBirth,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cVolumes", None, size_of="pVolumes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pVolumes", [], CVolumeId, size_is=lambda pkt: pkt.cVolumes
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -317,14 +306,13 @@ class TRKSVR_CALL_SEARCH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cSearch", None, size_of="pSearches"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pSearches",
                 [],
                 TRK_FILE_TRACKING_INFORMATION,
                 size_is=lambda pkt: pkt.cSearch,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -450,9 +438,7 @@ class TRKSVR_MESSAGE_UNION(NDRPacket):
             align=(4, 8),
             switch_fmt=("I", "I"),
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ptszMachineID", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ptszMachineID", "")),
     ]
 
 

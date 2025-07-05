@@ -15,7 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRIntField,
     NDRPacketField,
     register_dcerpc_interface,
@@ -37,9 +37,8 @@ class EVENT_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("BufferLength", None, size_of="Buffer"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferLength)
         ),
     ]
 

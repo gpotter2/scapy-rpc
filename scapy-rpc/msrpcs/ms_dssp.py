@@ -14,6 +14,7 @@ from scapy.layers.dcerpc import (
     DceRpcOp,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -54,15 +55,9 @@ class DSROLER_PRIMARY_DOMAIN_INFO_BASIC(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("MachineRole", 0, DSROLE_MACHINE_ROLE),
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DomainNameFlat", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DomainNameDns", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DomainForestName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DomainNameFlat", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DomainNameDns", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DomainForestName", "")),
         NDRPacketField("DomainGuid", GUID(), GUID),
     ]
 

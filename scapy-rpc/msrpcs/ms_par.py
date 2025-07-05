@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
     NDRFieldListField,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIEEEFloatField,
     NDRInt3264EnumField,
@@ -41,9 +42,8 @@ class DEVMODE_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", None, size_of="pDevMode"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pDevMode", "", size_is=lambda pkt: pkt.cbBuf),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pDevMode", "", size_is=lambda pkt: pkt.cbBuf)
         ),
     ]
 
@@ -52,12 +52,8 @@ class SPLCLIENT_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSize", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
         NDRIntField("dwBuildNum", 0),
         NDRIntField("dwMajorVersion", 0),
         NDRIntField("dwMinorVersion", 0),
@@ -75,12 +71,8 @@ class SPLCLIENT_INFO_3(NDRPacket):
         NDRIntField("cbSize", 0),
         NDRIntField("dwFlags", 0),
         NDRIntField("dwSize", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
         NDRIntField("dwBuildNum", 0),
         NDRIntField("dwMajorVersion", 0),
         NDRIntField("dwMinorVersion", 0),
@@ -96,11 +88,10 @@ class SPLCLIENT_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ClientInfo", SPLCLIENT_INFO_1(), SPLCLIENT_INFO_1
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -108,11 +99,10 @@ class SPLCLIENT_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ClientInfo", SPLCLIENT_INFO_2(), SPLCLIENT_INFO_2
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -120,11 +110,10 @@ class SPLCLIENT_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ClientInfo", SPLCLIENT_INFO_3(), SPLCLIENT_INFO_3
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -173,12 +162,8 @@ class SYSTEMTIME(NDRPacket):
 class PRINTER_INFO_STRESS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pServerName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pServerName", "")),
         NDRIntField("cJobs", 0),
         NDRIntField("cTotalJobs", 0),
         NDRIntField("cTotalBytes", 0),
@@ -213,11 +198,9 @@ class PRINTER_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDescription", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pComment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pComment", "")),
     ]
 
 
@@ -303,53 +286,32 @@ class SECURITY_DESCRIPTOR(NDRPacket):
         NDRByteField("Revision", 0),
         NDRByteField("Sbz1", 0),
         NDRShortField("Control", 0),
-        NDRFullPointerField(NDRPacketField("Owner", PSID(), PSID), deferred=True),
-        NDRFullPointerField(NDRPacketField("Group", PSID(), PSID), deferred=True),
-        NDRFullPointerField(NDRPacketField("Sacl", PACL(), PACL), deferred=True),
-        NDRFullPointerField(NDRPacketField("Dacl", PACL(), PACL), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Owner", PSID(), PSID)),
+        NDRFullEmbPointerField(NDRPacketField("Group", PSID(), PSID)),
+        NDRFullEmbPointerField(NDRPacketField("Sacl", PACL(), PACL)),
+        NDRFullEmbPointerField(NDRPacketField("Dacl", PACL(), PACL)),
     ]
 
 
 class PRINTER_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pServerName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pShareName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pComment", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pLocation", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDevMode", DEVMODE(), DEVMODE), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pSepFile", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrintProcessor", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDatatype", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pParameters", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pShareName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pComment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pLocation", "")),
+        NDRFullEmbPointerField(NDRPacketField("pDevMode", DEVMODE(), DEVMODE)),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pSepFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrintProcessor", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDatatype", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pParameters", "")),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pSecurityDescriptor", SECURITY_DESCRIPTOR(), SECURITY_DESCRIPTOR
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("Attributes", 0),
         NDRIntField("Priority", 0),
@@ -365,11 +327,10 @@ class PRINTER_INFO_2(NDRPacket):
 class PRINTER_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pSecurityDescriptor", SECURITY_DESCRIPTOR(), SECURITY_DESCRIPTOR
-            ),
-            deferred=True,
+            )
         )
     ]
 
@@ -377,12 +338,8 @@ class PRINTER_INFO_3(NDRPacket):
 class PRINTER_INFO_4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pServerName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pServerName", "")),
         NDRIntField("Attributes", 0),
     ]
 
@@ -390,12 +347,8 @@ class PRINTER_INFO_4(NDRPacket):
 class PRINTER_INFO_5(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", "")),
         NDRIntField("Attributes", 0),
         NDRIntField("DeviceNotSelectedTimeout", 0),
         NDRIntField("TransmissionRetryTimeout", 0),
@@ -410,9 +363,7 @@ class PRINTER_INFO_6(NDRPacket):
 class PRINTER_INFO_7(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszObjectGUID", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszObjectGUID", "")),
         NDRIntField("dwAction", 0),
     ]
 
@@ -420,18 +371,14 @@ class PRINTER_INFO_7(NDRPacket):
 class PRINTER_INFO_8(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pDevMode", DEVMODE(), DEVMODE), deferred=True
-        )
+        NDRFullEmbPointerField(NDRPacketField("pDevMode", DEVMODE(), DEVMODE))
     ]
 
 
 class PRINTER_INFO_9(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pDevMode", DEVMODE(), DEVMODE), deferred=True
-        )
+        NDRFullEmbPointerField(NDRPacketField("pDevMode", DEVMODE(), DEVMODE))
     ]
 
 
@@ -442,11 +389,10 @@ class PRINTER_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "PrinterInfo", PRINTER_INFO_STRESS(), PRINTER_INFO_STRESS
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -454,9 +400,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_1(), PRINTER_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_1(), PRINTER_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -464,9 +409,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_2(), PRINTER_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_2(), PRINTER_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -474,9 +418,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_3(), PRINTER_INFO_3),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_3(), PRINTER_INFO_3)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -484,9 +427,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_4(), PRINTER_INFO_4),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_4(), PRINTER_INFO_4)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -494,9 +436,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_5(), PRINTER_INFO_5),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_5(), PRINTER_INFO_5)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 5),
@@ -504,9 +445,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_6(), PRINTER_INFO_6),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_6(), PRINTER_INFO_6)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 6),
@@ -514,9 +454,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_7(), PRINTER_INFO_7),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_7(), PRINTER_INFO_7)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 7),
@@ -524,9 +463,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_8(), PRINTER_INFO_8),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_8(), PRINTER_INFO_8)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 8),
@@ -534,9 +472,8 @@ class PRINTER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PrinterInfo", PRINTER_INFO_9(), PRINTER_INFO_9),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PrinterInfo", PRINTER_INFO_9(), PRINTER_INFO_9)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 9),
@@ -555,9 +492,8 @@ class SECURITY_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", None, size_of="pSecurity"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pSecurity", "", size_is=lambda pkt: pkt.cbBuf),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pSecurity", "", size_is=lambda pkt: pkt.cbBuf)
         ),
     ]
 
@@ -583,22 +519,12 @@ class JOB_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("JobId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocument", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDatatype", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pStatus", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocument", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDatatype", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pStatus", "")),
         NDRIntField("Status", 0),
         NDRIntField("Priority", 0),
         NDRIntField("Position", 0),
@@ -612,42 +538,21 @@ class JOB_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("JobId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocument", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pNotifyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDatatype", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrintProcessor", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pParameters", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDevMode", DEVMODE(), DEVMODE), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pStatus", ""), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocument", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pNotifyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDatatype", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrintProcessor", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pParameters", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverName", "")),
+        NDRFullEmbPointerField(NDRPacketField("pDevMode", DEVMODE(), DEVMODE)),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pStatus", "")),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pSecurityDescriptor", SECURITY_DESCRIPTOR(), SECURITY_DESCRIPTOR
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("Status", 0),
         NDRIntField("Priority", 0),
@@ -675,42 +580,21 @@ class JOB_INFO_4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("JobId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocument", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pNotifyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDatatype", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrintProcessor", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pParameters", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDevMode", DEVMODE(), DEVMODE), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pStatus", ""), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocument", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pNotifyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDatatype", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrintProcessor", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pParameters", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverName", "")),
+        NDRFullEmbPointerField(NDRPacketField("pDevMode", DEVMODE(), DEVMODE)),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pStatus", "")),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pSecurityDescriptor", SECURITY_DESCRIPTOR(), SECURITY_DESCRIPTOR
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("Status", 0),
         NDRIntField("Priority", 0),
@@ -733,9 +617,8 @@ class JOB_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("JobInfo", JOB_INFO_1(), JOB_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("JobInfo", JOB_INFO_1(), JOB_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -743,9 +626,8 @@ class JOB_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("JobInfo", JOB_INFO_2(), JOB_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("JobInfo", JOB_INFO_2(), JOB_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -753,9 +635,8 @@ class JOB_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("JobInfo", JOB_INFO_3(), JOB_INFO_3),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("JobInfo", JOB_INFO_3(), JOB_INFO_3)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -763,9 +644,8 @@ class JOB_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("JobInfo", JOB_INFO_4(), JOB_INFO_4),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("JobInfo", JOB_INFO_4(), JOB_INFO_4)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -903,13 +783,9 @@ class RpcAsyncGetPrinter_Response(NDRPacket):
 class DOC_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDocName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pOutputFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDatatype", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pOutputFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDatatype", "")),
     ]
 
 
@@ -920,9 +796,8 @@ class DOC_INFO_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("DocInfo", DOC_INFO_1(), DOC_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("DocInfo", DOC_INFO_1(), DOC_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -1086,7 +961,7 @@ class FORM_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRPacketField("Size", SIZE(), SIZE),
         NDRPacketField("ImageableArea", RECTL(), RECTL),
     ]
@@ -1096,16 +971,14 @@ class RPC_FORM_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRPacketField("Size", SIZE(), SIZE),
         NDRPacketField("ImageableArea", RECTL(), RECTL),
-        NDRFullPointerField(NDRConfVarStrNullField("pKeyword", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pKeyword", "")),
         NDRIntField("StringType", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pMuiDll", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMuiDll", "")),
         NDRIntField("dwResourceId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDisplayName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDisplayName", "")),
         NDRShortField("wLangID", 0),
     ]
 
@@ -1117,9 +990,8 @@ class FORM_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("FormInfo", FORM_INFO_1(), FORM_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("FormInfo", FORM_INFO_1(), FORM_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -1127,9 +999,8 @@ class FORM_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("FormInfo", RPC_FORM_INFO_2(), RPC_FORM_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("FormInfo", RPC_FORM_INFO_2(), RPC_FORM_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -1360,9 +1231,8 @@ class RPC_BINARY_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", None, size_of="pszString"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pszString", "", size_is=lambda pkt: pkt.cbBuf),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pszString", "", size_is=lambda pkt: pkt.cbBuf)
         ),
     ]
 
@@ -1397,9 +1267,7 @@ class RPC_BIDI_DATA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("u", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("u", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwBidiType", None)
@@ -1451,7 +1319,7 @@ class RPC_BIDI_REQUEST_DATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwReqNumber", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pSchema", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pSchema", "")),
         NDRPacketField("data", RPC_BIDI_DATA(), RPC_BIDI_DATA),
     ]
 
@@ -1478,7 +1346,7 @@ class RPC_BIDI_RESPONSE_DATA(NDRPacket):
     fields_desc = [
         NDRIntField("dwResult", 0),
         NDRIntField("dwReqNumber", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pSchema", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pSchema", "")),
         NDRPacketField("data", RPC_BIDI_DATA(), RPC_BIDI_DATA),
     ]
 
@@ -1584,28 +1452,18 @@ class RpcAsyncEnumPrinters_Response(NDRPacket):
 
 class DRIVER_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", ""))]
 
 
 class DRIVER_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pConfigFile", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pConfigFile", "")),
     ]
 
 
@@ -1613,34 +1471,19 @@ class RPC_DRIVER_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pConfigFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHelpFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMonitorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDefaultDataType", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pConfigFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHelpFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMonitorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1649,41 +1492,25 @@ class RPC_DRIVER_INFO_4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pConfigFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHelpFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMonitorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDefaultDataType", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pConfigFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHelpFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMonitorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1697,52 +1524,32 @@ class RPC_DRIVER_INFO_6(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("cVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pConfigFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHelpFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMonitorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDefaultDataType", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pConfigFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHelpFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMonitorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("ftDriverDate", FILETIME(), FILETIME),
         NDRLongField("dwlDriverVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pMfgName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pOEMUrl", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHardwareID", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pProvider", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMfgName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pOEMUrl", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHardwareID", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pProvider", "")),
     ]
 
 
@@ -1750,75 +1557,49 @@ class RPC_DRIVER_INFO_8(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("cVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDriverPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pConfigFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHelpFile", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMonitorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDefaultDataType", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDriverPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pConfigFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHelpFile", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMonitorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("ftDriverDate", FILETIME(), FILETIME),
         NDRLongField("dwlDriverVersion", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pMfgName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pOEMUrl", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pHardwareID", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pProvider", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrintProcessor", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pVendorSetup", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMfgName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pOEMUrl", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pHardwareID", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pProvider", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrintProcessor", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pVendorSetup", "")),
         NDRIntField("cchColorProfiles", None, size_of="pszzColorProfiles"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszzColorProfiles", "", size_is=lambda pkt: pkt.cchColorProfiles
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pInfPath", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pInfPath", "")),
         NDRIntField("dwPrinterDriverAttributes", 0),
         NDRIntField("cchCoreDependencies", None, size_of="pszzCoreDriverDependencies"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszzCoreDriverDependencies",
                 "",
                 size_is=lambda pkt: pkt.cchCoreDependencies,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("ftMinInboxDriverVerDate", FILETIME(), FILETIME),
         NDRLongField("dwlMinInboxDriverVerVersion", 0),
@@ -1832,9 +1613,8 @@ class DRIVER_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("DriverInfo", DRIVER_INFO_1(), DRIVER_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("DriverInfo", DRIVER_INFO_1(), DRIVER_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -1842,9 +1622,8 @@ class DRIVER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("DriverInfo", DRIVER_INFO_2(), DRIVER_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("DriverInfo", DRIVER_INFO_2(), DRIVER_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -1852,11 +1631,10 @@ class DRIVER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DriverInfo", RPC_DRIVER_INFO_3(), RPC_DRIVER_INFO_3
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -1864,11 +1642,10 @@ class DRIVER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DriverInfo", RPC_DRIVER_INFO_4(), RPC_DRIVER_INFO_4
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -1876,11 +1653,10 @@ class DRIVER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DriverInfo", RPC_DRIVER_INFO_6(), RPC_DRIVER_INFO_6
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 6),
@@ -1888,11 +1664,10 @@ class DRIVER_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DriverInfo", RPC_DRIVER_INFO_8(), RPC_DRIVER_INFO_8
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 8),
@@ -2074,23 +1849,15 @@ class RpcAsyncEnumMonitors_Response(NDRPacket):
 
 class PORT_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", ""))]
 
 
 class PORT_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMonitorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDescription", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMonitorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDescription", "")),
         NDRIntField("fPortType", 0),
         NDRIntField("Reserved", 0),
     ]
@@ -2100,9 +1867,7 @@ class PORT_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwStatus", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszStatus", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszStatus", "")),
         NDRIntField("dwSeverity", 0),
     ]
 
@@ -2110,11 +1875,9 @@ class PORT_INFO_3(NDRPacket):
 class PORT_INFO_FF(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", "")),
         NDRIntField("cbMonitorData", 0),
-        NDRFullPointerField(NDRByteField("pMonitorData", 0), deferred=True),
+        NDRFullEmbPointerField(NDRByteField("pMonitorData", 0)),
     ]
 
 
@@ -2125,9 +1888,8 @@ class PORT_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PortInfo", PORT_INFO_1(), PORT_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PortInfo", PORT_INFO_1(), PORT_INFO_1)
                     ),
                     (
                         (lambda pkt: (16777215 & getattr(pkt, "Level", None)) == 1),
@@ -2135,9 +1897,8 @@ class PORT_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PortInfo", PORT_INFO_2(), PORT_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PortInfo", PORT_INFO_2(), PORT_INFO_2)
                     ),
                     (
                         (lambda pkt: (16777215 & getattr(pkt, "Level", None)) == 2),
@@ -2145,9 +1906,8 @@ class PORT_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PortInfo", PORT_INFO_3(), PORT_INFO_3),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PortInfo", PORT_INFO_3(), PORT_INFO_3)
                     ),
                     (
                         (lambda pkt: (16777215 & getattr(pkt, "Level", None)) == 3),
@@ -2155,9 +1915,8 @@ class PORT_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("PortInfo", PORT_INFO_FF(), PORT_INFO_FF),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("PortInfo", PORT_INFO_FF(), PORT_INFO_FF)
                     ),
                     (
                         (
@@ -2179,11 +1938,10 @@ class PORT_VAR_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbMonitorData", None, size_of="pMonitorData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pMonitorData", "", size_is=lambda pkt: pkt.cbMonitorData
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2215,19 +1973,15 @@ class RpcAsyncSetPort_Response(NDRPacket):
 
 class MONITOR_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", ""))]
 
 
 class MONITOR_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pEnvironment", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDLLName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDLLName", "")),
     ]
 
 
@@ -2238,9 +1992,8 @@ class MONITOR_CONTAINER(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("MonitorInfo", MONITOR_INFO_1(), MONITOR_INFO_1),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("MonitorInfo", MONITOR_INFO_1(), MONITOR_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -2248,9 +2001,8 @@ class MONITOR_CONTAINER(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("MonitorInfo", MONITOR_INFO_2(), MONITOR_INFO_2),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("MonitorInfo", MONITOR_INFO_2(), MONITOR_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -2376,9 +2128,7 @@ class SYSTEMTIME_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", 0),
-        NDRFullPointerField(
-            NDRPacketField("pSystemTime", SYSTEMTIME(), SYSTEMTIME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pSystemTime", SYSTEMTIME(), SYSTEMTIME)),
     ]
 
 
@@ -2386,11 +2136,10 @@ class STRING_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", None, size_of="pszString", adjust=lambda _, x: (x * 2)),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pszString", "", size_is=lambda pkt: (pkt.cbBuf // 2)
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2486,9 +2235,8 @@ class RPC_V2_NOTIFY_INFO(NDRPacket):
 class NOTIFY_REPLY_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pInfo", RPC_V2_NOTIFY_INFO(), RPC_V2_NOTIFY_INFO),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pInfo", RPC_V2_NOTIFY_INFO(), RPC_V2_NOTIFY_INFO)
         )
     ]
 
@@ -2501,9 +2249,8 @@ class RPC_V2_NOTIFY_OPTIONS_TYPE(NDRPacket):
         NDRIntField("Reserved1", 0),
         NDRIntField("Reserved2", 0),
         NDRIntField("Count", None, size_of="pFields"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pFields", "", size_is=lambda pkt: pkt.Count),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pFields", "", size_is=lambda pkt: pkt.Count)
         ),
     ]
 
@@ -2514,11 +2261,10 @@ class RPC_V2_NOTIFY_OPTIONS(NDRPacket):
         NDRIntField("Version", 0),
         NDRIntField("Reserved", 0),
         NDRIntField("Count", None, size_of="pTypes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pTypes", [], RPC_V2_NOTIFY_OPTIONS_TYPE, size_is=lambda pkt: pkt.Count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2526,9 +2272,8 @@ class RPC_V2_NOTIFY_OPTIONS(NDRPacket):
 class NOTIFY_OPTIONS_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pOptions", RPC_V2_NOTIFY_OPTIONS(), RPC_V2_NOTIFY_OPTIONS),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pOptions", RPC_V2_NOTIFY_OPTIONS(), RPC_V2_NOTIFY_OPTIONS)
         )
     ]
 
@@ -2540,9 +2285,7 @@ class RpcPrintPropertyValue(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "ePropertyType", None)
@@ -2672,9 +2415,7 @@ class RpcPrintPropertyValue(NDRPacket):
 class RpcPrintNamedProperty(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("propertyName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("propertyName", "")),
         NDRPacketField("propertyValue", RpcPrintPropertyValue(), RpcPrintPropertyValue),
     ]
 
@@ -2683,14 +2424,13 @@ class RpcPrintPropertiesCollection(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("numberOfProperties", None, size_of="propertiesCollection"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "propertiesCollection",
                 [],
                 RpcPrintNamedProperty,
                 size_is=lambda pkt: pkt.numberOfProperties,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2934,8 +2674,8 @@ class propertyBlob_sub4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbBuf", None, size_of="pBuf"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pBuf", "", size_is=lambda pkt: pkt.cbBuf), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pBuf", "", size_is=lambda pkt: pkt.cbBuf)
         ),
     ]
 
@@ -2947,9 +2687,7 @@ class RPC_PrintPropertyValue(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "ePropertyType", None)
@@ -3039,9 +2777,7 @@ class RpcAsyncGetJobNamedPropertyValue_Response(NDRPacket):
 class RPC_PrintNamedProperty(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("propertyName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("propertyName", "")),
         NDRPacketField(
             "propertyValue", RPC_PrintPropertyValue(), RPC_PrintPropertyValue
         ),
@@ -3106,21 +2842,11 @@ class RPC_BranchOfficeJobDataPrinted(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("Status", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocumentName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPortName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocumentName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPortName", "")),
         NDRSignedLongField("Size", 0),
         NDRIntField("TotalPages", 0),
     ]
@@ -3143,55 +2869,33 @@ class RPC_BranchOfficeJobDataError(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("LastError", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocumentName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDataType", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocumentName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDataType", "")),
         NDRSignedLongField("TotalSize", 0),
         NDRSignedLongField("PrintedSize", 0),
         NDRIntField("TotalPages", 0),
         NDRIntField("PrintedPages", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pJobError", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pErrorDescription", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pJobError", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pErrorDescription", "")),
     ]
 
 
 class RPC_BranchOfficeJobDataPipelineFailed(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDocumentName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pPrinterName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pExtraErrorInfo", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDocumentName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPrinterName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pExtraErrorInfo", "")),
     ]
 
 
 class RPC_BranchOfficeLogOfflineFileFull(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pMachineName", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pMachineName", ""))
     ]
 
 

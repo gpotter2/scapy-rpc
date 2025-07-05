@@ -45,6 +45,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -271,8 +272,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -284,8 +284,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -297,8 +296,7 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1708,8 +1706,7 @@ class SAFEARR_VARIANT(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aVariant", [], wireVARIANTStr, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1719,13 +1716,11 @@ class wireBRECORDStr(NDRPacket):
     fields_desc = [
         NDRIntField("fFlags", 0),
         NDRIntField("clSize", None, size_of="pRecord"),
-        NDRFullPointerField(
-            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
         ),
     ]
 
@@ -1737,8 +1732,7 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1760,8 +1754,7 @@ class SAFEARR_HAVEIID(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("iid", GUID(), GUID),
     ]
@@ -1771,9 +1764,8 @@ class BYTE_SIZEDARR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("clSize", None, size_of="pData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
         ),
     ]
 
@@ -1782,9 +1774,8 @@ class WORD_SIZEDARR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("clSize", None, size_of="pData"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
         ),
     ]
 
@@ -1793,11 +1784,10 @@ class DWORD_SIZEDARR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("clSize", None, size_of="pData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pData", [], NDRIntField("pData", 0), size_is=lambda pkt: pkt.clSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1806,14 +1796,13 @@ class HYPER_SIZEDARR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("clSize", None, size_of="pData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pData",
                 [],
                 NDRSignedLongField("pData", 0),
                 size_is=lambda pkt: pkt.clSize,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

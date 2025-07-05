@@ -16,7 +16,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRLongField,
@@ -57,14 +57,13 @@ class u_sub0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="Int64Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Int64Values",
                 [],
                 NDRSignedLongField("Int64Values", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -73,14 +72,13 @@ class u_sub1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="Uint64Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Uint64Values",
                 [],
                 NDRLongField("Uint64Values", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -89,16 +87,13 @@ class u_sub2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "StringValues",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("StringValues", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("StringValues", "")),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -107,14 +102,13 @@ class u_sub3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="BooleanValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "BooleanValues",
                 [],
                 NDRLongField("BooleanValues", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -122,7 +116,7 @@ class u_sub3(NDRPacket):
 class CLAIM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Id", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Id", "")),
         NDRInt3264EnumField("Type", 0, CLAIM_TYPE),
         NDRUnionField(
             [
@@ -178,14 +172,13 @@ class u_sub0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="Int64Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Int64Values",
                 [],
                 NDRSignedLongField("Int64Values", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -194,14 +187,13 @@ class u_sub1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="Uint64Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Uint64Values",
                 [],
                 NDRLongField("Uint64Values", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -210,16 +202,13 @@ class u_sub2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "StringValues",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("StringValues", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("StringValues", "")),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -228,14 +217,13 @@ class u_sub3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="BooleanValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "BooleanValues",
                 [],
                 NDRLongField("BooleanValues", 0),
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -243,7 +231,7 @@ class u_sub3(NDRPacket):
 class PCLAIM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Id", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Id", "")),
         NDRInt3264EnumField("Type", 0, CLAIM_TYPE),
         NDRUnionField(
             [
@@ -300,14 +288,13 @@ class CLAIMS_ARRAY(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("usClaimsSourceType", 0, CLAIMS_SOURCE_TYPE),
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimEntries",
                 [PCLAIM_ENTRY()],
                 PCLAIM_ENTRY,
                 size_is=lambda pkt: pkt.ulClaimsCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -317,14 +304,13 @@ class PCLAIMS_ARRAY(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("usClaimsSourceType", 0, CLAIMS_SOURCE_TYPE),
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimEntries",
                 [PCLAIM_ENTRY()],
                 PCLAIM_ENTRY,
                 size_is=lambda pkt: pkt.ulClaimsCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -333,22 +319,20 @@ class CLAIMS_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsArrayCount", None, size_of="ClaimsArrays"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
                 [PCLAIMS_ARRAY()],
                 PCLAIMS_ARRAY,
                 size_is=lambda pkt: pkt.ulClaimsArrayCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRShortField("usReservedType", 0),
         NDRIntField("ulReservedFieldSize", None, size_of="ReservedField"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ReservedField", "", size_is=lambda pkt: pkt.ulReservedFieldSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -357,22 +341,20 @@ class PCLAIMS_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsArrayCount", None, size_of="ClaimsArrays"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
                 [PCLAIMS_ARRAY()],
                 PCLAIMS_ARRAY,
                 size_is=lambda pkt: pkt.ulClaimsArrayCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRShortField("usReservedType", 0),
         NDRIntField("ulReservedFieldSize", None, size_of="ReservedField"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ReservedField", "", size_is=lambda pkt: pkt.ulReservedFieldSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -381,21 +363,17 @@ class CLAIMS_SET_METADATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsSetSize", None, size_of="ClaimsSet"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize)
         ),
         NDRInt3264EnumField("usCompressionFormat", 0, CLAIMS_COMPRESSION_FORMAT),
         NDRIntField("ulUncompressedClaimsSetSize", 0),
         NDRShortField("usReservedType", 0),
         NDRIntField("ulReservedFieldSize", None, size_of="ReservedField"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ReservedField", "", size_is=lambda pkt: pkt.ulReservedFieldSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -404,20 +382,16 @@ class PCLAIMS_SET_METADATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsSetSize", None, size_of="ClaimsSet"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize)
         ),
         NDRInt3264EnumField("usCompressionFormat", 0, CLAIMS_COMPRESSION_FORMAT),
         NDRIntField("ulUncompressedClaimsSetSize", 0),
         NDRShortField("usReservedType", 0),
         NDRIntField("ulReservedFieldSize", None, size_of="ReservedField"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ReservedField", "", size_is=lambda pkt: pkt.ulReservedFieldSize
-            ),
-            deferred=True,
+            )
         ),
     ]

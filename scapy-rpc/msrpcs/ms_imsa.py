@@ -24,6 +24,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -124,9 +125,8 @@ class METADATA_RECORD(NDRPacket):
         NDRIntField("dwMDUserType", 0),
         NDRIntField("dwMDDataType", 0),
         NDRIntField("dwMDDataLen", None, size_of="pbMDData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbMDData", "", size_is=lambda pkt: pkt.dwMDDataLen),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbMDData", "", size_is=lambda pkt: pkt.dwMDDataLen)
         ),
         NDRIntField("dwMDDataTag", 0),
     ]
@@ -1073,8 +1073,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1086,8 +1085,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1099,8 +1097,7 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 

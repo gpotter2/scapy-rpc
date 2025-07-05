@@ -23,6 +23,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -125,9 +126,9 @@ class DSNAME(NDRPacket):
 class DRS_MSG_REPSYNC_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("uuidDsaSrc", UUID(), UUID),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDsaSrc", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDsaSrc", "")),
         NDRIntField("ulOptions", 0),
     ]
 
@@ -151,18 +152,17 @@ class VAR_SIZE_BUFFER_WITH_VERSION(NDRPacket):
 class DRS_MSG_REPSYNC_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("uuidDsaSrc", UUID(), UUID),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDsaSrc", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDsaSrc", "")),
         NDRIntField("ulOptions", 0),
         NDRPacketField("correlationID", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pReservedBuffer",
                 VAR_SIZE_BUFFER_WITH_VERSION(),
                 VAR_SIZE_BUFFER_WITH_VERSION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -273,9 +273,8 @@ class OID_t(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("length", None, size_of="elements"),
-        NDRFullPointerField(
-            NDRConfStrLenField("elements", "", size_is=lambda pkt: pkt.length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("elements", "", size_is=lambda pkt: pkt.length)
         ),
     ]
 
@@ -289,14 +288,13 @@ class SCHEMA_PREFIX_TABLE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("PrefixCount", None, size_of="pPrefixEntry"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pPrefixEntry",
                 [],
                 PrefixTableEntry,
                 size_is=lambda pkt: pkt.PrefixCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -306,21 +304,19 @@ class DRS_MSG_GETCHGREQ_V3(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecDestV1", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrVecDestV1",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableDest", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulFlags", 0),
@@ -335,7 +331,7 @@ class DRS_MSG_GETCHGREQ_V4(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidTransportObj", UUID(), UUID),
         NDRRefEmbPointerField(
-            NDRPacketField("pmtxReturnAddress", MTX_ADDR(), MTX_ADDR), deferred=True
+            NDRPacketField("pmtxReturnAddress", MTX_ADDR(), MTX_ADDR)
         ),
         NDRPacketField("V3", DRS_MSG_GETCHGREQ_V3(), DRS_MSG_GETCHGREQ_V3),
     ]
@@ -351,13 +347,12 @@ class DRS_MSG_GETCHGREQ_V5(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecDestV1", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulFlags", 0),
         NDRIntField("cMaxObjects", 0),
@@ -372,24 +367,22 @@ class DRS_MSG_GETCHGREQ_V7(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidTransportObj", UUID(), UUID),
         NDRRefEmbPointerField(
-            NDRPacketField("pmtxReturnAddress", MTX_ADDR(), MTX_ADDR), deferred=True
+            NDRPacketField("pmtxReturnAddress", MTX_ADDR(), MTX_ADDR)
         ),
         NDRPacketField("V3", DRS_MSG_GETCHGREQ_V3(), DRS_MSG_GETCHGREQ_V3),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSet",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSetEx",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableDest", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
     ]
@@ -400,34 +393,31 @@ class DRS_MSG_GETCHGREQ_V8(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecDest", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulFlags", 0),
         NDRIntField("cMaxObjects", 0),
         NDRIntField("cMaxBytes", 0),
         NDRIntField("ulExtendedOp", 0),
         NDRPacketField("liFsmoInfo", ULARGE_INTEGER(), ULARGE_INTEGER),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSet",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSetEx",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableDest", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
     ]
@@ -438,34 +428,31 @@ class DRS_MSG_GETCHGREQ_V10(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecDest", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulFlags", 0),
         NDRIntField("cMaxObjects", 0),
         NDRIntField("cMaxBytes", 0),
         NDRIntField("ulExtendedOp", 0),
         NDRPacketField("liFsmoInfo", ULARGE_INTEGER(), ULARGE_INTEGER),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSet",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSetEx",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableDest", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulMoreFlags", 0),
@@ -477,45 +464,41 @@ class DRS_MSG_GETCHGREQ_V11(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecDest", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulFlags", 0),
         NDRIntField("cMaxObjects", 0),
         NDRIntField("cMaxBytes", 0),
         NDRIntField("ulExtendedOp", 0),
         NDRPacketField("liFsmoInfo", ULARGE_INTEGER(), ULARGE_INTEGER),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSet",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pPartialAttrSetEx",
                 PARTIAL_ATTR_VECTOR_V1_EXT(),
                 PARTIAL_ATTR_VECTOR_V1_EXT,
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableDest", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulMoreFlags", 0),
         NDRPacketField("correlationID", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pReservedBuffer",
                 VAR_SIZE_BUFFER_WITH_VERSION(),
                 VAR_SIZE_BUFFER_WITH_VERSION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -524,9 +507,8 @@ class ATTRVAL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("valLen", None, size_of="pVal"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pVal", "", size_is=lambda pkt: pkt.valLen),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pVal", "", size_is=lambda pkt: pkt.valLen)
         ),
     ]
 
@@ -535,11 +517,10 @@ class ATTRVALBLOCK(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("valCount", None, size_of="pAVal"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pAVal", [], ATTRVAL, size_is=lambda pkt: pkt.valCount
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -556,11 +537,8 @@ class ATTRBLOCK(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("attrCount", None, size_of="pAttr"),
-        NDRFullPointerField(
-            NDRConfPacketListField(
-                "pAttr", [], ATTR, size_is=lambda pkt: pkt.attrCount
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("pAttr", [], ATTR, size_is=lambda pkt: pkt.attrCount)
         ),
     ]
 
@@ -568,7 +546,7 @@ class ATTRBLOCK(NDRPacket):
 class ENTINF(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pName", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pName", DSNAME(), DSNAME)),
         NDRIntField("ulFlags", 0),
         NDRPacketField("AttrBlock", ATTRBLOCK(), ATTRBLOCK),
     ]
@@ -605,14 +583,13 @@ class REPLENTINFLIST(NDRPacket):
         NDRRecursiveField("pNextEntInf"),
         NDRPacketField("Entinf", ENTINF(), ENTINF),
         NDRSignedIntField("fIsNCPrefix", 0),
-        NDRFullPointerField(NDRPacketField("pParentGuid", UUID(), UUID), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRPacketField("pParentGuid", UUID(), UUID)),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pMetaDataExt",
                 PROPERTY_META_DATA_EXT_VECTOR(),
                 PROPERTY_META_DATA_EXT_VECTOR,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -622,21 +599,20 @@ class DRS_MSG_GETCHGREPLY_V1(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjSrc", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRFullPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
         NDRPacketField("usnvecTo", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecSrcV1", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableSrc", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulExtendedRet", 0),
         NDRIntField("cNumObjects", 0),
         NDRIntField("cNumBytes", 0),
-        NDRFullPointerField(
-            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST)
         ),
         NDRSignedIntField("fMoreData", 0),
     ]
@@ -647,11 +623,10 @@ class DRS_COMPRESSED_BLOB(NDRPacket):
     fields_desc = [
         NDRIntField("cbUncompressedSize", 0),
         NDRIntField("cbCompressedSize", None, size_of="pbCompressedData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pbCompressedData", "", size_is=lambda pkt: pkt.cbCompressedSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -701,7 +676,7 @@ class VALUE_META_DATA_EXT_V1(NDRPacket):
 class REPLVALINF_V1(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pObject", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pObject", DSNAME(), DSNAME)),
         NDRIntField("attrTyp", 0),
         NDRPacketField("Aval", ATTRVAL(), ATTRVAL),
         NDRSignedIntField("fIsPresent", 0),
@@ -714,31 +689,29 @@ class DRS_MSG_GETCHGREPLY_V6(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjSrc", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRFullPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
         NDRPacketField("usnvecTo", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecSrc", UPTODATE_VECTOR_V2_EXT(), UPTODATE_VECTOR_V2_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableSrc", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulExtendedRet", 0),
         NDRIntField("cNumObjects", 0),
         NDRIntField("cNumBytes", 0),
-        NDRFullPointerField(
-            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST)
         ),
         NDRSignedIntField("fMoreData", 0),
         NDRIntField("cNumNcSizeObjects", 0),
         NDRIntField("cNumNcSizeValues", 0),
         NDRIntField("cNumValues", None, size_of="rgValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgValues", [], REPLVALINF_V1, size_is=lambda pkt: pkt.cNumValues
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwDRSError", 0),
     ]
@@ -775,7 +748,7 @@ class VALUE_META_DATA_EXT_V3(NDRPacket):
 class REPLVALINF_V3(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pObject", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pObject", DSNAME(), DSNAME)),
         NDRIntField("attrTyp", 0),
         NDRPacketField("Aval", ATTRVAL(), ATTRVAL),
         NDRSignedIntField("fIsPresent", 0),
@@ -788,31 +761,29 @@ class DRS_MSG_GETCHGREPLY_V9(NDRPacket):
     fields_desc = [
         NDRPacketField("uuidDsaObjSrc", UUID(), UUID),
         NDRPacketField("uuidInvocIdSrc", UUID(), UUID),
-        NDRFullPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("usnvecFrom", USN_VECTOR(), USN_VECTOR),
         NDRPacketField("usnvecTo", USN_VECTOR(), USN_VECTOR),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecSrc", UPTODATE_VECTOR_V2_EXT(), UPTODATE_VECTOR_V2_EXT
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTableSrc", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulExtendedRet", 0),
         NDRIntField("cNumObjects", 0),
         NDRIntField("cNumBytes", 0),
-        NDRFullPointerField(
-            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("pObjects", REPLENTINFLIST(), REPLENTINFLIST)
         ),
         NDRSignedIntField("fMoreData", 0),
         NDRIntField("cNumNcSizeObjects", 0),
         NDRIntField("cNumNcSizeValues", 0),
         NDRIntField("cNumValues", None, size_of="rgValues"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgValues", [], REPLVALINF_V3, size_is=lambda pkt: pkt.cNumValues
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwDRSError", 0),
     ]
@@ -948,8 +919,8 @@ class IDL_DRSGetNCChanges_Response(NDRPacket):
 class DRS_MSG_UPDREFS_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaDest", ""), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaDest", "")),
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRIntField("ulOptions", 0),
     ]
@@ -958,18 +929,17 @@ class DRS_MSG_UPDREFS_V1(NDRPacket):
 class DRS_MSG_UPDREFS_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaDest", ""), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaDest", "")),
         NDRPacketField("uuidDsaObjDest", UUID(), UUID),
         NDRIntField("ulOptions", 0),
         NDRPacketField("correlationID", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pReservedBuffer",
                 VAR_SIZE_BUFFER_WITH_VERSION(),
                 VAR_SIZE_BUFFER_WITH_VERSION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1017,8 +987,8 @@ class REPLTIMES(NDRPacket):
 class DRS_MSG_REPADD_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaSrc", ""), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRRefEmbPointerField(NDRConfVarStrNullField("pszDsaSrc", "")),
         NDRPacketField("rtSchedule", REPLTIMES(), REPLTIMES),
         NDRIntField("ulOptions", 0),
     ]
@@ -1027,16 +997,10 @@ class DRS_MSG_REPADD_V1(NDRPacket):
 class DRS_MSG_REPADD_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("pSourceDsaDN", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pTransportDN", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRRefEmbPointerField(
-            NDRConfVarStrNullField("pszSourceDsaAddress", ""), deferred=True
-        ),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pSourceDsaDN", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pTransportDN", DSNAME(), DSNAME)),
+        NDRRefEmbPointerField(NDRConfVarStrNullField("pszSourceDsaAddress", "")),
         NDRPacketField("rtSchedule", REPLTIMES(), REPLTIMES),
         NDRIntField("ulOptions", 0),
     ]
@@ -1045,26 +1009,19 @@ class DRS_MSG_REPADD_V2(NDRPacket):
 class DRS_MSG_REPADD_V3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("pSourceDsaDN", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pTransportDN", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRRefEmbPointerField(
-            NDRConfVarStrNullField("pszSourceDsaAddress", ""), deferred=True
-        ),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pSourceDsaDN", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pTransportDN", DSNAME(), DSNAME)),
+        NDRRefEmbPointerField(NDRConfVarStrNullField("pszSourceDsaAddress", "")),
         NDRPacketField("rtSchedule", REPLTIMES(), REPLTIMES),
         NDRIntField("ulOptions", 0),
         NDRPacketField("correlationID", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pReservedBuffer",
                 VAR_SIZE_BUFFER_WITH_VERSION(),
                 VAR_SIZE_BUFFER_WITH_VERSION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1111,8 +1068,8 @@ class IDL_DRSReplicaAdd_Response(NDRPacket):
 class DRS_MSG_REPDEL_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDsaSrc", ""), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDsaSrc", "")),
         NDRIntField("ulOptions", 0),
     ]
 
@@ -1145,9 +1102,9 @@ class IDL_DRSReplicaDel_Response(NDRPacket):
 class DRS_MSG_REPMOD_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("uuidSourceDRA", UUID(), UUID),
-        NDRFullPointerField(NDRConfVarStrNullField("pszSourceDRA", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszSourceDRA", "")),
         NDRPacketField("rtSchedule", REPLTIMES(), REPLTIMES),
         NDRIntField("ulReplicaFlags", 0),
         NDRIntField("ulModifyFields", 0),
@@ -1185,11 +1142,10 @@ class DRS_MSG_VERIFYREQ_V1(NDRPacket):
     fields_desc = [
         NDRIntField("dwFlags", 0),
         NDRIntField("cNames", None, size_of="rpNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rpNames", [], DSNAME, size_is=lambda pkt: pkt.cNames, ptr_pack=True
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("RequiredAttrs", ATTRBLOCK(), ATTRBLOCK),
         NDRPacketField("PrefixTable", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
@@ -1201,11 +1157,10 @@ class DRS_MSG_VERIFYREPLY_V1(NDRPacket):
     fields_desc = [
         NDRIntField("error", 0),
         NDRIntField("cNames", None, size_of="rpEntInf"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rpEntInf", [], ENTINF, size_is=lambda pkt: pkt.cNames
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("PrefixTable", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
     ]
@@ -1271,17 +1226,14 @@ class DRS_MSG_REVMEMB_REQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cDsNames", None, size_of="ppDsNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_pack=True
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwFlags", 0),
         NDRInt3264EnumField("OperationType", 0, REVERSE_MEMBERSHIP_OPERATION_TYPE),
-        NDRFullPointerField(
-            NDRPacketField("pLimitingDomain", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pLimitingDomain", DSNAME(), DSNAME)),
     ]
 
 
@@ -1291,30 +1243,27 @@ class DRS_MSG_REVMEMB_REPLY_V1(NDRPacket):
         NDRIntField("errCode", 0),
         NDRIntField("cDsNames", None, size_of="pAttributes"),
         NDRIntField("cSidHistory", None, size_of="ppSidHistory"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_pack=True
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pAttributes",
                 [],
                 NDRIntField("pAttributes", 0),
                 size_is=lambda pkt: pkt.cDsNames,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ppSidHistory",
                 [],
                 NT4SID,
                 size_is=lambda pkt: pkt.cSidHistory,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1368,9 +1317,9 @@ class IDL_DRSGetMemberships_Response(NDRPacket):
 class DRS_MSG_MOVEREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRSignedByteField("pSourceDSA", 0), deferred=True),
-        NDRFullPointerField(NDRPacketField("pObject", ENTINF(), ENTINF), deferred=True),
-        NDRFullPointerField(NDRPacketField("pParentUUID", UUID(), UUID), deferred=True),
+        NDRFullEmbPointerField(NDRSignedByteField("pSourceDSA", 0)),
+        NDRFullEmbPointerField(NDRPacketField("pObject", ENTINF(), ENTINF)),
+        NDRFullEmbPointerField(NDRPacketField("pParentUUID", UUID(), UUID)),
         NDRPacketField("PrefixTable", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulFlags", 0),
     ]
@@ -1381,9 +1330,8 @@ class DRS_SecBuffer(NDRPacket):
     fields_desc = [
         NDRIntField("cbBuffer", None, size_of="pvBuffer"),
         NDRIntField("BufferType", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("pvBuffer", "", size_is=lambda pkt: pkt.cbBuffer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pvBuffer", "", size_is=lambda pkt: pkt.cbBuffer)
         ),
     ]
 
@@ -1393,11 +1341,10 @@ class DRS_SecBufferDesc(NDRPacket):
     fields_desc = [
         NDRIntField("ulVersion", 0),
         NDRIntField("cBuffers", None, size_of="Buffers"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffers", [], DRS_SecBuffer, size_is=lambda pkt: pkt.cBuffers
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1405,19 +1352,12 @@ class DRS_SecBufferDesc(NDRPacket):
 class DRS_MSG_MOVEREQ_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pSrcDSA", DSNAME(), DSNAME), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("pSrcObject", ENTINF(), ENTINF), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDstName", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pExpectedTargetNC", DSNAME(), DSNAME), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pClientCreds", DRS_SecBufferDesc(), DRS_SecBufferDesc),
-            deferred=True,
+        NDRFullEmbPointerField(NDRPacketField("pSrcDSA", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pSrcObject", ENTINF(), ENTINF)),
+        NDRFullEmbPointerField(NDRPacketField("pDstName", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(NDRPacketField("pExpectedTargetNC", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(
+            NDRPacketField("pClientCreds", DRS_SecBufferDesc(), DRS_SecBufferDesc)
         ),
         NDRPacketField("PrefixTable", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
         NDRIntField("ulFlags", 0),
@@ -1427,14 +1367,11 @@ class DRS_MSG_MOVEREQ_V2(NDRPacket):
 class DRS_MSG_MOVEREPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppResult", ENTINF(), ENTINF), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("ppResult", ENTINF(), ENTINF))
         ),
         NDRPacketField("PrefixTable", SCHEMA_PREFIX_TABLE(), SCHEMA_PREFIX_TABLE),
-        NDRFullPointerField(NDRIntField("pError", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pError", 0)),
     ]
 
 
@@ -1442,9 +1379,7 @@ class DRS_MSG_MOVEREPLY_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("win32Error", 0),
-        NDRFullPointerField(
-            NDRPacketField("pAddedName", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pAddedName", DSNAME(), DSNAME)),
     ]
 
 
@@ -1514,9 +1449,8 @@ class DRS_MSG_NT4_CHGLOG_REQ_V1(NDRPacket):
         NDRIntField("dwFlags", 0),
         NDRIntField("PreferredMaximumLength", 0),
         NDRIntField("cbRestart", None, size_of="pRestart"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pRestart", "", size_is=lambda pkt: pkt.cbRestart),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRestart", "", size_is=lambda pkt: pkt.cbRestart)
         ),
     ]
 
@@ -1547,12 +1481,11 @@ class DRS_MSG_NT4_CHGLOG_REPLY_V1(NDRPacket):
             "ReplicationState", NT4_REPLICATION_STATE(), NT4_REPLICATION_STATE
         ),
         NDRIntField("ActualNtStatus", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("pRestart", "", size_is=lambda pkt: pkt.cbRestart),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRestart", "", size_is=lambda pkt: pkt.cbRestart)
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("pLog", "", size_is=lambda pkt: pkt.cbLog), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pLog", "", size_is=lambda pkt: pkt.cbLog)
         ),
     ]
 
@@ -1614,16 +1547,13 @@ class DRS_MSG_CRACKREQ_V1(NDRPacket):
         NDRIntField("formatOffered", 0),
         NDRIntField("formatDesired", 0),
         NDRIntField("cNames", None, size_of="rpNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "rpNames",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("rpNames", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rpNames", "")),
                 size_is=lambda pkt: pkt.cNames,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1632,8 +1562,8 @@ class PDS_NAME_RESULT_ITEMW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("status", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDomain", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDomain", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
     ]
 
 
@@ -1641,14 +1571,13 @@ class DS_NAME_RESULTW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cItems", None, size_of="rItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rItems",
                 [PDS_NAME_RESULT_ITEMW()],
                 PDS_NAME_RESULT_ITEMW,
                 size_is=lambda pkt: pkt.cItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1656,8 +1585,8 @@ class DS_NAME_RESULTW(NDRPacket):
 class DRS_MSG_CRACKREPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pResult", DS_NAME_RESULTW(), DS_NAME_RESULTW), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("pResult", DS_NAME_RESULTW(), DS_NAME_RESULTW)
         )
     ]
 
@@ -1713,20 +1642,15 @@ class DRS_MSG_SPNREQ_V1(NDRPacket):
     fields_desc = [
         NDRIntField("operation", 0),
         NDRIntField("flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszAccount", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAccount", "")),
         NDRIntField("cSPN", None, size_of="rpwszSPN"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "rpwszSPN",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("rpwszSPN", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rpwszSPN", "")),
                 size_is=lambda pkt: pkt.cSPN,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1783,8 +1707,8 @@ class IDL_DRSWriteSPN_Response(NDRPacket):
 class DRS_MSG_RMSVRREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerDN", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainDN", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerDN", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DomainDN", "")),
         NDRSignedIntField("fCommit", 0),
     ]
 
@@ -1842,9 +1766,7 @@ class IDL_DRSRemoveDsServer_Response(NDRPacket):
 
 class DRS_MSG_RMDMNREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainDN", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DomainDN", ""))]
 
 
 class DRS_MSG_RMDMNREPLY_V1(NDRPacket):
@@ -1901,7 +1823,7 @@ class IDL_DRSRemoveDsDomain_Response(NDRPacket):
 class DRS_MSG_DCINFOREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Domain", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Domain", "")),
         NDRIntField("InfoLevel", 0),
     ]
 
@@ -1909,19 +1831,11 @@ class DRS_MSG_DCINFOREQ_V1(NDRPacket):
 class DS_DOMAIN_CONTROLLER_INFO_1W(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("NetbiosName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DnsHostName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("SiteName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ComputerObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerObjectName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("NetbiosName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DnsHostName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ComputerObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerObjectName", "")),
         NDRSignedIntField("fIsPdc", 0),
         NDRSignedIntField("fDsEnabled", 0),
     ]
@@ -1931,14 +1845,13 @@ class DRS_MSG_DCINFOREPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cItems", None, size_of="rItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rItems",
                 [],
                 DS_DOMAIN_CONTROLLER_INFO_1W,
                 size_is=lambda pkt: pkt.cItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1946,25 +1859,13 @@ class DRS_MSG_DCINFOREPLY_V1(NDRPacket):
 class DS_DOMAIN_CONTROLLER_INFO_2W(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("NetbiosName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DnsHostName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("SiteName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SiteObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ComputerObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("NtdsDsaObjectName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("NetbiosName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DnsHostName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ComputerObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("NtdsDsaObjectName", "")),
         NDRSignedIntField("fIsPdc", 0),
         NDRSignedIntField("fDsEnabled", 0),
         NDRSignedIntField("fIsGc", 0),
@@ -1979,14 +1880,13 @@ class DRS_MSG_DCINFOREPLY_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cItems", None, size_of="rItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rItems",
                 [],
                 DS_DOMAIN_CONTROLLER_INFO_2W,
                 size_is=lambda pkt: pkt.cItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1994,25 +1894,13 @@ class DRS_MSG_DCINFOREPLY_V2(NDRPacket):
 class DS_DOMAIN_CONTROLLER_INFO_3W(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("NetbiosName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DnsHostName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("SiteName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SiteObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ComputerObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerObjectName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("NtdsDsaObjectName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("NetbiosName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DnsHostName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ComputerObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerObjectName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("NtdsDsaObjectName", "")),
         NDRSignedIntField("fIsPdc", 0),
         NDRSignedIntField("fDsEnabled", 0),
         NDRSignedIntField("fIsGc", 0),
@@ -2028,14 +1916,13 @@ class DRS_MSG_DCINFOREPLY_V3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cItems", None, size_of="rItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rItems",
                 [],
                 DS_DOMAIN_CONTROLLER_INFO_3W,
                 size_is=lambda pkt: pkt.cItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2049,7 +1936,7 @@ class DS_DOMAIN_CONTROLLER_INFO_FFFFFFFFW(NDRPacket):
         NDRIntField("Flags", 0),
         NDRIntField("TotalRequests", 0),
         NDRIntField("Reserved1", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("UserName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("UserName", "")),
     ]
 
 
@@ -2057,14 +1944,13 @@ class DRS_MSG_DCINFOREPLY_VFFFFFFFF(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cItems", None, size_of="rItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rItems",
                 [],
                 DS_DOMAIN_CONTROLLER_INFO_FFFFFFFFW,
                 size_is=lambda pkt: pkt.cItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2147,9 +2033,7 @@ class IDL_DRSDomainControllerInfo_Response(NDRPacket):
 class DRS_MSG_ADDENTRYREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(
-            NDRPacketField("pObject", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRRefEmbPointerField(NDRPacketField("pObject", DSNAME(), DSNAME)),
         NDRPacketField("AttrBlock", ATTRBLOCK(), ATTRBLOCK),
     ]
 
@@ -2171,9 +2055,8 @@ class DRS_MSG_ADDENTRYREQ_V3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("EntInfList", ENTINFLIST(), ENTINFLIST),
-        NDRFullPointerField(
-            NDRPacketField("pClientCreds", DRS_SecBufferDesc(), DRS_SecBufferDesc),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pClientCreds", DRS_SecBufferDesc(), DRS_SecBufferDesc)
         ),
     ]
 
@@ -2202,23 +2085,20 @@ class ADDENTRY_REPLY_INFO(NDRPacket):
 class DRS_MSG_ADDENTRYREPLY_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pErrorObject", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pErrorObject", DSNAME(), DSNAME)),
         NDRIntField("errCode", 0),
         NDRIntField("dsid", 0),
         NDRIntField("extendedErr", 0),
         NDRIntField("extendedData", 0),
         NDRShortField("problem", 0),
         NDRIntField("cObjectsAdded", None, size_of="infoList"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "infoList",
                 [],
                 ADDENTRY_REPLY_INFO,
                 size_is=lambda pkt: pkt.cObjectsAdded,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2247,7 +2127,7 @@ class PROBLEMLIST_DRS_WIRE_V1(NDRPacket):
 class ATRERR_DRS_WIRE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pObject", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pObject", DSNAME(), DSNAME)),
         NDRIntField("count", 0),
         NDRPacketField(
             "FirstProblem", PROBLEMLIST_DRS_WIRE_V1(), PROBLEMLIST_DRS_WIRE_V1
@@ -2262,9 +2142,7 @@ class NAMERR_DRS_WIRE_V1(NDRPacket):
         NDRIntField("extendedErr", 0),
         NDRIntField("extendedData", 0),
         NDRShortField("problem", 0),
-        NDRFullPointerField(
-            NDRPacketField("pMatched", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pMatched", DSNAME(), DSNAME)),
     ]
 
 
@@ -2284,14 +2162,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2300,9 +2177,8 @@ class DSA_ADDRESS_LIST_DRS_WIRE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRRecursiveField("pNextAddress"),
-        NDRFullPointerField(
-            NDRPacketField("pAddress", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pAddress", RPC_UNICODE_STRING(), RPC_UNICODE_STRING)
         ),
     ]
 
@@ -2310,17 +2186,16 @@ class DSA_ADDRESS_LIST_DRS_WIRE_V1(NDRPacket):
 class CONTREF_DRS_WIRE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pTarget", DSNAME(), DSNAME), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("pTarget", DSNAME(), DSNAME)),
         NDRPacketField("OpState", NAMERESOP_DRS_WIRE_V1(), NAMERESOP_DRS_WIRE_V1),
         NDRShortField("aliasRDN", 0),
         NDRShortField("RDNsInternal", 0),
         NDRShortField("refType", 0),
         NDRShortField("count", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pDAL", DSA_ADDRESS_LIST_DRS_WIRE_V1(), DSA_ADDRESS_LIST_DRS_WIRE_V1
-            ),
-            deferred=True,
+            )
         ),
         NDRRecursiveField("pNextContRef"),
         NDRSignedIntField("bNewChoice", 0),
@@ -2383,7 +2258,7 @@ class DRS_ERROR_DATA_V1(NDRPacket):
     fields_desc = [
         NDRIntField("dwRepError", 0),
         NDRIntField("errCode", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRUnionField(
                 [
                     (
@@ -2453,8 +2328,7 @@ class DRS_ERROR_DATA_V1(NDRPacket):
                 StrFixedLenField("pErrInfo", "", length=0),
                 align=(4, 8),
                 switch_fmt=("L", "L"),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2462,11 +2336,9 @@ class DRS_ERROR_DATA_V1(NDRPacket):
 class DRS_MSG_ADDENTRYREPLY_V3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pdsErrObject", DSNAME(), DSNAME), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pdsErrObject", DSNAME(), DSNAME)),
         NDRIntField("dwErrVer", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRUnionField(
                 [
                     (
@@ -2482,18 +2354,16 @@ class DRS_MSG_ADDENTRYREPLY_V3(NDRPacket):
                 StrFixedLenField("pErrData", "", length=0),
                 align=(4, 8),
                 switch_fmt=("L", "L"),
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cObjectsAdded", None, size_of="infoList"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "infoList",
                 [],
                 ADDENTRY_REPLY_INFO,
                 size_is=lambda pkt: pkt.cObjectsAdded,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2616,9 +2486,7 @@ class DRS_MSG_GETREPLINFO_REQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("InfoType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszObjectDN", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszObjectDN", "")),
         NDRPacketField("uuidSourceDsaObjGuid", UUID(), UUID),
     ]
 
@@ -2627,17 +2495,11 @@ class DRS_MSG_GETREPLINFO_REQ_V2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("InfoType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszObjectDN", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszObjectDN", "")),
         NDRPacketField("uuidSourceDsaObjGuid", UUID(), UUID),
         NDRIntField("ulFlags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAttributeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszValueDN", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAttributeName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszValueDN", "")),
         NDRIntField("dwEnumerationContext", 0),
     ]
 
@@ -2650,18 +2512,11 @@ class FILETIME(NDRPacket):
 class DS_REPL_NEIGHBORW(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszNamingContext", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszSourceDsaDN", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszSourceDsaAddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAsyncIntersiteTransportDN", ""),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszNamingContext", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszSourceDsaDN", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszSourceDsaAddress", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pszAsyncIntersiteTransportDN", "")
         ),
         NDRIntField("dwReplicaFlags", 0),
         NDRIntField("dwReserved", 0),
@@ -2721,9 +2576,7 @@ class DS_REPL_CURSORS(NDRPacket):
 class DS_REPL_ATTR_META_DATA(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAttributeName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAttributeName", "")),
         NDRIntField("dwVersion", 0),
         NDRPacketField("ftimeLastOriginatingChange", FILETIME(), FILETIME),
         NDRPacketField("uuidLastOriginatingDsaInvocationID", UUID(), UUID),
@@ -2751,7 +2604,7 @@ class DS_REPL_OBJ_META_DATA(NDRPacket):
 class DS_REPL_KCC_DSA_FAILUREW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszDsaDN", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsaDN", "")),
         NDRPacketField("uuidDsaObjGuid", UUID(), UUID),
         NDRPacketField("ftimeFirstFailure", FILETIME(), FILETIME),
         NDRIntField("cNumFailures", 0),
@@ -2791,13 +2644,9 @@ class DS_REPL_OPW(NDRPacket):
         NDRIntField("ulPriority", 0),
         NDRInt3264EnumField("OpType", 0, DS_REPL_OP_TYPE),
         NDRIntField("ulOptions", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszNamingContext", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszDsaDN", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDsaAddress", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszNamingContext", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsaDN", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsaAddress", "")),
         NDRPacketField("uuidNamingContextObjGuid", UUID(), UUID),
         NDRPacketField("uuidDsaObjGuid", UUID(), UUID),
     ]
@@ -2822,16 +2671,11 @@ class DS_REPL_PENDING_OPSW(NDRPacket):
 class DS_REPL_VALUE_META_DATA(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAttributeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszObjectDn", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAttributeName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszObjectDn", "")),
         NDRIntField("cbData", None, size_of="pbData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData)
         ),
         NDRPacketField("ftimeDeleted", FILETIME(), FILETIME),
         NDRPacketField("ftimeCreated", FILETIME(), FILETIME),
@@ -2890,9 +2734,7 @@ class DS_REPL_CURSOR_3W(NDRPacket):
         NDRPacketField("uuidSourceDsaInvocationID", UUID(), UUID),
         NDRSignedLongField("usnAttributeFilter", 0),
         NDRPacketField("ftimeLastSyncSuccess", FILETIME(), FILETIME),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszSourceDsaDN", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszSourceDsaDN", "")),
     ]
 
 
@@ -2915,16 +2757,14 @@ class DS_REPL_CURSORS_3W(NDRPacket):
 class DS_REPL_ATTR_META_DATA_2(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAttributeName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAttributeName", "")),
         NDRIntField("dwVersion", 0),
         NDRPacketField("ftimeLastOriginatingChange", FILETIME(), FILETIME),
         NDRPacketField("uuidLastOriginatingDsaInvocationID", UUID(), UUID),
         NDRSignedLongField("usnOriginatingChange", 0),
         NDRSignedLongField("usnLocalChange", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszLastOriginatingDsaDN", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pszLastOriginatingDsaDN", "")
         ),
     ]
 
@@ -2948,16 +2788,11 @@ class DS_REPL_OBJ_META_DATA_2(NDRPacket):
 class DS_REPL_VALUE_META_DATA_2(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAttributeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszObjectDn", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAttributeName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszObjectDn", "")),
         NDRIntField("cbData", None, size_of="pbData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbData", "", size_is=lambda pkt: pkt.cbData)
         ),
         NDRPacketField("ftimeDeleted", FILETIME(), FILETIME),
         NDRPacketField("ftimeCreated", FILETIME(), FILETIME),
@@ -2966,8 +2801,8 @@ class DS_REPL_VALUE_META_DATA_2(NDRPacket):
         NDRPacketField("uuidLastOriginatingDsaInvocationID", UUID(), UUID),
         NDRSignedLongField("usnOriginatingChange", 0),
         NDRSignedLongField("usnLocalChange", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszLastOriginatingDsaDN", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pszLastOriginatingDsaDN", "")
         ),
     ]
 
@@ -2991,9 +2826,7 @@ class DS_REPL_ATTR_VALUE_META_DATA_2(NDRPacket):
 class DS_REPL_SERVER_OUTGOING_CALL(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszServerName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszServerName", "")),
         NDRSignedIntField("fIsHandleBound", 0),
         NDRSignedIntField("fIsHandleFromCache", 0),
         NDRSignedIntField("fIsHandleInCache", 0),
@@ -3280,42 +3113,29 @@ class DRS_MSG_ADDSIDREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SrcDomain", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SrcPrincipal", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SrcDomainController", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SrcDomain", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SrcPrincipal", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SrcDomainController", "")),
         NDRIntField("SrcCredsUserLength", None, size_of="SrcCredsUser"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "SrcCredsUser", "", size_is=lambda pkt: pkt.SrcCredsUserLength
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SrcCredsDomainLength", None, size_of="SrcCredsDomain"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "SrcCredsDomain", "", size_is=lambda pkt: pkt.SrcCredsDomainLength
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SrcCredsPasswordLength", None, size_of="SrcCredsPassword"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "SrcCredsPassword", "", size_is=lambda pkt: pkt.SrcCredsPasswordLength
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DstDomain", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DstPrincipal", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DstDomain", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DstPrincipal", "")),
     ]
 
 
@@ -3374,11 +3194,10 @@ class DRS_MSG_GETMEMBERSHIPS2_REQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Requests"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Requests", [], DRS_MSG_REVMEMB_REQ_V1, size_is=lambda pkt: pkt.Count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3387,11 +3206,10 @@ class DRS_MSG_GETMEMBERSHIPS2_REPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Replies"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Replies", [], DRS_MSG_REVMEMB_REPLY_V1, size_is=lambda pkt: pkt.Count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3449,7 +3267,7 @@ class IDL_DRSGetMemberships2_Response(NDRPacket):
 class DRS_MSG_REPVERIFYOBJ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
         NDRPacketField("uuidDsaSrc", UUID(), UUID),
         NDRIntField("ulOptions", 0),
     ]
@@ -3487,12 +3305,11 @@ class DRS_MSG_EXISTREQ_V1(NDRPacket):
     fields_desc = [
         NDRPacketField("guidStart", UUID(), UUID),
         NDRIntField("cGuids", 0),
-        NDRFullPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pUpToDateVecCommonV1", UPTODATE_VECTOR_V1_EXT(), UPTODATE_VECTOR_V1_EXT
-            ),
-            deferred=True,
+            )
         ),
         StrFixedLenField("Md5Digest", "", length=16),
     ]
@@ -3503,11 +3320,10 @@ class DRS_MSG_EXISTREPLY_V1(NDRPacket):
     fields_desc = [
         NDRIntField("dwStatusFlags", 0),
         NDRIntField("cNumGuids", None, size_of="rgGuids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgGuids", [], UUID, size_is=lambda pkt: pkt.cNumGuids
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3561,20 +3377,15 @@ class IDL_DRSGetObjectExistence_Response(NDRPacket):
 class DRS_MSG_QUERYSITESREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFromSite", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFromSite", "")),
         NDRIntField("cToSites", None, size_of="rgszToSites"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "rgszToSites",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("rgszToSites", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rgszToSites", "")),
                 size_is=lambda pkt: pkt.cToSites,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwFlags", 0),
     ]
@@ -3589,14 +3400,13 @@ class DRS_MSG_QUERYSITESREPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cToSites", None, size_of="rgCostInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgCostInfo",
                 [],
                 DRS_MSG_QUERYSITESREPLYELEMENT_V1,
                 size_is=lambda pkt: pkt.cToSites,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("dwFlags", 0),
     ]
@@ -3715,7 +3525,7 @@ class DRS_MSG_REPLICA_DEMOTIONREQ_V1(NDRPacket):
     fields_desc = [
         NDRIntField("dwFlags", 0),
         NDRPacketField("uuidHelperDest", UUID(), UUID),
-        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME), deferred=True),
+        NDRRefEmbPointerField(NDRPacketField("pNC", DSNAME(), DSNAME)),
     ]
 
 
@@ -3779,9 +3589,7 @@ class DRS_MSG_FINISH_DEMOTIONREQ_V1(NDRPacket):
     fields_desc = [
         NDRIntField("dwOperations", 0),
         NDRPacketField("uuidHelperDest", UUID(), UUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("szScriptBase", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("szScriptBase", "")),
     ]
 
 
@@ -3847,26 +3655,21 @@ class IDL_DRSFinishDemotion_Response(NDRPacket):
 class DRS_MSG_ADDCLONEDCREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszCloneDCName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszSite", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszCloneDCName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszSite", "")),
     ]
 
 
 class DRS_MSG_ADDCLONEDCREPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszCloneDCName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszSite", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszCloneDCName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszSite", "")),
         NDRIntField("cPasswordLength", None, size_of="pwsNewDCAccountPassword"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "pwsNewDCAccountPassword", "", size_is=lambda pkt: pkt.cPasswordLength
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3922,13 +3725,10 @@ class IDL_DRSAddCloneDC_Response(NDRPacket):
 class DRS_MSG_WRITENGCKEYREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszAccount", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAccount", "")),
         NDRIntField("cNgcKey", None, size_of="pNgcKey"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pNgcKey", "", size_is=lambda pkt: pkt.cNgcKey),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pNgcKey", "", size_is=lambda pkt: pkt.cNgcKey)
         ),
     ]
 
@@ -3989,9 +3789,7 @@ class IDL_DRSWriteNgcKey_Response(NDRPacket):
 class DRS_MSG_READNGCKEYREQ_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszAccount", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAccount", ""))
     ]
 
 
@@ -4000,9 +3798,8 @@ class DRS_MSG_READNGCKEYREPLY_V1(NDRPacket):
     fields_desc = [
         NDRIntField("retVal", 0),
         NDRIntField("cNgcKey", None, size_of="pNgcKey"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pNgcKey", "", size_is=lambda pkt: pkt.cNgcKey),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pNgcKey", "", size_is=lambda pkt: pkt.cNgcKey)
         ),
     ]
 
@@ -4109,25 +3906,20 @@ class DSA_MSG_PREPARE_SCRIPT_REPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwOperationStatus", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwErrMessage", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwErrMessage", "")),
         NDRIntField("cbPassword", None, size_of="pbPassword"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbPassword", "", size_is=lambda pkt: pkt.cbPassword),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbPassword", "", size_is=lambda pkt: pkt.cbPassword)
         ),
         NDRIntField("cbHashBody", None, size_of="pbHashBody"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbHashBody", "", size_is=lambda pkt: pkt.cbHashBody),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbHashBody", "", size_is=lambda pkt: pkt.cbHashBody)
         ),
         NDRIntField("cbHashSignature", None, size_of="pbHashSignature"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pbHashSignature", "", size_is=lambda pkt: pkt.cbHashSignature
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4186,9 +3978,8 @@ class DSA_MSG_EXECUTE_SCRIPT_REQ_V1(NDRPacket):
     fields_desc = [
         NDRIntField("Flags", 0),
         NDRIntField("cbPassword", None, size_of="pbPassword"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbPassword", "", size_is=lambda pkt: pkt.cbPassword),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbPassword", "", size_is=lambda pkt: pkt.cbPassword)
         ),
     ]
 
@@ -4197,9 +3988,7 @@ class DSA_MSG_EXECUTE_SCRIPT_REPLY_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwOperationStatus", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwErrMessage", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwErrMessage", "")),
     ]
 
 

@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntEnumField,
     NDRIntField,
@@ -327,22 +328,12 @@ class LPQUERY_SERVICE_CONFIGW(NDRPacket):
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpBinaryPathName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpLoadOrderGroup", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpBinaryPathName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpLoadOrderGroup", "")),
         NDRIntField("dwTagId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpDependencies", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpServiceStartName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpDisplayName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDependencies", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpServiceStartName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDisplayName", "")),
     ]
 
 
@@ -367,9 +358,7 @@ class LPQUERY_SERVICE_LOCK_STATUSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("fIsLocked", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpLockOwner", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpLockOwner", "")),
         NDRIntField("dwLockDuration", 0),
     ]
 
@@ -394,11 +383,10 @@ class RQueryServiceLockStatusW_Response(NDRPacket):
 class LPSTRING_PTRSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "StringPtr", "", size_is=lambda pkt: pkt.SC_MAX_ARGUMENT_LENGTH
-            ),
-            deferred=True,
+            )
         )
     ]
 
@@ -601,20 +589,12 @@ class LPQUERY_SERVICE_CONFIGA(NDRPacket):
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("lpBinaryPathName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("lpLoadOrderGroup", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpBinaryPathName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpLoadOrderGroup", "")),
         NDRIntField("dwTagId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("lpDependencies", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("lpServiceStartName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullField("lpDisplayName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpDependencies", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpServiceStartName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpDisplayName", "")),
     ]
 
 
@@ -639,9 +619,8 @@ class LPQUERY_SERVICE_LOCK_STATUSA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("fIsLocked", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpLockOwner", "", size_is=lambda pkt: (8 * 1024)),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("lpLockOwner", "", size_is=lambda pkt: (8 * 1024))
         ),
         NDRIntField("dwLockDuration", 0),
     ]
@@ -666,9 +645,7 @@ class RQueryServiceLockStatusA_Response(NDRPacket):
 
 class LPSTRING_PTRSA(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullField("StringPtr", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullField("StringPtr", ""))]
 
 
 class RStartServiceA_Request(NDRPacket):
@@ -742,9 +719,7 @@ class REnumServiceGroupW_Response(NDRPacket):
 
 class LPSERVICE_DESCRIPTIONA(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullField("lpDescription", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullField("lpDescription", ""))]
 
 
 class SC_ACTION_TYPE(IntEnum):
@@ -763,14 +738,13 @@ class LPSERVICE_FAILURE_ACTIONSA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwResetPeriod", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("lpRebootMsg", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("lpCommand", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpRebootMsg", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("lpCommand", "")),
         NDRIntField("cActions", None, size_of="lpsaActions"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpsaActions", [], SC_ACTION, size_is=lambda pkt: pkt.cActions
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -794,11 +768,10 @@ class LPSERVICE_RPC_REQUIRED_PRIVILEGES_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbRequiredPrivileges", None, size_of="pRequiredPrivileges"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pRequiredPrivileges", "", size_is=lambda pkt: pkt.cbRequiredPrivileges
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -823,9 +796,8 @@ class PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM(NDRPacket):
     fields_desc = [
         NDRIntField("dwDataType", 0),
         NDRIntField("cbData", None, size_of="pData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.cbData)
         ),
     ]
 
@@ -835,18 +807,15 @@ class PSERVICE_TRIGGER(NDRPacket):
     fields_desc = [
         NDRIntField("dwTriggerType", 0),
         NDRIntField("dwAction", 0),
-        NDRFullPointerField(
-            NDRPacketField("pTriggerSubtype", GUID(), GUID), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("pTriggerSubtype", GUID(), GUID)),
         NDRIntField("cDataItems", None, size_of="pDataItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pDataItems",
                 [PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM()],
                 PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM,
                 size_is=lambda pkt: pkt.cDataItems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -855,16 +824,15 @@ class PSERVICE_TRIGGER_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cTriggers", None, size_of="pTriggers"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pTriggers",
                 [PSERVICE_TRIGGER()],
                 PSERVICE_TRIGGER,
                 size_is=lambda pkt: pkt.cTriggers,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRByteField("pReserved", 0), deferred=True),
+        NDRFullEmbPointerField(NDRByteField("pReserved", 0)),
     ]
 
 
@@ -880,11 +848,10 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", LPSERVICE_DESCRIPTIONA(), LPSERVICE_DESCRIPTIONA
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 1),
@@ -892,13 +859,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_FAILURE_ACTIONSA(),
                             LPSERVICE_FAILURE_ACTIONSA,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 2),
@@ -906,13 +872,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_DELAYED_AUTO_START_INFO(),
                             LPSERVICE_DELAYED_AUTO_START_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 3),
@@ -920,13 +885,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_FAILURE_ACTIONS_FLAG(),
                             LPSERVICE_FAILURE_ACTIONS_FLAG,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 4),
@@ -934,11 +898,10 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", LPSERVICE_SID_INFO(), LPSERVICE_SID_INFO
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 5),
@@ -946,13 +909,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_RPC_REQUIRED_PRIVILEGES_INFO(),
                             LPSERVICE_RPC_REQUIRED_PRIVILEGES_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 6),
@@ -960,13 +922,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_PRESHUTDOWN_INFO(),
                             LPSERVICE_PRESHUTDOWN_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 7),
@@ -974,11 +935,10 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", PSERVICE_TRIGGER_INFO(), PSERVICE_TRIGGER_INFO
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 8),
@@ -986,13 +946,12 @@ class SC_RPC_CONFIG_INFOA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_PREFERRED_NODE_INFO(),
                             LPSERVICE_PREFERRED_NODE_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 9),
@@ -1021,9 +980,7 @@ class RChangeServiceConfig2A_Response(NDRPacket):
 class LPSERVICE_DESCRIPTIONW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpDescription", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDescription", ""))
     ]
 
 
@@ -1031,18 +988,13 @@ class LPSERVICE_FAILURE_ACTIONSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwResetPeriod", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpRebootMsg", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpCommand", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpRebootMsg", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpCommand", "")),
         NDRIntField("cActions", None, size_of="lpsaActions"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpsaActions", [], SC_ACTION, size_is=lambda pkt: pkt.cActions
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1054,11 +1006,10 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", LPSERVICE_DESCRIPTIONW(), LPSERVICE_DESCRIPTIONW
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 1),
@@ -1066,13 +1017,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_FAILURE_ACTIONSW(),
                             LPSERVICE_FAILURE_ACTIONSW,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 2),
@@ -1080,13 +1030,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_DELAYED_AUTO_START_INFO(),
                             LPSERVICE_DELAYED_AUTO_START_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 3),
@@ -1094,13 +1043,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_FAILURE_ACTIONS_FLAG(),
                             LPSERVICE_FAILURE_ACTIONS_FLAG,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 4),
@@ -1108,11 +1056,10 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", LPSERVICE_SID_INFO(), LPSERVICE_SID_INFO
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 5),
@@ -1120,13 +1067,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_RPC_REQUIRED_PRIVILEGES_INFO(),
                             LPSERVICE_RPC_REQUIRED_PRIVILEGES_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 6),
@@ -1134,13 +1080,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_PRESHUTDOWN_INFO(),
                             LPSERVICE_PRESHUTDOWN_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 7),
@@ -1148,11 +1093,10 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value", PSERVICE_TRIGGER_INFO(), PSERVICE_TRIGGER_INFO
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 8),
@@ -1160,13 +1104,12 @@ class SC_RPC_CONFIG_INFOW(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             LPSERVICE_PREFERRED_NODE_INFO(),
                             LPSERVICE_PREFERRED_NODE_INFO,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 9),
@@ -1413,9 +1356,7 @@ class PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_2(NDRPacket):
         NDRIntField("dwNotificationStatus", 0),
         NDRIntField("dwSequence", 0),
         NDRIntField("dwNotificationTriggered", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszServiceNames", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszServiceNames", "")),
     ]
 
 
@@ -1426,13 +1367,12 @@ class SC_RPC_NOTIFY_PARAMS(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_1(),
                             PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_1,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 1),
@@ -1440,13 +1380,12 @@ class SC_RPC_NOTIFY_PARAMS(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "value",
                             PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_2(),
                             PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_2,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "dwInfoLevel", None) == 2),
@@ -1526,7 +1465,7 @@ class PSERVICE_CONTROL_STATUS_REASON_IN_PARAMSA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwReason", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszComment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszComment", "")),
     ]
 
 
@@ -1597,9 +1536,7 @@ class PSERVICE_CONTROL_STATUS_REASON_IN_PARAMSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwReason", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszComment", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszComment", "")),
     ]
 
 

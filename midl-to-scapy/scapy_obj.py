@@ -362,13 +362,14 @@ class ScapyField:
                 # Top-level reference = no wrap. See C706 chap 14 - "Transfer Syntax NDR"
                 return self.ptr_wrap(fld, toplevel, lvl - 1, skipref=True)
             else:
-                return "NDRRefEmbPointerField(%s, deferred=True)" % self.ptr_wrap(fld, toplevel, lvl - 1)
+                return "NDRRefEmbPointerField(%s)" % self.ptr_wrap(fld, toplevel, lvl - 1)
         elif any(x in ["ptr", "unique"] for x in self.idl_attributes) or skipref:
             # Other pointers See C706 chap 14 - "Transfer Syntax NDR"
             fld = self.ptr_wrap(fld, toplevel, lvl - 1)
-            if not toplevel:
-                return "NDRFullPointerField(%s, deferred=True)" % fld
-            return "NDRFullPointerField(%s)" % fld
+            if toplevel:
+                return "NDRFullPointerField(%s)" % fld
+            else:
+                return "NDRFullEmbPointerField(%s)" % fld
         else:
             assert False, "ptr_lvl > 1 but no pointer marker !"
 

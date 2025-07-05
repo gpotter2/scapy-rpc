@@ -15,6 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264Field,
     NDRIntField,
@@ -31,7 +32,7 @@ class LPAT_INFO(NDRPacket):
         NDRIntField("DaysOfMonth", 0),
         NDRByteField("DaysOfWeek", 0),
         NDRByteField("Flags", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Command", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Command", "")),
     ]
 
 
@@ -66,7 +67,7 @@ class LPAT_ENUM(NDRPacket):
         NDRIntField("DaysOfMonth", 0),
         NDRByteField("DaysOfWeek", 0),
         NDRByteField("Flags", 0),
-        NDRFullPointerField(NDRShortField("Command", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("Command", 0)),
     ]
 
 
@@ -74,11 +75,10 @@ class LPAT_ENUM_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [LPAT_ENUM()], LPAT_ENUM, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 

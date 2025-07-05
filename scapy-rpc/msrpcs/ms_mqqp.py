@@ -15,7 +15,7 @@ from scapy.layers.dcerpc import (
     NDRByteField,
     NDRConfVarStrLenField,
     NDRContextHandle,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRLongField,
@@ -44,14 +44,13 @@ class REMOTEREADDESC(NDRPacket):
         NDRIntField("Reserved", 0),
         NDRIntField("dwArriveTime", 0),
         NDRInt3264EnumField("eAckNack", 0, REMOTEREADACK),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpBuffer",
                 "",
                 size_is=lambda pkt: pkt.dwSize,
                 length_is=lambda pkt: pkt.dwSize,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -172,9 +171,8 @@ class RemoteQmGetVersion_Response(NDRPacket):
 class REMOTEREADDESC2(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pRemoteReadDesc", REMOTEREADDESC(), REMOTEREADDESC),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pRemoteReadDesc", REMOTEREADDESC(), REMOTEREADDESC)
         ),
         NDRLongField("SequentialId", 0),
     ]

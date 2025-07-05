@@ -16,6 +16,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -35,8 +36,8 @@ class SchRpcHighestVersion_Response(NDRPacket):
 class TASK_USER_CRED(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("userId", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("password", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("userId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("password", "")),
         NDRIntField("flags", 0),
     ]
 
@@ -46,8 +47,8 @@ class PTASK_XML_ERROR_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("line", 0),
         NDRIntField("column", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("node", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("value", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("node", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
     ]
 
 

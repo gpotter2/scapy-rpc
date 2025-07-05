@@ -23,6 +23,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -78,9 +79,8 @@ class BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbSize", None, size_of="pBlobData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize)
         ),
     ]
 
@@ -89,9 +89,8 @@ class CAUB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -100,9 +99,8 @@ class CAUI(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -111,14 +109,13 @@ class CAL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
                 NDRSignedIntField("pElems", 0),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -127,11 +124,10 @@ class CAUL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems", [], NDRIntField("pElems", 0), size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -140,11 +136,10 @@ class CAUH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pElems", [], ULARGE_INTEGER, size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -153,9 +148,8 @@ class CACLSID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -164,16 +158,13 @@ class CALPWSTR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("pElems", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pElems", "")),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -320,11 +311,10 @@ class MQRESTRICTION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cRes", None, size_of="paPropRes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "paPropRes", [], MQPROPERTYRESTRICTION, size_is=lambda pkt: pkt.cRes
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -333,11 +323,10 @@ class MQCOLUMNSET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cCol", None, size_of="aCol"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "aCol", [], NDRIntField("aCol", 0), size_is=lambda pkt: pkt.cCol
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -351,9 +340,8 @@ class MQSORTSET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cCol", None, size_of="aCol"),
-        NDRFullPointerField(
-            NDRConfPacketListField("aCol", [], MQSORTKEY, size_is=lambda pkt: pkt.cCol),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("aCol", [], MQSORTKEY, size_is=lambda pkt: pkt.cCol)
         ),
     ]
 

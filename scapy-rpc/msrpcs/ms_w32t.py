@@ -15,6 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -53,9 +54,7 @@ class PW32TIME_NTP_PEER_INFO(NDRPacket):
         NDRIntField("ulLastSyncErrorMsgId", 0),
         NDRIntField("ulValidDataCounter", 0),
         NDRIntField("ulAuthTypeMsgId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszUniqueName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszUniqueName", "")),
         NDRByteField("ulMode", 0),
         NDRByteField("ulStratum", 0),
         NDRByteField("ulReachability", 0),
@@ -71,14 +70,13 @@ class W32TIME_NTP_PROVIDER_DATA(NDRPacket):
         NDRIntField("ulError", 0),
         NDRIntField("ulErrorMsgId", 0),
         NDRIntField("cPeerInfo", None, size_of="pPeerInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pPeerInfo",
                 [PW32TIME_NTP_PEER_INFO()],
                 PW32TIME_NTP_PEER_INFO,
                 size_is=lambda pkt: pkt.cPeerInfo,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -89,8 +87,8 @@ class W32TIME_HARDWARE_PROVIDER_DATA(NDRPacket):
         NDRIntField("ulSize", 0),
         NDRIntField("ulError", 0),
         NDRIntField("ulErrorMsgId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszReferenceIdentifier", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("wszReferenceIdentifier", "")
         ),
     ]
 
@@ -102,13 +100,12 @@ class PW32TIME_PROVIDER_INFO(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ProviderData",
                             W32TIME_NTP_PROVIDER_DATA(),
                             W32TIME_NTP_PROVIDER_DATA,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ulProviderType", None) == 0),
@@ -116,13 +113,12 @@ class PW32TIME_PROVIDER_INFO(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ProviderData",
                             W32TIME_HARDWARE_PROVIDER_DATA(),
                             W32TIME_HARDWARE_PROVIDER_DATA,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ulProviderType", None) == 1),
@@ -170,9 +166,9 @@ class PW32TIME_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulSize", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("wszName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("wszValue", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("wszHelp", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszValue", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszHelp", "")),
     ]
 
 
@@ -188,10 +184,8 @@ class PW32TIME_NTPCLIENT_PROVIDER_CONFIG_DATA(NDRPacket):
         NDRIntField("ulEventLogFlags", 0),
         NDRIntField("ulLargeSampleSkew", 0),
         NDRIntField("ulSpecialPollInterval", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("wszType", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszNtpServer", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszType", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszNtpServer", "")),
         NDRIntField("ulAllowNonstandardModeCombinationsFlag", 0),
         NDRIntField("ulCrossSiteSyncFlagsFlag", 0),
         NDRIntField("ulResolvePeerBackoffMinutesFlag", 0),
@@ -203,14 +197,13 @@ class PW32TIME_NTPCLIENT_PROVIDER_CONFIG_DATA(NDRPacket):
         NDRIntField("ulTypeFlag", 0),
         NDRIntField("ulNtpServerFlag", 0),
         NDRIntField("cEntries", None, size_of="pEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEntries",
                 [PW32TIME_ENTRY()],
                 PW32TIME_ENTRY,
                 size_is=lambda pkt: pkt.cEntries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -224,14 +217,13 @@ class PW32TIME_NTPSERVER_PROVIDER_CONFIG_DATA(NDRPacket):
         NDRIntField("ulEventLogFlags", 0),
         NDRIntField("ulEventLogFlagsFlag", 0),
         NDRIntField("cEntries", None, size_of="pEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEntries",
                 [PW32TIME_ENTRY()],
                 PW32TIME_ENTRY,
                 size_is=lambda pkt: pkt.cEntries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -241,17 +233,16 @@ class PW32TIME_PROVIDER_CONFIG(NDRPacket):
     fields_desc = [
         NDRIntField("ulSize", 0),
         NDRIntField("ulProviderType", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRUnionField(
                 [
                     (
-                        NDRFullPointerField(
+                        NDRFullEmbPointerField(
                             NDRPacketField(
                                 "pProviderConfigData",
                                 PW32TIME_NTPCLIENT_PROVIDER_CONFIG_DATA(),
                                 PW32TIME_NTPCLIENT_PROVIDER_CONFIG_DATA,
-                            ),
-                            deferred=True,
+                            )
                         ),
                         (
                             (lambda pkt: getattr(pkt, "ulProviderType", None) == 0),
@@ -259,13 +250,12 @@ class PW32TIME_PROVIDER_CONFIG(NDRPacket):
                         ),
                     ),
                     (
-                        NDRFullPointerField(
+                        NDRFullEmbPointerField(
                             NDRPacketField(
                                 "pProviderConfigData",
                                 PW32TIME_NTPSERVER_PROVIDER_CONFIG_DATA(),
                                 PW32TIME_NTPSERVER_PROVIDER_CONFIG_DATA,
-                            ),
-                            deferred=True,
+                            )
                         ),
                         (
                             (lambda pkt: getattr(pkt, "ulProviderType", None) == 1),
@@ -276,8 +266,7 @@ class PW32TIME_PROVIDER_CONFIG(NDRPacket):
                 StrFixedLenField("pProviderConfigData", "", length=0),
                 align=(4, 8),
                 switch_fmt=("L", "L"),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -288,21 +277,16 @@ class PW32TIME_CONFIGURATION_PROVIDER(NDRPacket):
         NDRIntField("ulSize", 0),
         NDRIntField("ulInputProvider", 0),
         NDRIntField("ulEnabled", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszDllName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszProviderName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDllName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszProviderName", "")),
         NDRIntField("ulDllNameFlag", 0),
         NDRIntField("ulProviderNameFlag", 0),
         NDRIntField("ulInputProviderFlag", 0),
         NDRIntField("ulEnabledFlag", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pProviderConfig", PW32TIME_PROVIDER_CONFIG(), PW32TIME_PROVIDER_CONFIG
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -377,12 +361,8 @@ class W32TIME_CONFIGURATION_DEFAULT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulSize", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszFileLogName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszFileLogEntries", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFileLogName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFileLogEntries", "")),
         NDRIntField("ulFileLogSize", 0),
         NDRIntField("ulFileLogFlags", 0),
         NDRIntField("ulFileLogNameFlag", 0),
@@ -410,25 +390,23 @@ class PW32TIME_CONFIGURATION_INFO(NDRPacket):
             W32TIME_CONFIGURATION_DEFAULT,
         ),
         NDRIntField("cProviderConfig", None, size_of="pProviderConfig"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pProviderConfig",
                 [],
                 PW32TIME_CONFIGURATION_PROVIDER,
                 size_is=lambda pkt: pkt.cProviderConfig,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cEntries", None, size_of="pEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEntries",
                 [PW32TIME_ENTRY()],
                 PW32TIME_ENTRY,
                 size_is=lambda pkt: pkt.cEntries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -462,9 +440,7 @@ class PW32TIME_STATUS_INFO(NDRPacket):
         NDRSignedLongField("toRootDelay", 0),
         NDRLongField("tpRootDispersion", 0),
         NDRSignedIntField("nClockPrecision", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszSource", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSource", "")),
         NDRSignedLongField("toSysPhaseOffset", 0),
         NDRIntField("ulLcState", 0),
         NDRIntField("ulTSFlags", 0),
@@ -473,14 +449,13 @@ class PW32TIME_STATUS_INFO(NDRPacket):
         NDRIntField("eLastSyncResult", 0),
         NDRLongField("tpTimeLastGoodSync", 0),
         NDRIntField("cEntries", None, size_of="pEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEntries",
                 [PW32TIME_ENTRY()],
                 PW32TIME_ENTRY,
                 size_is=lambda pkt: pkt.cEntries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

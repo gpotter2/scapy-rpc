@@ -22,6 +22,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRInt3264Field,
@@ -118,7 +119,7 @@ class ENUM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Type", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
     ]
 
 
@@ -371,14 +372,13 @@ class ApiGetRootKey_Response(NDRPacket):
 class RPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
@@ -560,14 +560,13 @@ class ApiQueryInfoKey_Response(NDRPacket):
 class PRPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
@@ -1992,15 +1991,14 @@ class NOTIFICATION_DATA_RPC(NDRPacket):
         NDRPacketField(
             "FilterAndType", NOTIFY_FILTER_AND_TYPE_RPC(), NOTIFY_FILTER_AND_TYPE_RPC
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("buffer", "", size_is=lambda pkt: pkt.dwBufferSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("buffer", "", size_is=lambda pkt: pkt.dwBufferSize)
         ),
         NDRIntField("dwBufferSize", None, size_of="buffer"),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ObjectId", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ParentId", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Type", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ObjectId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ParentId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Type", "")),
     ]
 
 
@@ -2035,22 +2033,20 @@ class ApiGetNotifyV2_Response(NDRPacket):
 class GROUP_ENUM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Id", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Id", "")),
         NDRIntField("dwState", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Owner", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Owner", "")),
         NDRIntField("dwFlags", 0),
         NDRIntField("cbProperties", None, size_of="Properties"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Properties", "", size_is=lambda pkt: pkt.cbProperties),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Properties", "", size_is=lambda pkt: pkt.cbProperties)
         ),
         NDRIntField("cbRoProperties", None, size_of="RoProperties"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "RoProperties", "", size_is=lambda pkt: pkt.cbRoProperties
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2092,23 +2088,19 @@ class ApiCreateGroupEnum_Response(NDRPacket):
 class RESOURCE_ENUM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Id", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("OwnerName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("OwnerId", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Id", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("OwnerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("OwnerId", "")),
         NDRIntField("cbProperties", None, size_of="Properties"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Properties", "", size_is=lambda pkt: pkt.cbProperties),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Properties", "", size_is=lambda pkt: pkt.cbProperties)
         ),
         NDRIntField("cbRoProperties", None, size_of="RoProperties"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "RoProperties", "", size_is=lambda pkt: pkt.cbRoProperties
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2179,7 +2171,7 @@ class PNOTIFICATION_DATA_ASYNC_RPC(NDRPacket):
     fields_desc = [
         NDRIntField("dwNotifyKey", 0),
         NDRIntField("dwFilter", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
     ]
 
 

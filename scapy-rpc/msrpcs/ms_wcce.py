@@ -15,7 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRIntField,
     NDRPacketField,
     NDRSignedIntField,
@@ -27,8 +27,8 @@ class CERTTRANSBLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cb", None, size_of="pb"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pb", "", size_is=lambda pkt: pkt.cb), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pb", "", size_is=lambda pkt: pkt.cb)
         ),
     ]
 

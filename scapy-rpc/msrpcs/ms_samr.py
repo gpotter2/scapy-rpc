@@ -23,6 +23,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -65,11 +66,8 @@ class PSAMPR_SR_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="SecurityDescriptor"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "SecurityDescriptor", "", size_is=lambda pkt: pkt.Length
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("SecurityDescriptor", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -117,14 +115,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -175,14 +172,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -199,14 +195,13 @@ class PSAMPR_ENUMERATION_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_RID_ENUMERATION()],
                 PSAMPR_RID_ENUMERATION,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -957,9 +952,7 @@ class SamrEnumerateAliasesInDomain_Response(NDRPacket):
 class PSAMPR_SID_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("SidPointer", PRPC_SID(), PRPC_SID), deferred=True
-        )
+        NDRFullEmbPointerField(NDRPacketField("SidPointer", PRPC_SID(), PRPC_SID))
     ]
 
 
@@ -967,14 +960,13 @@ class PSAMPR_PSID_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Sids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Sids",
                 [PSAMPR_SID_INFORMATION()],
                 PSAMPR_SID_INFORMATION,
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -983,11 +975,10 @@ class PSAMPR_ULONG_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Element"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Element", [], NDRIntField("Element", 0), size_is=lambda pkt: pkt.Count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1032,14 +1023,13 @@ class PSAMPR_RETURNED_USTRING_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Element"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Element",
                 [PRPC_UNICODE_STRING()],
                 PRPC_UNICODE_STRING,
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1366,23 +1356,21 @@ class PSAMPR_GET_MEMBERS_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("MemberCount", None, size_of="Attributes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Members",
                 [],
                 NDRIntField("Members", 0),
                 size_is=lambda pkt: pkt.MemberCount,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Attributes",
                 [],
                 NDRIntField("Attributes", 0),
                 size_is=lambda pkt: pkt.MemberCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1635,14 +1623,13 @@ class PSAMPR_PSID_ARRAY_OUT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Sids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Sids",
                 [PSAMPR_SID_INFORMATION()],
                 PSAMPR_SID_INFORMATION,
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1742,14 +1729,13 @@ class SAMPR_LOGON_HOURS(NDRPacket):
             size_of="LogonHours",
             adjust=lambda _, x: ((x * 8) - 7),
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "LogonHours",
                 "",
                 size_is=lambda pkt: 1260,
                 length_is=lambda pkt: ((pkt.UnitsPerWeek + 7) // 8),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1918,14 +1904,13 @@ class RPC_SHORT_BLOB(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1934,11 +1919,8 @@ class SAMPR_SR_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="SecurityDescriptor"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "SecurityDescriptor", "", size_is=lambda pkt: pkt.Length
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("SecurityDescriptor", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -2046,9 +2028,8 @@ class SAMPR_ENCRYPTED_PASSWORD_AES(NDRPacket):
         StrFixedLenField("AuthData", "", length=64),
         StrFixedLenField("Salt", "", length=16),
         NDRIntField("cbCipher", None, size_of="Cipher"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher)
         ),
         NDRLongField("PBKDF2Iterations", 0),
     ]
@@ -3033,14 +3014,13 @@ class PSAMPR_GET_GROUPS_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("MembershipCount", None, size_of="Groups"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Groups",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.MembershipCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3084,14 +3064,13 @@ class SAMPR_DOMAIN_DISPLAY_USER_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_DOMAIN_DISPLAY_USER()],
                 PSAMPR_DOMAIN_DISPLAY_USER,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3111,14 +3090,13 @@ class SAMPR_DOMAIN_DISPLAY_MACHINE_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_DOMAIN_DISPLAY_MACHINE()],
                 PSAMPR_DOMAIN_DISPLAY_MACHINE,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3138,14 +3116,13 @@ class SAMPR_DOMAIN_DISPLAY_GROUP_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_DOMAIN_DISPLAY_GROUP()],
                 PSAMPR_DOMAIN_DISPLAY_GROUP,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3155,14 +3132,13 @@ class RPC_STRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", None, size_of="Buffer"),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3179,14 +3155,13 @@ class SAMPR_DOMAIN_DISPLAY_OEM_USER_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_DOMAIN_DISPLAY_OEM_USER()],
                 PSAMPR_DOMAIN_DISPLAY_OEM_USER,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3203,14 +3178,13 @@ class SAMPR_DOMAIN_DISPLAY_OEM_GROUP_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [PSAMPR_DOMAIN_DISPLAY_OEM_GROUP()],
                 PSAMPR_DOMAIN_DISPLAY_OEM_GROUP,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4323,14 +4297,13 @@ class PRPC_STRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", None, size_of="Buffer"),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4994,9 +4967,8 @@ class PSAM_VALIDATE_PASSWORD_HASH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Hash"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Hash", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Hash", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -5010,14 +4982,13 @@ class SAM_VALIDATE_PERSISTED_FIELDS(NDRPacket):
         NDRPacketField("LockoutTime", LARGE_INTEGER(), LARGE_INTEGER),
         NDRIntField("BadPasswordCount", 0),
         NDRIntField("PasswordHistoryLength", None, size_of="PasswordHistory"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "PasswordHistory",
                 [PSAM_VALIDATE_PASSWORD_HASH()],
                 PSAM_VALIDATE_PASSWORD_HASH,
                 size_is=lambda pkt: pkt.PasswordHistoryLength,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5038,9 +5009,8 @@ class SAM_VALIDATE_PASSWORD_HASH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Hash"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Hash", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Hash", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -5242,9 +5212,8 @@ class PSAMPR_ENCRYPTED_PASSWORD_AES(NDRPacket):
         StrFixedLenField("AuthData", "", length=64),
         StrFixedLenField("Salt", "", length=16),
         NDRIntField("cbCipher", None, size_of="Cipher"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher)
         ),
         NDRLongField("PBKDF2Iterations", 0),
     ]

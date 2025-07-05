@@ -17,6 +17,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -113,14 +114,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -128,14 +128,13 @@ class RPC_UNICODE_STRING(NDRPacket):
 class RPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
@@ -213,14 +212,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -300,14 +298,13 @@ class BaseRegFlushKey_Response(NDRPacket):
 class PRPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
@@ -531,12 +528,11 @@ class OpenCurrentConfig_Response(NDRPacket):
 class PRVALENT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("ve_valuename", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("ve_valuename", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
         NDRIntField("ve_valuelen", 0),
-        NDRFullPointerField(NDRIntField("ve_valueptr", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("ve_valueptr", 0)),
         NDRIntField("ve_type", 0),
     ]
 

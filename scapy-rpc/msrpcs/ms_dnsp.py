@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -68,24 +69,22 @@ class PDNS_RPC_SERVER_INFO_W2K(NDRPacket):
         NDRByteField("fAdminConfigured", 0),
         NDRByteField("fAllowUpdate", 0),
         NDRByteField("fDsAvailable", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszServerName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDsContainer", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsContainer", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipServerAddrs", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipServerAddrs", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipListenAddrs", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipListenAddrs", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
-        NDRFullPointerField(NDRIntField("pExtension1", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pExtension2", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pExtension3", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pExtension4", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pExtension5", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pExtension1", 0)),
+        NDRFullEmbPointerField(NDRIntField("pExtension2", 0)),
+        NDRFullEmbPointerField(NDRIntField("pExtension3", 0)),
+        NDRFullEmbPointerField(NDRIntField("pExtension4", 0)),
+        NDRFullEmbPointerField(NDRIntField("pExtension5", 0)),
         NDRIntField("dwLogLevel", 0),
         NDRIntField("dwDebugLevel", 0),
         NDRIntField("dwForwardTimeout", 0),
@@ -142,8 +141,8 @@ class PDNS_RPC_FORWARDERS_W2K(NDRPacket):
     fields_desc = [
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwForwardTimeout", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY)
         ),
     ]
 
@@ -151,9 +150,7 @@ class PDNS_RPC_FORWARDERS_W2K(NDRPacket):
 class PDNS_RPC_ZONE_W2K(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszZoneName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszZoneName", "")),
         NDRIntField("Flags", 0),
         NDRByteField("ZoneType", 0),
         NDRByteField("Version", 0),
@@ -163,7 +160,7 @@ class PDNS_RPC_ZONE_W2K(NDRPacket):
 class PDNS_RPC_ZONE_INFO_W2K(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fReverse", 0),
         NDRIntField("fAllowUpdate", 0),
@@ -171,27 +168,22 @@ class PDNS_RPC_ZONE_INFO_W2K(NDRPacket):
         NDRIntField("fShutdown", 0),
         NDRIntField("fAutoCreated", 0),
         NDRIntField("fUseDatabase", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
+        NDRFullEmbPointerField(NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY)),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY)),
         NDRIntField("fUseWins", 0),
         NDRIntField("fUseNbstat", 0),
         NDRIntField("fAging", 0),
         NDRIntField("dwNoRefreshInterval", 0),
         NDRIntField("dwRefreshInterval", 0),
         NDRIntField("dwAvailForScavengeTime", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipScavengeServers", PIP4_ARRAY(), PIP4_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipScavengeServers", PIP4_ARRAY(), PIP4_ARRAY)
         ),
         NDRIntField("pvReserved1", 0),
         NDRIntField("pvReserved2", 0),
@@ -205,12 +197,10 @@ class PDNS_RPC_ZONE_SECONDARIES_W2K(NDRPacket):
     fields_desc = [
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY)),
     ]
 
 
@@ -218,38 +208,36 @@ class PDNS_RPC_ZONE_DATABASE_W2K(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("fDsIntegrated", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszFileName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszFileName", "")),
     ]
 
 
 class PDNS_RPC_ZONE_CREATE_INFO_W2K(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fAllowUpdate", 0),
         NDRIntField("fAging", 0),
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
         NDRIntField("fDsIntegrated", 0),
         NDRIntField("fLoadExisting", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszAdmin", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszAdmin", "")),
+        NDRFullEmbPointerField(NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY)),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved1", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved2", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved3", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved4", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved5", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved6", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved7", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pvReserved8", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved1", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved2", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved3", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved4", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved5", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved6", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved7", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pvReserved8", "")),
         NDRIntField("dwReserved1", 0),
         NDRIntField("dwReserved2", 0),
         NDRIntField("dwReserved3", 0),
@@ -265,7 +253,7 @@ class PDNS_RPC_NAME_AND_PARAM(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwParam", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszNodeName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszNodeName", "")),
     ]
 
 
@@ -295,32 +283,28 @@ class PDNS_RPC_SERVER_INFO_DOTNET(NDRPacket):
         NDRByteField("fAdminConfigured", 0),
         NDRByteField("fAllowUpdate", 0),
         NDRByteField("fDsAvailable", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszServerName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDsContainer", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsContainer", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipServerAddrs", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipServerAddrs", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipListenAddrs", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipListenAddrs", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipLogFilter", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipLogFilter", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszLogFilePath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDomainName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszForestName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullField("pszDomainDirectoryPartition", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszLogFilePath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDomainName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pszForestName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszDomainDirectoryPartition", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszForestDirectoryPartition", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
         NDRFieldListField(
             "pExtensions", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
@@ -372,8 +356,8 @@ class PDNS_RPC_FORWARDERS_DOTNET(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwForwardTimeout", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PIP4_ARRAY(), PIP4_ARRAY)
         ),
     ]
 
@@ -383,14 +367,12 @@ class PDNS_RPC_ZONE(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszZoneName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszZoneName", "")),
         NDRIntField("Flags", 0),
         NDRByteField("ZoneType", 0),
         NDRByteField("Version", 0),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
     ]
 
 
@@ -399,7 +381,7 @@ class PDNS_RPC_ZONE_INFO_DOTNET(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fReverse", 0),
         NDRIntField("fAllowUpdate", 0),
@@ -407,38 +389,31 @@ class PDNS_RPC_ZONE_INFO_DOTNET(NDRPacket):
         NDRIntField("fShutdown", 0),
         NDRIntField("fAutoCreated", 0),
         NDRIntField("fUseDatabase", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
+        NDRFullEmbPointerField(NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY)),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY)),
         NDRIntField("fUseWins", 0),
         NDRIntField("fUseNbstat", 0),
         NDRIntField("fAging", 0),
         NDRIntField("dwNoRefreshInterval", 0),
         NDRIntField("dwRefreshInterval", 0),
         NDRIntField("dwAvailForScavengeTime", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipScavengeServers", PIP4_ARRAY(), PIP4_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipScavengeServers", PIP4_ARRAY(), PIP4_ARRAY)
         ),
         NDRIntField("dwForwarderTimeout", 0),
         NDRIntField("fForwarderSlave", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipLocalMasters", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipLocalMasters", PIP4_ARRAY(), PIP4_ARRAY)
         ),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszZoneDn", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszZoneDn", "")),
         NDRIntField("dwLastSuccessfulSoaCheck", 0),
         NDRIntField("dwLastSuccessfulXfr", 0),
         NDRIntField("dwReserved1", 0),
@@ -446,10 +421,10 @@ class PDNS_RPC_ZONE_INFO_DOTNET(NDRPacket):
         NDRIntField("dwReserved3", 0),
         NDRIntField("dwReserved4", 0),
         NDRIntField("dwReserved5", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pReserved1", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pReserved2", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pReserved3", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pReserved4", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pReserved1", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pReserved2", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pReserved3", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pReserved4", "")),
     ]
 
 
@@ -460,12 +435,10 @@ class PDNS_RPC_ZONE_SECONDARIES_DOTNET(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("aipNotify", PIP4_ARRAY(), PIP4_ARRAY)),
     ]
 
 
@@ -475,7 +448,7 @@ class PDNS_RPC_ZONE_DATABASE(NDRPacket):
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
         NDRIntField("fDsIntegrated", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszFileName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszFileName", "")),
     ]
 
 
@@ -484,27 +457,25 @@ class PDNS_RPC_ZONE_CREATE_INFO_DOTNET(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fAllowUpdate", 0),
         NDRIntField("fAging", 0),
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
         NDRIntField("fDsIntegrated", 0),
         NDRIntField("fLoadExisting", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszAdmin", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszAdmin", "")),
+        NDRFullEmbPointerField(NDRPacketField("aipMasters", PIP4_ARRAY(), PIP4_ARRAY)),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PIP4_ARRAY(), PIP4_ARRAY)
         ),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
         NDRIntField("dwTimeout", 0),
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
         NDRFieldListField("dwReserved", [], NDRIntField("", 0), length_is=lambda _: 32),
     ]
 
@@ -514,14 +485,12 @@ class PDNS_RPC_ZONE_DOTNET(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszZoneName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszZoneName", "")),
         NDRIntField("Flags", 0),
         NDRByteField("ZoneType", 0),
         NDRByteField("Version", 0),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
     ]
 
 
@@ -548,18 +517,14 @@ class PDNS_RPC_ZONE_EXPORT_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszZoneExportFile", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneExportFile", "")),
     ]
 
 
 class PDNS_RPC_DP_REPLICA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszReplicaDn", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszReplicaDn", ""))
     ]
 
 
@@ -569,9 +534,9 @@ class PDNS_RPC_DP_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszDpDn", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszCrDn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDpDn", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszCrDn", "")),
         NDRIntField("dwFlags", 0),
         NDRIntField("dwZoneCount", 0),
         NDRIntField("dwState", 0),
@@ -596,7 +561,7 @@ class PDNS_RPC_DP_ENUM(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
         NDRIntField("dwFlags", 0),
         NDRIntField("dwZoneCount", 0),
     ]
@@ -625,7 +590,7 @@ class PDNS_RPC_ENLIST_DP(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
         NDRIntField("dwOperation", 0),
     ]
 
@@ -635,9 +600,7 @@ class PDNS_RPC_ZONE_CHANGE_DP(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszDestPartition", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDestPartition", "")),
     ]
 
 
@@ -647,12 +610,8 @@ class PDNS_RPC_ENUM_ZONES_FILTER(NDRPacket):
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
         NDRIntField("dwFilter", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszPartitionFqdn", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszQueryString", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszPartitionFqdn", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszQueryString", "")),
         NDRFieldListField(
             "pszReserved", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
         ),
@@ -702,36 +661,28 @@ class PDNS_RPC_SERVER_INFO(NDRPacket):
         NDRByteField("fAdminConfigured", 0),
         NDRByteField("fAllowUpdate", 0),
         NDRByteField("fDsAvailable", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszServerName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDsContainer", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDsContainer", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipServerAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipServerAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipListenAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipListenAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipLogFilter", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipLogFilter", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszLogFilePath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDomainName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszForestName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullField("pszDomainDirectoryPartition", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszLogFilePath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDomainName", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("pszForestName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszDomainDirectoryPartition", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszForestDirectoryPartition", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
         NDRFieldListField(
             "pExtensions", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
@@ -782,29 +733,27 @@ class PDNS_RPC_ZONE_CREATE_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fAllowUpdate", 0),
         NDRIntField("fAging", 0),
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
         NDRIntField("fDsIntegrated", 0),
         NDRIntField("fLoadExisting", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszAdmin", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszAdmin", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
         NDRIntField("dwTimeout", 0),
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
         NDRFieldListField("dwReserved", [], NDRIntField("", 0), length_is=lambda _: 32),
     ]
 
@@ -816,9 +765,8 @@ class PDNS_RPC_FORWARDERS(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwForwardTimeout", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipForwarders", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipForwarders", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
     ]
 
@@ -830,13 +778,11 @@ class PDNS_RPC_ZONE_SECONDARIES(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipNotify", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
     ]
 
@@ -848,12 +794,9 @@ class PDNS_RPC_IP_VALIDATE(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("dwContext", 0),
         NDRIntField("dwReserved1", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszContextName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("aipValidateAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszContextName", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipValidateAddrs", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
     ]
 
@@ -863,7 +806,7 @@ class PDNS_RPC_ZONE_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszZoneName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszZoneName", "")),
         NDRIntField("dwZoneType", 0),
         NDRIntField("fReverse", 0),
         NDRIntField("fAllowUpdate", 0),
@@ -871,20 +814,17 @@ class PDNS_RPC_ZONE_INFO(NDRPacket):
         NDRIntField("fShutdown", 0),
         NDRIntField("fAutoCreated", 0),
         NDRIntField("fUseDatabase", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDataFile", ""), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("aipMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDataFile", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("aipMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
         NDRIntField("fSecureSecondaries", 0),
         NDRIntField("fNotifyLevel", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipSecondaries", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("aipNotify", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipNotify", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
         NDRIntField("fUseWins", 0),
         NDRIntField("fUseNbstat", 0),
@@ -892,21 +832,17 @@ class PDNS_RPC_ZONE_INFO(NDRPacket):
         NDRIntField("dwNoRefreshInterval", 0),
         NDRIntField("dwRefreshInterval", 0),
         NDRIntField("dwAvailForScavengeTime", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipScavengeServers", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipScavengeServers", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
         NDRIntField("dwForwarderTimeout", 0),
         NDRIntField("fForwarderSlave", 0),
-        NDRFullPointerField(
-            NDRPacketField("aipLocalMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("aipLocalMasters", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
         NDRIntField("dwDpFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("pszDpFqdn", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszZoneDn", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszZoneDn", "")),
         NDRIntField("dwLastSuccessfulSoaCheck", 0),
         NDRIntField("dwLastSuccessfulXfr", 0),
         NDRIntField("fQueuedForBackgroundLoad", 0),
@@ -924,9 +860,7 @@ class PDNS_RPC_AUTOCONFIGURE(NDRPacket):
         NDRIntField("dwReserved0", 0),
         NDRIntField("dwAutoConfigFlags", 0),
         NDRIntField("dwReserved1", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszNewDomainName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszNewDomainName", "")),
     ]
 
 
@@ -934,14 +868,13 @@ class PDNS_RPC_UTF8_STRING_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwCount", None, size_of="pszStrings"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pszStrings",
                 [],
-                NDRFullPointerField(NDRSignedByteField("pszStrings", 0), deferred=True),
+                NDRFullEmbPointerField(NDRSignedByteField("pszStrings", 0)),
                 size_is=lambda pkt: pkt.dwCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -950,14 +883,13 @@ class PDNS_RPC_UNICODE_STRING_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwCount", None, size_of="pwszStrings"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pwszStrings",
                 [],
-                NDRFullPointerField(NDRShortField("pwszStrings", 0), deferred=True),
+                NDRFullEmbPointerField(NDRShortField("pwszStrings", 0)),
                 size_is=lambda pkt: pkt.dwCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -978,8 +910,8 @@ class PDNS_RPC_SKD(NDRPacket):
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
         NDRPacketField("Guid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszKeyStorageProvider", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pwszKeyStorageProvider", "")
         ),
         NDRSignedIntField("fStoreKeysInDirectory", 0),
         NDRSignedIntField("fIsKSK", 0),
@@ -1029,15 +961,9 @@ class PDNS_RPC_SKD_STATE(NDRPacket):
         NDRPacketField("ftNextRolloverTime", FILETIME(), FILETIME),
         NDRIntField("dwState", 0),
         NDRIntField("dwCurrentRolloverStatus", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszActiveKey", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszStandbyKey", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszNextKey", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszActiveKey", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszStandbyKey", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszNextKey", "")),
         NDRIntField("dwReserved", 0),
     ]
 
@@ -1048,9 +974,8 @@ class PDNS_RPC_SIGNING_VALIDATION_ERROR(NDRPacket):
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
         NDRPacketField("guidSKD", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszSigningKeyPointerString", ""),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pwszSigningKeyPointerString", "")
         ),
         NDRIntField("dwExtendedError", 0),
         NDRIntField("dwReserved", 0),
@@ -1070,9 +995,7 @@ class PDNS_RPC_TRUST_POINT(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("pszTrustPointName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("pszTrustPointName", "")),
         NDRInt3264EnumField("eTrustPointState", 0, TRUSTPOINT_STATE),
         NDRSignedLongField("i64LastActiveRefreshTime", 0),
         NDRSignedLongField("i64NextActiveRefreshTime", 0),
@@ -1168,11 +1091,9 @@ class PDNS_RPC_SKD_STATE_EX(NDRPacket):
         NDRIntField("dwPreRollEventFired", 0),
         NDRPacketField("ftNextKeyGenerationTime", FILETIME(), FILETIME),
         NDRIntField("dwRevokedOrSwappedDnskeysLength", 0),
-        NDRFullPointerField(
-            NDRByteField("pRevokedOrSwappedDnskeysBuffer", 0), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRByteField("pRevokedOrSwappedDnskeysBuffer", 0)),
         NDRIntField("dwFinalDnskeysLength", 0),
-        NDRFullPointerField(NDRByteField("pFinalDnskeys", 0), deferred=True),
+        NDRFullEmbPointerField(NDRByteField("pFinalDnskeys", 0)),
         NDRInt3264EnumField("eActiveKeyScope", 0, KeySignScope),
         NDRInt3264EnumField("eStandByKeyScope", 0, KeySignScope),
         NDRInt3264EnumField("eNextKeyScope", 0, KeySignScope),
@@ -1184,18 +1105,14 @@ class PDNS_RPC_ZONE_SKD(NDRPacket):
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved0", 0),
-        NDRFullPointerField(
-            NDRPacketField("pSkd", PDNS_RPC_SKD(), PDNS_RPC_SKD), deferred=True
+        NDRFullEmbPointerField(NDRPacketField("pSkd", PDNS_RPC_SKD(), PDNS_RPC_SKD)),
+        NDRFullEmbPointerField(
+            NDRPacketField("pSkdState", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE)
         ),
-        NDRFullPointerField(
-            NDRPacketField("pSkdState", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE),
-            deferred=True,
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pSkdStateEx", PDNS_RPC_SKD_STATE_EX(), PDNS_RPC_SKD_STATE_EX
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1215,17 +1132,17 @@ class PDNS_RPC_ZONE_DNSSEC_SETTINGS(NDRPacket):
         NDRByteField("bNSEC3HashAlgorithm", 0),
         NDRByteField("bNSEC3RandomSaltLength", 0),
         NDRShortField("wNSEC3IterationCount", 0),
-        NDRFullPointerField(NDRShortField("pwszNSEC3UserSalt", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszNSEC3UserSalt", 0)),
         NDRIntField("dwDNSKEYRecordSetTtl", 0),
         NDRIntField("dwDSRecordSetTtl", 0),
         NDRIntField("dwSignatureInceptionOffset", 0),
         NDRIntField("dwSecureDelegationPollingPeriod", 0),
         NDRIntField("dwPropagationTime", 0),
         NDRIntField("cbNSEC3CurrentSaltLength", 0),
-        NDRFullPointerField(NDRByteField("pbNSEC3CurrentSalt", 0), deferred=True),
+        NDRFullEmbPointerField(NDRByteField("pbNSEC3CurrentSalt", 0)),
         NDRPacketField("CurrentRollingSKDGuid", GUID(), GUID),
         NDRIntField("dwBufferLength", 0),
-        NDRFullPointerField(NDRByteField("pBuffer", 0), deferred=True),
+        NDRFullEmbPointerField(NDRByteField("pBuffer", 0)),
         NDRIntField("dwCount", 0),
         PacketListField("pZoneSkdArray", [], PDNS_RPC_ZONE_SKD, count_from=lambda _: 1),
     ]
@@ -1368,7 +1285,7 @@ class PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(NDRShortField("pwszScopeName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszScopeName", 0)),
     ]
 
 
@@ -1376,8 +1293,8 @@ class PDNS_RPC_ZONE_SCOPE_INFO_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
-        NDRFullPointerField(NDRShortField("pwszScopeName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("pwszDataFile", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszScopeName", 0)),
+        NDRFullEmbPointerField(NDRShortField("pwszDataFile", 0)),
     ]
 
 
@@ -1393,13 +1310,12 @@ class PDNS_RPC_ENUM_SCOPE_LIST(NDRPacket):
 class PDNS_RPC_CLIENT_SUBNET_RECORD(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("pwszClientSubnetName", 0), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("pIPAddr", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY), deferred=True
+        NDRFullEmbPointerField(NDRShortField("pwszClientSubnetName", 0)),
+        NDRFullEmbPointerField(
+            NDRPacketField("pIPAddr", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
-        NDRFullPointerField(
-            NDRPacketField("pIPv6Addr", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pIPv6Addr", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
         ),
     ]
 
@@ -1433,7 +1349,7 @@ class DNS_RPC_POLICY_CONDITION(IntEnum):
 class PDNS_RPC_POLICY_CONTENT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("pwszScopeName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszScopeName", 0)),
         NDRIntField("dwWeight", 0),
     ]
 
@@ -1469,7 +1385,7 @@ class PDNS_RPC_CRITERIA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRInt3264EnumField("type", 0, DNS_RPC_CRITERIA_ENUM),
-        NDRFullPointerField(NDRShortField("pCriteria", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pCriteria", 0)),
     ]
 
 
@@ -1477,21 +1393,20 @@ class PDNS_RPC_POLICY(NDRPacket):
     ALIGNMENT = (8, 8)
     DEPORTED_CONFORMANTS = ["pCriteriaList"]
     fields_desc = [
-        NDRFullPointerField(NDRShortField("pwszPolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszPolicyName", 0)),
         NDRInt3264EnumField("level", 0, DNS_RPC_POLICY_LEVEL),
         NDRInt3264EnumField("appliesOn", 0, DNS_RPC_POLICY_TYPE),
         NDRInt3264EnumField("action", 0, DNS_RPC_POLICY_ACTION_TYPE),
         NDRInt3264EnumField("condition", 0, DNS_RPC_POLICY_CONDITION),
         NDRSignedIntField("isEnabled", 0),
         NDRIntField("dwProcessingOrder", 0),
-        NDRFullPointerField(NDRSignedByteField("pszZoneName", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRSignedByteField("pszZoneName", 0)),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pContentList",
                 PDNS_RPC_POLICY_CONTENT_LIST(),
                 PDNS_RPC_POLICY_CONTENT_LIST,
-            ),
-            deferred=True,
+            )
         ),
         NDRLongField("flags", 0),
         NDRIntField("dwCriteriaCount", None, size_of="pCriteriaList"),
@@ -1509,7 +1424,7 @@ class PDNS_RPC_POLICY(NDRPacket):
 class PDNS_RPC_POLICY_NAME(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("pwszPolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszPolicyName", 0)),
         NDRInt3264EnumField("appliesOn", 0, DNS_RPC_POLICY_TYPE),
         NDRSignedIntField("fEnabled", 0),
         NDRIntField("processingOrder", 0),
@@ -1561,18 +1476,18 @@ class PDNS_RPC_VIRTUALIZATION_INSTANCE(NDRPacket):
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwReserved", 0),
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(NDRShortField("pwszVirtualizationID", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("pwszFriendlyName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("pwszDescription", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszVirtualizationID", 0)),
+        NDRFullEmbPointerField(NDRShortField("pwszFriendlyName", 0)),
+        NDRFullEmbPointerField(NDRShortField("pwszDescription", 0)),
     ]
 
 
 class PDNS_RPC_VIRTUALIZATION_INSTANCE_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("pwszVirtualizationID", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("pwszFriendlyName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("pwszDescription", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pwszVirtualizationID", 0)),
+        NDRFullEmbPointerField(NDRShortField("pwszFriendlyName", 0)),
+        NDRFullEmbPointerField(NDRShortField("pwszDescription", 0)),
     ]
 
 

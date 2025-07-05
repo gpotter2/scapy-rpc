@@ -1,0 +1,26 @@
+diff --git a/midl-to-scapy/idl/win/ms-tsts_tsdef.h b/midl-to-scapy/idl/win/ms-tsts_tsdef.h
+index 8ba0f57..40cf9e5 100644
+--- a/midl-to-scapy/idl/win/ms-tsts_tsdef.h
++++ b/midl-to-scapy/idl/win/ms-tsts_tsdef.h
+@@ -1,6 +1,6 @@
+- #ifdef __cplusplus
+- extern "C" {
+- #endif
++ //#ifdef __cplusplus
++ //extern "C" {
++ //#endif
+   
+  typedef ULONG TNotificationId;
+   
+@@ -100,8 +100,8 @@
+   
+   
+   
+- #ifdef __cplusplus
+- }
+- #endif
++ //#ifdef __cplusplus
++ //}
++ //#endif
+   
+   

@@ -13,6 +13,7 @@ from scapy.layers.dcerpc import (
     DceRpcOp,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -147,12 +148,8 @@ class PFSSAGENT_SHARE_MAPPING_1(NDRPacket):
     fields_desc = [
         NDRPacketField("ShadowCopySetId", GUID(), GUID),
         NDRPacketField("ShadowCopyId", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ShareNameUNC", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ShadowCopyShareName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ShareNameUNC", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ShadowCopyShareName", "")),
         NDRSignedLongField("CreationTimestamp", 0),
     ]
 

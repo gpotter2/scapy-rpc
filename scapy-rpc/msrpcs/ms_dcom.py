@@ -22,6 +22,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -68,15 +69,14 @@ class ORPC_EXTENT_ARRAY(NDRPacket):
     fields_desc = [
         NDRIntField("size", 0),
         NDRIntField("reserved", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "extent",
                 [],
                 ORPC_EXTENT,
                 size_is=lambda pkt: ((pkt.size + 1) & (~1)),
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -88,9 +88,8 @@ class ORPCTHIS(NDRPacket):
         NDRIntField("flags", 0),
         NDRIntField("reserved1", 0),
         NDRPacketField("cid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRPacketField("extensions", ORPC_EXTENT_ARRAY(), ORPC_EXTENT_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("extensions", ORPC_EXTENT_ARRAY(), ORPC_EXTENT_ARRAY)
         ),
     ]
 
@@ -110,9 +109,8 @@ class ORPCTHAT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("flags", 0),
-        NDRFullPointerField(
-            NDRPacketField("extensions", ORPC_EXTENT_ARRAY(), ORPC_EXTENT_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("extensions", ORPC_EXTENT_ARRAY(), ORPC_EXTENT_ARRAY)
         ),
     ]
 

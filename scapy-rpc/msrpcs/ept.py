@@ -16,6 +16,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarPacketListField,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -53,7 +54,7 @@ class ept_entry_t(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("object", UUID(), UUID),
-        NDRFullPointerField(NDRPacketField("tower", twr_p_t(), twr_p_t), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("tower", twr_p_t(), twr_p_t)),
         NDRVarStrLenField("annotation", ""),
     ]
 

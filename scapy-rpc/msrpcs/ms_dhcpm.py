@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -37,8 +38,8 @@ class DHCP_HOST_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("IpAddress", 0),
-        NDRFullPointerField(NDRShortField("NetBiosName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("HostName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("NetBiosName", 0)),
+        NDRFullEmbPointerField(NDRShortField("HostName", 0)),
     ]
 
 
@@ -55,8 +56,8 @@ class LPDHCP_SUBNET_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("SubnetAddress", 0),
         NDRIntField("SubnetMask", 0),
-        NDRFullPointerField(NDRShortField("SubnetName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SubnetComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("SubnetName", 0)),
+        NDRFullEmbPointerField(NDRShortField("SubnetComment", 0)),
         NDRPacketField("PrimaryHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRInt3264EnumField("SubnetState", 0, DHCP_SUBNET_STATE),
     ]
@@ -106,11 +107,10 @@ class LPDHCP_IP_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Elements", [], NDRIntField, size_is=lambda pkt: pkt.NumElements
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -155,9 +155,8 @@ class DHCP_BINARY_DATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("DataLength", None, size_of="Data"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataLength)
         ),
     ]
 
@@ -166,9 +165,8 @@ class DHCP_IP_RESERVATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ReservedIpAddress", 0),
-        NDRFullPointerField(
-            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA)
         ),
     ]
 
@@ -185,9 +183,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE)
                     ),
                     (
                         (
@@ -201,9 +198,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO)
                     ),
                     (
                         (
@@ -217,11 +213,10 @@ class LPDHCP_SUBNET_ELEMENT_DATA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "Element", DHCP_IP_RESERVATION(), DHCP_IP_RESERVATION
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (
@@ -235,9 +230,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE)
                     ),
                     (
                         (
@@ -251,9 +245,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER)
                     ),
                     (
                         (
@@ -292,14 +285,13 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_SUBNET_ELEMENT_DATA()],
                 LPDHCP_SUBNET_ELEMENT_DATA,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -454,7 +446,7 @@ class LPDHCP_OPTION_DATA_ELEMENT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("Element", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("Element", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "OptionType", None)
@@ -493,7 +485,7 @@ class LPDHCP_OPTION_DATA_ELEMENT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("Element", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("Element", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "OptionType", None)
@@ -517,14 +509,13 @@ class DHCP_OPTION_DATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_OPTION_DATA_ELEMENT()],
                 LPDHCP_OPTION_DATA_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -538,8 +529,8 @@ class LPDHCP_OPTION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("OptionID", 0),
-        NDRFullPointerField(NDRShortField("OptionName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("OptionComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("OptionName", 0)),
+        NDRFullEmbPointerField(NDRShortField("OptionComment", 0)),
         NDRPacketField("DefaultValue", DHCP_OPTION_DATA(), DHCP_OPTION_DATA),
         NDRInt3264EnumField("OptionType", 0, DHCP_OPTION_TYPE),
     ]
@@ -673,7 +664,7 @@ class LPDHCP_OPTION_SCOPE_INFO(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("ScopeInfo", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("ScopeInfo", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "ScopeType", None)
@@ -697,14 +688,13 @@ class LPDHCP_OPTION_DATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_OPTION_DATA_ELEMENT()],
                 LPDHCP_OPTION_DATA_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -755,14 +745,13 @@ class LPDHCP_OPTION_VALUE_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Values",
                 [LPDHCP_OPTION_VALUE()],
                 LPDHCP_OPTION_VALUE,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -817,8 +806,8 @@ class LPDHCP_CLIENT_INFO(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
     ]
@@ -885,7 +874,7 @@ class LPDHCP_SEARCH_INFO(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("SearchInfo", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("SearchInfo", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "SearchType", None)
@@ -936,15 +925,14 @@ class LPDHCP_CLIENT_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -984,11 +972,10 @@ class LPDHCP_OPTION_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumOptions", None, size_of="Options"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options", [], DHCP_OPTION_VALUE, size_is=lambda pkt: pkt.NumOptions
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1032,14 +1019,13 @@ class LPDHCP_MIB_INFO(NDRPacket):
         NDRIntField("Releases", 0),
         NDRPacketField("ServerStartTime", DATE_TIME(), DATE_TIME),
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeInfo",
                 [LPSCOPE_MIB_INFO()],
                 LPSCOPE_MIB_INFO,
                 size_is=lambda pkt: pkt.Scopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1063,14 +1049,13 @@ class LPDHCP_OPTION_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Options"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options",
                 [LPDHCP_OPTION()],
                 LPDHCP_OPTION,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1115,9 +1100,9 @@ class LPDHCP_SERVER_CONFIG_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("APIProtocolSupport", 0),
-        NDRFullPointerField(NDRShortField("DatabaseName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DatabasePath", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("BackupPath", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DatabaseName", 0)),
+        NDRFullEmbPointerField(NDRShortField("DatabasePath", 0)),
+        NDRFullEmbPointerField(NDRShortField("BackupPath", 0)),
         NDRIntField("BackupInterval", 0),
         NDRIntField("DatabaseLoggingFlag", 0),
         NDRIntField("RestoreFlag", 0),
@@ -1174,11 +1159,10 @@ class LPDHCP_SCAN_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumScanItems", None, size_of="ScanItems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScanItems", [], DHCP_SCAN_ITEM, size_is=lambda pkt: pkt.NumScanItems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1218,9 +1202,8 @@ class DHCP_IP_RESERVATION_V4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ReservedIpAddress", 0),
-        NDRFullPointerField(
-            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA)
         ),
         NDRByteField("bAllowedClientTypes", 0),
     ]
@@ -1233,9 +1216,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V4(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE)
                     ),
                     (
                         (
@@ -1249,9 +1231,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V4(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO)
                     ),
                     (
                         (
@@ -1265,11 +1246,10 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V4(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "Element", DHCP_IP_RESERVATION_V4(), DHCP_IP_RESERVATION_V4
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (
@@ -1283,9 +1263,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V4(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE)
                     ),
                     (
                         (
@@ -1299,9 +1278,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V4(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER)
                     ),
                     (
                         (
@@ -1342,14 +1320,13 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_SUBNET_ELEMENT_DATA_V4()],
                 LPDHCP_SUBNET_ELEMENT_DATA_V4,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1403,8 +1380,8 @@ class LPDHCP_CLIENT_INFO_V4(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -1453,15 +1430,14 @@ class LPDHCP_CLIENT_INFO_ARRAY_V4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_V4,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1508,7 +1484,7 @@ class DHCP_SUPER_SCOPE_TABLE_ENTRY(NDRPacket):
         NDRIntField("SubnetAddress", 0),
         NDRIntField("SuperScopeNumber", 0),
         NDRIntField("NextInSuperScope", 0),
-        NDRFullPointerField(NDRShortField("SuperScopeName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("SuperScopeName", 0)),
     ]
 
 
@@ -1516,14 +1492,13 @@ class LPDHCP_SUPER_SCOPE_TABLE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cEntries", None, size_of="pEntries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEntries",
                 [],
                 DHCP_SUPER_SCOPE_TABLE_ENTRY,
                 size_is=lambda pkt: pkt.cEntries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1560,9 +1535,9 @@ class LPDHCP_SERVER_CONFIG_INFO_V4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("APIProtocolSupport", 0),
-        NDRFullPointerField(NDRShortField("DatabaseName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DatabasePath", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("BackupPath", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DatabaseName", 0)),
+        NDRFullEmbPointerField(NDRShortField("DatabasePath", 0)),
+        NDRFullEmbPointerField(NDRShortField("BackupPath", 0)),
         NDRIntField("BackupInterval", 0),
         NDRIntField("DatabaseLoggingFlag", 0),
         NDRIntField("RestoreFlag", 0),
@@ -1570,11 +1545,10 @@ class LPDHCP_SERVER_CONFIG_INFO_V4(NDRPacket):
         NDRIntField("DebugFlag", 0),
         NDRIntField("dwPingRetries", 0),
         NDRIntField("cbBootTableString", None, size_of="wszBootTableString"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "wszBootTableString", "", size_is=lambda pkt: pkt.cbBootTableString
-            ),
-            deferred=True,
+            )
         ),
         NDRSignedIntField("fAuditLog", 0),
     ]
@@ -1617,9 +1591,9 @@ class LPDHCP_SERVER_CONFIG_INFO_VQ(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("APIProtocolSupport", 0),
-        NDRFullPointerField(NDRShortField("DatabaseName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DatabasePath", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("BackupPath", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DatabaseName", 0)),
+        NDRFullEmbPointerField(NDRShortField("DatabasePath", 0)),
+        NDRFullEmbPointerField(NDRShortField("BackupPath", 0)),
         NDRIntField("BackupInterval", 0),
         NDRIntField("DatabaseLoggingFlag", 0),
         NDRIntField("RestoreFlag", 0),
@@ -1627,11 +1601,10 @@ class LPDHCP_SERVER_CONFIG_INFO_VQ(NDRPacket):
         NDRIntField("DebugFlag", 0),
         NDRIntField("dwPingRetries", 0),
         NDRIntField("cbBootTableString", None, size_of="wszBootTableString"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "wszBootTableString", "", size_is=lambda pkt: pkt.cbBootTableString
-            ),
-            deferred=True,
+            )
         ),
         NDRSignedIntField("fAuditLog", 0),
         NDRSignedIntField("QuarantineOn", 0),
@@ -1708,14 +1681,13 @@ class LPDHCP_MIB_INFO_VQ(NDRPacket):
         NDRIntField("QtnCapableClients", 0),
         NDRIntField("QtnIASErrors", 0),
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeInfo",
                 [LPSCOPE_MIB_INFO_VQ()],
                 LPSCOPE_MIB_INFO_VQ,
                 size_is=lambda pkt: pkt.Scopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1751,8 +1723,8 @@ class LPDHCP_CLIENT_INFO_VQ(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -1805,15 +1777,14 @@ class LPDHCP_CLIENT_INFO_ARRAY_VQ(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_VQ,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1846,8 +1817,8 @@ class LPDHCP_SUBNET_INFO_VQ(NDRPacket):
     fields_desc = [
         NDRIntField("SubnetAddress", 0),
         NDRIntField("SubnetMask", 0),
-        NDRFullPointerField(NDRShortField("SubnetName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SubnetComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("SubnetName", 0)),
+        NDRFullEmbPointerField(NDRShortField("SubnetComment", 0)),
         NDRPacketField("PrimaryHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRInt3264EnumField("SubnetState", 0, DHCP_SUBNET_STATE),
         NDRIntField("QuarantineOn", 0),
@@ -1971,8 +1942,8 @@ class LPDHCP_CLIENT_INFO_V5(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -1984,15 +1955,14 @@ class LPDHCP_CLIENT_INFO_ARRAY_V5(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_V5,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2023,15 +1993,15 @@ class R_DhcpEnumSubnetClientsV5_Response(NDRPacket):
 class LPDHCP_MSCOPE_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("MScopeName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("MScopeComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("MScopeName", 0)),
+        NDRFullEmbPointerField(NDRShortField("MScopeComment", 0)),
         NDRIntField("MScopeId", 0),
         NDRIntField("MScopeAddressPolicy", 0),
         NDRPacketField("PrimaryHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRInt3264EnumField("MScopeState", 0, DHCP_SUBNET_STATE),
         NDRIntField("MScopeFlags", 0),
         NDRPacketField("ExpiryTime", DATE_TIME(), DATE_TIME),
-        NDRFullPointerField(NDRShortField("LangTag", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("LangTag", 0)),
         NDRByteField("TTL", 0),
     ]
 
@@ -2069,14 +2039,13 @@ class LPDHCP_MSCOPE_TABLE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="pMScopeNames"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pMScopeNames",
                 [],
-                NDRFullPointerField(NDRShortField("pMScopeNames", 0), deferred=True),
+                NDRFullEmbPointerField(NDRShortField("pMScopeNames", 0)),
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2195,7 +2164,7 @@ class LPDHCP_MCLIENT_INFO(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("MScopeId", 0),
         NDRPacketField("ClientId", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
         NDRPacketField("ClientLeaseStarts", DATE_TIME(), DATE_TIME),
         NDRPacketField("ClientLeaseEnds", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
@@ -2258,15 +2227,14 @@ class LPDHCP_MCLIENT_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_MCLIENT_INFO,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2487,16 +2455,13 @@ class R_DhcpRemoveOptionValueV5_Response(NDRPacket):
 class LPDHCP_CLASS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("ClassName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClassComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClassName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClassComment", 0)),
         NDRIntField("ClassDataLength", None, size_of="ClassData"),
         NDRSignedIntField("IsVendor", 0),
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "ClassData", "", size_is=lambda pkt: pkt.ClassDataLength
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("ClassData", "", size_is=lambda pkt: pkt.ClassDataLength)
         ),
     ]
 
@@ -2558,14 +2523,13 @@ class LPDHCP_CLASS_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Classes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Classes",
                 [LPDHCP_CLASS_INFO()],
                 LPDHCP_CLASS_INFO,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2597,8 +2561,8 @@ class DHCP_OPTION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("OptionID", 0),
-        NDRFullPointerField(NDRShortField("OptionName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("OptionComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("OptionName", 0)),
+        NDRFullEmbPointerField(NDRShortField("OptionComment", 0)),
         NDRPacketField("DefaultValue", DHCP_OPTION_DATA(), DHCP_OPTION_DATA),
         NDRInt3264EnumField("OptionType", 0, DHCP_OPTION_TYPE),
     ]
@@ -2608,8 +2572,8 @@ class VendorOptions_DHCP_ALL_OPTIONS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Option", DHCP_OPTION(), DHCP_OPTION),
-        NDRFullPointerField(NDRShortField("VendorName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClassName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("VendorName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClassName", 0)),
     ]
 
 
@@ -2617,21 +2581,19 @@ class LPDHCP_ALL_OPTIONS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "NonVendorOptions", LPDHCP_OPTION_ARRAY(), LPDHCP_OPTION_ARRAY
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("NumVendorOptions", None, size_of="VendorOptions_DHCP_ALL_OPTIONS"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "VendorOptions_DHCP_ALL_OPTIONS",
                 [VendorOptions_DHCP_ALL_OPTIONS()],
                 VendorOptions_DHCP_ALL_OPTIONS,
                 size_is=lambda pkt: pkt.NumVendorOptions,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2655,14 +2617,13 @@ class R_DhcpGetAllOptions_Response(NDRPacket):
 class Options_DHCP_ALL_OPTION_VALUES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("ClassName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("VendorName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClassName", 0)),
+        NDRFullEmbPointerField(NDRShortField("VendorName", 0)),
         NDRSignedIntField("IsVendor", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OptionsArray", LPDHCP_OPTION_VALUE_ARRAY(), LPDHCP_OPTION_VALUE_ARRAY
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2672,14 +2633,13 @@ class LPDHCP_ALL_OPTION_VALUES(NDRPacket):
     fields_desc = [
         NDRIntField("Flags", 0),
         NDRIntField("NumElements", None, size_of="Options_DHCP_ALL_OPTION_VALUES"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options_DHCP_ALL_OPTION_VALUES",
                 [Options_DHCP_ALL_OPTION_VALUES()],
                 Options_DHCP_ALL_OPTION_VALUES,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2709,7 +2669,7 @@ class LPMSCOPE_MIB_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("MScopeId", 0),
-        NDRFullPointerField(NDRShortField("MScopeName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("MScopeName", 0)),
         NDRIntField("NumAddressesInuse", 0),
         NDRIntField("NumAddressesFree", 0),
         NDRIntField("NumPendingOffers", 0),
@@ -2729,14 +2689,13 @@ class LPDHCP_MCAST_MIB_INFO(NDRPacket):
         NDRIntField("Informs", 0),
         NDRPacketField("ServerStartTime", DATE_TIME(), DATE_TIME),
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeInfo",
                 [LPMSCOPE_MIB_INFO()],
                 LPMSCOPE_MIB_INFO,
                 size_is=lambda pkt: pkt.Scopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2844,14 +2803,13 @@ class LPDHCP_ATTRIB_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="DhcpAttribs"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "DhcpAttribs",
                 [LPDHCP_ATTRIB()],
                 LPDHCP_ATTRIB,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -2904,11 +2862,10 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V5(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "Element", DHCP_BOOTP_IP_RANGE(), DHCP_BOOTP_IP_RANGE
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (
@@ -2922,9 +2879,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V5(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_HOST_INFO(), DHCP_HOST_INFO)
                     ),
                     (
                         (
@@ -2938,11 +2894,10 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V5(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "Element", DHCP_IP_RESERVATION_V4(), DHCP_IP_RESERVATION_V4
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (
@@ -2956,9 +2911,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V5(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE(), DHCP_IP_RANGE)
                     ),
                     (
                         (
@@ -2972,9 +2926,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V5(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_CLUSTER(), DHCP_IP_CLUSTER)
                     ),
                     (
                         (
@@ -3015,14 +2968,13 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V5(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_SUBNET_ELEMENT_DATA_V5()],
                 LPDHCP_SUBNET_ELEMENT_DATA_V5,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3077,11 +3029,10 @@ class LPDHCP_BIND_ELEMENT(NDRPacket):
         NDRSignedIntField("fBoundToDHCPServer", 0),
         NDRIntField("AdapterPrimaryAddress", 0),
         NDRIntField("AdapterSubnetAddress", 0),
-        NDRFullPointerField(NDRShortField("IfDescription", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("IfDescription", 0)),
         NDRIntField("IfIdSize", None, size_of="IfId"),
-        NDRFullPointerField(
-            NDRConfStrLenField("IfId", "", size_is=lambda pkt: pkt.IfIdSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("IfId", "", size_is=lambda pkt: pkt.IfIdSize)
         ),
     ]
 
@@ -3090,14 +3041,13 @@ class LPDHCP_BIND_ELEMENT_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_BIND_ELEMENT()],
                 LPDHCP_BIND_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3190,8 +3140,8 @@ class R_DhcpRestoreDatabase_Response(NDRPacket):
 class LPDHCP_SERVER_SPECIFIC_STRINGS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("DefaultVendorClassName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DefaultUserClassName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DefaultVendorClassName", 0)),
+        NDRFullEmbPointerField(NDRShortField("DefaultUserClassName", 0)),
     ]
 
 
@@ -3496,8 +3446,8 @@ class LPDHCP_SUBNET_INFO_V6(NDRPacket):
         NDRPacketField("SubnetAddress", DHCP_IPV6_ADDRESS(), DHCP_IPV6_ADDRESS),
         NDRIntField("Prefix", 0),
         NDRShortField("Preference", 0),
-        NDRFullPointerField(NDRShortField("SubnetName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SubnetComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("SubnetName", 0)),
+        NDRFullEmbPointerField(NDRShortField("SubnetComment", 0)),
         NDRIntField("State", 0),
         NDRIntField("ScopeId", 0),
     ]
@@ -3524,14 +3474,13 @@ class LPDHCPV6_IP_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_IPV6_ADDRESS()],
                 LPDHCP_IPV6_ADDRESS,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3574,9 +3523,8 @@ class DHCP_IP_RESERVATION_V6(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRPacketField("ReservedIpAddress", DHCP_IPV6_ADDRESS(), DHCP_IPV6_ADDRESS),
-        NDRFullPointerField(
-            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA)
         ),
         NDRIntField("InterfaceId", 0),
     ]
@@ -3589,9 +3537,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V6(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE_V6(), DHCP_IP_RANGE_V6),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE_V6(), DHCP_IP_RANGE_V6)
                     ),
                     (
                         (
@@ -3605,11 +3552,10 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V6(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "Element", DHCP_IP_RESERVATION_V6(), DHCP_IP_RESERVATION_V6
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (
@@ -3623,9 +3569,8 @@ class LPDHCP_SUBNET_ELEMENT_DATA_V6(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Element", DHCP_IP_RANGE_V6(), DHCP_IP_RANGE_V6),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Element", DHCP_IP_RANGE_V6(), DHCP_IP_RANGE_V6)
                     ),
                     (
                         (
@@ -3666,14 +3611,13 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_SUBNET_ELEMENT_DATA_V6()],
                 LPDHCP_SUBNET_ELEMENT_DATA_V6,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3753,8 +3697,8 @@ class DHCP_HOST_INFO_V6(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
         NDRPacketField("IpAddress", DHCP_IPV6_ADDRESS(), DHCP_IPV6_ADDRESS),
-        NDRFullPointerField(NDRShortField("NetBiosName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("HostName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("NetBiosName", 0)),
+        NDRFullEmbPointerField(NDRShortField("HostName", 0)),
     ]
 
 
@@ -3765,8 +3709,8 @@ class LPDHCP_CLIENT_INFO_V6(NDRPacket):
         NDRPacketField("ClientDUID", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
         NDRIntField("AddressType", 0),
         NDRIntField("IAID", 0),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientValidLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("ClientPrefLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO_V6(), DHCP_HOST_INFO_V6),
@@ -3777,15 +3721,14 @@ class LPDHCP_CLIENT_INFO_ARRAY_V6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_V6,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3904,14 +3847,13 @@ class LPDHCP_MIB_INFO_V6(NDRPacket):
         NDRIntField("Informs", 0),
         NDRPacketField("ServerStartTime", DATE_TIME(), DATE_TIME),
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeInfo",
                 [LPSCOPE_MIB_INFO_V6()],
                 LPSCOPE_MIB_INFO_V6,
                 size_is=lambda pkt: pkt.Scopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3938,12 +3880,11 @@ class LPDHCPV6_BIND_ELEMENT(NDRPacket):
         NDRSignedIntField("fBoundToDHCPServer", 0),
         NDRPacketField("AdapterPrimaryAddress", DHCP_IPV6_ADDRESS(), DHCP_IPV6_ADDRESS),
         NDRPacketField("AdapterSubnetAddress", DHCP_IPV6_ADDRESS(), DHCP_IPV6_ADDRESS),
-        NDRFullPointerField(NDRShortField("IfDescription", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("IfDescription", 0)),
         NDRIntField("IpV6IfIndex", 0),
         NDRIntField("IfIdSize", None, size_of="IfId"),
-        NDRFullPointerField(
-            NDRConfStrLenField("IfId", "", size_is=lambda pkt: pkt.IfIdSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("IfId", "", size_is=lambda pkt: pkt.IfIdSize)
         ),
     ]
 
@@ -3952,14 +3893,13 @@ class LPDHCPV6_BIND_ELEMENT_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCPV6_BIND_ELEMENT()],
                 LPDHCPV6_BIND_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4052,7 +3992,7 @@ class LPDHCP_SEARCH_INFO_V6(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("SearchInfo", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("SearchInfo", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "SearchType", None)
@@ -4102,17 +4042,14 @@ class R_DhcpDeleteClientInfoV6_Response(NDRPacket):
 class LPDHCP_CLASS_INFO_V6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("ClassName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClassComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClassName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClassComment", 0)),
         NDRIntField("ClassDataLength", None, size_of="ClassData"),
         NDRSignedIntField("IsVendor", 0),
         NDRIntField("EnterpriseNumber", 0),
         NDRIntField("Flags", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "ClassData", "", size_is=lambda pkt: pkt.ClassDataLength
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("ClassData", "", size_is=lambda pkt: pkt.ClassDataLength)
         ),
     ]
 
@@ -4157,14 +4094,13 @@ class LPDHCP_CLASS_INFO_ARRAY_V6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Classes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Classes",
                 [LPDHCP_CLASS_INFO_V6()],
                 LPDHCP_CLASS_INFO_V6,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4271,14 +4207,13 @@ class LPDHCP_MIB_INFO_V5(NDRPacket):
         NDRIntField("DelayedOffers", 0),
         NDRIntField("ScopesWithDelayedOffers", 0),
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeInfo",
                 [LPSCOPE_MIB_INFO_V5()],
                 LPSCOPE_MIB_INFO_V5,
                 size_is=lambda pkt: pkt.Scopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4318,7 +4253,7 @@ class DHCP_FILTER_ADD_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("AddrPatt", DHCP_ADDR_PATTERN(), DHCP_ADDR_PATTERN),
-        NDRFullPointerField(NDRShortField("Comment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("Comment", 0)),
         NDRInt3264EnumField("ListType", 0, DHCP_FILTER_LIST_TYPE),
     ]
 
@@ -4397,7 +4332,7 @@ class LPDHCP_FILTER_RECORD(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("AddrPatt", DHCP_ADDR_PATTERN(), DHCP_ADDR_PATTERN),
-        NDRFullPointerField(NDRShortField("Comment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("Comment", 0)),
     ]
 
 
@@ -4405,14 +4340,13 @@ class LPDHCP_FILTER_ENUM_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="pEnumRecords"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEnumRecords",
                 [LPDHCP_FILTER_RECORD()],
                 LPDHCP_FILTER_RECORD,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4459,8 +4393,8 @@ class LPDHCP_CLIENT_FILTER_STATUS_INFO(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -4476,15 +4410,14 @@ class LPDHCP_CLIENT_FILTER_STATUS_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_FILTER_STATUS_INFO,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4550,14 +4483,14 @@ class LPDHCP_FAILOVER_RELATIONSHIP(NDRPacket):
         NDRInt3264EnumField("prevState", 0, FSM_STATE),
         NDRIntField("mclt", 0),
         NDRIntField("safePeriod", 0),
-        NDRFullPointerField(NDRShortField("relationshipName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("primaryServerName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("secondaryServerName", 0), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("pScopes", LPDHCP_IP_ARRAY(), LPDHCP_IP_ARRAY), deferred=True
+        NDRFullEmbPointerField(NDRShortField("relationshipName", 0)),
+        NDRFullEmbPointerField(NDRShortField("primaryServerName", 0)),
+        NDRFullEmbPointerField(NDRShortField("secondaryServerName", 0)),
+        NDRFullEmbPointerField(
+            NDRPacketField("pScopes", LPDHCP_IP_ARRAY(), LPDHCP_IP_ARRAY)
         ),
         NDRByteField("percentage", 0),
-        NDRFullPointerField(NDRShortField("pSharedSecret", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("pSharedSecret", 0)),
     ]
 
 
@@ -4627,14 +4560,13 @@ class LPDHCP_FAILOVER_RELATIONSHIP_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("numElements", None, size_of="pRelationships"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pRelationships",
                 [LPDHCP_FAILOVER_RELATIONSHIP()],
                 LPDHCP_FAILOVER_RELATIONSHIP,
                 size_is=lambda pkt: pkt.numElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4750,8 +4682,8 @@ class LPDHCPV4_FAILOVER_CLIENT_INFO(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -4766,7 +4698,7 @@ class LPDHCPV4_FAILOVER_CLIENT_INFO(NDRPacket):
         NDRIntField("CltLastTransTime", 0),
         NDRIntField("LastBndUpdTime", 0),
         NDRIntField("bndMsgStatus", 0),
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
         NDRByteField("flags", 0),
     ]
 
@@ -4891,14 +4823,13 @@ class R_DhcpV4RemoveOptionValue_Response(NDRPacket):
 class Options_DHCP_ALL_OPTION_VALUES_PB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("VendorName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
+        NDRFullEmbPointerField(NDRShortField("VendorName", 0)),
         NDRSignedIntField("IsVendor", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OptionsArray", LPDHCP_OPTION_VALUE_ARRAY(), LPDHCP_OPTION_VALUE_ARRAY
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4908,14 +4839,13 @@ class LPDHCP_ALL_OPTION_VALUES_PB(NDRPacket):
     fields_desc = [
         NDRIntField("Flags", 0),
         NDRIntField("NumElements", None, size_of="Options_DHCP_ALL_OPTION_VALUES_PB"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options_DHCP_ALL_OPTION_VALUES_PB",
                 [Options_DHCP_ALL_OPTION_VALUES_PB()],
                 Options_DHCP_ALL_OPTION_VALUES_PB,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4990,11 +4920,10 @@ class LPDHCP_POL_COND(NDRPacket):
         NDRInt3264EnumField("Type", 0, DHCP_POL_ATTR_TYPE),
         NDRIntField("OptionID", 0),
         NDRIntField("SubOptionID", 0),
-        NDRFullPointerField(NDRShortField("VendorName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("VendorName", 0)),
         NDRInt3264EnumField("Operator", 0, DHCP_POL_COMPARATOR),
-        NDRFullPointerField(
-            NDRConfStrLenField("Value", "", size_is=lambda pkt: pkt.ValueLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Value", "", size_is=lambda pkt: pkt.ValueLength)
         ),
         NDRIntField("ValueLength", None, size_of="Value"),
     ]
@@ -5004,14 +4933,13 @@ class LPDHCP_POL_COND_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_POL_COND()],
                 LPDHCP_POL_COND,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5033,14 +4961,13 @@ class LPDHCP_POL_EXPR_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_POL_EXPR()],
                 LPDHCP_POL_EXPR,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5054,14 +4981,13 @@ class LPDHCP_IP_RANGE_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_IP_RANGE()],
                 LPDHCP_IP_RANGE,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5069,27 +4995,22 @@ class LPDHCP_IP_RANGE_ARRAY(NDRPacket):
 class LPDHCP_POLICY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
         NDRSignedIntField("IsGlobalPolicy", 0),
         NDRIntField("Subnet", 0),
         NDRIntField("ProcessingOrder", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Conditions", LPDHCP_POL_COND_ARRAY(), LPDHCP_POL_COND_ARRAY
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Conditions", LPDHCP_POL_COND_ARRAY(), LPDHCP_POL_COND_ARRAY)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "Expressions", LPDHCP_POL_EXPR_ARRAY(), LPDHCP_POL_EXPR_ARRAY
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRPacketField("Ranges", LPDHCP_IP_RANGE_ARRAY(), LPDHCP_IP_RANGE_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Ranges", LPDHCP_IP_RANGE_ARRAY(), LPDHCP_IP_RANGE_ARRAY)
         ),
-        NDRFullPointerField(NDRShortField("Description", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("Description", 0)),
         NDRSignedIntField("Enabled", 0),
     ]
 
@@ -5153,14 +5074,13 @@ class LPDHCP_POLICY_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_POLICY()],
                 LPDHCP_POLICY,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5217,8 +5137,8 @@ class LPDHCP_CLIENT_INFO_PB(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -5227,7 +5147,7 @@ class LPDHCP_CLIENT_INFO_PB(NDRPacket):
         NDRPacketField("ProbationEnds", DATE_TIME(), DATE_TIME),
         NDRSignedIntField("QuarantineCapable", 0),
         NDRIntField("FilterStatus", 0),
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
     ]
 
 
@@ -5235,15 +5155,14 @@ class LPDHCP_CLIENT_INFO_PB_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_PB,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5322,14 +5241,13 @@ class LPDHCPV6_STATELESS_STATS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumScopes", None, size_of="ScopeStats"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeStats",
                 [LPDHCPV6_STATELESS_SCOPE_STATS()],
                 LPDHCPV6_STATELESS_SCOPE_STATS,
                 size_is=lambda pkt: pkt.NumScopes,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5356,8 +5274,8 @@ class LPDHCP_IP_RESERVATION_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("ReservedIpAddress", 0),
         NDRPacketField("ReservedForClient", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ReservedClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ReservedClientDesc", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ReservedClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ReservedClientDesc", 0)),
         NDRByteField("bAllowedClientTypes", 0),
         NDRByteField("fOptionsPresent", 0),
     ]
@@ -5367,15 +5285,14 @@ class LPDHCP_RESERVATION_INFO_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [],
                 LPDHCP_IP_RESERVATION_INFO,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5544,7 +5461,7 @@ class LPDHCP_PROPERTY(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRShortField("Value", 0), deferred=True),
+                    NDRFullEmbPointerField(NDRShortField("Value", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "Type", None)
@@ -5581,14 +5498,13 @@ class LPDHCP_PROPERTY_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_PROPERTY()],
                 LPDHCP_PROPERTY,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5596,33 +5512,25 @@ class LPDHCP_PROPERTY_ARRAY(NDRPacket):
 class LPDHCP_POLICY_EX(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
         NDRSignedIntField("IsGlobalPolicy", 0),
         NDRIntField("Subnet", 0),
         NDRIntField("ProcessingOrder", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Conditions", LPDHCP_POL_COND_ARRAY(), LPDHCP_POL_COND_ARRAY
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Conditions", LPDHCP_POL_COND_ARRAY(), LPDHCP_POL_COND_ARRAY)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "Expressions", LPDHCP_POL_EXPR_ARRAY(), LPDHCP_POL_EXPR_ARRAY
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRPacketField("Ranges", LPDHCP_IP_RANGE_ARRAY(), LPDHCP_IP_RANGE_ARRAY),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Ranges", LPDHCP_IP_RANGE_ARRAY(), LPDHCP_IP_RANGE_ARRAY)
         ),
-        NDRFullPointerField(NDRShortField("Description", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("Description", 0)),
         NDRSignedIntField("Enabled", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Properties", LPDHCP_PROPERTY_ARRAY(), LPDHCP_PROPERTY_ARRAY
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Properties", LPDHCP_PROPERTY_ARRAY(), LPDHCP_PROPERTY_ARRAY)
         ),
     ]
 
@@ -5675,14 +5583,13 @@ class LPDHCP_POLICY_EX_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Elements"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
                 [LPDHCP_POLICY_EX()],
                 LPDHCP_POLICY_EX,
                 size_is=lambda pkt: pkt.NumElements,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -5713,8 +5620,8 @@ class LPDHCP_CLIENT_INFO_EX(NDRPacket):
         NDRIntField("ClientIpAddress", 0),
         NDRIntField("SubnetMask", 0),
         NDRPacketField("ClientHardwareAddress", DHCP_BINARY_DATA(), DHCP_BINARY_DATA),
-        NDRFullPointerField(NDRShortField("ClientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("ClientComment", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("ClientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("ClientComment", 0)),
         NDRPacketField("ClientLeaseExpires", DATE_TIME(), DATE_TIME),
         NDRPacketField("OwnerHost", DHCP_HOST_INFO(), DHCP_HOST_INFO),
         NDRByteField("bClientType", 0),
@@ -5723,12 +5630,9 @@ class LPDHCP_CLIENT_INFO_EX(NDRPacket):
         NDRPacketField("ProbationEnds", DATE_TIME(), DATE_TIME),
         NDRSignedIntField("QuarantineCapable", 0),
         NDRIntField("FilterStatus", 0),
-        NDRFullPointerField(NDRShortField("PolicyName", 0), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Properties", LPDHCP_PROPERTY_ARRAY(), LPDHCP_PROPERTY_ARRAY
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(NDRShortField("PolicyName", 0)),
+        NDRFullEmbPointerField(
+            NDRPacketField("Properties", LPDHCP_PROPERTY_ARRAY(), LPDHCP_PROPERTY_ARRAY)
         ),
     ]
 
@@ -5737,15 +5641,14 @@ class LPDHCP_CLIENT_INFO_EX_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("NumElements", None, size_of="Clients"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Clients",
                 [],
                 LPDHCP_CLIENT_INFO_EX,
                 size_is=lambda pkt: pkt.NumElements,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

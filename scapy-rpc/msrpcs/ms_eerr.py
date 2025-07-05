@@ -19,7 +19,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRPacket,
@@ -41,9 +41,8 @@ class EEAString(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedShortField("nLength", None, size_of="pString"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField("pString", "", size_is=lambda pkt: pkt.nLength),
-            deferred=True,
         ),
     ]
 
@@ -52,9 +51,8 @@ class EEUString(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedShortField("nLength", None, size_of="pString"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16("pString", "", size_is=lambda pkt: pkt.nLength),
-            deferred=True,
         ),
     ]
 
@@ -63,9 +61,8 @@ class BinaryEEInfo(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedShortField("nSize", None, size_of="pBlob"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField("pBlob", "", size_is=lambda pkt: pkt.nSize),
-            deferred=True,
         ),
     ]
 

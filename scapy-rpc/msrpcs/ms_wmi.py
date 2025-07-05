@@ -35,6 +35,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntEnumField,
     NDRIntField,
@@ -907,9 +908,8 @@ class WBEM_REFRESHED_OBJECT(NDRPacket):
         NDRSignedIntField("m_lRequestId", 0),
         NDRIntEnumField("m_lBlobType", 0, WBEM_INSTANCE_BLOB_TYPE),
         NDRSignedIntField("m_lBlobLength", None, size_of="m_pbBlob"),
-        NDRFullPointerField(
-            NDRConfStrLenField("m_pbBlob", "", size_is=lambda pkt: pkt.m_lBlobLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("m_pbBlob", "", size_is=lambda pkt: pkt.m_lBlobLength)
         ),
     ]
 
@@ -980,9 +980,7 @@ register_dcerpc_interface(
 class _WBEM_REFRESHER_ID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullField("m_szMachineName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("m_szMachineName", "")),
         NDRIntField("m_dwProcessId", 0),
         NDRPacketField("m_guidRefresherId", GUID(), GUID),
     ]
@@ -997,13 +995,11 @@ class WBEM_REFRESH_TYPE(IntEnum):
 class _WBEM_REFRESH_INFO_REMOTE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("m_pRefresher", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("m_pRefresher", MInterfacePointer(), MInterfacePointer)
         ),
-        NDRFullPointerField(
-            NDRPacketField("m_pTemplate", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("m_pTemplate", MInterfacePointer(), MInterfacePointer)
         ),
         NDRPacketField("m_Guid", GUID(), GUID),
     ]
@@ -1012,12 +1008,9 @@ class _WBEM_REFRESH_INFO_REMOTE(NDRPacket):
 class _WBEM_REFRESH_INFO_NON_HIPERF(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_wszNamespace", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("m_pTemplate", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_wszNamespace", "")),
+        NDRFullEmbPointerField(
+            NDRPacketField("m_pTemplate", MInterfacePointer(), MInterfacePointer)
         ),
     ]
 
@@ -1172,9 +1165,7 @@ class _WBEM_RECONNECT_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedIntField("m_lType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwcsPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwcsPath", "")),
     ]
 
 

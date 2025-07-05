@@ -18,7 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRFieldListField,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRLongField,
@@ -55,9 +55,8 @@ class PSID(NDRPacket):
 class KERB_SID_AND_ATTRIBUTES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRFullPointerField(NDRPacketField("Sid", PSID(), PSID), deferred=True),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("Sid", PSID(), PSID))
         ),
         NDRIntField("Attributes", 0),
     ]
@@ -66,9 +65,8 @@ class KERB_SID_AND_ATTRIBUTES(NDRPacket):
 class PKERB_SID_AND_ATTRIBUTES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRFullPointerField(NDRPacketField("Sid", PSID(), PSID), deferred=True),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("Sid", PSID(), PSID))
         ),
         NDRIntField("Attributes", 0),
     ]
@@ -87,21 +85,17 @@ class PGROUP_MEMBERSHIP(NDRPacket):
 class PDOMAIN_GROUP_MEMBERSHIP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("DomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("DomainId", PSID(), PSID))
         ),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.GroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -109,21 +103,17 @@ class PDOMAIN_GROUP_MEMBERSHIP(NDRPacket):
 class PDOMAIN_GROUP_MEMBERSHIP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("DomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("DomainId", PSID(), PSID))
         ),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.GroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -184,14 +174,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -216,53 +205,46 @@ class KERB_VALIDATION_INFO(NDRPacket):
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.GroupCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("UserFlags", 0),
         NDRPacketField("UserSessionKey", USER_SESSION_KEY(), USER_SESSION_KEY),
         NDRPacketField("LogonServer", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("LogonDomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PSID(), PSID))
         ),
         NDRFieldListField("Reserved1", [], NDRIntField("", 0), length_is=lambda _: 2),
         NDRIntField("UserAccountControl", 0),
         NDRFieldListField("Reserved3", [], NDRIntField("", 0), length_is=lambda _: 7),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [PKERB_SID_AND_ATTRIBUTES()],
                 PKERB_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ResourceGroupDomainSid", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(
+                NDRPacketField("ResourceGroupDomainSid", PSID(), PSID)
+            )
         ),
         NDRIntField("ResourceGroupCount", None, size_of="ResourceGroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ResourceGroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.ResourceGroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -287,53 +269,46 @@ class PKERB_VALIDATION_INFO(NDRPacket):
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.GroupCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("UserFlags", 0),
         NDRPacketField("UserSessionKey", USER_SESSION_KEY(), USER_SESSION_KEY),
         NDRPacketField("LogonServer", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("LogonDomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PSID(), PSID))
         ),
         NDRFieldListField("Reserved1", [], NDRIntField("", 0), length_is=lambda _: 2),
         NDRIntField("UserAccountControl", 0),
         NDRFieldListField("Reserved3", [], NDRIntField("", 0), length_is=lambda _: 7),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [PKERB_SID_AND_ATTRIBUTES()],
                 PKERB_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ResourceGroupDomainSid", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(
+                NDRPacketField("ResourceGroupDomainSid", PSID(), PSID)
+            )
         ),
         NDRIntField("ResourceGroupCount", None, size_of="ResourceGroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ResourceGroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.ResourceGroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -361,11 +336,10 @@ class SECPKG_SUPPLEMENTAL_CRED(NDRPacket):
     fields_desc = [
         NDRPacketField("PackageName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRIntField("CredentialSize", None, size_of="Credentials"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "Credentials", "", size_is=lambda pkt: pkt.CredentialSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -405,11 +379,10 @@ class PSECPKG_SUPPLEMENTAL_CRED(NDRPacket):
     fields_desc = [
         NDRPacketField("PackageName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRIntField("CredentialSize", None, size_of="Credentials"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "Credentials", "", size_is=lambda pkt: pkt.CredentialSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -459,14 +432,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -476,14 +448,13 @@ class S4U_DELEGATION_INFO(NDRPacket):
     fields_desc = [
         NDRPacketField("S4U2proxyTarget", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRIntField("TransitedListSize", None, size_of="S4UTransitedServices"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "S4UTransitedServices",
                 [PRPC_UNICODE_STRING()],
                 PRPC_UNICODE_STRING,
                 size_is=lambda pkt: pkt.TransitedListSize,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -493,14 +464,13 @@ class PS4U_DELEGATION_INFO(NDRPacket):
     fields_desc = [
         NDRPacketField("S4U2proxyTarget", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRIntField("TransitedListSize", None, size_of="S4UTransitedServices"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "S4UTransitedServices",
                 [PRPC_UNICODE_STRING()],
                 PRPC_UNICODE_STRING,
                 size_is=lambda pkt: pkt.TransitedListSize,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -538,21 +508,17 @@ class PCLAIMS_SET_METADATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsSetSize", None, size_of="ClaimsSet"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("ClaimsSet", "", size_is=lambda pkt: pkt.ulClaimsSetSize)
         ),
         NDRInt3264EnumField("usCompressionFormat", 0, CLAIMS_COMPRESSION_FORMAT),
         NDRIntField("ulUncompressedClaimsSetSize", 0),
         NDRShortField("usReservedType", 0),
         NDRIntField("ulReservedFieldSize", None, size_of="ReservedField"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ReservedField", "", size_is=lambda pkt: pkt.ulReservedFieldSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -560,9 +526,8 @@ class PCLAIMS_SET_METADATA(NDRPacket):
 class PAC_CLIENT_CLAIMS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA)
         )
     ]
 
@@ -570,9 +535,8 @@ class PAC_CLIENT_CLAIMS_INFO(NDRPacket):
 class PPAC_CLIENT_CLAIMS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA)
         )
     ]
 
@@ -582,41 +546,35 @@ class PAC_DEVICE_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("AccountDomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("AccountDomainId", PSID(), PSID))
         ),
         NDRIntField("AccountGroupCount", None, size_of="AccountGroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "AccountGroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.AccountGroupCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [PKERB_SID_AND_ATTRIBUTES()],
                 PKERB_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("DomainGroupCount", None, size_of="DomainGroup"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "DomainGroup",
                 [PDOMAIN_GROUP_MEMBERSHIP()],
                 PDOMAIN_GROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.DomainGroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -626,41 +584,35 @@ class PPAC_DEVICE_INFO(NDRPacket):
     fields_desc = [
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("AccountDomainId", PSID(), PSID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("AccountDomainId", PSID(), PSID))
         ),
         NDRIntField("AccountGroupCount", None, size_of="AccountGroupIds"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "AccountGroupIds",
                 [PGROUP_MEMBERSHIP()],
                 PGROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.AccountGroupCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [PKERB_SID_AND_ATTRIBUTES()],
                 PKERB_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("DomainGroupCount", None, size_of="DomainGroup"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "DomainGroup",
                 [PDOMAIN_GROUP_MEMBERSHIP()],
                 PDOMAIN_GROUP_MEMBERSHIP,
                 size_is=lambda pkt: pkt.DomainGroupCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -668,9 +620,8 @@ class PPAC_DEVICE_INFO(NDRPacket):
 class PAC_DEVICE_CLAIMS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA)
         )
     ]
 
@@ -678,8 +629,7 @@ class PAC_DEVICE_CLAIMS_INFO(NDRPacket):
 class PPAC_DEVICE_CLAIMS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Claims", PCLAIMS_SET_METADATA(), PCLAIMS_SET_METADATA)
         )
     ]

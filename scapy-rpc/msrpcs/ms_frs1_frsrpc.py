@@ -14,6 +14,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -30,8 +31,8 @@ class PCOMM_PACKET(NDRPacket):
         NDRIntField("MemLen", 0),
         NDRIntField("PktLen", None, size_of="Pkt"),
         NDRIntField("UpkLen", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("Pkt", "", size_is=lambda pkt: pkt.PktLen), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Pkt", "", size_is=lambda pkt: pkt.PktLen)
         ),
     ]
 

@@ -17,6 +17,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntEnumField,
@@ -65,18 +66,14 @@ class NetrDfsRemove_Response(NDRPacket):
 
 class DFS_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", ""))]
 
 
 class DFS_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("NumberOfStorages", 0),
     ]
@@ -86,32 +83,25 @@ class DFS_STORAGE_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("State", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ShareName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ShareName", "")),
     ]
 
 
 class DFS_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("NumberOfStorages", None, size_of="Storage"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
                 [],
                 DFS_STORAGE_INFO,
                 size_is=lambda pkt: pkt.NumberOfStorages,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -129,22 +119,19 @@ class GUID(NDRPacket):
 class DFS_INFO_4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("NumberOfStorages", None, size_of="Storage"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
                 [],
                 DFS_STORAGE_INFO,
                 size_is=lambda pkt: pkt.NumberOfStorages,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -152,10 +139,8 @@ class DFS_INFO_4(NDRPacket):
 class DFS_INFO_5(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
@@ -187,12 +172,8 @@ class DFS_STORAGE_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("State", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ShareName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ShareName", "")),
         NDRPacketField("TargetPriority", DFS_TARGET_PRIORITY(), DFS_TARGET_PRIORITY),
     ]
 
@@ -200,24 +181,21 @@ class DFS_STORAGE_INFO_1(NDRPacket):
 class DFS_INFO_6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("MetadataSize", 0),
         NDRIntField("NumberOfStorages", None, size_of="Storage"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
                 [],
                 DFS_STORAGE_INFO_1,
                 size_is=lambda pkt: pkt.NumberOfStorages,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -230,23 +208,20 @@ class DFS_INFO_7(NDRPacket):
 class DFS_INFO_8(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("MetadataSize", 0),
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("NumberOfStorages", 0),
     ]
@@ -256,12 +231,8 @@ class LPDFS_STORAGE_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("State", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ShareName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ShareName", "")),
         NDRPacketField("TargetPriority", DFS_TARGET_PRIORITY(), DFS_TARGET_PRIORITY),
     ]
 
@@ -269,33 +240,29 @@ class LPDFS_STORAGE_INFO_1(NDRPacket):
 class DFS_INFO_9(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("MetadataSize", 0),
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("NumberOfStorages", None, size_of="Storage"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
                 [LPDFS_STORAGE_INFO_1()],
                 LPDFS_STORAGE_INFO_1,
                 size_is=lambda pkt: pkt.NumberOfStorages,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -311,9 +278,7 @@ class DFS_INFO_50(NDRPacket):
 
 class DFS_INFO_100(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""))]
 
 
 class DFS_INFO_101(NDRPacket):
@@ -341,7 +306,7 @@ class DFS_INFO_104(NDRPacket):
 class DFS_INFO_105(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRIntField("PropertyFlagMask", 0),
@@ -360,19 +325,18 @@ class DFS_INFO_106(NDRPacket):
 class DFS_INFO_107(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRIntField("PropertyFlagMask", 0),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -381,13 +345,12 @@ class DFS_INFO_150(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -780,11 +743,10 @@ class DFS_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_1, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -793,11 +755,10 @@ class DFS_INFO_2_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_2, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -806,11 +767,10 @@ class DFS_INFO_3_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_3, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -819,11 +779,10 @@ class DFS_INFO_4_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_4, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -832,11 +791,10 @@ class DFS_INFO_5_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_5, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -845,11 +803,10 @@ class DFS_INFO_6_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_6, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -857,23 +814,20 @@ class DFS_INFO_6_CONTAINER(NDRPacket):
 class LPDFS_INFO_8(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("MetadataSize", 0),
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("NumberOfStorages", 0),
     ]
@@ -883,14 +837,13 @@ class DFS_INFO_8_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPDFS_INFO_8()],
                 LPDFS_INFO_8,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -898,33 +851,29 @@ class DFS_INFO_8_CONTAINER(NDRPacket):
 class LPDFS_INFO_9(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("EntryPath", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Comment", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("EntryPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Comment", "")),
         NDRIntField("State", 0),
         NDRIntField("Timeout", 0),
         NDRPacketField("Guid", GUID(), GUID),
         NDRIntField("PropertyFlags", 0),
         NDRIntField("MetadataSize", 0),
         NDRIntField("SecurityDescriptorLength", None, size_of="pSecurityDescriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.SecurityDescriptorLength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("NumberOfStorages", None, size_of="Storage"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
                 [LPDFS_STORAGE_INFO_1()],
                 LPDFS_STORAGE_INFO_1,
                 size_is=lambda pkt: pkt.NumberOfStorages,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -933,34 +882,30 @@ class DFS_INFO_9_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPDFS_INFO_9()],
                 LPDFS_INFO_9,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
 
 class DFS_INFO_200(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("FtDfsName", ""), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("FtDfsName", ""))]
 
 
 class DFS_INFO_200_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_200, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -969,7 +914,7 @@ class DFS_INFO_300(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Flags", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DfsName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DfsName", "")),
     ]
 
 
@@ -977,11 +922,10 @@ class DFS_INFO_300_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer", [], DFS_INFO_300, size_is=lambda pkt: pkt.EntriesRead
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -993,13 +937,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_1_CONTAINER(),
                             DFS_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -1007,13 +950,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_2_CONTAINER(),
                             DFS_INFO_2_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -1021,13 +963,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_3_CONTAINER(),
                             DFS_INFO_3_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -1035,13 +976,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_4_CONTAINER(),
                             DFS_INFO_4_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -1049,13 +989,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_5_CONTAINER(),
                             DFS_INFO_5_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 5),
@@ -1063,13 +1002,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_6_CONTAINER(),
                             DFS_INFO_6_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 6),
@@ -1077,13 +1015,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_8_CONTAINER(),
                             DFS_INFO_8_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 8),
@@ -1091,13 +1028,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_9_CONTAINER(),
                             DFS_INFO_9_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 9),
@@ -1105,13 +1041,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_200_CONTAINER(),
                             DFS_INFO_200_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 200),
@@ -1119,13 +1054,12 @@ class DFS_INFO_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "DfsInfoContainer",
                             DFS_INFO_300_CONTAINER(),
                             DFS_INFO_300_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 300),
@@ -1176,9 +1110,7 @@ class NetrDfsMove_Response(NDRPacket):
 class DFSM_ROOT_LIST_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ServerShare", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ServerShare", ""))
     ]
 
 

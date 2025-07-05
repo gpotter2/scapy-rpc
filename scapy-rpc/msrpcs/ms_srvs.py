@@ -19,6 +19,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -40,14 +41,13 @@ class CONNECT_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPCONNECTION_INFO_0()],
                 LPCONNECTION_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -60,12 +60,8 @@ class LPCONNECTION_INFO_1(NDRPacket):
         NDRIntField("coni1_num_opens", 0),
         NDRIntField("coni1_num_users", 0),
         NDRIntField("coni1_time", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("coni1_username", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("coni1_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("coni1_username", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("coni1_netname", "")),
     ]
 
 
@@ -73,14 +69,13 @@ class CONNECT_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPCONNECTION_INFO_1()],
                 LPCONNECTION_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -92,13 +87,12 @@ class LPCONNECT_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ConnectInfo",
                             CONNECT_INFO_0_CONTAINER(),
                             CONNECT_INFO_0_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -106,13 +100,12 @@ class LPCONNECT_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ConnectInfo",
                             CONNECT_INFO_1_CONTAINER(),
                             CONNECT_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -155,14 +148,13 @@ class FILE_INFO_2_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPFILE_INFO_2()],
                 LPFILE_INFO_2,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -173,12 +165,8 @@ class LPFILE_INFO_3(NDRPacket):
         NDRIntField("fi3_id", 0),
         NDRIntField("fi3_permissions", 0),
         NDRIntField("fi3_num_locks", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("fi3_pathname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("fi3_username", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("fi3_pathname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("fi3_username", "")),
     ]
 
 
@@ -186,14 +174,13 @@ class FILE_INFO_3_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPFILE_INFO_3()],
                 LPFILE_INFO_3,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -205,11 +192,10 @@ class PFILE_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "FileInfo", FILE_INFO_2_CONTAINER(), FILE_INFO_2_CONTAINER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -217,11 +203,10 @@ class PFILE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "FileInfo", FILE_INFO_3_CONTAINER(), FILE_INFO_3_CONTAINER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -309,9 +294,7 @@ class NetrFileClose_Response(NDRPacket):
 class LPSESSION_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi0_cname", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi0_cname", ""))
     ]
 
 
@@ -319,14 +302,13 @@ class SESSION_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSESSION_INFO_0()],
                 LPSESSION_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -334,12 +316,8 @@ class SESSION_INFO_0_CONTAINER(NDRPacket):
 class LPSESSION_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi1_cname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi1_username", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi1_cname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi1_username", "")),
         NDRIntField("sesi1_num_opens", 0),
         NDRIntField("sesi1_time", 0),
         NDRIntField("sesi1_idle_time", 0),
@@ -351,14 +329,13 @@ class SESSION_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSESSION_INFO_1()],
                 LPSESSION_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -366,19 +343,13 @@ class SESSION_INFO_1_CONTAINER(NDRPacket):
 class LPSESSION_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi2_cname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi2_username", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi2_cname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi2_username", "")),
         NDRIntField("sesi2_num_opens", 0),
         NDRIntField("sesi2_time", 0),
         NDRIntField("sesi2_idle_time", 0),
         NDRIntField("sesi2_user_flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi2_cltype_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi2_cltype_name", "")),
     ]
 
 
@@ -386,14 +357,13 @@ class SESSION_INFO_2_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSESSION_INFO_2()],
                 LPSESSION_INFO_2,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -401,12 +371,8 @@ class SESSION_INFO_2_CONTAINER(NDRPacket):
 class LPSESSION_INFO_10(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi10_cname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi10_username", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi10_cname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi10_username", "")),
         NDRIntField("sesi10_time", 0),
         NDRIntField("sesi10_idle_time", 0),
     ]
@@ -416,14 +382,13 @@ class SESSION_INFO_10_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSESSION_INFO_10()],
                 LPSESSION_INFO_10,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -431,22 +396,14 @@ class SESSION_INFO_10_CONTAINER(NDRPacket):
 class LPSESSION_INFO_502(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi502_cname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi502_username", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi502_cname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi502_username", "")),
         NDRIntField("sesi502_num_opens", 0),
         NDRIntField("sesi502_time", 0),
         NDRIntField("sesi502_idle_time", 0),
         NDRIntField("sesi502_user_flags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi502_cltype_name", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sesi502_transport", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi502_cltype_name", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sesi502_transport", "")),
     ]
 
 
@@ -454,14 +411,13 @@ class SESSION_INFO_502_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSESSION_INFO_502()],
                 LPSESSION_INFO_502,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -473,13 +429,12 @@ class PSESSION_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "SessionInfo",
                             SESSION_INFO_0_CONTAINER(),
                             SESSION_INFO_0_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -487,13 +442,12 @@ class PSESSION_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "SessionInfo",
                             SESSION_INFO_1_CONTAINER(),
                             SESSION_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -501,13 +455,12 @@ class PSESSION_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "SessionInfo",
                             SESSION_INFO_2_CONTAINER(),
                             SESSION_INFO_2_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -515,13 +468,12 @@ class PSESSION_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "SessionInfo",
                             SESSION_INFO_10_CONTAINER(),
                             SESSION_INFO_10_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 10),
@@ -529,13 +481,12 @@ class PSESSION_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "SessionInfo",
                             SESSION_INFO_502_CONTAINER(),
                             SESSION_INFO_502_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 502),
@@ -585,74 +536,51 @@ class NetrSessionDel_Response(NDRPacket):
 class LPSHARE_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi0_netname", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi0_netname", ""))
     ]
 
 
 class LPSHARE_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi1_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi1_netname", "")),
         NDRIntField("shi1_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi1_remark", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi1_remark", "")),
     ]
 
 
 class LPSHARE_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi2_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi2_netname", "")),
         NDRIntField("shi2_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi2_remark", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi2_remark", "")),
         NDRIntField("shi2_permissions", 0),
         NDRIntField("shi2_max_uses", 0),
         NDRIntField("shi2_current_uses", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi2_path", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi2_passwd", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi2_path", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi2_passwd", "")),
     ]
 
 
 class LPSHARE_INFO_502_I(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi502_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi502_netname", "")),
         NDRIntField("shi502_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi502_remark", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi502_remark", "")),
         NDRIntField("shi502_permissions", 0),
         NDRIntField("shi502_max_uses", 0),
         NDRIntField("shi502_current_uses", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi502_path", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi502_passwd", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi502_path", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi502_passwd", "")),
         NDRIntField("shi502_reserved", None, size_of="shi502_security_descriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "shi502_security_descriptor",
                 "",
                 size_is=lambda pkt: pkt.shi502_reserved,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -660,9 +588,7 @@ class LPSHARE_INFO_502_I(NDRPacket):
 class LPSHARE_INFO_1004(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi1004_remark", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi1004_remark", ""))
     ]
 
 
@@ -675,13 +601,12 @@ class LPSHARE_INFO_1501_I(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("shi1501_reserved", None, size_of="shi1501_security_descriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "shi1501_security_descriptor",
                 "",
                 size_is=lambda pkt: pkt.shi1501_reserved,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -694,13 +619,9 @@ class LPSHARE_INFO_1005(NDRPacket):
 class LPSHARE_INFO_501(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi501_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi501_netname", "")),
         NDRIntField("shi501_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi501_remark", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi501_remark", "")),
         NDRIntField("shi501_flags", 0),
     ]
 
@@ -708,33 +629,22 @@ class LPSHARE_INFO_501(NDRPacket):
 class LPSHARE_INFO_503_I(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi503_netname", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi503_netname", "")),
         NDRIntField("shi503_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi503_remark", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi503_remark", "")),
         NDRIntField("shi503_permissions", 0),
         NDRIntField("shi503_max_uses", 0),
         NDRIntField("shi503_current_uses", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi503_path", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi503_passwd", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("shi503_servername", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi503_path", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi503_passwd", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("shi503_servername", "")),
         NDRIntField("shi503_reserved", None, size_of="shi503_security_descriptor"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "shi503_security_descriptor",
                 "",
                 size_is=lambda pkt: pkt.shi503_reserved,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -869,14 +779,13 @@ class SHARE_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_0()],
                 LPSHARE_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -885,14 +794,13 @@ class SHARE_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_1()],
                 LPSHARE_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -901,14 +809,13 @@ class SHARE_INFO_2_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_2()],
                 LPSHARE_INFO_2,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -917,14 +824,13 @@ class SHARE_INFO_501_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_501()],
                 LPSHARE_INFO_501,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -933,14 +839,13 @@ class SHARE_INFO_502_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_502_I()],
                 LPSHARE_INFO_502_I,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -949,14 +854,13 @@ class SHARE_INFO_503_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSHARE_INFO_503_I()],
                 LPSHARE_INFO_503_I,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -968,13 +872,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_0_CONTAINER(),
                             SHARE_INFO_0_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -982,13 +885,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_1_CONTAINER(),
                             SHARE_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -996,13 +898,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_2_CONTAINER(),
                             SHARE_INFO_2_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -1010,13 +911,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_501_CONTAINER(),
                             SHARE_INFO_501_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 501),
@@ -1024,13 +924,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_502_CONTAINER(),
                             SHARE_INFO_502_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 502),
@@ -1038,13 +937,12 @@ class LPSHARE_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ShareInfo",
                             SHARE_INFO_503_CONTAINER(),
                             SHARE_INFO_503_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 503),
@@ -1368,9 +1266,7 @@ class LPSERVER_INFO_100(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("sv100_platform_id", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv100_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv100_name", "")),
     ]
 
 
@@ -1378,15 +1274,11 @@ class LPSERVER_INFO_101(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("sv101_platform_id", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv101_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv101_name", "")),
         NDRIntField("sv101_version_major", 0),
         NDRIntField("sv101_version_minor", 0),
         NDRIntField("sv101_version_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv101_comment", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv101_comment", "")),
     ]
 
 
@@ -1394,24 +1286,18 @@ class LPSERVER_INFO_102(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("sv102_platform_id", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv102_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv102_name", "")),
         NDRIntField("sv102_version_major", 0),
         NDRIntField("sv102_version_minor", 0),
         NDRIntField("sv102_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv102_comment", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv102_comment", "")),
         NDRIntField("sv102_users", 0),
         NDRSignedIntField("sv102_disc", 0),
         NDRSignedIntField("sv102_hidden", 0),
         NDRIntField("sv102_announce", 0),
         NDRIntField("sv102_anndelta", 0),
         NDRIntField("sv102_licenses", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv102_userpath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv102_userpath", "")),
     ]
 
 
@@ -1419,24 +1305,18 @@ class LPSERVER_INFO_103(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("sv103_platform_id", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv103_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv103_name", "")),
         NDRIntField("sv103_version_major", 0),
         NDRIntField("sv103_version_minor", 0),
         NDRIntField("sv103_type", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv103_comment", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv103_comment", "")),
         NDRIntField("sv103_users", 0),
         NDRSignedIntField("sv103_disc", 0),
         NDRSignedIntField("sv103_hidden", 0),
         NDRIntField("sv103_announce", 0),
         NDRIntField("sv103_anndelta", 0),
         NDRIntField("sv103_licenses", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv103_userpath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv103_userpath", "")),
         NDRIntField("sv103_capabilities", 0),
     ]
 
@@ -1486,9 +1366,7 @@ class LPSERVER_INFO_503(NDRPacket):
         NDRSignedIntField("sv503_timesource", 0),
         NDRSignedIntField("sv503_acceptdownlevelapis", 0),
         NDRSignedIntField("sv503_lmannounce", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv503_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv503_domain", "")),
         NDRIntField("sv503_maxcopyreadlen", 0),
         NDRIntField("sv503_maxcopywritelen", 0),
         NDRIntField("sv503_minkeepsearch", 0),
@@ -1536,9 +1414,7 @@ class LPSERVER_INFO_599(NDRPacket):
         NDRSignedIntField("sv599_timesource", 0),
         NDRSignedIntField("sv599_acceptdownlevelapis", 0),
         NDRSignedIntField("sv599_lmannounce", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv599_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv599_domain", "")),
         NDRIntField("sv599_maxcopyreadlen", 0),
         NDRIntField("sv599_maxcopywritelen", 0),
         NDRIntField("sv599_minkeepsearch", 0),
@@ -1582,9 +1458,7 @@ class LPSERVER_INFO_599(NDRPacket):
 class LPSERVER_INFO_1005(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv1005_comment", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv1005_comment", ""))
     ]
 
 
@@ -2976,15 +2850,14 @@ class DISK_ENUM_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarPacketListField(
                 "Buffer",
                 [LPDISK_INFO()],
                 LPDISK_INFO,
                 size_is=lambda pkt: pkt.EntriesRead,
                 length_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3053,23 +2926,18 @@ class LPSERVER_TRANSPORT_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti0_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti0_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti0_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti0_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti0_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti0_transportaddresslength", None, size_of="svti0_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti0_networkaddress", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti0_networkaddress", "")),
     ]
 
 
@@ -3091,14 +2959,13 @@ class PSERVER_XPORT_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_TRANSPORT_INFO_0()],
                 LPSERVER_TRANSPORT_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3107,26 +2974,19 @@ class LPSERVER_TRANSPORT_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti1_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti1_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti1_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti1_transportaddresslength", None, size_of="svti1_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_domain", "")),
     ]
 
 
@@ -3134,14 +2994,13 @@ class PSERVER_XPORT_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_TRANSPORT_INFO_1()],
                 LPSERVER_TRANSPORT_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3150,26 +3009,19 @@ class LPSERVER_TRANSPORT_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti2_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti2_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti2_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti2_transportaddresslength", None, size_of="svti2_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_domain", "")),
         NDRIntField("svti2_flags", 0),
     ]
 
@@ -3178,14 +3030,13 @@ class PSERVER_XPORT_INFO_2_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_TRANSPORT_INFO_2()],
                 LPSERVER_TRANSPORT_INFO_2,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3194,26 +3045,19 @@ class LPSERVER_TRANSPORT_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti3_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti3_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti3_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti3_transportaddresslength", None, size_of="svti3_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_domain", "")),
         NDRIntField("svti3_flags", 0),
         NDRIntField("svti3_passwordlength", 0),
         StrFixedLenField("svti3_password", "", length=256),
@@ -3224,14 +3068,13 @@ class PSERVER_XPORT_INFO_3_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_TRANSPORT_INFO_3()],
                 LPSERVER_TRANSPORT_INFO_3,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3243,13 +3086,12 @@ class LPSERVER_XPORT_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "XportInfo",
                             PSERVER_XPORT_INFO_0_CONTAINER(),
                             PSERVER_XPORT_INFO_0_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -3257,13 +3099,12 @@ class LPSERVER_XPORT_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "XportInfo",
                             PSERVER_XPORT_INFO_1_CONTAINER(),
                             PSERVER_XPORT_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -3271,13 +3112,12 @@ class LPSERVER_XPORT_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "XportInfo",
                             PSERVER_XPORT_INFO_2_CONTAINER(),
                             PSERVER_XPORT_INFO_2_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -3285,13 +3125,12 @@ class LPSERVER_XPORT_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "XportInfo",
                             PSERVER_XPORT_INFO_3_CONTAINER(),
                             PSERVER_XPORT_INFO_3_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -3512,9 +3351,8 @@ class PADT_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Buffer"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -3561,23 +3399,18 @@ class SERVER_TRANSPORT_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti0_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti0_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti0_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti0_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti0_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti0_transportaddresslength", None, size_of="svti0_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti0_networkaddress", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti0_networkaddress", "")),
     ]
 
 
@@ -3585,26 +3418,19 @@ class SERVER_TRANSPORT_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti1_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti1_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti1_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti1_transportaddresslength", None, size_of="svti1_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti1_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti1_domain", "")),
     ]
 
 
@@ -3612,26 +3438,19 @@ class SERVER_TRANSPORT_INFO_2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti2_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti2_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti2_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti2_transportaddresslength", None, size_of="svti2_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti2_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti2_domain", "")),
         NDRIntField("svti2_flags", 0),
     ]
 
@@ -3640,26 +3459,19 @@ class SERVER_TRANSPORT_INFO_3(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("svti3_numberofvcs", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_transportname", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_transportname", "")),
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "svti3_transportaddress",
                 "",
                 size_is=lambda pkt: pkt.svti3_transportaddresslength,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField(
             "svti3_transportaddresslength", None, size_of="svti3_transportaddress"
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_networkaddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("svti3_domain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_networkaddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("svti3_domain", "")),
         NDRIntField("svti3_flags", 0),
         NDRIntField("svti3_passwordlength", 0),
         StrFixedLenField("svti3_password", "", length=256),
@@ -3742,7 +3554,7 @@ class LPNET_DFS_ENTRY_ID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Uid", GUID(), GUID),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Prefix", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Prefix", "")),
     ]
 
 
@@ -3750,14 +3562,13 @@ class LPNET_DFS_ENTRY_ID_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPNET_DFS_ENTRY_ID()],
                 LPNET_DFS_ENTRY_ID,
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3873,7 +3684,7 @@ class DFS_SITENAME_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("SiteFlags", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("SiteName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SiteName", "")),
     ]
 
 
@@ -3971,12 +3782,8 @@ class NetrServerTransportDelEx_Response(NDRPacket):
 class LPSERVER_ALIAS_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("srvai0_alias", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("srvai0_target", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("srvai0_alias", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("srvai0_target", "")),
         NDRByteField("srvai0_default", 0),
         NDRIntField("srvai0_reserved", 0),
     ]
@@ -4015,14 +3822,13 @@ class SERVER_ALIAS_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_ALIAS_INFO_0()],
                 LPSERVER_ALIAS_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4034,13 +3840,12 @@ class LPSERVER_ALIAS_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ServerAliasInfo",
                             SERVER_ALIAS_INFO_0_CONTAINER(),
                             SERVER_ALIAS_INFO_0_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),

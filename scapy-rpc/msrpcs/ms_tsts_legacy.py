@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264Field,
     NDRIntField,
@@ -387,14 +388,13 @@ class TS_UNICODE_STRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", None, size_of="Buffer"),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -435,18 +435,16 @@ class PTS_SYS_PROCESS_INFORMATION(NDRPacket):
 class PTS_ALL_PROCESSES_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pTsProcessInfo",
                 PTS_SYS_PROCESS_INFORMATION(),
                 PTS_SYS_PROCESS_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SizeOfSid", None, size_of="pSid"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pSid", "", size_is=lambda pkt: pkt.SizeOfSid),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pSid", "", size_is=lambda pkt: pkt.SizeOfSid)
         ),
     ]
 
@@ -657,14 +655,13 @@ class NT6_TS_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -705,18 +702,16 @@ class PTS_SYS_PROCESS_INFORMATION_NT6(NDRPacket):
 class PTS_ALL_PROCESSES_INFO_NT6(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "pTsProcessInfo",
                 PTS_SYS_PROCESS_INFORMATION_NT6(),
                 PTS_SYS_PROCESS_INFORMATION_NT6,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("SizeOfSid", None, size_of="pSid"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pSid", "", size_is=lambda pkt: pkt.SizeOfSid),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pSid", "", size_is=lambda pkt: pkt.SizeOfSid)
         ),
     ]
 

@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -189,15 +190,9 @@ class RpcGetSessionCounters_Response(NDRPacket):
 class PLSMSESSIONINFORMATION(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDomain", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszTerminalName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDomain", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszTerminalName", "")),
         NDRSignedIntField("SessionState", 0),
         NDRSignedIntField("DesktopLocked", 0),
         NDRSignedLongField("ConnectTime", 0),
@@ -252,11 +247,10 @@ class LSM_SESSIONINFO_EX_LEVEL1(NDRPacket):
         NDRSignedLongField("LogonTime", 0),
         NDRSignedLongField("LastInputTime", 0),
         NDRIntField("ProtocolDataSize", None, size_of="ProtocolData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ProtocolData", "", size_is=lambda pkt: pkt.ProtocolDataSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -598,11 +592,10 @@ class SESSIONENUM_LEVEL3(NDRPacket):
         NDRSignedIntField("bFullDesktop", 0),
         NDRPacketField("SessionType", GUID(), GUID),
         NDRIntField("ProtoDataSize", None, size_of="pProtocolData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pProtocolData", "", size_is=lambda pkt: pkt.ProtoDataSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -739,21 +732,11 @@ class EXECENVDATAEX_LEVEL1(NDRPacket):
         NDRSignedIntField("ExecEnvId", 0),
         NDRSignedIntField("State", 0),
         NDRSignedIntField("AbsSessionId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszSessionName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszHostName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDomainName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszFarmName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszSessionName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszHostName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDomainName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszFarmName", "")),
     ]
 
 

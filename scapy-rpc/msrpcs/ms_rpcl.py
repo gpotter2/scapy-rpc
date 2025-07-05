@@ -15,6 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -89,11 +90,9 @@ class I_nsi_lookup_done_Response(NDRPacket):
 class NSI_BINDING_T(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("string", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("string", "")),
         NDRIntField("entry_name_syntax", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("entry_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("entry_name", "")),
     ]
 
 

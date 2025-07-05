@@ -18,6 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -118,9 +119,8 @@ class EFS_HASH_BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbData", None, size_of="bData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData)
         ),
     ]
 
@@ -129,15 +129,9 @@ class ENCRYPTION_CERTIFICATE_HASH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbTotalLength", 0),
-        NDRFullPointerField(
-            NDRPacketField("UserSid", RPC_SID(), RPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Hash", EFS_HASH_BLOB(), EFS_HASH_BLOB), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpDisplayInformation", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("UserSid", RPC_SID(), RPC_SID)),
+        NDRFullEmbPointerField(NDRPacketField("Hash", EFS_HASH_BLOB(), EFS_HASH_BLOB)),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDisplayInformation", "")),
     ]
 
 
@@ -145,15 +139,14 @@ class ENCRYPTION_CERTIFICATE_HASH_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("nCert_Hash", None, size_of="Users"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Users",
                 [],
                 ENCRYPTION_CERTIFICATE_HASH,
                 size_is=lambda pkt: pkt.nCert_Hash,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -212,9 +205,8 @@ class EFS_CERTIFICATE_BLOB(NDRPacket):
     fields_desc = [
         NDRIntField("dwCertEncodingType", 0),
         NDRIntField("cbData", None, size_of="bData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData)
         ),
     ]
 
@@ -223,12 +215,9 @@ class ENCRYPTION_CERTIFICATE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbTotalLength", 0),
-        NDRFullPointerField(
-            NDRPacketField("UserSid", RPC_SID(), RPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("CertBlob", EFS_CERTIFICATE_BLOB(), EFS_CERTIFICATE_BLOB),
-            deferred=True,
+        NDRFullEmbPointerField(NDRPacketField("UserSid", RPC_SID(), RPC_SID)),
+        NDRFullEmbPointerField(
+            NDRPacketField("CertBlob", EFS_CERTIFICATE_BLOB(), EFS_CERTIFICATE_BLOB)
         ),
     ]
 
@@ -237,15 +226,14 @@ class ENCRYPTION_CERTIFICATE_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("nUsers", None, size_of="Users"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Users",
                 [],
                 ENCRYPTION_CERTIFICATE,
                 size_is=lambda pkt: pkt.nUsers,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -269,9 +257,8 @@ class EFS_RPC_BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbData", None, size_of="bData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("bData", "", size_is=lambda pkt: pkt.cbData)
         ),
     ]
 
@@ -370,25 +357,22 @@ class ENCRYPTED_FILE_METADATA_SIGNATURE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwEfsAccessType", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "CertificatesAdded",
                 ENCRYPTION_CERTIFICATE_HASH_LIST(),
                 ENCRYPTION_CERTIFICATE_HASH_LIST,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "EncryptionCertificate",
                 ENCRYPTION_CERTIFICATE(),
                 ENCRYPTION_CERTIFICATE,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRPacketField("EfsStreamSignature", EFS_RPC_BLOB(), EFS_RPC_BLOB),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("EfsStreamSignature", EFS_RPC_BLOB(), EFS_RPC_BLOB)
         ),
     ]
 
@@ -438,11 +422,9 @@ class PENCRYPTION_PROTECTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbTotalLength", 0),
-        NDRFullPointerField(
-            NDRPacketField("UserSid", RPC_SID(), RPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpProtectorDescriptor", ""), deferred=True
+        NDRFullEmbPointerField(NDRPacketField("UserSid", RPC_SID(), RPC_SID)),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpProtectorDescriptor", "")
         ),
     ]
 
@@ -451,15 +433,14 @@ class PENCRYPTION_PROTECTOR_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("nProtectors", None, size_of="pProtectors"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pProtectors",
                 [],
                 PENCRYPTION_PROTECTOR,
                 size_is=lambda pkt: pkt.nProtectors,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

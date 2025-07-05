@@ -59,6 +59,7 @@ from scapy.layers.dcerpc import (
     DceRpcOp,
     NDRConfStrLenField,
     NDRConfVarPacketListField,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -147,9 +148,8 @@ class MInterfacePointer(NDRPacket):
 class CONNECTDATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pUnk", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pUnk", MInterfacePointer(), MInterfacePointer)
         ),
         NDRIntField("dwCookie", 0),
     ]

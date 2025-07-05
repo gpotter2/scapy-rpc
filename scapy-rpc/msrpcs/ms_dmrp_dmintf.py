@@ -21,7 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRPacketField,
@@ -58,27 +58,22 @@ class diskinfo(NDRPacket):
         NDRSignedIntField("cchDgid", None, size_of="dgid"),
         NDRSignedIntField("cchAdapterName", None, size_of="adapterName"),
         NDRSignedIntField("cchDgName", None, size_of="dgName"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("name", "", size_is=lambda pkt: pkt.cchName),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("name", "", size_is=lambda pkt: pkt.cchName)
         ),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("vendor", "", size_is=lambda pkt: pkt.cchVendor),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("vendor", "", size_is=lambda pkt: pkt.cchVendor)
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("dgid", "", size_is=lambda pkt: pkt.cchDgid),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("dgid", "", size_is=lambda pkt: pkt.cchDgid)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "adapterName", "", size_is=lambda pkt: pkt.cchAdapterName
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("dgName", "", size_is=lambda pkt: pkt.cchDgName),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("dgName", "", size_is=lambda pkt: pkt.cchDgName)
         ),
     ]
 
@@ -222,9 +217,8 @@ class filesysteminfo(NDRPacket):
         NDRSignedLongField("taskId", 0),
         NDRSignedIntField("fsType", 0),
         NDRSignedIntField("cchLabel", None, size_of="label"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("label", "", size_is=lambda pkt: pkt.cchLabel),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("label", "", size_is=lambda pkt: pkt.cchLabel)
         ),
     ]
 
@@ -605,11 +599,8 @@ class ifilesysteminfo(NDRPacket):
         NDRIntField("fsCompressionFlags", 0),
         NDRSignedIntField("cchLabelLimit", 0),
         NDRSignedIntField("cchLabel", None, size_of="iLabelChSet"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16(
-                "iLabelChSet", "", size_is=lambda pkt: pkt.cchLabel
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("iLabelChSet", "", size_is=lambda pkt: pkt.cchLabel)
         ),
     ]
 
@@ -1396,9 +1387,8 @@ class countedstring(NDRPacket):
         NDRSignedLongField("sourceId", 0),
         NDRSignedLongField("targetId", 0),
         NDRSignedIntField("cchString", None, size_of="sstring"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("sstring", "", size_is=lambda pkt: pkt.cchString),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("sstring", "", size_is=lambda pkt: pkt.cchString)
         ),
     ]
 

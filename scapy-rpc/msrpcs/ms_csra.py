@@ -19,6 +19,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -36,8 +37,8 @@ class CERTTRANSBLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cb", None, size_of="pb"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pb", "", size_is=lambda pkt: pkt.cb), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pb", "", size_is=lambda pkt: pkt.cb)
         ),
     ]
 
@@ -203,9 +204,8 @@ class CERTVIEWRESTRICTION(NDRPacket):
         NDRIntField("ColumnIndex", 0),
         NDRSignedIntField("SeekOperator", 0),
         NDRSignedIntField("SortOrder", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("pbValue", "", size_is=lambda pkt: pkt.cbValue),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pbValue", "", size_is=lambda pkt: pkt.cbValue)
         ),
         NDRIntField("cbValue", None, size_of="pbValue"),
     ]
@@ -757,8 +757,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -770,8 +769,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -783,8 +781,7 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 

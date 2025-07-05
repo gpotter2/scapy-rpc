@@ -37,6 +37,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIEEEFloatField,
     NDRInt3264EnumField,
@@ -826,9 +827,7 @@ class SRPLevelInfo(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSRPLevel", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("wszFriendlyName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFriendlyName", "")),
     ]
 
 

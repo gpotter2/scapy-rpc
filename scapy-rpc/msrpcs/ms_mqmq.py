@@ -18,7 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRIntField,
     NDRLongField,
     NDRPacketField,
@@ -40,9 +40,8 @@ class BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbSize", None, size_of="pBlobData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize)
         ),
     ]
 
@@ -51,9 +50,8 @@ class CAUB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -62,9 +60,8 @@ class CAUI(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -73,14 +70,13 @@ class CAL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
                 NDRSignedIntField("pElems", 0),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -89,11 +85,10 @@ class CAUL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems", [], NDRIntField("pElems", 0), size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -107,11 +102,10 @@ class CAUH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pElems", [], ULARGE_INTEGER, size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -130,9 +124,8 @@ class CACLSID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -141,16 +134,13 @@ class CALPWSTR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("pElems", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pElems", "")),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -270,9 +260,7 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("_varUnion", GUID(), GUID), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRPacketField("_varUnion", GUID(), GUID)),
                     (
                         (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CLSID),
                         (lambda _, val: val.tag == VARENUM.VT_CLSID),
@@ -286,8 +274,8 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("_varUnion", ""), deferred=True
+                    NDRFullEmbPointerField(
+                        NDRConfVarStrNullFieldUtf16("_varUnion", "")
                     ),
                     (
                         (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_LPWSTR),
@@ -407,9 +395,7 @@ class DL_ID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("m_DlGuid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwzDomain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwzDomain", "")),
     ]
 
 
@@ -486,9 +472,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)
@@ -553,9 +537,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)

@@ -14,6 +14,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -26,9 +27,7 @@ class LPSERVER_INFO_100(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("sv100_platform_id", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("sv100_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("sv100_name", "")),
     ]
 
 
@@ -36,14 +35,13 @@ class LPSERVER_INFO_100_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPSERVER_INFO_100()],
                 LPSERVER_INFO_100,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -55,13 +53,12 @@ class LPSERVER_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ServerInfo",
                             LPSERVER_INFO_100_CONTAINER(),
                             LPSERVER_INFO_100_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 100),

@@ -18,7 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRLongField,
@@ -72,9 +72,7 @@ class DL_ID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("m_DlGuid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwzDomain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwzDomain", "")),
     ]
 
 
@@ -131,9 +129,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)
@@ -198,9 +194,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)
@@ -293,11 +287,10 @@ class SectionBuffer(NDRPacket):
         NDRInt3264EnumField("SectionBufferType", 0, SectionType),
         NDRIntField("SectionSizeAlloc", 0),
         NDRIntField("SectionSize", None, size_of="pSectionBuffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSectionBuffer", "", size_is=lambda pkt: pkt.SectionSize
-            ),
-            deferred=True,
+            )
         ),
     ]
 

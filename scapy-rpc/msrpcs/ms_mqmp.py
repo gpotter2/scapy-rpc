@@ -24,6 +24,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -91,9 +92,7 @@ class DL_ID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("m_DlGuid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwzDomain", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwzDomain", "")),
     ]
 
 
@@ -150,9 +149,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)
@@ -217,9 +214,7 @@ class QUEUE_FORMAT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "m_qft", None)
@@ -282,13 +277,11 @@ class TRANSFER_TYPE(IntEnum):
 class Send_sub0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pAdminQueueFormat", QUEUE_FORMAT(), QUEUE_FORMAT),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pAdminQueueFormat", QUEUE_FORMAT(), QUEUE_FORMAT)
         ),
-        NDRFullPointerField(
-            NDRPacketField("pResponseQueueFormat", QUEUE_FORMAT(), QUEUE_FORMAT),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pResponseQueueFormat", QUEUE_FORMAT(), QUEUE_FORMAT)
         ),
     ]
 
@@ -301,61 +294,45 @@ class Receive_sub1(NDRPacket):
         NDRIntField("Asynchronous", 0),
         NDRIntField("Cursor", 0),
         NDRIntField("ulResponseFormatNameLen", None, size_of="ppResponseFormatName"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppResponseFormatName",
                 [],
-                NDRFullPointerField(
-                    NDRShortField("ppResponseFormatName", 0), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRShortField("ppResponseFormatName", 0)),
                 size_is=lambda pkt: pkt.ulResponseFormatNameLen,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRIntField("pulResponseFormatNameLenProp", 0), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRIntField("pulResponseFormatNameLenProp", 0)),
         NDRIntField("ulAdminFormatNameLen", None, size_of="ppAdminFormatName"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppAdminFormatName",
                 [],
-                NDRFullPointerField(
-                    NDRShortField("ppAdminFormatName", 0), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRShortField("ppAdminFormatName", 0)),
                 size_is=lambda pkt: pkt.ulAdminFormatNameLen,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRIntField("pulAdminFormatNameLenProp", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulAdminFormatNameLenProp", 0)),
         NDRIntField("ulDestFormatNameLen", None, size_of="ppDestFormatName"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppDestFormatName",
                 [],
-                NDRFullPointerField(
-                    NDRShortField("ppDestFormatName", 0), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRShortField("ppDestFormatName", 0)),
                 size_is=lambda pkt: pkt.ulDestFormatNameLen,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRIntField("pulDestFormatNameLenProp", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulDestFormatNameLenProp", 0)),
         NDRIntField("ulOrderingFormatNameLen", None, size_of="ppOrderingFormatName"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppOrderingFormatName",
                 [],
-                NDRFullPointerField(
-                    NDRShortField("ppOrderingFormatName", 0), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRShortField("ppOrderingFormatName", 0)),
                 size_is=lambda pkt: pkt.ulOrderingFormatNameLen,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
-            NDRIntField("pulOrderingFormatNameLenProp", 0), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRIntField("pulOrderingFormatNameLenProp", 0)),
     ]
 
 
@@ -415,176 +392,152 @@ class CACTransferBufferV1(NDRPacket):
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
-        NDRFullPointerField(NDRShortField("pClass", 0), deferred=True),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppMessageID", OBJECTID(), OBJECTID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(NDRShortField("pClass", 0)),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("ppMessageID", OBJECTID(), OBJECTID))
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarFieldListField(
                 "ppCorrelationID",
                 [],
-                NDRFullPointerField(
-                    NDRVarStrLenField("ppCorrelationID", "", length_is=lambda pkt: 20),
-                    deferred=True,
+                NDRFullEmbPointerField(
+                    NDRVarStrLenField("ppCorrelationID", "", length_is=lambda pkt: 20)
                 ),
                 size_is=lambda pkt: 20,
                 length_is=lambda pkt: 20,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRIntField("pSentTime", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pArrivedTime", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pPriority", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pDelivery", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pAcknowledge", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pAuditing", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pApplicationTag", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRIntField("pSentTime", 0)),
+        NDRFullEmbPointerField(NDRIntField("pArrivedTime", 0)),
+        NDRFullEmbPointerField(NDRByteField("pPriority", 0)),
+        NDRFullEmbPointerField(NDRByteField("pDelivery", 0)),
+        NDRFullEmbPointerField(NDRByteField("pAcknowledge", 0)),
+        NDRFullEmbPointerField(NDRByteField("pAuditing", 0)),
+        NDRFullEmbPointerField(NDRIntField("pApplicationTag", 0)),
+        NDRFullEmbPointerField(
             NDRConfVarFieldListField(
                 "ppBody",
                 [],
-                NDRFullPointerField(
+                NDRFullEmbPointerField(
                     NDRVarStrLenField(
                         "ppBody", "", length_is=lambda pkt: pkt.ulBodyBufferSizeInBytes
-                    ),
-                    deferred=True,
+                    )
                 ),
                 size_is=lambda pkt: pkt.ulAllocBodyBufferInBytes,
                 length_is=lambda pkt: pkt.ulBodyBufferSizeInBytes,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulBodyBufferSizeInBytes", None, size_of="ppBody"),
         NDRIntField("ulAllocBodyBufferInBytes", None, size_of="ppBody"),
-        NDRFullPointerField(NDRIntField("pBodySize", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRIntField("pBodySize", 0)),
+        NDRFullEmbPointerField(
             NDRConfVarFieldListField(
                 "ppTitle",
                 [],
-                NDRFullPointerField(
+                NDRFullEmbPointerField(
                     NDRVarStrLenFieldUtf16(
                         "ppTitle",
                         "",
                         length_is=lambda pkt: pkt.ulTitleBufferSizeInWCHARs,
-                    ),
-                    deferred=True,
+                    )
                 ),
                 size_is=lambda pkt: pkt.ulTitleBufferSizeInWCHARs,
                 length_is=lambda pkt: pkt.ulTitleBufferSizeInWCHARs,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulTitleBufferSizeInWCHARs", None, size_of="ppTitle"),
-        NDRFullPointerField(
-            NDRIntField("pulTitleBufferSizeInWCHARs", 0), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRIntField("pulTitleBufferSizeInWCHARs", 0)),
         NDRIntField("ulAbsoluteTimeToQueue", 0),
-        NDRFullPointerField(NDRIntField("pulRelativeTimeToQueue", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulRelativeTimeToQueue", 0)),
         NDRIntField("ulRelativeTimeToLive", 0),
-        NDRFullPointerField(NDRIntField("pulRelativeTimeToLive", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pTrace", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulSenderIDType", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRIntField("pulRelativeTimeToLive", 0)),
+        NDRFullEmbPointerField(NDRByteField("pTrace", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulSenderIDType", 0)),
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppSenderID",
                 [],
-                NDRFullPointerField(NDRByteField("ppSenderID", 0), deferred=True),
+                NDRFullEmbPointerField(NDRByteField("ppSenderID", 0)),
                 size_is=lambda pkt: pkt.uSenderIDLen,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(NDRIntField("pulSenderIDLenProp", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulPrivLevel", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulSenderIDLenProp", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulPrivLevel", 0)),
         NDRIntField("ulAuthLevel", 0),
-        NDRFullPointerField(NDRByteField("pAuthenticated", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulHashAlg", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulEncryptAlg", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRByteField("pAuthenticated", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulHashAlg", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulEncryptAlg", 0)),
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppSenderCert",
                 [],
-                NDRFullPointerField(NDRByteField("ppSenderCert", 0), deferred=True),
+                NDRFullEmbPointerField(NDRByteField("ppSenderCert", 0)),
                 size_is=lambda pkt: pkt.ulSenderCertLen,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulSenderCertLen", None, size_of="ppSenderCert"),
-        NDRFullPointerField(NDRIntField("pulSenderCertLenProp", 0), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRIntField("pulSenderCertLenProp", 0)),
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppwcsProvName",
                 [],
-                NDRFullPointerField(NDRShortField("ppwcsProvName", 0), deferred=True),
+                NDRFullEmbPointerField(NDRShortField("ppwcsProvName", 0)),
                 size_is=lambda pkt: pkt.ulProvNameLen,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulProvNameLen", None, size_of="ppwcsProvName"),
-        NDRFullPointerField(NDRIntField("pulAuthProvNameLenProp", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulProvType", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulAuthProvNameLenProp", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulProvType", 0)),
         NDRSignedIntField("fDefaultProvider", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppSymmKeys",
                 [],
-                NDRFullPointerField(NDRByteField("ppSymmKeys", 0), deferred=True),
+                NDRFullEmbPointerField(NDRByteField("ppSymmKeys", 0)),
                 size_is=lambda pkt: pkt.ulSymmKeysSize,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulSymmKeysSize", None, size_of="ppSymmKeys"),
-        NDRFullPointerField(NDRIntField("pulSymmKeysSizeProp", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulSymmKeysSizeProp", 0)),
         NDRByteField("bEncrypted", 0),
         NDRByteField("bAuthenticated", 0),
         NDRShortField("uSenderIDLen", None, size_of="ppSenderID"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ppSignature",
                 [],
-                NDRFullPointerField(NDRByteField("ppSignature", 0), deferred=True),
+                NDRFullEmbPointerField(NDRByteField("ppSignature", 0)),
                 size_is=lambda pkt: pkt.ulSignatureSize,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulSignatureSize", None, size_of="ppSignature"),
-        NDRFullPointerField(NDRIntField("pulSignatureSizeProp", 0), deferred=True),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppSrcQMID", GUID(), GUID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(NDRIntField("pulSignatureSizeProp", 0)),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("ppSrcQMID", GUID(), GUID))
         ),
-        NDRFullPointerField(NDRPacketField("pUow", XACTUOW(), XACTUOW), deferred=True),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRPacketField("pUow", XACTUOW(), XACTUOW)),
+        NDRFullEmbPointerField(
             NDRConfVarFieldListField(
                 "ppMsgExtension",
                 [],
-                NDRFullPointerField(
+                NDRFullEmbPointerField(
                     NDRVarStrLenField(
                         "ppMsgExtension",
                         "",
                         length_is=lambda pkt: pkt.ulMsgExtensionBufferInBytes,
-                    ),
-                    deferred=True,
+                    )
                 ),
                 size_is=lambda pkt: pkt.ulMsgExtensionBufferInBytes,
                 length_is=lambda pkt: pkt.ulMsgExtensionBufferInBytes,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulMsgExtensionBufferInBytes", None, size_of="ppMsgExtension"),
-        NDRFullPointerField(NDRIntField("pMsgExtensionSize", 0), deferred=True),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppConnectorType", GUID(), GUID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(NDRIntField("pMsgExtensionSize", 0)),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("ppConnectorType", GUID(), GUID))
         ),
-        NDRFullPointerField(NDRIntField("pulBodyType", 0), deferred=True),
-        NDRFullPointerField(NDRIntField("pulVersion", 0), deferred=True),
+        NDRFullEmbPointerField(NDRIntField("pulBodyType", 0)),
+        NDRFullEmbPointerField(NDRIntField("pulVersion", 0)),
     ]
 
 
@@ -632,9 +585,8 @@ class BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cbSize", None, size_of="pBlobData"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pBlobData", "", size_is=lambda pkt: pkt.cbSize)
         ),
     ]
 
@@ -643,9 +595,8 @@ class CAUB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -654,9 +605,8 @@ class CAUI(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -665,14 +615,13 @@ class CAL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
                 NDRSignedIntField("pElems", 0),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -681,11 +630,10 @@ class CAUL(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems", [], NDRIntField("pElems", 0), size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -694,11 +642,10 @@ class CAUH(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pElems", [], ULARGE_INTEGER, size_is=lambda pkt: pkt.cElems
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -707,9 +654,8 @@ class CACLSID(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
-            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("pElems", [], GUID, size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -718,16 +664,13 @@ class CALPWSTR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "pElems",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("pElems", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pElems", "")),
                 size_is=lambda pkt: pkt.cElems,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -770,9 +713,8 @@ class OBJECT_FORMAT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("value", QUEUE_FORMAT(), QUEUE_FORMAT),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRPacketField("value", QUEUE_FORMAT(), QUEUE_FORMAT)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ObjType", None) == 1),
@@ -1110,13 +1052,10 @@ class CACTransferBufferV2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("old", CACTransferBufferV1(), CACTransferBufferV1),
-        NDRFullPointerField(NDRByteField("pbFirstInXact", 0), deferred=True),
-        NDRFullPointerField(NDRByteField("pbLastInXact", 0), deferred=True),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppXactID", OBJECTID(), OBJECTID), deferred=True
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(NDRByteField("pbFirstInXact", 0)),
+        NDRFullEmbPointerField(NDRByteField("pbLastInXact", 0)),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(NDRPacketField("ppXactID", OBJECTID(), OBJECTID))
         ),
     ]
 

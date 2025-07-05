@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntEnumField,
     NDRIntField,
@@ -36,7 +37,7 @@ from scapy.layers.dcerpc import (
 class EvtRpcQueryChannelInfo(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRShortField("name", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("name", 0)),
         NDRIntField("status", 0),
     ]
 
@@ -264,11 +265,10 @@ class BooleanArray(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="ptr"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ptr", [], NDRIntField("ptr", 0), size_is=lambda pkt: pkt.count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -277,11 +277,10 @@ class UInt32Array(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="ptr"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ptr", [], NDRIntField("ptr", 0), size_is=lambda pkt: pkt.count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -290,11 +289,10 @@ class UInt64Array(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="ptr"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ptr", [], NDRLongField("ptr", 0), size_is=lambda pkt: pkt.count
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -303,16 +301,13 @@ class StringArray(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="ptr"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "ptr",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("ptr", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ptr", "")),
                 size_is=lambda pkt: pkt.count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -321,9 +316,8 @@ class GuidArray(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="ptr"),
-        NDRFullPointerField(
-            NDRConfPacketListField("ptr", [], GUID, size_is=lambda pkt: pkt.count),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfPacketListField("ptr", [], GUID, size_is=lambda pkt: pkt.count)
         ),
     ]
 
@@ -385,9 +379,7 @@ class EvtRpcVariant(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("value", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "type", None)
@@ -400,9 +392,7 @@ class EvtRpcVariant(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("value", GUID(), GUID), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRPacketField("value", GUID(), GUID)),
                     (
                         (
                             lambda pkt: getattr(pkt, "type", None)
@@ -488,11 +478,10 @@ class EvtRpcVariantList(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("count", None, size_of="props"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "props", [], EvtRpcVariant, size_is=lambda pkt: pkt.count
-            ),
-            deferred=True,
+            )
         ),
     ]
 

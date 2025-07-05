@@ -1,0 +1,28 @@
+diff --git a/midl-to-scapy/idl/win/ms-adts-claims.idl b/midl-to-scapy/idl/win/ms-adts-claims.idl
+index 7bcf2a6..297b7bf 100644
+--- a/midl-to-scapy/idl/win/ms-adts-claims.idl
++++ b/midl-to-scapy/idl/win/ms-adts-claims.idl
+@@ -1,11 +1,11 @@
+  import "ms-dtyp.idl";
+   
+- [ uuid (BBA9CB76-EB0C-462C-AA1B-5D8C34415701),
+-   version(1.0),
+-   pointer_default(unique)
+- ]
+- interface Claims
+- {
++ //[ uuid (BBA9CB76-EB0C-462C-AA1B-5D8C34415701),
++ //  version(1.0),
++ //  pointer_default(unique)
++ //]
++ //interface Claims
++ //{
+      typedef [string] wchar_t *CLAIM_ID;
+      typedef [string] wchar_t **PCLAIM_ID;
+   
+@@ -95,4 +95,4 @@
+          ULONG                           ulReservedFieldSize;
+          [size_is(ulReservedFieldSize)]  BYTE  *ReservedField;
+      } CLAIMS_SET_METADATA, *PCLAIMS_SET_METADATA;
+- }
++ //}

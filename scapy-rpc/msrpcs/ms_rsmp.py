@@ -30,6 +30,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264Field,
     NDRIntField,
@@ -363,9 +364,8 @@ class LPNTMS_MOUNT_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSize", 0),
-        NDRFullPointerField(
-            NDRPacketField("lpReserved", LPNTMS_ASYNC_IO(), LPNTMS_ASYNC_IO),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("lpReserved", LPNTMS_ASYNC_IO(), LPNTMS_ASYNC_IO)
         ),
     ]
 
@@ -418,7 +418,7 @@ class LPNTMS_ALLOCATION_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSize", 0),
-        NDRFullPointerField(NDRSignedByteField("lpReserved", 0), deferred=True),
+        NDRFullEmbPointerField(NDRSignedByteField("lpReserved", 0)),
         NDRPacketField("AllocatedFrom", GUID(), GUID),
     ]
 
@@ -500,11 +500,10 @@ class LPSECURITY_ATTRIBUTES_NTMS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("nLength", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "lpSecurityDescriptor", "", size_is=lambda pkt: pkt.nDescriptorLength
-            ),
-            deferred=True,
+            )
         ),
         NDRSignedIntField("bInheritHandle", 0),
         NDRIntField("nDescriptorLength", None, size_of="lpSecurityDescriptor"),
@@ -2146,27 +2145,17 @@ register_com_interface(
 class LPRSM_MESSAGE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("lpguidOperation", GUID(), GUID), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("lpguidOperation", GUID(), GUID)),
         NDRIntField("dwNtmsType", 0),
         NDRIntField("dwState", 0),
         NDRIntField("dwFlags", 0),
         NDRIntField("dwPriority", 0),
         NDRIntField("dwErrorCode", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszComputerName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszApplication", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("lpszUser", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszTimeSubmitted", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszMessage", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszComputerName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszUser", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszTimeSubmitted", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszMessage", "")),
     ]
 
 

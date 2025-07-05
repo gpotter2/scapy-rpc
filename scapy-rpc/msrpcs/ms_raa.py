@@ -18,6 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -126,7 +127,7 @@ class OBJECT_TYPE_LIST(NDRPacket):
     fields_desc = [
         NDRShortField("Level", 0),
         NDRIntField("Remaining", 0),
-        NDRFullPointerField(NDRPacketField("ObjectType", GUID(), GUID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("ObjectType", GUID(), GUID)),
     ]
 
 
@@ -134,18 +135,15 @@ class AUTHZR_ACCESS_REQUEST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("DesiredAccess", 0),
-        NDRFullPointerField(
-            NDRPacketField("PrincipalSelfSid", RPC_SID(), RPC_SID), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("PrincipalSelfSid", RPC_SID(), RPC_SID)),
         NDRIntField("ObjectTypeListLength", None, size_of="ObjectTypeList"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ObjectTypeList",
                 [],
                 OBJECT_TYPE_LIST,
                 size_is=lambda pkt: pkt.ObjectTypeListLength,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -154,9 +152,8 @@ class SR_SD(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwLength", None, size_of="pSrSd"),
-        NDRFullPointerField(
-            NDRConfStrLenField("pSrSd", "", size_is=lambda pkt: pkt.dwLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pSrSd", "", size_is=lambda pkt: pkt.dwLength)
         ),
     ]
 
@@ -165,23 +162,21 @@ class AUTHZR_ACCESS_REPLY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ResultListLength", None, size_of="Error"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "GrantedAccessMask",
                 [],
                 NDRIntField("GrantedAccessMask", 0),
                 size_is=lambda pkt: pkt.ResultListLength,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Error",
                 [],
                 NDRIntField("Error", 0),
                 size_is=lambda pkt: pkt.ResultListLength,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -231,7 +226,7 @@ class AUTHZ_CONTEXT_INFORMATION_CLASS(IntEnum):
 class AUTHZR_SID_AND_ATTRIBUTES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Sid", RPC_SID(), RPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", RPC_SID(), RPC_SID)),
         NDRIntField("Attributes", 0),
     ]
 
@@ -262,9 +257,8 @@ class AUTHZR_SECURITY_ATTRIBUTE_STRING_VALUE(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Value"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -312,22 +306,20 @@ class AUTHZR_SECURITY_ATTRIBUTE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Value"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
         ),
         NDRShortField("ValueType", 0),
         NDRShortField("Reserved", 0),
         NDRIntField("Flags", 0),
         NDRIntField("ValueCount", None, size_of="Values"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Values",
                 [],
                 AUTHZR_SECURITY_ATTRIBUTE_V1_VALUE,
                 size_is=lambda pkt: pkt.ValueCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -338,14 +330,13 @@ class AUTHZR_SECURITY_ATTRIBUTES_INFORMATION(NDRPacket):
         NDRShortField("Version", 0),
         NDRShortField("Reserved", 0),
         NDRIntField("AttributeCount", None, size_of="Attributes"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Attributes",
                 [],
                 AUTHZR_SECURITY_ATTRIBUTE_V1,
                 size_is=lambda pkt: pkt.AttributeCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -357,11 +348,10 @@ class AUTHZR_CONTEXT_INFORMATION(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ContextInfoUnion", AUTHZR_TOKEN_USER(), AUTHZR_TOKEN_USER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ValueType", None) == 1),
@@ -369,13 +359,12 @@ class AUTHZR_CONTEXT_INFORMATION(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ContextInfoUnion",
                             AUTHZR_TOKEN_GROUPS(),
                             AUTHZR_TOKEN_GROUPS,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ValueType", None) in [2, 3, 12]),
@@ -383,13 +372,12 @@ class AUTHZR_CONTEXT_INFORMATION(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ContextInfoUnion",
                             AUTHZR_SECURITY_ATTRIBUTES_INFORMATION(),
                             AUTHZR_SECURITY_ATTRIBUTES_INFORMATION,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "ValueType", None) in [13, 14]),

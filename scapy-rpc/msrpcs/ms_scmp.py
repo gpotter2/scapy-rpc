@@ -19,6 +19,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntEnumField,
     NDRIntField,
@@ -216,24 +217,18 @@ class VSS_SNAPSHOT_PROP(NDRPacket):
         NDRPacketField("m_SnapshotId", GUID(), GUID),
         NDRPacketField("m_SnapshotSetId", GUID(), GUID),
         NDRSignedIntField("m_lSnapshotsCount", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszSnapshotDeviceObject", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszSnapshotDeviceObject", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszOriginalVolumeName", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszOriginalVolumeName", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszOriginatingMachine", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszOriginatingMachine", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszServiceMachine", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszExposedName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszExposedPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszServiceMachine", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszExposedName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszExposedPath", "")),
         NDRPacketField("m_ProviderId", GUID(), GUID),
         NDRSignedIntField("m_lSnapshotAttributes", 0),
         NDRSignedLongField("m_tsCreationTimestamp", 0),
@@ -249,12 +244,10 @@ class VSS_PROVIDER_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("m_ProviderId", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszProviderName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszProviderName", "")),
         NDRIntEnumField("m_eProviderType", 0, VSS_PROVIDER_TYPE),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszProviderVersion", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszProviderVersion", "")
         ),
         NDRPacketField("m_ProviderVersionId", GUID(), GUID),
         NDRPacketField("m_ClassId", GUID(), GUID),
@@ -369,11 +362,9 @@ class VSS_MGMT_OBJECT_TYPE(IntEnum):
 class VSS_VOLUME_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszVolumeDisplayName", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszVolumeDisplayName", "")
         ),
     ]
 
@@ -381,11 +372,9 @@ class VSS_VOLUME_PROP(NDRPacket):
 class VSS_DIFF_VOLUME_PROP(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszVolumeDisplayName", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszVolumeDisplayName", "")
         ),
         NDRSignedLongField("m_llVolumeFreeSpace", 0),
         NDRSignedLongField("m_llVolumeTotalSpace", 0),
@@ -395,11 +384,9 @@ class VSS_DIFF_VOLUME_PROP(NDRPacket):
 class VSS_DIFF_AREA_PROP(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("m_pwszDiffAreaVolumeName", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("m_pwszVolumeName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("m_pwszDiffAreaVolumeName", "")
         ),
         NDRSignedLongField("m_llMaximumDiffSpace", 0),
         NDRSignedLongField("m_llAllocatedDiffSpace", 0),

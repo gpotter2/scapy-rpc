@@ -15,6 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -76,17 +77,11 @@ class LPINET_INFO_IP_SEC_LIST(NDRPacket):
 class INET_INFO_VIRTUAL_ROOT_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszRoot", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAddress", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszDirectory", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszRoot", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDirectory", "")),
         NDRIntField("dwMask", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszAccountName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszAccountName", "")),
         StrFixedLenFieldUtf16("AccountPassword", "", length=257 * 2),
         NDRIntField("dwError", 0),
     ]
@@ -113,51 +108,39 @@ class LPINET_INFO_CONFIG_INFO(NDRPacket):
         NDRIntField("FieldControl", 0),
         NDRIntField("dwConnectionTimeout", 0),
         NDRIntField("dwMaxConnections", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAdminName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAdminEmail", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszServerComment", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAdminName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAdminEmail", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszServerComment", "")),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "lpLogConfig", LPINET_LOG_CONFIGURATION(), LPINET_LOG_CONFIGURATION
-            ),
-            deferred=True,
+            )
         ),
         NDRShortField("LangId", 0),
         NDRIntField("LocalId", 0),
         StrFixedLenField("ProductId", "", length=64),
         NDRSignedIntField("fLogAnonymous", 0),
         NDRSignedIntField("fLogNonAnonymous", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAnonUserName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAnonUserName", "")),
         StrFixedLenFieldUtf16("szAnonPassword", "", length=257 * 2),
         NDRIntField("dwAuthentication", 0),
         NDRSignedShortField("sPort", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "DenyIPList", LPINET_INFO_IP_SEC_LIST(), LPINET_INFO_IP_SEC_LIST
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "GrantIPList", LPINET_INFO_IP_SEC_LIST(), LPINET_INFO_IP_SEC_LIST
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "VirtualRoots",
                 LPINET_INFO_VIRTUAL_ROOT_LIST(),
                 LPINET_INFO_VIRTUAL_ROOT_LIST,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -183,9 +166,7 @@ class R_InetInfoGetAdminInformation_Response(NDRPacket):
 class INET_INFO_SITE_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pszComment", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszComment", "")),
         NDRIntField("dwInstance", 0),
     ]
 
@@ -227,51 +208,39 @@ class INET_INFO_CONFIG_INFO(NDRPacket):
         NDRIntField("FieldControl", 0),
         NDRIntField("dwConnectionTimeout", 0),
         NDRIntField("dwMaxConnections", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAdminName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAdminEmail", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszServerComment", ""), deferred=True
-        ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAdminName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAdminEmail", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszServerComment", "")),
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "lpLogConfig", LPINET_LOG_CONFIGURATION(), LPINET_LOG_CONFIGURATION
-            ),
-            deferred=True,
+            )
         ),
         NDRShortField("LangId", 0),
         NDRIntField("LocalId", 0),
         StrFixedLenField("ProductId", "", length=64),
         NDRSignedIntField("fLogAnonymous", 0),
         NDRSignedIntField("fLogNonAnonymous", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpszAnonUserName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpszAnonUserName", "")),
         StrFixedLenFieldUtf16("szAnonPassword", "", length=257 * 2),
         NDRIntField("dwAuthentication", 0),
         NDRSignedShortField("sPort", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "DenyIPList", LPINET_INFO_IP_SEC_LIST(), LPINET_INFO_IP_SEC_LIST
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "GrantIPList", LPINET_INFO_IP_SEC_LIST(), LPINET_INFO_IP_SEC_LIST
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "VirtualRoots",
                 LPINET_INFO_VIRTUAL_ROOT_LIST(),
                 LPINET_INFO_VIRTUAL_ROOT_LIST,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -458,14 +427,13 @@ class LPINET_INFO_CAPABILITIES_STRUCT(NDRPacket):
         NDRIntField("MinorVersion", 0),
         NDRIntField("BuildNumber", 0),
         NDRIntField("NumCapFlags", None, size_of="CapFlags"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "CapFlags",
                 [LPINET_INFO_CAP_FLAGS()],
                 LPINET_INFO_CAP_FLAGS,
                 size_is=lambda pkt: pkt.NumCapFlags,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -673,7 +641,7 @@ class LPIIS_USER_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("idUser", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszUser", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszUser", "")),
         NDRSignedIntField("fAnonymous", 0),
         NDRIntField("inetHost", 0),
         NDRIntField("tConnect", 0),
@@ -684,14 +652,13 @@ class LPIIS_USER_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPIIS_USER_INFO_1()],
                 LPIIS_USER_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -703,13 +670,12 @@ class LPIIS_USER_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "ConfigInfo",
                             LPIIS_USER_INFO_1_CONTAINER(),
                             LPIIS_USER_INFO_1_CONTAINER,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),

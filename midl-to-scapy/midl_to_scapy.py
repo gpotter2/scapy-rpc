@@ -72,9 +72,9 @@ def get_base(out):
                         "NDRUnionField",
                         # Misc
                         "NDRPacketField",
-                        "NDRRefPointerField",
-                        "NDRRefEmbPointerField",
                         "NDRFullPointerField",
+                        "NDRFullEmbPointerField",
+                        "NDRRefEmbPointerField",
                         "NDRRecursiveField",
                         "NDRContextHandle",
                         # Enums

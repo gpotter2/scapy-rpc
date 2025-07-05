@@ -14,7 +14,7 @@ from scapy.layers.dcerpc import (
     NDRByteField,
     NDRConfFieldListField,
     NDRConfPacketListField,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRIntField,
     NDRPacketField,
     register_dcerpc_interface,
@@ -48,20 +48,17 @@ class PRPC_SID(NDRPacket):
 
 class LSAPR_SID_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID))]
 
 
 class LSAPR_WRAPPED_CAPID_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="SidInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "SidInfo", [], LSAPR_SID_INFORMATION, size_is=lambda pkt: pkt.Entries
-            ),
-            deferred=True,
+            )
         ),
     ]
 

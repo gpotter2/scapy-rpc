@@ -18,6 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -34,14 +35,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -256,9 +256,8 @@ class PRPC_STRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", 0),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.MaximumLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.MaximumLength)
         ),
     ]
 

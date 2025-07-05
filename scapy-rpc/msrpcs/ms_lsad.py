@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -52,14 +53,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -81,14 +81,13 @@ class PLSAPR_PRIVILEGE_ENUM_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Privileges"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Privileges",
                 [PLSAPR_POLICY_PRIVILEGE_DEF()],
                 PLSAPR_POLICY_PRIVILEGE_DEF,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -117,11 +116,8 @@ class PLSAPR_SR_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="SecurityDescriptor"),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "SecurityDescriptor", "", size_is=lambda pkt: pkt.Length
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("SecurityDescriptor", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -167,14 +163,13 @@ class PSTRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", None, size_of="Buffer"),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -226,18 +221,10 @@ class PLSAPR_SECURITY_DESCRIPTOR(NDRPacket):
         NDRByteField("Revision", 0),
         NDRByteField("Sbz1", 0),
         NDRShortField("Control", 0),
-        NDRFullPointerField(
-            NDRPacketField("Owner", PRPC_SID(), PRPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Group", PRPC_SID(), PRPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Sacl", PLSAPR_ACL(), PLSAPR_ACL), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Dacl", PLSAPR_ACL(), PLSAPR_ACL), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("Owner", PRPC_SID(), PRPC_SID)),
+        NDRFullEmbPointerField(NDRPacketField("Group", PRPC_SID(), PRPC_SID)),
+        NDRFullEmbPointerField(NDRPacketField("Sacl", PLSAPR_ACL(), PLSAPR_ACL)),
+        NDRFullEmbPointerField(NDRPacketField("Dacl", PLSAPR_ACL(), PLSAPR_ACL)),
     ]
 
 
@@ -262,26 +249,22 @@ class PLSAPR_OBJECT_ATTRIBUTES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", 0),
-        NDRFullPointerField(NDRByteField("RootDirectory", 0), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("ObjectName", PSTRING(), PSTRING), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRByteField("RootDirectory", 0)),
+        NDRFullEmbPointerField(NDRPacketField("ObjectName", PSTRING(), PSTRING)),
         NDRIntField("Attributes", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "SecurityDescriptor",
                 PLSAPR_SECURITY_DESCRIPTOR(),
                 PLSAPR_SECURITY_DESCRIPTOR,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "SecurityQualityOfService",
                 PSECURITY_QUALITY_OF_SERVICE(),
                 PSECURITY_QUALITY_OF_SERVICE,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -343,14 +326,13 @@ class LSAPR_POLICY_AUDIT_EVENTS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRByteField("AuditingMode", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "EventAuditingOptions",
                 [],
                 NDRIntField("EventAuditingOptions", 0),
                 size_is=lambda pkt: pkt.MaximumAuditEventCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("MaximumAuditEventCount", None, size_of="EventAuditingOptions"),
     ]
@@ -360,7 +342,7 @@ class LSAPR_POLICY_PRIMARY_DOM_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -368,9 +350,7 @@ class LSAPR_POLICY_ACCOUNT_DOM_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("DomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -430,7 +410,7 @@ class LSAPR_POLICY_DNS_DOMAIN_INFO(NDRPacket):
         NDRPacketField("DnsDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("DnsForestName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("DomainGuid", GUID(), GUID),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -438,7 +418,7 @@ class LSAPR_POLICY_MACHINE_ACCT_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Rid", 0),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -975,23 +955,20 @@ class LsarCreateAccount_Response(NDRPacket):
 
 class PLSAPR_ACCOUNT_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID))]
 
 
 class PLSAPR_ACCOUNT_ENUM_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Information"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Information",
                 [PLSAPR_ACCOUNT_INFORMATION()],
                 PLSAPR_ACCOUNT_INFORMATION,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1020,7 +997,7 @@ class PLSAPR_TRUST_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -1047,14 +1024,13 @@ class PLSAPR_TRUSTED_ENUM_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Information"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Information",
                 [PLSAPR_TRUST_INFORMATION()],
                 PLSAPR_TRUST_INFORMATION,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1086,14 +1062,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1252,14 +1227,13 @@ class LSAPR_TRUSTED_CONTROLLERS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Names"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Names",
                 [PRPC_UNICODE_STRING()],
                 PRPC_UNICODE_STRING,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1274,14 +1248,13 @@ class PLSAPR_CR_CIPHER_VALUE(NDRPacket):
     fields_desc = [
         NDRIntField("Length", None, size_of="Buffer"),
         NDRIntField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1289,17 +1262,13 @@ class PLSAPR_CR_CIPHER_VALUE(NDRPacket):
 class LSAPR_TRUSTED_PASSWORD_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
-            ),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("Password", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OldPassword", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1308,7 +1277,7 @@ class LSAPR_TRUST_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -1317,7 +1286,7 @@ class LSAPR_TRUSTED_DOMAIN_INFORMATION_EX(NDRPacket):
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("FlatName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
         NDRIntField("TrustDirection", 0),
         NDRIntField("TrustType", 0),
         NDRIntField("TrustAttributes", 0),
@@ -1330,9 +1299,8 @@ class PLSAPR_AUTH_INFORMATION(NDRPacket):
         NDRPacketField("LastUpdateTime", LARGE_INTEGER(), LARGE_INTEGER),
         NDRIntField("AuthType", 0),
         NDRIntField("AuthInfoLength", None, size_of="AuthInfo"),
-        NDRFullPointerField(
-            NDRConfStrLenField("AuthInfo", "", size_is=lambda pkt: pkt.AuthInfoLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("AuthInfo", "", size_is=lambda pkt: pkt.AuthInfoLength)
         ),
     ]
 
@@ -1341,38 +1309,34 @@ class LSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("IncomingAuthInfos", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "IncomingAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "IncomingPreviousAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("OutgoingAuthInfos", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OutgoingAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OutgoingPreviousAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1400,9 +1364,8 @@ class LSAPR_TRUSTED_DOMAIN_AUTH_BLOB(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("AuthSize", None, size_of="AuthBlob"),
-        NDRFullPointerField(
-            NDRConfStrLenField("AuthBlob", "", size_is=lambda pkt: pkt.AuthSize),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("AuthBlob", "", size_is=lambda pkt: pkt.AuthSize)
         ),
     ]
 
@@ -1440,16 +1403,15 @@ class LSAPR_TRUSTED_DOMAIN_INFORMATION_EX2(NDRPacket):
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("FlatName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
         NDRIntField("TrustDirection", 0),
         NDRIntField("TrustType", 0),
         NDRIntField("TrustAttributes", 0),
         NDRIntField("ForestTrustLength", None, size_of="ForestTrustInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "ForestTrustInfo", "", size_is=lambda pkt: pkt.ForestTrustLength
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1484,9 +1446,8 @@ class LSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION_INTERNAL_AES(NDRPacket):
         StrFixedLenField("AuthData", "", length=64),
         StrFixedLenField("Salt", "", length=16),
         NDRIntField("cbCipher", None, size_of="Cipher"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher)
         ),
     ]
 
@@ -2248,14 +2209,13 @@ class PLSAPR_USER_RIGHT_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="UserRights"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "UserRights",
                 [PRPC_UNICODE_STRING()],
                 PRPC_UNICODE_STRING,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -3991,7 +3951,7 @@ class PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(NDRPacket):
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("FlatName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
         NDRIntField("TrustDirection", 0),
         NDRIntField("TrustType", 0),
         NDRIntField("TrustAttributes", 0),
@@ -4002,14 +3962,13 @@ class PLSAPR_TRUSTED_ENUM_BUFFER_EX(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="EnumerationBuffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "EnumerationBuffer",
                 [PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX()],
                 PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4038,38 +3997,34 @@ class PLSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("IncomingAuthInfos", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "IncomingAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "IncomingPreviousAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("OutgoingAuthInfos", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OutgoingAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "OutgoingPreviousAuthenticationInformation",
                 PLSAPR_AUTH_INFORMATION(),
                 PLSAPR_AUTH_INFORMATION,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4113,9 +4068,8 @@ class LSAPR_POLICY_DOMAIN_EFS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("InfoLength", None, size_of="EfsBlob"),
-        NDRFullPointerField(
-            NDRConfStrLenField("EfsBlob", "", size_is=lambda pkt: pkt.InfoLength),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("EfsBlob", "", size_is=lambda pkt: pkt.InfoLength)
         ),
     ]
 
@@ -4336,7 +4290,7 @@ class LSA_FOREST_TRUST_RECORD_TYPE(IntEnum):
 class LSA_FOREST_TRUST_DOMAIN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
         NDRPacketField("DnsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("NetbiosName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
     ]
@@ -4345,9 +4299,7 @@ class LSA_FOREST_TRUST_DOMAIN_INFO(NDRPacket):
 class LSA_FOREST_TRUST_SCANNER_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID)),
         NDRPacketField("DnsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRPacketField("NetbiosName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
     ]
@@ -4357,9 +4309,8 @@ class LSA_FOREST_TRUST_BINARY_DATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", None, size_of="Buffer"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.Length),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -4443,15 +4394,14 @@ class PLSA_FOREST_TRUST_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("RecordCount", None, size_of="Entries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Entries",
                 [],
                 PLSA_FOREST_TRUST_RECORD,
                 size_is=lambda pkt: pkt.RecordCount,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4497,15 +4447,14 @@ class PLSA_FOREST_TRUST_COLLISION_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("RecordCount", None, size_of="Entries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Entries",
                 [],
                 PLSA_FOREST_TRUST_COLLISION_RECORD,
                 size_is=lambda pkt: pkt.RecordCount,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4543,9 +4492,8 @@ class PLSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION_INTERNAL_AES(NDRPacket):
         StrFixedLenField("AuthData", "", length=64),
         StrFixedLenField("Salt", "", length=16),
         NDRIntField("cbCipher", None, size_of="Cipher"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher)
         ),
     ]
 
@@ -4726,15 +4674,14 @@ class PLSA_FOREST_TRUST_INFORMATION2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("RecordCount", None, size_of="Entries"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Entries",
                 [],
                 PLSA_FOREST_TRUST_RECORD2,
                 size_is=lambda pkt: pkt.RecordCount,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -4847,9 +4794,8 @@ class PLSAPR_AES_CIPHER_VALUE(NDRPacket):
         StrFixedLenField("AuthData", "", length=64),
         StrFixedLenField("Salt", "", length=16),
         NDRIntField("cbCipher", None, size_of="Cipher"),
-        NDRFullPointerField(
-            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("Cipher", "", size_is=lambda pkt: pkt.cbCipher)
         ),
     ]
 

@@ -14,6 +14,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -36,9 +37,7 @@ class NetrMessageNameAdd_Response(NDRPacket):
 class LPMSG_INFO_0(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("msgi0_name", ""), deferred=True
-        )
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("msgi0_name", ""))
     ]
 
 
@@ -46,14 +45,13 @@ class LPMSG_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPMSG_INFO_0()],
                 LPMSG_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -61,13 +59,9 @@ class LPMSG_INFO_0_CONTAINER(NDRPacket):
 class LPMSG_INFO_1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("msgi1_name", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("msgi1_name", "")),
         NDRIntField("msgi1_forward_flag", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("msgi1_forward", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("msgi1_forward", "")),
     ]
 
 
@@ -75,14 +69,13 @@ class LPMSG_INFO_1_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [LPMSG_INFO_1()],
                 LPMSG_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -94,11 +87,10 @@ class LPMSG_ENUM_STRUCT(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "MsgInfo", LPMSG_INFO_0_CONTAINER(), LPMSG_INFO_0_CONTAINER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -106,11 +98,10 @@ class LPMSG_ENUM_STRUCT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "MsgInfo", LPMSG_INFO_1_CONTAINER(), LPMSG_INFO_1_CONTAINER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),

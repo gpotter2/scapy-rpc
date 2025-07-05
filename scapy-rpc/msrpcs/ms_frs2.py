@@ -17,6 +17,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -216,24 +217,22 @@ class FRS_ASYNC_VERSION_VECTOR_RESPONSE(NDRPacket):
     fields_desc = [
         NDRLongField("vvGeneration", 0),
         NDRIntField("versionVectorCount", None, size_of="versionVector"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "versionVector",
                 [],
                 FRS_VERSION_VECTOR,
                 size_is=lambda pkt: pkt.versionVectorCount,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("epoqueVectorCount", None, size_of="epoqueVector"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "epoqueVector",
                 [],
                 FRS_EPOQUE_VECTOR,
                 size_is=lambda pkt: pkt.epoqueVectorCount,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

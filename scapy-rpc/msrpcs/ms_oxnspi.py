@@ -19,6 +19,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -118,8 +119,8 @@ class Binary_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cb", None, size_of="lpb"),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpb", "", size_is=lambda pkt: pkt.cb), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("lpb", "", size_is=lambda pkt: pkt.cb)
         ),
     ]
 
@@ -133,9 +134,8 @@ class ShortArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lpi"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("lpi", "", size_is=lambda pkt: pkt.cValues),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("lpi", "", size_is=lambda pkt: pkt.cValues)
         ),
     ]
 
@@ -144,11 +144,10 @@ class LongArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lpl"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lpl", [], NDRSignedIntField("lpl", 0), size_is=lambda pkt: pkt.cValues
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -157,16 +156,13 @@ class StringArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszA"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lppszA",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullField("lppszA", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullField("lppszA", "")),
                 size_is=lambda pkt: pkt.cValues,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -175,11 +171,10 @@ class BinaryArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lpbin"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpbin", [], Binary_r, size_is=lambda pkt: pkt.cValues
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -188,11 +183,10 @@ class FlatUIDArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lpguid"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpguid", [], FlatUID_r, size_is=lambda pkt: pkt.cValues, ptr_pack=True
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -201,16 +195,13 @@ class WStringArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszW"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lppszW",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("lppszW", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lppszW", "")),
                 size_is=lambda pkt: pkt.cValues,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -219,11 +210,10 @@ class DateTimeArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cValues", None, size_of="lpft"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpft", [], FILETIME, size_is=lambda pkt: pkt.cValues
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -275,9 +265,7 @@ class _PropertyValue_r(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullField("Value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullField("Value", "")),
                     (
                         (
                             lambda pkt: (
@@ -303,9 +291,7 @@ class _PropertyValue_r(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrNullFieldUtf16("Value", ""), deferred=True
-                    ),
+                    NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Value", "")),
                     (
                         (
                             lambda pkt: (
@@ -318,8 +304,8 @@ class _PropertyValue_r(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRPacketField("Value", FlatUID_r(), FlatUID_r), deferred=True
+                    NDRFullEmbPointerField(
+                        NDRPacketField("Value", FlatUID_r(), FlatUID_r)
                     ),
                     (
                         (
@@ -475,11 +461,10 @@ class PropertyRow_r(NDRPacket):
     fields_desc = [
         NDRIntField("Reserved", 0),
         NDRIntField("cValues", None, size_of="lpProps"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lpProps", [], _PropertyValue_r, size_is=lambda pkt: pkt.cValues
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -558,9 +543,7 @@ class _Restriction_r(NDRPacket):
 class PropertyName_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("lpguid", FlatUID_r(), FlatUID_r), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("lpguid", FlatUID_r(), FlatUID_r)),
         NDRIntField("ulReserved", 0),
         NDRSignedIntField("lID", 0),
     ]
@@ -625,14 +608,13 @@ class StringsArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Strings",
                 [],
-                NDRFullPointerField(NDRSignedByteField("Strings", 0), deferred=True),
+                NDRFullEmbPointerField(NDRSignedByteField("Strings", 0)),
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -816,14 +798,13 @@ class WStringsArray_r(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Strings",
                 [],
-                NDRFullPointerField(NDRShortField("Strings", 0), deferred=True),
+                NDRFullEmbPointerField(NDRShortField("Strings", 0)),
                 size_is=lambda pkt: pkt.Count,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

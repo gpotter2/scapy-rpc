@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -114,7 +115,7 @@ class ENUM_ENTRY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Type", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
     ]
 
 
@@ -367,14 +368,13 @@ class ApiGetRootKey_Response(NDRPacket):
 class RPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
@@ -552,14 +552,13 @@ class ApiQueryInfoKey_Response(NDRPacket):
 class PRPC_SECURITY_DESCRIPTOR(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "lpSecurityDescriptor",
                 "",
                 size_is=lambda pkt: pkt.cbInSecurityDescriptor,
                 length_is=lambda pkt: pkt.cbOutSecurityDescriptor,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cbInSecurityDescriptor", None, size_of="lpSecurityDescriptor"),
         NDRIntField("cbOutSecurityDescriptor", None, size_of="lpSecurityDescriptor"),

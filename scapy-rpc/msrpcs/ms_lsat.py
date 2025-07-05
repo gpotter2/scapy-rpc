@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -47,14 +48,13 @@ class PSTRING(NDRPacket):
     fields_desc = [
         NDRShortField("Length", None, size_of="Buffer"),
         NDRShortField("MaximumLength", None, size_of="Buffer"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenField(
                 "Buffer",
                 "",
                 size_is=lambda pkt: pkt.MaximumLength,
                 length_is=lambda pkt: pkt.Length,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -106,18 +106,10 @@ class PLSAPR_SECURITY_DESCRIPTOR(NDRPacket):
         NDRByteField("Revision", 0),
         NDRByteField("Sbz1", 0),
         NDRShortField("Control", 0),
-        NDRFullPointerField(
-            NDRPacketField("Owner", PRPC_SID(), PRPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Group", PRPC_SID(), PRPC_SID), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Sacl", PLSAPR_ACL(), PLSAPR_ACL), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRPacketField("Dacl", PLSAPR_ACL(), PLSAPR_ACL), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRPacketField("Owner", PRPC_SID(), PRPC_SID)),
+        NDRFullEmbPointerField(NDRPacketField("Group", PRPC_SID(), PRPC_SID)),
+        NDRFullEmbPointerField(NDRPacketField("Sacl", PLSAPR_ACL(), PLSAPR_ACL)),
+        NDRFullEmbPointerField(NDRPacketField("Dacl", PLSAPR_ACL(), PLSAPR_ACL)),
     ]
 
 
@@ -142,26 +134,22 @@ class PLSAPR_OBJECT_ATTRIBUTES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Length", 0),
-        NDRFullPointerField(NDRByteField("RootDirectory", 0), deferred=True),
-        NDRFullPointerField(
-            NDRPacketField("ObjectName", PSTRING(), PSTRING), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRByteField("RootDirectory", 0)),
+        NDRFullEmbPointerField(NDRPacketField("ObjectName", PSTRING(), PSTRING)),
         NDRIntField("Attributes", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "SecurityDescriptor",
                 PLSAPR_SECURITY_DESCRIPTOR(),
                 PLSAPR_SECURITY_DESCRIPTOR,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "SecurityQualityOfService",
                 PSECURITY_QUALITY_OF_SERVICE(),
                 PSECURITY_QUALITY_OF_SERVICE,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -190,14 +178,13 @@ class PRPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -228,14 +215,13 @@ class PLSAPR_TRANSLATED_SIDS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Sids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Sids",
                 [PLSA_TRANSLATED_SID()],
                 PLSA_TRANSLATED_SID,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -257,14 +243,13 @@ class RPC_UNICODE_STRING(NDRPacket):
         NDRShortField(
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfVarStrLenFieldUtf16(
                 "Buffer",
                 "",
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -273,7 +258,7 @@ class PLSAPR_TRUST_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -281,14 +266,13 @@ class PLSAPR_REFERENCED_DOMAIN_LIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Domains"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Domains",
                 [PLSAPR_TRUST_INFORMATION()],
                 PLSAPR_TRUST_INFORMATION,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("MaxEntries", 0),
     ]
@@ -331,23 +315,20 @@ class LsarLookupNames_Response(NDRPacket):
 
 class PLSAPR_SID_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True)
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID))]
 
 
 class PLSAPR_SID_ENUM_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="SidInfo"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "SidInfo",
                 [PLSAPR_SID_INFORMATION()],
                 PLSAPR_SID_INFORMATION,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -365,14 +346,13 @@ class PLSAPR_TRANSLATED_NAMES(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Names"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Names",
                 [PLSAPR_TRANSLATED_NAME()],
                 PLSAPR_TRANSLATED_NAME,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -467,14 +447,13 @@ class PLSAPR_TRANSLATED_NAMES_EX(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Names"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Names",
                 [PLSAPR_TRANSLATED_NAME_EX()],
                 PLSAPR_TRANSLATED_NAME_EX,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -526,14 +505,13 @@ class PLSAPR_TRANSLATED_SIDS_EX(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Sids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Sids",
                 [PLSAPR_TRANSLATED_SID_EX()],
                 PLSAPR_TRANSLATED_SID_EX,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -579,7 +557,7 @@ class PLSAPR_TRANSLATED_SID_EX2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRInt3264EnumField("Use", 0, SID_NAME_USE),
-        NDRFullPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID), deferred=True),
+        NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
         NDRSignedIntField("DomainIndex", 0),
         NDRIntField("Flags", 0),
     ]
@@ -589,14 +567,13 @@ class PLSAPR_TRANSLATED_SIDS_EX2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Sids"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Sids",
                 [PLSAPR_TRANSLATED_SID_EX2()],
                 PLSAPR_TRANSLATED_SID_EX2,
                 size_is=lambda pkt: pkt.Entries,
-            ),
-            deferred=True,
+            )
         ),
     ]
 

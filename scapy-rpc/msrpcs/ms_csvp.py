@@ -29,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -208,21 +209,13 @@ class DISK_PROPS_EX(NDRPacket):
         NDRPacketField("ScsiAddress", CPREP_SCSI_ADDRESS(), CPREP_SCSI_ADDRESS),
         NDRSignedIntField("DiskIsClusterable", 0),
         StrFixedLenFieldUtf16("AdapterDesc", "", length=260 * 2),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFriendlyName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFriendlyName", "")),
         NDRIntField("NumPaths", 0),
         NDRIntField("Flags", 0),
         NDRIntField("ExtendedFlags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszPoolName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszPage83Id", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszSerialNumber", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszPoolName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszPage83Id", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszSerialNumber", "")),
         NDRPacketField("guidPoolId", GUID(), GUID),
     ]
 

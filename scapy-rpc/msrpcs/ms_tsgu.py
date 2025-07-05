@@ -18,6 +18,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRLongField,
@@ -71,14 +72,13 @@ class PTSG_PACKET_VERSIONCAPS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("tsgHeader", TSG_PACKET_HEADER(), TSG_PACKET_HEADER),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "TSGCaps",
                 [PTSG_PACKET_CAPABILITIES()],
                 PTSG_PACKET_CAPABILITIES,
                 size_is=lambda pkt: pkt.numCapabilities,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("numCapabilities", None, size_of="TSGCaps"),
         NDRShortField("majorVersion", 0),
@@ -96,16 +96,14 @@ class PTSG_PACKET_QUARREQUEST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("flags", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "machineName", "", size_is=lambda pkt: pkt.nameLength
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("nameLength", None, size_of="machineName"),
-        NDRFullPointerField(
-            NDRConfStrLenField("data", "", size_is=lambda pkt: pkt.dataLen),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("data", "", size_is=lambda pkt: pkt.dataLen)
         ),
         NDRIntField("dataLen", None, size_of="data"),
     ]
@@ -130,11 +128,10 @@ class PTSG_PACKET_RESPONSE(NDRPacket):
     fields_desc = [
         NDRIntField("flags", 0),
         NDRIntField("reserved", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "responseData", "", size_is=lambda pkt: pkt.responseDataLen
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("responseDataLen", None, size_of="responseData"),
         NDRPacketField(
@@ -158,18 +155,16 @@ class PTSG_PACKET_QUARENC_RESPONSE(NDRPacket):
     fields_desc = [
         NDRIntField("flags", 0),
         NDRIntField("certChainLen", None, size_of="certChainData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "certChainData", "", size_is=lambda pkt: pkt.certChainLen
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("nonce", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "versionCaps", PTSG_PACKET_VERSIONCAPS(), PTSG_PACKET_VERSIONCAPS
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -179,18 +174,16 @@ class TSG_PACKET_QUARENC_RESPONSE(NDRPacket):
     fields_desc = [
         NDRIntField("flags", 0),
         NDRIntField("certChainLen", None, size_of="certChainData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenFieldUtf16(
                 "certChainData", "", size_is=lambda pkt: pkt.certChainLen
-            ),
-            deferred=True,
+            )
         ),
         NDRPacketField("nonce", GUID(), GUID),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRPacketField(
                 "versionCaps", PTSG_PACKET_VERSIONCAPS(), PTSG_PACKET_VERSIONCAPS
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -201,9 +194,8 @@ class PTSG_PACKET_STRING_MESSAGE(NDRPacket):
         NDRSignedIntField("isDisplayMandatory", 0),
         NDRSignedIntField("isConsentMandatory", 0),
         NDRIntField("msgBytes", None, size_of="msgBuffer"),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("msgBuffer", "", size_is=lambda pkt: pkt.msgBytes),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("msgBuffer", "", size_is=lambda pkt: pkt.msgBytes)
         ),
     ]
 
@@ -222,13 +214,12 @@ class TSG_PACKET_MSG_RESPONSE(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_STRING_MESSAGE(),
                             PTSG_PACKET_STRING_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 1),
@@ -236,13 +227,12 @@ class TSG_PACKET_MSG_RESPONSE(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_STRING_MESSAGE(),
                             PTSG_PACKET_STRING_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 2),
@@ -250,13 +240,12 @@ class TSG_PACKET_MSG_RESPONSE(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_REAUTH_MESSAGE(),
                             PTSG_PACKET_REAUTH_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 3),
@@ -299,13 +288,12 @@ class PTSG_PACKET_MSG_RESPONSE(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_STRING_MESSAGE(),
                             PTSG_PACKET_STRING_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 1),
@@ -313,13 +301,12 @@ class PTSG_PACKET_MSG_RESPONSE(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_STRING_MESSAGE(),
                             PTSG_PACKET_STRING_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 2),
@@ -327,13 +314,12 @@ class PTSG_PACKET_MSG_RESPONSE(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "messagePacket",
                             PTSG_PACKET_REAUTH_MESSAGE(),
                             PTSG_PACKET_REAUTH_MESSAGE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "msgType", None) == 3),
@@ -352,14 +338,13 @@ class TSG_PACKET_VERSIONCAPS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("tsgHeader", TSG_PACKET_HEADER(), TSG_PACKET_HEADER),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "TSGCaps",
                 [PTSG_PACKET_CAPABILITIES()],
                 PTSG_PACKET_CAPABILITIES,
                 size_is=lambda pkt: pkt.numCapabilities,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("numCapabilities", None, size_of="TSGCaps"),
         NDRShortField("majorVersion", 0),
@@ -375,9 +360,8 @@ class PTSG_PACKET_AUTH(NDRPacket):
             "TSGVersionCaps", TSG_PACKET_VERSIONCAPS(), TSG_PACKET_VERSIONCAPS
         ),
         NDRIntField("cookieLen", None, size_of="cookie"),
-        NDRFullPointerField(
-            NDRConfStrLenField("cookie", "", size_is=lambda pkt: pkt.cookieLen),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("cookie", "", size_is=lambda pkt: pkt.cookieLen)
         ),
     ]
 
@@ -390,13 +374,12 @@ class PTSG_PACKET_REAUTH(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGInitialPacket",
                             PTSG_PACKET_VERSIONCAPS(),
                             PTSG_PACKET_VERSIONCAPS,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 22083),
@@ -404,11 +387,10 @@ class PTSG_PACKET_REAUTH(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGInitialPacket", PTSG_PACKET_AUTH(), PTSG_PACKET_AUTH
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 16468),
@@ -430,11 +412,10 @@ class PTSG_PACKET(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket", PTSG_PACKET_HEADER(), PTSG_PACKET_HEADER
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 18500),
@@ -442,13 +423,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_VERSIONCAPS(),
                             PTSG_PACKET_VERSIONCAPS,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 22083),
@@ -456,13 +436,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_QUARCONFIGREQUEST(),
                             PTSG_PACKET_QUARCONFIGREQUEST,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 20803),
@@ -470,13 +449,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_QUARREQUEST(),
                             PTSG_PACKET_QUARREQUEST,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 20818),
@@ -484,11 +462,10 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket", PTSG_PACKET_RESPONSE(), PTSG_PACKET_RESPONSE
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 20562),
@@ -496,13 +473,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_QUARENC_RESPONSE(),
                             PTSG_PACKET_QUARENC_RESPONSE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 17746),
@@ -510,13 +486,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_CAPS_RESPONSE(),
                             PTSG_PACKET_CAPS_RESPONSE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 17232),
@@ -524,13 +499,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_MSG_REQUEST(),
                             PTSG_PACKET_MSG_REQUEST,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 18258),
@@ -538,13 +512,12 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket",
                             PTSG_PACKET_MSG_RESPONSE(),
                             PTSG_PACKET_MSG_RESPONSE,
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 18256),
@@ -552,11 +525,10 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket", PTSG_PACKET_AUTH(), PTSG_PACKET_AUTH
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 16468),
@@ -564,11 +536,10 @@ class PTSG_PACKET(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
+                    NDRFullEmbPointerField(
                         NDRPacketField(
                             "TSGPacket", PTSG_PACKET_REAUTH(), PTSG_PACKET_REAUTH
-                        ),
-                        deferred=True,
+                        )
                     ),
                     (
                         (lambda pkt: getattr(pkt, "packetId", None) == 21072),
@@ -634,29 +605,24 @@ class TsProxyMakeTunnelCall_Response(NDRPacket):
 class PTSENDPOINTINFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "resourceName",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("resourceName", ""), deferred=True
-                ),
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("resourceName", "")),
                 size_is=lambda pkt: pkt.numResourceNames,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("numResourceNames", None, size_of="resourceName"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "alternateResourceNames",
                 [],
-                NDRFullPointerField(
-                    NDRConfVarStrNullFieldUtf16("alternateResourceNames", ""),
-                    deferred=True,
+                NDRFullEmbPointerField(
+                    NDRConfVarStrNullFieldUtf16("alternateResourceNames", "")
                 ),
                 size_is=lambda pkt: pkt.numAlternateResourceNames,
-            ),
-            deferred=True,
+            )
         ),
         NDRShortField(
             "numAlternateResourceNames", None, size_of="alternateResourceNames"

@@ -1,0 +1,251 @@
+diff --git a/midl-to-scapy/idl/win/ms-fasp.idl b/midl-to-scapy/idl/win/ms-fasp.idl
+index bed2481..05eba10 100644
+--- a/midl-to-scapy/idl/win/ms-fasp.idl
++++ b/midl-to-scapy/idl/win/ms-fasp.idl
+@@ -1,11 +1,12 @@
+- import "wtypes.h";
++// import "wtypes.h";
++ import "ms-dtyp.idl";
+  // define PWSTR
+  typedef LPWSTR PWSTR;
+  typedef LPCWSTR PCWSTR;
+   
+- cpp_quote("#ifndef __FIREWALL_H_")
+- cpp_quote("#define FW_CURRENT_BINARY_VERSION (FW_VERSION(2,33))")
+- cpp_quote("#define FW_CURRENT_SCHEMA_VERSION (FW_VERSION(2,33))")
++// cpp_quote("#ifndef __FIREWALL_H_")
++// cpp_quote("#define FW_CURRENT_BINARY_VERSION (FW_VERSION(2,33))")
++// cpp_quote("#define FW_CURRENT_SCHEMA_VERSION (FW_VERSION(2,33))")
+   
+  /***********************************************************************
+   *                                                                     *
+@@ -51,7 +52,7 @@
+      FW_PROFILE_TYPE_CURRENT  = 0x80000000,
+      FW_PROFILE_TYPE_NONE     = FW_PROFILE_TYPE_CURRENT + 1
+  } FW_PROFILE_TYPE;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PROFILE_TYPE);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PROFILE_TYPE);")
+   
+  typedef enum _tag_FW_POLICY_ACCESS_RIGHT
+  {
+@@ -71,7 +72,7 @@
+      FW_POLICY_STORE_FLAGS_NOT_USED_VALUE_16 = 0x0010,
+      FW_POLICY_STORE_FLAGS_MAX           = 0x0020
+  }FW_POLICY_STORE_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_POLICY_STORE_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_POLICY_STORE_FLAGS);")
+   
+  /********************************************************************
+   * FW_RULE_DUPLICATE_STATUS_FLAGS: Order of this enum matters       *
+@@ -86,7 +87,7 @@
+      FW_DUPLICATE_STATUS_FLAGS_HAS_DUPLICATE = 0x0002, // Rule is or has an existing duplicate rule
+      FW_DUPLICATE_STATUS_FLAGS_IS_ENFORCED = 0x0004 // Rule is enforced by getting plumbed
+  }FW_RULE_DUPLICATE_STATUS_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_DUPLICATE_STATUS_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_DUPLICATE_STATUS_FLAGS);")
+  /********************************************************
+   *                                                      *
+   *  Firewall Rules structures                           *
+@@ -187,7 +188,7 @@
+      FW_PORT_KEYWORD_MAX_V2_24         = 0x100,
+      FW_PORT_KEYWORD_MAX_V2_25         = 0x200,
+  }FW_PORT_KEYWORD;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PORT_KEYWORD);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PORT_KEYWORD);")
+   
+  typedef struct _tag_FW_PORTS
+  {
+@@ -241,7 +242,7 @@
+      FW_INTERFACE_TYPE_MAX            = 0x0010,
+      FW_INTERFACE_TYPE_MAX_V2_23      = 0x0008,
+  } FW_INTERFACE_TYPE;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_INTERFACE_TYPE);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_INTERFACE_TYPE);")
+   
+  typedef enum _tag_FW_ADDRESS_KEYWORD
+  {
+@@ -263,7 +264,7 @@
+      FW_ADDRESS_KEYWORD_MAX_V2_33       = 0x0400, //Same as local addresses
+      FW_ADDRESS_KEYWORD_MAX             = 0x0800,
+  }FW_ADDRESS_KEYWORD;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_ADDRESS_KEYWORD);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_ADDRESS_KEYWORD);")
+   
+  typedef struct _tag_FW_ADDRESSES
+  {
+@@ -284,8 +285,8 @@
+      GUID* ids;
+  } FW_DYNAMIC_KEYWORD_ADDRESS_ID_LIST, *PFW_DYNAMIC_KEYWORD_ADDRESS_ID_LIST;
+   
+- cpp_quote("#ifndef __FW_DYNAMIC_KEYWORDS_TYPES__")
+- cpp_quote("#define __FW_DYNAMIC_KEYWORDS_TYPES__")
++// cpp_quote("#ifndef __FW_DYNAMIC_KEYWORDS_TYPES__")
++// cpp_quote("#define __FW_DYNAMIC_KEYWORDS_TYPES__")
+   
+  typedef enum _tag_FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS
+  {
+@@ -293,7 +294,7 @@
+      FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS_AUTO_RESOLVE = 0x0001,
+      FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS_MAX          = 0x0002
+  } FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_DYNAMIC_KEYWORD_ADDRESS_FLAGS);")
+   
+  typedef enum _tag_FW_DYNAMIC_KEYWORD_ORIGIN_TYPE
+  {
+@@ -330,8 +331,8 @@
+      FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS_ALL              = (FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS_AUTO_RESOLVE | FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS_NON_AUTO_RESOLVE),
+      FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS_MAX              = 0x0004
+  } FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS);")
+- cpp_quote("#endif //__FW_DYNAMIC_KEYWORDS_TYPES__")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_DYNAMIC_KEYWORD_ADDRESS_ENUM_FLAGS);")
++// cpp_quote("#endif //__FW_DYNAMIC_KEYWORDS_TYPES__")
+   
+  // Internal version of the dynamic keyword address struct.
+  // Notably, it uses the FW_ADDRESSES struct for the
+@@ -364,7 +365,7 @@
+      FW_TRUST_TUPLE_KEYWORD_MAX_V2_26           = 0x0020,
+      FW_TRUST_TUPLE_KEYWORD_MAX_V2_27           = 0x0080,
+  }FW_TRUST_TUPLE_KEYWORD;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_TRUST_TUPLE_KEYWORD);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_TRUST_TUPLE_KEYWORD);")
+   
+  typedef
+  [v1_enum]
+@@ -1265,7 +1266,7 @@
+      FW_ENUM_RULES_FLAG_INCLUDE_METADATA     = 0x0040, // Inlude Object MetaData in the Enumerated Object.
+      FW_ENUM_RULES_FLAG_MAX                  = 0x0080
+  }FW_ENUM_RULES_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_ENUM_RULES_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_ENUM_RULES_FLAGS);")
+   
+  //ordered by priority - highest on top
+  typedef enum _tag_FW_RULE_ACTION
+@@ -1304,7 +1305,7 @@
+      FW_RULE_FLAGS_BIND_TO_INTERFACE = 0x2000,
+      FW_RULE_FLAGS_MAX               = 0x4000,
+  }FW_RULE_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_FLAGS);")
+   
+  typedef enum _tag_FW_RULE_FLAGS2
+  {
+@@ -1327,7 +1328,7 @@
+   
+      FW_RULE_FLAGS2_MAX               = 0x2000
+  }FW_RULE_FLAGS2;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_FLAGS2);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_RULE_FLAGS2);")
+   
+  typedef struct _tag_FW_RULE2_0
+  {
+@@ -2214,7 +2215,7 @@
+                                                            //    Boolean (as DWORD)
+      FW_PROFILE_CONFIG_MAX
+  } FW_PROFILE_CONFIG;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PROFILE_CONFIG);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PROFILE_CONFIG);")
+   
+  typedef enum _FW_GLOBAL_CONFIG_IPSEC_EXEMPT_VALUES
+  {
+@@ -2227,7 +2228,7 @@
+      FW_GLOBAL_CONFIG_IPSEC_EXEMPT_DHCP               =  0x0008,
+      FW_GLOBAL_CONFIG_IPSEC_EXEMPT_MAX                =  0x0010
+  }FW_GLOBAL_CONFIG_IPSEC_EXEMPT_VALUES;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_GLOBAL_CONFIG_IPSEC_EXEMPT_VALUES);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_GLOBAL_CONFIG_IPSEC_EXEMPT_VALUES);")
+   
+  typedef enum _FW_GLOBAL_CONFIG_PRESHARED_KEY_ENCODING_VALUES
+  {
+@@ -2410,7 +2411,7 @@
+      FW_CS_RULE_FLAGS_MAX_V2_10                   = 0x40,
+      FW_CS_RULE_FLAGS_MAX_V2_20                   = 0x100
+  }FW_CS_RULE_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_CS_RULE_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_CS_RULE_FLAGS);")
+   
+  typedef enum _tag_FW_CS_RULE_ACTION
+  {
+@@ -2656,7 +2657,7 @@
+      FW_AUTH_SUITE_FLAGS_MAX                                 = 0x0080
+   
+  }FW_AUTH_SUITE_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_SUITE_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_SUITE_FLAGS);")
+   
+  typedef struct _tag_FW_AUTH_SUITE2_10
+  {
+@@ -2717,7 +2718,7 @@
+      FW_AUTH_CERT_CRITERIA_FLAGS_MAX                                  = 0x0002
+   
+  }FW_AUTH_CERT_CRITERIA_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_CERT_CRITERIA_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_CERT_CRITERIA_FLAGS);")
+   
+  typedef struct _tag_FW_CERT_CRITERIA
+  {
+@@ -2781,7 +2782,7 @@
+      FW_AUTH_SET_FLAGS_NONE     = 0x00,
+      FW_AUTH_SET_FLAGS_MAX      = 0x01,
+  } FW_AUTH_SET_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_SET_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_AUTH_SET_FLAGS);")
+   
+  typedef struct _tag_FW_AUTH_SET2_10
+  {
+@@ -2911,7 +2912,7 @@
+      FW_CRYPTO_SET_FLAGS_NONE     = 0x00,
+      FW_CRYPTO_SET_FLAGS_MAX      = 0x01,
+  } FW_CRYPTO_SET_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_CRYPTO_SET_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_CRYPTO_SET_FLAGS);")
+   
+  typedef struct _tag_FW_PHASE1_CRYPTO_SUITE
+  {
+@@ -2945,7 +2946,7 @@
+      FW_PHASE1_CRYPTO_FLAGS_DO_NOT_SKIP_DH           = 0x01,
+      FW_PHASE1_CRYPTO_FLAGS_MAX                      = 0x02
+  }FW_PHASE1_CRYPTO_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PHASE1_CRYPTO_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_PHASE1_CRYPTO_FLAGS);")
+   
+  typedef enum _tag_FW_PHASE2_CRYPTO_PFS
+  {
+@@ -3354,7 +3355,7 @@
+      FW_HYPERV_PORT_FLAGS_CONSTRAINED_INTERFACE = 0x1,
+      FW_HYPERV_PORT_FLAGS_MAX                   = 0x2
+  } FW_HYPERV_PORT_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_HYPERV_PORT_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_HYPERV_PORT_FLAGS);")
+   
+  typedef enum _tag_FW_HYPERV_NETWORK_TYPE
+  { 
+@@ -3495,7 +3496,7 @@
+      FW_HYPERV_RULE_FLAGS_MAX_V2_33             = 0x0008,
+      FW_HYPERV_RULE_FLAGS_MAX                   = 0x0008
+  } FW_HYPERV_RULE_FLAGS;
+- cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_HYPERV_RULE_FLAGS);")
++// cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(FW_HYPERV_RULE_FLAGS);")
+   
+  typedef struct _tag_FW_HYPERV_RULE_METADATA
+  {
+@@ -3566,13 +3567,13 @@
+      DWORD profileTypes; // Bitmask of FW_PROFILE_TYPE
+  } FW_HYPERV_RULE1, *PFW_HYPERV_RULE1;
+   
+- cpp_quote("#endif //__FIREWALL_H_")
++// cpp_quote("#endif //__FIREWALL_H_")
+   
+   
+- cpp_quote("#define MIDL_user_allocate MIDL_fw_allocate")
+- cpp_quote("#define MIDL_user_free MIDL_fw_free")
+- cpp_quote("void  * __RPC_USER MIDL_fw_allocate(size_t numBytes);")
+- cpp_quote("void __RPC_USER MIDL_fw_free(void  * p);")
++// cpp_quote("#define MIDL_user_allocate MIDL_fw_allocate")
++// cpp_quote("#define MIDL_user_free MIDL_fw_free")
++// cpp_quote("void  * __RPC_USER MIDL_fw_allocate(size_t numBytes);")
++// cpp_quote("void __RPC_USER MIDL_fw_free(void  * p);")
+   
+   
+  [

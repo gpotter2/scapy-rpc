@@ -28,6 +28,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264Field,
     NDRIntEnumField,
@@ -220,8 +221,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -233,8 +233,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -246,8 +245,7 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -268,24 +266,22 @@ class wireVARIANTStr(NDRPacket):
 class DISPPARAMS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "rgvarg",
                 [],
                 wireVARIANTStr,
                 size_is=lambda pkt: pkt.cArgs,
                 ptr_pack=True,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "rgdispidNamedArgs",
                 [],
                 NDRSignedIntField("rgdispidNamedArgs", 0),
                 size_is=lambda pkt: pkt.cNamedArgs,
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("cArgs", None, size_of="rgvarg"),
         NDRIntField("cNamedArgs", None, size_of="rgdispidNamedArgs"),
@@ -297,17 +293,14 @@ class EXCEPINFO(NDRPacket):
     fields_desc = [
         NDRShortField("wCode", 0),
         NDRShortField("wReserved", 0),
-        NDRFullPointerField(
-            NDRPacketField("bstrSource", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrSource", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
-        NDRFullPointerField(
-            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
-        NDRFullPointerField(
-            NDRPacketField("bstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
         NDRIntField("dwHelpContext", 0),
         NDRInt3264Field("pvReserved", 0),
@@ -565,9 +558,7 @@ class LPTYPEATTR(NDRPacket):
         NDRIntField("dwReserved1", 0),
         NDRIntField("dwReserved2", 0),
         NDRIntField("dwReserved3", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpstrReserved4", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpstrReserved4", "")),
         NDRIntField("cbSizeInstance", 0),
         NDRIntEnumField("typekind", 0, TYPEKIND),
         NDRShortField("cFuncs", 0),
@@ -613,9 +604,8 @@ class PARAMDESCEX(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cBytes", 0),
-        NDRFullPointerField(
-            NDRPacketField("varDefaultValue", wireVARIANTStr(), wireVARIANTStr),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("varDefaultValue", wireVARIANTStr(), wireVARIANTStr)
         ),
     ]
 
@@ -623,8 +613,8 @@ class PARAMDESCEX(NDRPacket):
 class PARAMDESC(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pparamdescex", PARAMDESCEX(), PARAMDESCEX), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("pparamdescex", PARAMDESCEX(), PARAMDESCEX)
         ),
         NDRShortField("wParamFlags", 0),
     ]
@@ -661,20 +651,18 @@ class LPFUNCDESC(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedIntField("memid", 0),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lReserved1",
                 [],
                 NDRSignedIntField("lReserved1", 0),
                 size_is=lambda pkt: pkt.cReserved2,
-            ),
-            deferred=True,
+            )
         ),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "lprgelemdescParam", [], ELEMDESC, size_is=lambda pkt: pkt.cParams
-            ),
-            deferred=True,
+            )
         ),
         NDRIntEnumField("funckind", 0, FUNCKIND),
         NDRIntEnumField("invkind", 0, INVOKEKIND),
@@ -711,9 +699,7 @@ class LPVARDESC(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRSignedIntField("memid", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpstrReserved", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpstrReserved", "")),
         NDRUnionField(
             [
                 (
@@ -738,14 +724,10 @@ class LPVARDESC(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(
-                        NDRFullPointerField(
-                            NDRPacketField(
-                                "_vdUnion", wireVARIANTStr(), wireVARIANTStr
-                            ),
-                            deferred=True,
-                        ),
-                        deferred=True,
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_vdUnion", wireVARIANTStr(), wireVARIANTStr)
+                        )
                     ),
                     (
                         (
@@ -1184,8 +1166,8 @@ class CUSTDATAITEM(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("guid", GUID(), GUID),
-        NDRFullPointerField(
-            NDRPacketField("varValue", wireVARIANTStr(), wireVARIANTStr), deferred=True
+        NDRFullEmbPointerField(
+            NDRPacketField("varValue", wireVARIANTStr(), wireVARIANTStr)
         ),
     ]
 
@@ -1194,11 +1176,10 @@ class CUSTDATA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("cCustData", None, size_of="prgCustData"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "prgCustData", [], CUSTDATAITEM, size_is=lambda pkt: pkt.cCustData
-            ),
-            deferred=True,
+            )
         ),
     ]
 

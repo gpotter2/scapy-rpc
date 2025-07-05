@@ -63,6 +63,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
+    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
@@ -444,9 +445,8 @@ class cp_sub0(NDRPacket):
 class cv_sub1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pVolumeUnk", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pVolumeUnk", MInterfacePointer(), MInterfacePointer)
         )
     ]
 
@@ -454,9 +454,8 @@ class cv_sub1(NDRPacket):
 class bvp_sub2(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pVolumeUnk", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pVolumeUnk", MInterfacePointer(), MInterfacePointer)
         )
     ]
 
@@ -469,9 +468,8 @@ class sv_sub3(NDRPacket):
 class cvd_sub4(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pVDiskUnk", MInterfacePointer(), MInterfacePointer),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRPacketField("pVDiskUnk", MInterfacePointer(), MInterfacePointer)
         )
     ]
 
@@ -633,9 +631,7 @@ class WaitForServiceReady_Response(NDRPacket):
 class VDS_SERVICE_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszVersion", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszVersion", "")),
         NDRIntField("ulFlags", 0),
     ]
 
@@ -756,8 +752,8 @@ class VDS_FILE_SYSTEM_TYPE_PROP(NDRPacket):
         NDRIntField("ulFlags", 0),
         NDRIntField("ulCompressionFlags", 0),
         NDRIntField("ulMaxLabelLength", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszIllegalLabelCharSet", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("pwszIllegalLabelCharSet", "")
         ),
     ]
 
@@ -941,11 +937,10 @@ class VDS_STORAGE_IDENTIFIER(NDRPacket):
         NDRInt3264EnumField("m_CodeSet", 0, VDS_STORAGE_IDENTIFIER_CODE_SET),
         NDRInt3264EnumField("m_Type", 0, VDS_STORAGE_IDENTIFIER_TYPE),
         NDRIntField("m_cbIdentifier", None, size_of="m_rgbIdentifier"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "m_rgbIdentifier", "", size_is=lambda pkt: pkt.m_cbIdentifier
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -955,14 +950,13 @@ class VDS_STORAGE_DEVICE_ID_DESCRIPTOR(NDRPacket):
     fields_desc = [
         NDRIntField("m_version", 0),
         NDRIntField("m_cIdentifiers", None, size_of="m_rgIdentifiers"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "m_rgIdentifiers",
                 [],
                 VDS_STORAGE_IDENTIFIER,
                 size_is=lambda pkt: pkt.m_cIdentifiers,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -981,14 +975,12 @@ class VDS_INTERCONNECT(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("m_addressType", 0, VDS_INTERCONNECT_ADDRESS_TYPE),
         NDRIntField("m_cbPort", None, size_of="m_pbPort"),
-        NDRFullPointerField(
-            NDRConfStrLenField("m_pbPort", "", size_is=lambda pkt: pkt.m_cbPort),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("m_pbPort", "", size_is=lambda pkt: pkt.m_cbPort)
         ),
         NDRIntField("m_cbAddress", None, size_of="m_pbAddress"),
-        NDRFullPointerField(
-            NDRConfStrLenField("m_pbAddress", "", size_is=lambda pkt: pkt.m_cbAddress),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("m_pbAddress", "", size_is=lambda pkt: pkt.m_cbAddress)
         ),
     ]
 
@@ -1001,14 +993,10 @@ class VDS_LUN_INFORMATION(NDRPacket):
         NDRSignedByteField("m_DeviceTypeModifier", 0),
         NDRSignedIntField("m_bCommandQueuing", 0),
         NDRInt3264EnumField("m_BusType", 0, VDS_STORAGE_BUS_TYPE),
-        NDRFullPointerField(NDRConfVarStrNullField("m_szVendorId", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullField("m_szProductId", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("m_szProductRevision", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullField("m_szSerialNumber", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("m_szVendorId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("m_szProductId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("m_szProductRevision", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullField("m_szSerialNumber", "")),
         NDRPacketField("m_diskSignature", GUID(), GUID),
         NDRPacketField(
             "m_deviceIdDescriptor",
@@ -1016,14 +1004,13 @@ class VDS_LUN_INFORMATION(NDRPacket):
             VDS_STORAGE_DEVICE_ID_DESCRIPTOR,
         ),
         NDRIntField("m_cInterconnects", None, size_of="m_rgInterconnects"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "m_rgInterconnects",
                 [],
                 VDS_INTERCONNECT,
                 size_is=lambda pkt: pkt.m_cInterconnects,
-            ),
-            deferred=True,
+            )
         ),
     ]
 
@@ -1117,11 +1104,10 @@ class QueryInitiatorAdapters_Response(NDRPacket):
 class VDS_ISCSI_SHARED_SECRET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfStrLenField(
                 "pSharedSecret", "", size_is=lambda pkt: pkt.ulSharedSecretSize
-            ),
-            deferred=True,
+            )
         ),
         NDRIntField("ulSharedSecretSize", None, size_of="pSharedSecret"),
     ]
@@ -1303,7 +1289,7 @@ class VDS_ISCSI_INITIATOR_ADAPTER_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("id", GUID(), GUID),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
     ]
 
 
@@ -1431,11 +1417,9 @@ class VDS_PROVIDER_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("id", GUID(), GUID),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
         NDRPacketField("guidVersionId", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszVersion", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszVersion", "")),
         NDRInt3264EnumField("type", 0, VDS_PROVIDER_TYPE),
         NDRIntField("ulFlags", 0),
         NDRIntField("ulStripeSizeFlags", 0),
@@ -1554,12 +1538,8 @@ class PVDS_CREATE_VDISK_PARAMETERS(NDRPacket):
         NDRLongField("MaximumSize", 0),
         NDRIntField("BlockSizeInBytes", 0),
         NDRIntField("SectorSizeInBytes", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pParentPath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pSourcePath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pParentPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pSourcePath", "")),
     ]
 
 
@@ -1699,7 +1679,7 @@ class VDS_PACK_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("id", GUID(), GUID),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
         NDRInt3264EnumField("status", 0, VDS_PACK_STATUS),
         NDRIntField("ulFlags", 0),
     ]
@@ -1985,19 +1965,11 @@ class VDS_DISK_PROP(NDRPacket):
             align=(2, 4),
             switch_fmt=("H", "I"),
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszDiskAddress", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFriendlyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszAdaptorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszDevicePath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszDiskAddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFriendlyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAdaptorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszDevicePath", "")),
     ]
 
 
@@ -2177,22 +2149,12 @@ class VDS_DISK_PROP2(NDRPacket):
             align=(2, 4),
             switch_fmt=("H", "I"),
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszDiskAddress", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFriendlyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszAdaptorName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszDevicePath", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszLocationPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszDiskAddress", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFriendlyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAdaptorName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszDevicePath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszLocationPath", "")),
     ]
 
 
@@ -2627,33 +2589,17 @@ register_com_interface(
 class VDS_ADVANCEDDISK_PROP(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszId", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszPathname", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszLocation", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFriendlyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pswzIdentifier", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszPathname", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszLocation", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFriendlyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pswzIdentifier", "")),
         NDRShortField("usIdentifierFormat", 0),
         NDRIntField("ulNumber", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszSerialNumber", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszFirmwareVersion", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszManufacturer", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszModel", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszSerialNumber", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFirmwareVersion", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszManufacturer", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszModel", "")),
         NDRLongField("ullTotalSize", 0),
         NDRLongField("ullAllocatedSize", 0),
         NDRIntField("ulLogicalSectorSize", 0),
@@ -2794,9 +2740,7 @@ class VDS_FILE_SYSTEM_PROP(NDRPacket):
         NDRLongField("ullTotalAllocationUnits", 0),
         NDRLongField("ullAvailableAllocationUnits", 0),
         NDRIntField("ulAllocationUnitSize", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pwszLabel", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszLabel", "")),
     ]
 
 
@@ -2985,7 +2929,7 @@ class VDS_VOLUME_PROP(NDRPacket):
         NDRLongField("ullSize", 0),
         NDRIntField("ulFlags", 0),
         NDRInt3264EnumField("RecommendedFileSystemType", 0, VDS_FILE_SYSTEM_TYPE),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
     ]
 
 
@@ -3155,10 +3099,9 @@ class VDS_VOLUME_PROP2(NDRPacket):
         NDRIntField("ulFlags", 0),
         NDRInt3264EnumField("RecommendedFileSystemType", 0, VDS_FILE_SYSTEM_TYPE),
         NDRIntField("cbUniqueId", None, size_of="pUniqueId"),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszName", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfStrLenField("pUniqueId", "", size_is=lambda pkt: pkt.cbUniqueId),
-            deferred=True,
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszName", "")),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pUniqueId", "", size_is=lambda pkt: pkt.cbUniqueId)
         ),
     ]
 
@@ -3241,9 +3184,8 @@ class PVDS_REPARSE_POINT_PROP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRPacketField("SourceVolumeId", GUID(), GUID),
-        NDRFullPointerField(
-            NDRConfStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1)),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
         ),
     ]
 
@@ -3689,15 +3631,11 @@ class PVDS_VDISK_PROPERTIES(NDRPacket):
         ),
         NDRLongField("VirtualSize", 0),
         NDRLongField("PhysicalSize", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pPath", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pDeviceName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pPath", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDeviceName", "")),
         NDRInt3264EnumField("DiskFlag", 0, DEPENDENT_DISK_FLAG),
         NDRSignedIntField("bIsChild", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("pParentPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pParentPath", "")),
     ]
 
 

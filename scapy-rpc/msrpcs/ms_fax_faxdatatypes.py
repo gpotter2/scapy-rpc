@@ -15,7 +15,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
-    NDRFullPointerField,
+    NDRFullEmbPointerField,
     NDRInt3264EnumField,
     NDRInt3264Field,
     NDRIntField,
@@ -31,16 +31,12 @@ class FAX_COVERPAGE_INFO_EXW(NDRPacket):
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwCoverPageFormat", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", "")
         ),
         NDRSignedIntField("bServerBased", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrNote", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSubject", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrNote", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSubject", "")),
     ]
 
 
@@ -49,16 +45,12 @@ class PFAX_COVERPAGE_INFO_EXW(NDRPacket):
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwCoverPageFormat", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", "")
         ),
         NDRSignedIntField("bServerBased", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrNote", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSubject", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrNote", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSubject", "")),
     ]
 
 
@@ -67,16 +59,12 @@ class LPCFAX_COVERPAGE_INFO_EXW(NDRPacket):
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwCoverPageFormat", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrCoverPageFileName", "")
         ),
         NDRSignedIntField("bServerBased", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrNote", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSubject", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrNote", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSubject", "")),
     ]
 
 
@@ -98,34 +86,20 @@ class FAX_JOB_PARAMW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("RecipientNumber", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("RecipientName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Tsid", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderCompany", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderDept", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("BillingCode", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("RecipientNumber", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("RecipientName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Tsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderCompany", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderDept", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("BillingCode", "")),
         NDRIntField("ScheduleAction", 0),
         NDRPacketField("ScheduleTime", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("DeliveryReportType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DeliveryReportAddress", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("DeliveryReportAddress", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DocumentName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DocumentName", "")),
         NDRIntField("CallHandle", 0),
         NDRFieldListField(
             "Reserved", [], NDRInt3264Field("", 0), length_is=lambda _: 3
@@ -137,34 +111,20 @@ class PFAX_JOB_PARAMW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("RecipientNumber", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("RecipientName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Tsid", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderCompany", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("SenderDept", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("BillingCode", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("RecipientNumber", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("RecipientName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Tsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderCompany", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SenderDept", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("BillingCode", "")),
         NDRIntField("ScheduleAction", 0),
         NDRPacketField("ScheduleTime", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("DeliveryReportType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DeliveryReportAddress", ""), deferred=True
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("DeliveryReportAddress", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DocumentName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DocumentName", "")),
         NDRIntField("CallHandle", 0),
         NDRFieldListField(
             "Reserved", [], NDRInt3264Field("", 0), length_is=lambda _: 3
@@ -243,22 +203,12 @@ class FAX_RECEIPTS_CONFIGW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwAllowedReceipts", 0),
         NDRInt3264EnumField("SMTPAuthOption", 0, FAX_ENUM_SMTP_AUTH_OPTIONS),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrReserved", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPServer", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrReserved", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPServer", "")),
         NDRIntField("dwSMTPPort", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPFrom", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPPassword", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPFrom", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPPassword", "")),
         NDRSignedIntField("bIsToUseForMSRouteThroughEmailMethod", 0),
     ]
 
@@ -269,22 +219,12 @@ class PFAX_RECEIPTS_CONFIGW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwAllowedReceipts", 0),
         NDRInt3264EnumField("SMTPAuthOption", 0, FAX_ENUM_SMTP_AUTH_OPTIONS),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrReserved", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPServer", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrReserved", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPServer", "")),
         NDRIntField("dwSMTPPort", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPFrom", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPUserName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrSMTPPassword", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPFrom", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPUserName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrSMTPPassword", "")),
         NDRSignedIntField("bIsToUseForMSRouteThroughEmailMethod", 0),
     ]
 
@@ -303,12 +243,8 @@ class FAX_CONFIGURATIONW(NDRPacket):
         NDRPacketField("StartCheapTime", FAX_TIME(), FAX_TIME),
         NDRPacketField("StopCheapTime", FAX_TIME(), FAX_TIME),
         NDRSignedIntField("ArchiveOutgoingFaxes", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ArchiveDirectory", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ProfileName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ArchiveDirectory", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ProfileName", "")),
     ]
 
 
@@ -326,12 +262,8 @@ class PFAX_CONFIGURATIONW(NDRPacket):
         NDRPacketField("StartCheapTime", FAX_TIME(), FAX_TIME),
         NDRPacketField("StopCheapTime", FAX_TIME(), FAX_TIME),
         NDRSignedIntField("ArchiveOutgoingFaxes", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ArchiveDirectory", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ProfileName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ArchiveDirectory", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ProfileName", "")),
     ]
 
 
@@ -340,18 +272,12 @@ class FAX_GLOBAL_ROUTING_INFOW(NDRPacket):
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
         NDRIntField("Priority", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Guid", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("FriendlyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("FunctionName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ExtensionImageName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ExtensionFriendlyName", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Guid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("FriendlyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("FunctionName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ExtensionImageName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("ExtensionFriendlyName", "")
         ),
     ]
 
@@ -361,18 +287,12 @@ class PFAX_GLOBAL_ROUTING_INFOW(NDRPacket):
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
         NDRIntField("Priority", 0),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Guid", ""), deferred=True),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("FriendlyName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("FunctionName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ExtensionImageName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("ExtensionFriendlyName", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Guid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("FriendlyName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("FunctionName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("ExtensionImageName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("ExtensionFriendlyName", "")
         ),
     ]
 
@@ -384,18 +304,15 @@ class FAX_JOB_PARAM_EXW(NDRPacket):
         NDRIntField("dwScheduleAction", 0),
         NDRPacketField("tmSchedule", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("dwReceiptDeliveryType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", ""),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", "")
         ),
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
             "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
     ]
 
@@ -407,18 +324,15 @@ class PFAX_JOB_PARAM_EXW(NDRPacket):
         NDRIntField("dwScheduleAction", 0),
         NDRPacketField("tmSchedule", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("dwReceiptDeliveryType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", ""),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", "")
         ),
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
             "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
     ]
 
@@ -430,18 +344,15 @@ class LPCFAX_JOB_PARAM_EXW(NDRPacket):
         NDRIntField("dwScheduleAction", 0),
         NDRPacketField("tmSchedule", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("dwReceiptDeliveryType", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", ""),
-            deferred=True,
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpwstrReceiptDeliveryAddress", "")
         ),
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
             "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
     ]
 
@@ -450,15 +361,12 @@ class RPC_FAX_OUTBOUND_ROUTING_GROUPW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrGroupName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrGroupName", "")),
         NDRIntField("dwNumDevices", None, size_of="lpdwDevices"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lpdwDevices", [], NDRIntField, size_is=lambda pkt: pkt.dwNumDevices
-            ),
-            deferred=True,
+            )
         ),
         NDRInt3264EnumField("Status", 0, FAX_ENUM_GROUP_STATUS),
     ]
@@ -468,15 +376,12 @@ class PRPC_FAX_OUTBOUND_ROUTING_GROUPW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrGroupName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrGroupName", "")),
         NDRIntField("dwNumDevices", None, size_of="lpdwDevices"),
-        NDRFullPointerField(
+        NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "lpdwDevices", [], NDRIntField, size_is=lambda pkt: pkt.dwNumDevices
-            ),
-            deferred=True,
+            )
         ),
         NDRInt3264EnumField("Status", 0, FAX_ENUM_GROUP_STATUS),
     ]
@@ -491,11 +396,9 @@ class FAX_PORT_INFO(NDRPacket):
         NDRIntField("Flags", 0),
         NDRIntField("Rings", 0),
         NDRIntField("Priority", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DeviceName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Tsid", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Csid", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DeviceName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Tsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Csid", "")),
     ]
 
 
@@ -508,11 +411,9 @@ class PFAX_PORT_INFO(NDRPacket):
         NDRIntField("Flags", 0),
         NDRIntField("Rings", 0),
         NDRIntField("Priority", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("DeviceName", ""), deferred=True
-        ),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Tsid", ""), deferred=True),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Csid", ""), deferred=True),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DeviceName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Tsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Csid", "")),
     ]
 
 
@@ -530,9 +431,7 @@ class RPC_FAX_OUTBOUND_ROUTING_RULEW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwAreaCode", 0),
         NDRIntField("dwCountryCode", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCountryName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrCountryName", "")),
         NDRUnionField(
             [
                 (
@@ -543,9 +442,7 @@ class RPC_FAX_OUTBOUND_ROUTING_RULEW(NDRPacket):
                     ),
                 )
             ],
-            NDRFullPointerField(
-                NDRConfVarStrNullFieldUtf16("Destination", ""), deferred=True
-            ),
+            NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Destination", "")),
             align=(4, 8),
             switch_fmt=("l", "l"),
         ),
@@ -559,9 +456,7 @@ class RPC_PFAX_OUTBOUND_ROUTING_RULEW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwAreaCode", 0),
         NDRIntField("dwCountryCode", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCountryName", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrCountryName", "")),
         NDRUnionField(
             [
                 (
@@ -572,9 +467,7 @@ class RPC_PFAX_OUTBOUND_ROUTING_RULEW(NDRPacket):
                     ),
                 )
             ],
-            NDRFullPointerField(
-                NDRConfVarStrNullFieldUtf16("Destination", ""), deferred=True
-            ),
+            NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Destination", "")),
             align=(4, 8),
             switch_fmt=("l", "l"),
         ),
@@ -644,9 +537,7 @@ class FAX_ACTIVITY_LOGGING_CONFIGW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRSignedIntField("bLogIncoming", 0),
         NDRSignedIntField("bLogOutgoing", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDBPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDBPath", "")),
     ]
 
 
@@ -656,9 +547,7 @@ class PFAX_ACTIVITY_LOGGING_CONFIGW(NDRPacket):
         NDRIntField("dwSizeOfStruct", 0),
         NDRSignedIntField("bLogIncoming", 0),
         NDRSignedIntField("bLogOutgoing", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDBPath", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDBPath", "")),
     ]
 
 
@@ -667,28 +556,16 @@ class FAX_PORT_INFO_EXW(NDRPacket):
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwDeviceID", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrDeviceName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDescription", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrProviderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrProviderGUID", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrDeviceName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrProviderName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrProviderGUID", "")),
         NDRSignedIntField("bSend", 0),
         NDRInt3264EnumField("ReceiveMode", 0, FAX_ENUM_DEVICE_RECEIVE_MODE),
         NDRIntField("dwStatus", 0),
         NDRIntField("dwRings", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCsid", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrTsid", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrCsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrTsid", "")),
     ]
 
 
@@ -697,28 +574,16 @@ class PFAX_PORT_INFO_EXW(NDRPacket):
     fields_desc = [
         NDRIntField("dwSizeOfStruct", 0),
         NDRIntField("dwDeviceID", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrDeviceName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrDescription", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrProviderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrProviderGUID", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrDeviceName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrProviderName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrProviderGUID", "")),
         NDRSignedIntField("bSend", 0),
         NDRInt3264EnumField("ReceiveMode", 0, FAX_ENUM_DEVICE_RECEIVE_MODE),
         NDRIntField("dwStatus", 0),
         NDRIntField("dwRings", 0),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrCsid", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpwstrTsid", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrCsid", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrTsid", "")),
     ]
 
 
@@ -755,18 +620,12 @@ class PFAX_SERVER_ACTIVITY(NDRPacket):
 class FAX_REASSIGN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrRecipients", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrRecipients", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrSenderName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpcwstrSenderFaxNumber", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSenderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSenderFaxNumber", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSubject", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrSubject", "")),
         NDRSignedIntField("bHasCoverPage", 0),
     ]
 
@@ -774,18 +633,12 @@ class FAX_REASSIGN_INFO(NDRPacket):
 class PFAX_REASSIGN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrRecipients", ""), deferred=True
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrRecipients", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrSenderName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrNullFieldUtf16("lpcwstrSenderFaxNumber", "")
         ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSenderName", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSenderFaxNumber", ""), deferred=True
-        ),
-        NDRFullPointerField(
-            NDRConfVarStrNullFieldUtf16("lpcwstrSubject", ""), deferred=True
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpcwstrSubject", "")),
         NDRSignedIntField("bHasCoverPage", 0),
     ]
 
@@ -805,24 +658,24 @@ class FAX_JOB_ENTRY(NDRPacket):
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
         NDRIntField("JobId", 0),
-        NDRFullPointerField(NDRShortField("UserName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("UserName", 0)),
         NDRIntField("JobType", 0),
         NDRIntField("QueueStatus", 0),
         NDRIntField("Status", 0),
         NDRIntField("Size", 0),
         NDRIntField("PageCount", 0),
-        NDRFullPointerField(NDRShortField("RecipientNumber", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("RecipientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("Tsid", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderCompany", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderDept", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("BillingCode", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("RecipientNumber", 0)),
+        NDRFullEmbPointerField(NDRShortField("RecipientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("Tsid", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderName", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderCompany", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderDept", 0)),
+        NDRFullEmbPointerField(NDRShortField("BillingCode", 0)),
         NDRIntField("ScheduleAction", 0),
         NDRPacketField("ScheduleTime", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("DeliveryReportType", 0),
-        NDRFullPointerField(NDRShortField("DeliveryReportAddress", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DocumentName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DeliveryReportAddress", 0)),
+        NDRFullEmbPointerField(NDRShortField("DocumentName", 0)),
     ]
 
 
@@ -831,22 +684,22 @@ class PFAX_JOB_ENTRY(NDRPacket):
     fields_desc = [
         NDRIntField("SizeOfStruct", 0),
         NDRIntField("JobId", 0),
-        NDRFullPointerField(NDRShortField("UserName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("UserName", 0)),
         NDRIntField("JobType", 0),
         NDRIntField("QueueStatus", 0),
         NDRIntField("Status", 0),
         NDRIntField("Size", 0),
         NDRIntField("PageCount", 0),
-        NDRFullPointerField(NDRShortField("RecipientNumber", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("RecipientName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("Tsid", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderName", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderCompany", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("SenderDept", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("BillingCode", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("RecipientNumber", 0)),
+        NDRFullEmbPointerField(NDRShortField("RecipientName", 0)),
+        NDRFullEmbPointerField(NDRShortField("Tsid", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderName", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderCompany", 0)),
+        NDRFullEmbPointerField(NDRShortField("SenderDept", 0)),
+        NDRFullEmbPointerField(NDRShortField("BillingCode", 0)),
         NDRIntField("ScheduleAction", 0),
         NDRPacketField("ScheduleTime", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("DeliveryReportType", 0),
-        NDRFullPointerField(NDRShortField("DeliveryReportAddress", 0), deferred=True),
-        NDRFullPointerField(NDRShortField("DocumentName", 0), deferred=True),
+        NDRFullEmbPointerField(NDRShortField("DeliveryReportAddress", 0)),
+        NDRFullEmbPointerField(NDRShortField("DocumentName", 0)),
     ]
