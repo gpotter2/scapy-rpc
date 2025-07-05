@@ -1,5 +1,7 @@
 # scapy-rpc
 
+[![Scapy RPC unit tests](https://github.com/secdev/scapy-rpc/actions/workflows/unittests.yml/badge.svg?branch=master&event=push)](https://github.com/secdev/scapy-rpc/actions/workflows/unittests.yml?query=event%3Apush)
+
 More details over in [the associated article](https://www.sstic.org/media/SSTIC2025/SSTIC-actes/l_outillage_reseau_windows_une_affaire_d_implement/SSTIC2025-Article-l_outillage_reseau_windows_une_affaire_d_implementation-potter.pdf) (english) or [the presentation](https://www.sstic.org/2025/presentation/l_outillage_reseau_windows_une_affaire_d_implementation/) (french).
 
 This repo contains two sub-projects:
@@ -26,3 +28,7 @@ A pre-compiled version of 117 windows interfaces (available through the Open Spe
 
 1. run ./get-idls.sh to download all the IDLs. This will apply some minor patches to some.
 2. run ./compile.sh which calls `midl-to-scapy` on all the downloaded IDLs.
+
+## License
+
+scapy-rpc's code, tests and tools are licensed under GPL v2.

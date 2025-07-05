@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "scapy-rpc"
 version = "0.0.2"
+dynamic = ["readme"]
 requires-python = ">=3.7, <4"
 description = "Scapy RPC definitions"
 classifiers = [
