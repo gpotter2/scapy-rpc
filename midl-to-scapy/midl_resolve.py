@@ -151,9 +151,7 @@ class Resolver:
                 self._resolve_arithm_values(x[3], env),
             )
         elif x[0] in ["cast", "monop"]:
-            return x[:2] + (
-                self._resolve_arithm_values(x[2], env),
-            )
+            return x[:2] + (self._resolve_arithm_values(x[2], env),)
         elif x[0] == "call" and x[1] == "sizeof":
             assert all(x[0] == "id" for x in x[2]), "Unknown sizeof type"
             typespec = [x[1] for x in x[2]]
@@ -225,12 +223,16 @@ class Resolver:
                             "if",
                             "call",
                         ]:
-                            value.append(("arithm_expr", self._resolve_arithm_values(x, env)))
+                            value.append(
+                                ("arithm_expr", self._resolve_arithm_values(x, env))
+                            )
                         elif x[0] == "id" and attr[1] != "case":
                             if attr[1] in env:
                                 # In env: should be resolved and converted to an arithmetic value
                                 # (or operation)
-                                value.append(("arithm_expr", self._resolve_arithm_values(x, env)))
+                                value.append(
+                                    ("arithm_expr", self._resolve_arithm_values(x, env))
+                                )
                             else:
                                 # Most likely a relative value (e.g. size_is = pkt.otherField)
                                 value.append(x[1])

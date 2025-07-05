@@ -42,7 +42,7 @@ PROTOCOLS = [
         "extras": [
             # Protocols not listed in the "list"
             "ms-oxcrpc",
-        ]
+        ],
     },
     {
         "name": "SharePoint Protocols",

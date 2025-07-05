@@ -1,0 +1,45 @@
+name: Scapy RPC unit tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [master]
+
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/control-the-concurrency-of-workflows-and-jobs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'master')}}
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    name: Code health check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Scapy-rpc
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check black compliance
+        uses: psf/black@stable
+        with:
+          options: "--check --config ./scapy-rpc/pyproject.toml"
+          src: "./"
+      - name: Install tox
+        run: pip install tox
+      - name: Run twine check
+        run: tox -e twine
+  spdx:
+    name: Check SPDX identifiers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Scapy
+        uses: actions/checkout@v4
+      - name: Launch script
+        run: bash .github/check_spdx.sh

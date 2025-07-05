@@ -78,6 +78,7 @@ states = (("macro", "inclusive"),)
 # A string containing ignored characters (spaces and tabs)
 t_ignore = " \t"
 
+
 # C or C++ comment (ignore)
 def t_comment(t):
     r"(/\*(.|\n)*?\*/)|(//.*)"
@@ -239,7 +240,7 @@ def p_macro(p):
             # define x = y;
             p[0] = ("macro", (p[2], ("id", p[3]), p[5], []))
     elif len(p) == 10:
-        #define PCWSTR      [string] const wchar_t*
+        # define PCWSTR      [string] const wchar_t*
         p[0] = ("macro", (p[2], (len(p[8]) * "ptr", p[3]), p[7], p[5]))
 
 
@@ -335,7 +336,7 @@ def p_atom(p):
         p[0] = ("call", p[1], p[3])
     elif len(p) == 3:
         # UMINUS
-        p[0] = - p[2]
+        p[0] = -p[2]
     elif len(p) == 2:
         p[0] = p[1]
 

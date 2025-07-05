@@ -260,9 +260,7 @@ class Function:
                 # conflict on the 'status' name
                 sname = "comm_status"
             # add implicit 'status' out argument
-            self.out_args.append(
-                CustomType(c, ("id", sname), ["error_status_t"], [])
-            )
+            self.out_args.append(CustomType(c, ("id", sname), ["error_status_t"], []))
 
     def __repr__(self):
         return (Colors.GREEN + "<Function %s(%s) -> (%s)>" + Colors.RESET) % (
@@ -516,7 +514,9 @@ if __name__ == "__main__":
             interfaces = [x for x in f.values() if isinstance(x, Interface)]
             for i in interfaces:
                 print("Interface %s:" % i.name)
-                print("\n".join((" - " + k + ": " + repr(v)) for k, v in i.ienv.items()))
+                print(
+                    "\n".join((" - " + k + ": " + repr(v)) for k, v in i.ienv.items())
+                )
             if not interfaces:
                 print("No interface found. Listing environment:")
                 print("\n".join(repr(x) for x in f.values() if x.origin == fname))

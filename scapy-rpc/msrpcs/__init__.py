@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# This file is part of Scapy RPC
+# See https://scapy.net/ for more information
+
 """
 Scapy RPC definitions
 """
@@ -11,7 +15,7 @@ __version__ = "0.0.1"
 
 def scapy_ext(plg):
     plg.config("Scapy RPC", __version__)
-    for lay in pathlib.Path(__file__).parent.glob('*.py'):
+    for lay in pathlib.Path(__file__).parent.glob("*.py"):
         if lay.name == "__init__.py":
             continue
         plg.register(

@@ -55,7 +55,9 @@ def _lkp(attrs, name):
     except StopIteration:
         return None
 
+
 ## Utils to resolve arithmetic: length_is and size_is
+
 
 def _rec_rslv_arithm(ar, env=None, getattr=False, prefix="pkt."):
     if isinstance(ar, int):
@@ -91,7 +93,10 @@ def _rec_rslv_arithm(ar, env=None, getattr=False, prefix="pkt."):
 
             typ = BUILTIN_TYPES[ar[1][1]]
             sr = struct.calcsize(typ[0] if isinstance(typ, tuple) else typ)
-            return "(%s & 0x%s)" % (_rec_rslv_arithm(ar[2], env, getattr, prefix), "FF" * sr)
+            return "(%s & 0x%s)" % (
+                _rec_rslv_arithm(ar[2], env, getattr, prefix),
+                "FF" * sr,
+            )
         elif ar[0] == "call" and ar[1] == "sizeof":
             assert all(x[0] == "id" for x in ar[2]), "Unknown sizeof type"
             typespec = [x[1] for x in ar[2]]
@@ -117,7 +122,9 @@ def res_size_is(size_is, getattr=False):
             return "pkt.%s" % size_is[0]
     assert False, "Unknown size_is %s" % repr(size_is)
 
+
 ## Utils to invert arithmetics: length_of and count_of
+
 
 def _rec_rslv_arithm_getmain(ar):
     """Used to find the main field of a length_is/size_is"""
@@ -128,10 +135,14 @@ def _rec_rslv_arithm_getmain(ar):
         if ar[0] == "binop":
             if ar[1] in ["&"]:
                 raise ValueError
-            parts = [x for x in [
-                _rec_rslv_arithm_getmain(ar[2]),
-                _rec_rslv_arithm_getmain(ar[3]),
-            ] if x]
+            parts = [
+                x
+                for x in [
+                    _rec_rslv_arithm_getmain(ar[2]),
+                    _rec_rslv_arithm_getmain(ar[3]),
+                ]
+                if x
+            ]
             if len(parts) == 1:
                 return parts[0]
             else:
@@ -151,7 +162,12 @@ def _rec_rslv_arithm_getmain(ar):
 
 def res_size_is_getmain(size_is):
     """Recursively iterate and return the id value if there's only one"""
-    if isinstance(size_is, list) and len(size_is) == 1 and isinstance(size_is[0], tuple) and size_is[0][0] == "arithm_expr":
+    if (
+        isinstance(size_is, list)
+        and len(size_is) == 1
+        and isinstance(size_is[0], tuple)
+        and size_is[0][0] == "arithm_expr"
+    ):
         try:
             return _rec_rslv_arithm_getmain(size_is[0][1])
         except ValueError:
@@ -174,13 +190,9 @@ def _rec_invert_arithmetic(ar, cur):
                 "*": "/",
             }[ar[1]]
             if _rec_rslv_arithm_getmain(ar[3]):
-                return _rec_invert_arithmetic(
-                    ar[3], ("binop", sign, cur, ar[2])
-                )
+                return _rec_invert_arithmetic(ar[3], ("binop", sign, cur, ar[2]))
             else:
-                return _rec_invert_arithmetic(
-                    ar[2], ("binop", sign, cur, ar[3])
-                )
+                return _rec_invert_arithmetic(ar[2], ("binop", sign, cur, ar[3]))
         elif ar[0] == "monop":
             return _rec_invert_arithmetic(ar[2], ("monop", ar[1], cur))
         elif ar[0] in ["id", "ptr"]:
@@ -189,9 +201,15 @@ def _rec_invert_arithmetic(ar, cur):
             return ar
     assert False, "Unknown arithmetic expression %s" % repr(ar)
 
+
 def invert_arithmetic(size_is):
     """Recursively iterate and invert arithmetics"""
-    if isinstance(size_is, list) and len(size_is) == 1 and isinstance(size_is[0], tuple) and size_is[0][0] == "arithm_expr":
+    if (
+        isinstance(size_is, list)
+        and len(size_is) == 1
+        and isinstance(size_is[0], tuple)
+        and size_is[0][0] == "arithm_expr"
+    ):
         return _rec_invert_arithmetic(size_is[0][1], ("id", "x"))
     elif isinstance(size_is, list) and len(size_is) == 1:
         return None
@@ -200,8 +218,11 @@ def invert_arithmetic(size_is):
 
 ## Utils to resolve Unions
 
+
 def _rslv_case_expr(switch_attr, switch_type, expr):
-    if isinstance(expr, list) and all(isinstance(x, tuple) and x[0] == "arithm_expr" for x in expr):
+    if isinstance(expr, list) and all(
+        isinstance(x, tuple) and x[0] == "arithm_expr" for x in expr
+    ):
         vals = [_rec_rslv_arithm(x[1]) for x in expr]
         if len(vals) > 1:
             test = "in [%s]" % ",".join(vals)
@@ -262,7 +283,9 @@ def _get_switch_fmt(switch_is, context):
         fmt = _R_SCAPY_FIELDS[fld.scapy_field]
         return (fmt, fmt)
 
+
 ## Utils to handle alignment / conformant counts
+
 
 class Context:
     """
@@ -362,7 +385,9 @@ class ScapyField:
                 # Top-level reference = no wrap. See C706 chap 14 - "Transfer Syntax NDR"
                 return self.ptr_wrap(fld, toplevel, lvl - 1, skipref=True)
             else:
-                return "NDRRefEmbPointerField(%s)" % self.ptr_wrap(fld, toplevel, lvl - 1)
+                return "NDRRefEmbPointerField(%s)" % self.ptr_wrap(
+                    fld, toplevel, lvl - 1
+                )
         elif any(x in ["ptr", "unique"] for x in self.idl_attributes) or skipref:
             # Other pointers See C706 chap 14 - "Transfer Syntax NDR"
             fld = self.ptr_wrap(fld, toplevel, lvl - 1)
@@ -391,7 +416,12 @@ class ScapyField:
             # Special case: void
             return f'StrFixedLenField("{self.name}", "", length=0)'
         elif "string" in self.idl_attributes:
-            assert self.ptr_lvl >= 1, "String attribute with wrong pointer value? %s: %s" % (self.name, repr(self.ptr_lvl))
+            assert (
+                self.ptr_lvl >= 1
+            ), "String attribute with wrong pointer value? %s: %s" % (
+                self.name,
+                repr(self.ptr_lvl),
+            )
             # Special case: string attribute
             # [C706] 4.2.21.1 - "Such a string is equivalent to a conformant array"
             if self.scapy_field in CHAR_TYPES:
@@ -419,7 +449,10 @@ class ScapyField:
                 default = "0"
                 if self.inv_length_or_size_is:
                     if self.inv_length_or_size_is[1] is not None:
-                        suffix += ', size_of="%s", adjust=lambda _, x: %s' % self.inv_length_or_size_is
+                        suffix += (
+                            ', size_of="%s", adjust=lambda _, x: %s'
+                            % self.inv_length_or_size_is
+                        )
                     else:
                         suffix += ', size_of="%s"' % self.inv_length_or_size_is[0]
                     default = "None"
@@ -487,7 +520,9 @@ class ScapyArrayField(ScapyField):
                     return fld
             elif not size_is and not max_is:
                 assert False, "String array with no length ! %s" % self.name
-        if (length_is or size_is or max_is) or (self.length is None or self.length == "*"):
+        if (length_is or size_is or max_is) or (
+            self.length is None or self.length == "*"
+        ):
             # Varying array or Conformant array (or both)
             prefix = "NDR"
             if self.length is None or self.length == "*":
@@ -512,7 +547,10 @@ class ScapyArrayField(ScapyField):
                 # a proper "string" is always varying
                 prefix += "Var"
             ptr_suffix = suffix
-            if any(x in ["ptr", "unique"] for x in self.idl_attributes) and self.subtype.ptr_lvl >= 1:
+            if (
+                any(x in ["ptr", "unique"] for x in self.idl_attributes)
+                and self.subtype.ptr_lvl >= 1
+            ):
                 ptr_suffix += ", ptr_pack=True"
             if length_is or size_is or max_is:
                 if self.scapy_field == "PacketListField":
@@ -522,13 +560,21 @@ class ScapyArrayField(ScapyField):
                     # because it's more managable in python (even though it should technically be a real array of bytes).
                     # The following check test if we do not need this abstraction.
                     if (
-                        (self.ptr_lvl >= 1 and self.subtype.scapy_field not in (CHAR_TYPES + WCHAR_TYPES)) or  # ptr and not string
-                        self.ptr_lvl >= 2 or # ptr >= 2.
-                        self.ptr_lvl == 1 and self.subtype.ptr_lvl >= 1
+                        (
+                            self.ptr_lvl >= 1
+                            and self.subtype.scapy_field
+                            not in (CHAR_TYPES + WCHAR_TYPES)
+                        )  # ptr and not string
+                        or self.ptr_lvl >= 2  # ptr >= 2.
+                        or self.ptr_lvl == 1
+                        and self.subtype.ptr_lvl >= 1
                     ):
                         fld = f'{prefix}FieldListField("{self.name}", [], {self.subtype.to_string(context, toplevel=toplevel)}{suffix})'
                     else:
-                        if isinstance(self.subtype, ScapyUnion) or (isinstance(self.subtype, ScapyStructField) and isinstance(self.subtype.subtype, ScapyEnum)):
+                        if isinstance(self.subtype, ScapyUnion) or (
+                            isinstance(self.subtype, ScapyStructField)
+                            and isinstance(self.subtype.subtype, ScapyEnum)
+                        ):
                             # Array of union/enum fields
                             fld = f'{prefix}{self.scapy_field}("{self.name}", [], {self.subtype.to_string(context, toplevel=toplevel)}{ptr_suffix})'
                         elif self.subtype.scapy_field in CHAR_TYPES:
@@ -542,7 +588,10 @@ class ScapyArrayField(ScapyField):
                 else:
                     assert False
             else:
-                assert False, "Unknown conformant array with no length_is nor size_is nor max_is ! %s" % self.name
+                assert False, (
+                    "Unknown conformant array with no length_is nor size_is nor max_is ! %s"
+                    % self.name
+                )
         else:
             # Fixed Arrays
             # https://docs.microsoft.com/en-us/windows/win32/rpc/fixed-arrays
@@ -646,19 +695,27 @@ class ScapyStruct:
         if not isinstance(fields, list):  # ScapyEnum
             return fields
         mapped_fields = {x.name: x for x in fields}
-        for fld in (x for x in fields if any(y[0] in ["size_is", "length_is"] for y in x.idl_attributes)):
+        for fld in (
+            x
+            for x in fields
+            if any(y[0] in ["size_is", "length_is"] for y in x.idl_attributes)
+        ):
             # Field has a size_is or length_is attribute
             lengthfld = sizefld = None
             size_is = _lkp(fld.idl_attributes, "size_is")
             length_is = _lkp(fld.idl_attributes, "length_is")
+
             def _procfld(mainfld, length_or_size_is):
                 if mainfld in mapped_fields:
                     # check we can access it
                     inv_length_or_size_is = invert_arithmetic(length_or_size_is)
                     mapped_fld = mapped_fields[mainfld]
                     if inv_length_or_size_is:
-                        inv_length_or_size_is = _rec_rslv_arithm(inv_length_or_size_is, env={"x": "x"})
+                        inv_length_or_size_is = _rec_rslv_arithm(
+                            inv_length_or_size_is, env={"x": "x"}
+                        )
                     mapped_fld.inv_length_or_size_is = (fld.name, inv_length_or_size_is)
+
             if length_is:
                 lengthfld = res_size_is_getmain(length_is)
                 if lengthfld:
@@ -700,7 +757,9 @@ class ScapyStruct:
 
 class ScapyUnion(ScapyStruct, ScapyField):
     def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name):
-        super(ScapyUnion, self).__init__(name, ptr_lvl, fields, idl_attributes, struct_name)
+        super(ScapyUnion, self).__init__(
+            name, ptr_lvl, fields, idl_attributes, struct_name
+        )
         self.field_type = name
         for f in self.fields:
             f.name = self.name
@@ -769,7 +828,10 @@ class ScapyEnum(ScapyStruct):
     def to_string(self):
         return "class %s(IntEnum):\n    %s\n" % (
             self.name,
-            "\n    ".join("%s = %s" % (k, v if isinstance(v, tuple) else v) for k, v in self.fields.items()),
+            "\n    ".join(
+                "%s = %s" % (k, v if isinstance(v, tuple) else v)
+                for k, v in self.fields.items()
+            ),
         )
 
 
@@ -784,8 +846,12 @@ class ScapyFunc:
         self.out_args = out_args
         self.opnum = opnum
         # Build resquest and response
-        self.request = ScapyStruct(self.name + "_Request", 0, self.in_args, [], self.name + "_Request")
-        self.response = ScapyStruct(self.name + "_Response", 0, self.out_args, [], self.name + "_Response")
+        self.request = ScapyStruct(
+            self.name + "_Request", 0, self.in_args, [], self.name + "_Request"
+        )
+        self.response = ScapyStruct(
+            self.name + "_Response", 0, self.out_args, [], self.name + "_Response"
+        )
 
     def __repr__(self):
         return (Colors.GREEN + "<ScapyFunc %s %s (%s)->(%s)>" + Colors.RESET) % (
@@ -838,24 +904,24 @@ class ScapyInterfaceDefinition:
             self.name.upper(),
             ",\n".join(
                 (
-                    "%s:%s"
-                    % (
-                        k,
-                        "DceRpcOp(%s, %s)"
+                    (
+                        "%s:%s"
                         % (
-                            v.request and v.request.name,
-                            v.response and v.response.name,
-                        ),
+                            k,
+                            "DceRpcOp(%s, %s)"
+                            % (
+                                v.request and v.request.name,
+                                v.response and v.response.name,
+                            ),
+                        )
                     )
-                ) if not isinstance(v, str) else ("# %s: %s" % (k, v))
+                    if not isinstance(v, str)
+                    else ("# %s: %s" % (k, v))
+                )
                 for k, v in self.opnums.items()
             ),
         ) + "%s(name='%s', uuid=uuid.UUID('%s'), %s opnums=%s)" % (
-            (
-                "register_com_interface"
-                if self.object else
-                "register_dcerpc_interface"
-            ),
+            ("register_com_interface" if self.object else "register_dcerpc_interface"),
             self.name,
             self.uuid,
             ("version='%s'," % self.version) if not self.object else "",
