@@ -1,6 +1,6 @@
 # scapy-rpc
 
-[![Scapy RPC unit tests](https://github.com/secdev/scapy-rpc/actions/workflows/unittests.yml/badge.svg?branch=master&event=push)](https://github.com/secdev/scapy-rpc/actions/workflows/unittests.yml?query=event%3Apush)
+[![Scapy RPC unit tests](https://github.com/gpotter2/scapy-rpc/actions/workflows/unittests.yml/badge.svg?branch=master&event=push)](https://github.com/gpotter2/scapy-rpc/actions/workflows/unittests.yml?query=event%3Apush)
 
 More details over in [the associated article](https://www.sstic.org/media/SSTIC2025/SSTIC-actes/l_outillage_reseau_windows_une_affaire_d_implement/SSTIC2025-Article-l_outillage_reseau_windows_une_affaire_d_implementation-potter.pdf) (english) or [the presentation](https://www.sstic.org/2025/presentation/l_outillage_reseau_windows_une_affaire_d_implementation/) (french).
 
