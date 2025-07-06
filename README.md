@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/044fb364-2a53-4ad7-97c9-e3c8e0c970fc
 
 ## scapy-rpc
 
-A pre-compiled version of 117 windows interfaces (available through the Open Specifications).
+A pre-compiled version of 110 windows interfaces (available through the Open Specifications).
 
 **Compilation steps:**
 
