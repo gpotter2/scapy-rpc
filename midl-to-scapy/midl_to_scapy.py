@@ -6,6 +6,7 @@
 Generate the .py file frmo the .idl
 """
 
+import argparse
 import os
 import re
 import sys
@@ -24,6 +25,7 @@ except ImportError:
 LICENSE = """# SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
++# Copyright (C) Gabriel Potter
 """
 
 BASE = """
@@ -121,8 +123,19 @@ def get_header(env):
     )
 
 
-# --- Main
+# For Scapy, we use the following:
+# FILTER = {
+#     "ept": [2, 3],
+#     "IObjectExporter": [3, 5],
+#     "drsuapi": [0, 1, 12],
+#     "samr": [0, 6],
+#     "logon": [4, 26],
+#     "srvsvc": [15, 16, 21],
+#     "wkssvc": [0, 30],
+# }
+FILTER = {}
 
+# --- Main
 
 def main(fname):
     # We use stdout.
@@ -136,12 +149,15 @@ def main(fname):
         % (os.path.basename(fname), current_time.strftime("%d/%m/%Y"))
     )
 
+    if FILTER:
+        print("# This file is a stripped version ! Use scapy-rpc for the full.")
+
     # Parse & build AST
     c = Compiler()
     f = c.process_file(fname)
     # Convert into Scapy code
     d = Resolver(f)
-    d.resolve_file(fname)
+    d.resolve_file(fname, filter=FILTER)
 
     # 3. Build compiled result
     HEADER = get_header(d.environment)

@@ -20,7 +20,7 @@ find $current_path/idl -name "*.idl" | while read filename; do
   name=${filename##*/}
   base=${name%.idl}
   # we skip "types-only" idls and ms-fax_faxobs because it's a weird duplicate
-  [[ "$base" =~ ^(ms-dtyp|rpctypes|ms-fax_faxobs|ms-eerr)$ ]] && continue
+  [[ "$base" =~ ^(ms-dtyp|rpctypes|ms-fax_faxobs)$ ]] && continue
   base=${base//-/_}
   echo "- Compiling $name"
   python3 $current_path/midl_to_scapy.py $filename > $destination_path/msrpcs/$base.py

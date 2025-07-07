@@ -46,9 +46,12 @@ class Resolver:
         self.globalnamespace = {}
         self.current_interface = None
 
-    def resolve_file(self, fname):
+    def resolve_file(self, fname, filter={}):
         """
-        Process a parsed file
+        Process a parsed file.
+
+        :param filter: a dict filter: {"interfacename": [opnums, ...]}
+                       to only include some filters for certain interfaces.
         """
         interfaces = [
             x
@@ -58,7 +61,10 @@ class Resolver:
         if interfaces:
             # File contains interfaces
             for i in interfaces:
-                self.resolve_interface(i)
+                self.resolve_interface(
+                    i,
+                    filter=filter.get(i.name, None)
+                )
         else:
             # Has no interface: export everything
             exported = []
@@ -104,9 +110,11 @@ class Resolver:
                 assert False, "Unknown interface idl_attribute: %s" % repr(attr)
         return res
 
-    def resolve_interface(self, interface):
+    def resolve_interface(self, interface, filter=None):
         """
-        Process an interface into Scapy packets and functions
+        Process an interface into Scapy packets and functions.
+
+        :param filter: a list of opnums to allow.
         """
         self.current_interface = interface
         self.globalnamespace[interface.name] = interface
@@ -123,6 +131,9 @@ class Resolver:
                     # Function should be skipped.
                     interface_opnums[i] = func.name
                     continue
+            if filter is not None and i not in filter:
+                # Function is filtered out
+                continue
             env = interface.ienv
             in_args = [self.make_field(x, env, toplevel=True) for x in func.in_args]
             out_args = [self.make_field(x, env, toplevel=True) for x in func.out_args]
