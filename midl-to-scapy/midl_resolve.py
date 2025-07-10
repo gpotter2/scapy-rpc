@@ -9,6 +9,7 @@ the names resolution.
 
 import re
 import sys
+import struct
 from midl_convert import (
     Compiler,
     Function,
@@ -17,6 +18,7 @@ from midl_convert import (
     StructType,
     Types,
     is_builtin,
+    BUILTIN_TYPES,
 )
 
 from scapy_obj import (
