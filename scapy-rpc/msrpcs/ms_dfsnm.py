@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-dfsnm.idl compiled on 05/07/2025
+# ms-dfsnm.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - netdfs (v3.0): 4fc742e0-4a10-11cf-8273-00aa004ae673

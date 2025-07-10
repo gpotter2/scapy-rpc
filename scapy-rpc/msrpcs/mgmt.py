@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# mgmt.idl compiled on 05/07/2025
+# mgmt.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - mgmt (v1.0): afa8bd80-7d8a-11c9-bef4-08002b102989

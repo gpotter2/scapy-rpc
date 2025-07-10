@@ -19,7 +19,7 @@
   
      typedef struct _MGMT_OBJECT {
          MgmtObjectType type;
-         [switch_is(type), switch_type(MgmtObjectType)] union
+         [switch_is(type)] union
          {
              [case(MGMT_QUEUE)]
                  QUEUE_FORMAT* pQueueFormat;

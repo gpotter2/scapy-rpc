@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-ioi.idl compiled on 05/07/2025
+# ms-ioi.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IManagedObject (v0.0): C3FCC19E-A970-11d2-8B5A-00A0C9B7C9C4

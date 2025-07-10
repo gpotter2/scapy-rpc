@@ -10,7 +10,7 @@
     
     typedef struct _CPREP_DISKID {
         CPREP_DISKID_ENUM       DiskIdType;
-        [switch_is(DiskIdType), switch_type(_CPREP_DISKID_ENUM)] union {
+        [switch_is(DiskIdType)] union {
             [case(CprepIdSignature)]    unsigned long DiskSignature;
             [case(CprepIdGuid)]         GUID          DiskGuid;
             [case(CprepIdNumber)]       unsigned long DeviceNumber;

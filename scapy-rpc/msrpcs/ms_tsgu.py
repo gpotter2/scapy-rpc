@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-tsgu.idl compiled on 05/07/2025
+# ms-tsgu.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - TsProxyRpcInterface (v1.3): 44e265dd-7daf-42cd-8560-3cdb6e7a2729

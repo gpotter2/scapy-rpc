@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-frs2.idl compiled on 05/07/2025
+# ms-frs2.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - FrsTransport (v1.0): 897e2e5f-93f3-4376-9c9c-fd2277495c27

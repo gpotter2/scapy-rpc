@@ -11,15 +11,6 @@ index add9a67..bb7a122 100644
       [case(BIDI_NULL, BIDI_BOOL)]
           int bData;
       [case(BIDI_INT)]
-@@ -729,7 +729,7 @@
-  typedef struct {
-      RPC_EPrintPropertyType ePropertyType;
-   
--     [switch_is(ePropertyType)]
-+     [switch_is(ePropertyType), switch_type(RPC_EPrintPropertyType)]
-      union {
-          [case(kRpcPropertyTypeString)]
-              [string] wchar_t *propertyString;
 @@ -1616,7 +1616,7 @@
       [out, size_is(,*pcProperties)] RPC_PrintNamedProperty **ppProperties);
    

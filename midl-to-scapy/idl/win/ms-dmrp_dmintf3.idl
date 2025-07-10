@@ -29,7 +29,7 @@
      boolean         isUpgradeable;
      boolean         maySwitchStyle;
      PARTITIONSTYLE  partitionStyle;
-     [switch_is(partitionStyle), switch_type(_PARTITIONSTYLE)] union {
+     [switch_is(partitionStyle)] union {
          [case(PARTITIONSTYLE_MBR)] struct {
              unsigned long   signature;
              
@@ -73,7 +73,7 @@
      LONGLONG        length;
      REGIONTYPE      regionType;
      PARTITIONSTYLE partitionStyle;
-     [switch_is(partitionStyle), switch_type(_PARTITIONSTYLE)] union {
+     [switch_is(partitionStyle)] union {
          [case(PARTITIONSTYLE_MBR)] struct {
              unsigned long   partitionType;
              boolean isActive;

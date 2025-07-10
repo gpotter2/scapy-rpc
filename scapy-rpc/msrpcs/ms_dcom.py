@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-dcom.idl compiled on 05/07/2025
+# ms-dcom.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IActivation (v0.0): 4d9f4ab8-7d1c-11cf-861e-0020af6e7c57

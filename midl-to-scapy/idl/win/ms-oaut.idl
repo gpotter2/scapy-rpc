@@ -265,7 +265,7 @@
      USHORT wReserved1;
      USHORT wReserved2;
      USHORT wReserved3;
-     [switch_type(tagVARENUM), switch_is(vt)] 
+     [switch_type(ULONG), switch_is(vt)] 
      union {
          [case(VT_I8)]
            LONGLONG llVal;

@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-com.idl compiled on 05/07/2025
+# ms-com.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - ITransactionStream (v0.0): 97199110-DB2E-11d1-A251-0000F805CA53

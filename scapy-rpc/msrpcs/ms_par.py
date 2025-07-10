@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-par.idl compiled on 05/07/2025
+# ms-par.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IRemoteWinspool (v1.0): 76F03F96-CDFD-44fc-A22C-64950A001209

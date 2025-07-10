@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# mc-mqac.idl compiled on 05/07/2025
+# mc-mqac.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - ITransaction (v0.0): 0fb15084-af41-11ce-bd2b-204c4f4f5020

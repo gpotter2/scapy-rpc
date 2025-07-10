@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-cmpo.idl compiled on 05/07/2025
+# ms-cmpo.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IXnRemote (v1.0): 906B0CE0-C70B-1067-B317-00DD010662DA

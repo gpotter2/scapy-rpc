@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-pla.idl compiled on 05/07/2025
+# ms-pla.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IDataCollectorSet (v0.0): 03837520-098b-11d8-9414-505054503030

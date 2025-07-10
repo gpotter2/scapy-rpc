@@ -25,7 +25,7 @@ except ImportError:
 LICENSE = """# SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
-+# Copyright (C) Gabriel Potter
+# Copyright (C) Gabriel Potter
 """
 
 BASE = """

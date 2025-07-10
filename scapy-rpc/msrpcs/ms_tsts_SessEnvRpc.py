@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-tsts_SessEnvRpc.idl compiled on 05/07/2025
+# ms-tsts_SessEnvRpc.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - SessEnvPublicRpc (v1.0): 1257B580-CE2F-4109-82D6-A9459D0BF6BC

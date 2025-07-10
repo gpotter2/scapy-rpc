@@ -113,7 +113,7 @@
      {
          EvtRpcVariantType type;
          DWORD flags;
-         [switch_is(type), switch_type(tag_EvtRpcVariantType)] union
+         [switch_is(type)] union
          {
              [case(EvtRpcVarTypeNull)] int nullVal;
              [case(EvtRpcVarTypeBoolean)] boolean booleanVal;

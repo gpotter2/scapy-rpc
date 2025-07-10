@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-nrpc.idl compiled on 05/07/2025
+# ms-nrpc.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - logon (v1.0): 12345678-1234-ABCD-EF00-01234567CFFB
@@ -21,7 +22,6 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
@@ -29,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
+    NDRLongField,
     NDRPacketField,
     NDRShortField,
     NDRSignedIntField,
@@ -126,21 +127,12 @@ class NETLOGON_LOGON_INFO_CLASS(IntEnum):
     NetlogonTicketLogonInformation = 8
 
 
-class RPC_UNICODE_STRING(NDRPacket):
+class UNICODE_STRING(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRShortField("Length", None, size_of="Buffer", adjust=lambda _, x: (x * 2)),
-        NDRShortField(
-            "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "Buffer",
-                "",
-                size_is=lambda pkt: (pkt.MaximumLength // 2),
-                length_is=lambda pkt: (pkt.Length // 2),
-            )
-        ),
+        NDRShortField("Length", 0),
+        NDRShortField("MaximumLength", 0),
+        NDRFullEmbPointerField(NDRShortField("Buffer", 0)),
     ]
 
 
@@ -152,11 +144,11 @@ class OLD_LARGE_INTEGER(NDRPacket):
 class NETLOGON_LOGON_IDENTITY_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("ParameterControl", 0),
         NDRPacketField("Reserved", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
-        NDRPacketField("UserName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("Workstation", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("UserName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("Workstation", UNICODE_STRING(), UNICODE_STRING),
     ]
 
 
@@ -232,7 +224,7 @@ class PNETLOGON_GENERIC_INFO(NDRPacket):
         NDRPacketField(
             "Identity", NETLOGON_LOGON_IDENTITY_INFO(), NETLOGON_LOGON_IDENTITY_INFO
         ),
-        NDRPacketField("PackageName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("PackageName", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DataLength", None, size_of="LogonData"),
         NDRFullEmbPointerField(
             NDRConfStrLenField("LogonData", "", size_is=lambda pkt: pkt.DataLength)
@@ -241,12 +233,12 @@ class PNETLOGON_GENERIC_INFO(NDRPacket):
 
 
 class PNETLOGON_TICKET_LOGON_INFO(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRShortField("CriticalOptions", 0),
-        NDRShortField("ComputerDomainOptions", 0),
-        NDRShortField("TransitOptions", 0),
-        NDRShortField("KerberosOptions", 0),
+        NDRPacketField(
+            "Identity", NETLOGON_LOGON_IDENTITY_INFO(), NETLOGON_LOGON_IDENTITY_INFO
+        ),
+        NDRLongField("RequestOptions", 0),
         NDRIntField("ServiceTicketLength", None, size_of="ServiceTicket"),
         NDRFullEmbPointerField(
             NDRConfStrLenField(
@@ -315,12 +307,12 @@ class PNETLOGON_VALIDATION_SAM_INFO(NDRPacket):
         NDRPacketField("PasswordLastSet", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordCanChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordMustChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
-        NDRPacketField("EffectiveName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("FullName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonScript", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ProfilePath", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectory", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectoryDrive", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("EffectiveName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("FullName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonScript", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ProfilePath", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectory", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectoryDrive", UNICODE_STRING(), UNICODE_STRING),
         NDRShortField("LogonCount", 0),
         NDRShortField("BadPasswordCount", 0),
         NDRIntField("UserId", 0),
@@ -336,8 +328,8 @@ class PNETLOGON_VALIDATION_SAM_INFO(NDRPacket):
         ),
         NDRIntField("UserFlags", 0),
         NDRPacketField("UserSessionKey", USER_SESSION_KEY(), USER_SESSION_KEY),
-        NDRPacketField("LogonServer", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("LogonServer", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PRPC_SID(), PRPC_SID)),
         NDRFieldListField(
             "ExpansionRoom", [], NDRIntField("", 0), length_is=lambda _: 10
@@ -362,12 +354,12 @@ class PNETLOGON_VALIDATION_SAM_INFO2(NDRPacket):
         NDRPacketField("PasswordLastSet", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordCanChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordMustChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
-        NDRPacketField("EffectiveName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("FullName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonScript", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ProfilePath", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectory", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectoryDrive", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("EffectiveName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("FullName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonScript", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ProfilePath", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectory", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectoryDrive", UNICODE_STRING(), UNICODE_STRING),
         NDRShortField("LogonCount", 0),
         NDRShortField("BadPasswordCount", 0),
         NDRIntField("UserId", 0),
@@ -383,8 +375,8 @@ class PNETLOGON_VALIDATION_SAM_INFO2(NDRPacket):
         ),
         NDRIntField("UserFlags", 0),
         NDRPacketField("UserSessionKey", USER_SESSION_KEY(), USER_SESSION_KEY),
-        NDRPacketField("LogonServer", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("LogonServer", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PRPC_SID(), PRPC_SID)),
         NDRFieldListField(
             "ExpansionRoom", [], NDRIntField("", 0), length_is=lambda _: 10
@@ -420,12 +412,12 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
         NDRPacketField("PasswordLastSet", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordCanChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("PasswordMustChange", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
-        NDRPacketField("EffectiveName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("FullName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonScript", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ProfilePath", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectory", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectoryDrive", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("EffectiveName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("FullName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonScript", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ProfilePath", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectory", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectoryDrive", UNICODE_STRING(), UNICODE_STRING),
         NDRShortField("LogonCount", 0),
         NDRShortField("BadPasswordCount", 0),
         NDRIntField("UserId", 0),
@@ -441,8 +433,8 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
         ),
         NDRIntField("UserFlags", 0),
         NDRPacketField("UserSessionKey", USER_SESSION_KEY(), USER_SESSION_KEY),
-        NDRPacketField("LogonServer", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("LogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("LogonServer", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PRPC_SID(), PRPC_SID)),
         StrFixedLenField("LMKey", "", length=8),
         NDRIntField("UserAccountControl", 0),
@@ -460,32 +452,28 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
                 size_is=lambda pkt: pkt.SidCount,
             )
         ),
-        NDRPacketField("DnsLogonDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("Upn", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString5", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString6", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString7", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString8", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString9", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ExpansionString10", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DnsLogonDomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("Upn", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString4", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString5", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString6", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString7", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString8", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString9", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ExpansionString10", UNICODE_STRING(), UNICODE_STRING),
     ]
 
 
 class PNETLOGON_VALIDATION_TICKET_LOGON(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRByteField("A", 0),
-        NDRByteField("B", 0),
-        NDRByteField("C", 0),
-        NDRByteField("D", 0),
-        NDRShortField("SourceInformation", 0),
-        NDRShortField("TransitInformation", 0),
-        NDRIntField("KerberosStatus", 0),
-        NDRIntField("NetlogonStatus", 0),
+        NDRLongField("Results", 0),
+        NDRSignedIntField("KerberosStatus", 0),
+        NDRSignedIntField("NetlogonStatus", 0),
+        NDRPacketField("SourceOfStatus", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(
             NDRPacketField(
                 "UserInformation",
@@ -1117,8 +1105,8 @@ class NETLOGON_DELTA_TYPE(IntEnum):
 class PNETLOGON_DELTA_DOMAIN(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("DomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("OemInformation", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("OemInformation", UNICODE_STRING(), UNICODE_STRING),
         NDRPacketField("ForceLogoff", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRShortField("MinPasswordLength", 0),
         NDRShortField("PasswordHistoryLength", 0),
@@ -1133,12 +1121,10 @@ class PNETLOGON_DELTA_DOMAIN(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField(
-            "DomainLockoutInformation", RPC_UNICODE_STRING(), RPC_UNICODE_STRING
-        ),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DomainLockoutInformation", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("PasswordProperties", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1149,10 +1135,10 @@ class PNETLOGON_DELTA_DOMAIN(NDRPacket):
 class PNETLOGON_DELTA_GROUP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("Name", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("RelativeId", 0),
         NDRIntField("Attributes", 0),
-        NDRPacketField("AdminComment", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("AdminComment", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("SecurityInformation", 0),
         NDRIntField("SecuritySize", None, size_of="SecurityDescriptor"),
         NDRFullEmbPointerField(
@@ -1160,10 +1146,10 @@ class PNETLOGON_DELTA_GROUP(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1174,12 +1160,12 @@ class PNETLOGON_DELTA_GROUP(NDRPacket):
 class PNETLOGON_DELTA_RENAME_GROUP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("OldName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("NewName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("OldName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("NewName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1229,15 +1215,15 @@ class NLPR_USER_PRIVATE_INFO(NDRPacket):
 class PNETLOGON_DELTA_USER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("UserName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("FullName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("UserName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("FullName", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
-        NDRPacketField("HomeDirectory", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("HomeDirectoryDrive", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("ScriptPath", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("AdminComment", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("WorkStations", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("HomeDirectory", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("HomeDirectoryDrive", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("ScriptPath", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("AdminComment", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("WorkStations", UNICODE_STRING(), UNICODE_STRING),
         NDRPacketField("LastLogon", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("LastLogoff", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("LogonHours", NLPR_LOGON_HOURS(), NLPR_LOGON_HOURS),
@@ -1259,8 +1245,8 @@ class PNETLOGON_DELTA_USER(NDRPacket):
         NDRByteField("NtPasswordPresent", 0),
         NDRByteField("LmPasswordPresent", 0),
         NDRByteField("PasswordExpired", 0),
-        NDRPacketField("UserComment", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("Parameters", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("UserComment", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("Parameters", UNICODE_STRING(), UNICODE_STRING),
         NDRShortField("CountryCode", 0),
         NDRShortField("CodePage", 0),
         NDRPacketField("PrivateData", NLPR_USER_PRIVATE_INFO(), NLPR_USER_PRIVATE_INFO),
@@ -1271,10 +1257,10 @@ class PNETLOGON_DELTA_USER(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("ProfilePath", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("ProfilePath", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1285,12 +1271,12 @@ class PNETLOGON_DELTA_USER(NDRPacket):
 class PNETLOGON_DELTA_RENAME_USER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("OldName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("NewName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("OldName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("NewName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1328,7 +1314,7 @@ class PNETLOGON_DELTA_GROUP_MEMBER(NDRPacket):
 class PNETLOGON_DELTA_ALIAS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("Name", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("Name", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("RelativeId", 0),
         NDRIntField("SecurityInformation", 0),
         NDRIntField("SecuritySize", None, size_of="SecurityDescriptor"),
@@ -1337,10 +1323,10 @@ class PNETLOGON_DELTA_ALIAS(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("Comment", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("Comment", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1351,12 +1337,12 @@ class PNETLOGON_DELTA_ALIAS(NDRPacket):
 class PNETLOGON_DELTA_RENAME_ALIAS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("OldName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("NewName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("OldName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("NewName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1429,7 +1415,7 @@ class PNETLOGON_DELTA_POLICY(NDRPacket):
                 size_is=lambda pkt: (pkt.MaximumAuditEventCount + 1),
             )
         ),
-        NDRPacketField("PrimaryDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("PrimaryDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(
             NDRPacketField("PrimaryDomainSid", PRPC_SID(), PRPC_SID)
         ),
@@ -1443,10 +1429,10 @@ class PNETLOGON_DELTA_POLICY(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1454,34 +1440,25 @@ class PNETLOGON_DELTA_POLICY(NDRPacket):
     ]
 
 
-class PRPC_UNICODE_STRING(NDRPacket):
+class PUNICODE_STRING(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRShortField("Length", None, size_of="Buffer", adjust=lambda _, x: (x * 2)),
-        NDRShortField(
-            "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "Buffer",
-                "",
-                size_is=lambda pkt: (pkt.MaximumLength // 2),
-                length_is=lambda pkt: (pkt.Length // 2),
-            )
-        ),
+        NDRShortField("Length", 0),
+        NDRShortField("MaximumLength", 0),
+        NDRFullEmbPointerField(NDRShortField("Buffer", 0)),
     ]
 
 
 class PNETLOGON_DELTA_TRUSTED_DOMAINS(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("DomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("NumControllerEntries", None, size_of="ControllerNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ControllerNames",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.NumControllerEntries,
             )
         ),
@@ -1492,10 +1469,10 @@ class PNETLOGON_DELTA_TRUSTED_DOMAINS(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("TrustedPosixOffset", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1519,8 +1496,8 @@ class PNETLOGON_DELTA_ACCOUNTS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "PrivilegeNames",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.PrivilegeEntries,
             )
         ),
@@ -1533,10 +1510,10 @@ class PNETLOGON_DELTA_ACCOUNTS(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1574,10 +1551,10 @@ class PNETLOGON_DELTA_SECRET(NDRPacket):
                 "SecurityDescriptor", "", size_is=lambda pkt: pkt.SecuritySize
             )
         ),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1589,10 +1566,10 @@ class PNETLOGON_DELTA_DELETE_GROUP(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -1604,10 +1581,10 @@ class PNETLOGON_DELTA_DELETE_USER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRPacketField("DummyString1", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DummyString1", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -2817,10 +2794,10 @@ class PNETLOGON_WORKSTATION_INFO(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Dummy2", "")),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Dummy3", "")),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("Dummy4", "")),
-        NDRPacketField("OsVersion", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("OsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("OsVersion", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("OsName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("WorkstationFlags", 0),
         NDRIntField("KerberosSupportedEncryptionTypes", 0),
         NDRIntField("DummyLong3", 0),
@@ -2831,15 +2808,15 @@ class PNETLOGON_WORKSTATION_INFO(NDRPacket):
 class NETLOGON_ONE_DOMAIN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("DomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DnsDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DnsForestName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DnsDomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DnsForestName", UNICODE_STRING(), UNICODE_STRING),
         NDRPacketField("DomainGuid", GUID(), GUID),
         NDRFullEmbPointerField(NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID)),
-        NDRPacketField("TrustExtension", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("TrustExtension", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -2850,15 +2827,15 @@ class NETLOGON_ONE_DOMAIN_INFO(NDRPacket):
 class PNETLOGON_ONE_DOMAIN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRPacketField("DomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DnsDomainName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DnsForestName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DnsDomainName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DnsForestName", UNICODE_STRING(), UNICODE_STRING),
         NDRPacketField("DomainGuid", GUID(), GUID),
         NDRFullEmbPointerField(NDRPacketField("DomainSid", PRPC_SID(), PRPC_SID)),
-        NDRPacketField("TrustExtension", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("TrustExtension", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("DummyLong1", 0),
         NDRIntField("DummyLong2", 0),
         NDRIntField("DummyLong3", 0),
@@ -2884,10 +2861,10 @@ class PNETLOGON_DOMAIN_INFO(NDRPacket):
         NDRPacketField(
             "LsaPolicy", NETLOGON_LSA_POLICY_INFO(), NETLOGON_LSA_POLICY_INFO
         ),
-        NDRPacketField("DnsHostNameInDs", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString2", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString3", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("DummyString4", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DnsHostNameInDs", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString2", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString3", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("DummyString4", UNICODE_STRING(), UNICODE_STRING),
         NDRIntField("WorkstationFlags", 0),
         NDRIntField("SupportedEncTypes", 0),
         NDRIntField("DummyLong3", 0),
@@ -3090,8 +3067,8 @@ class PNL_SITE_NAME_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "SiteNames",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.EntryCount,
             )
         ),
@@ -3206,16 +3183,16 @@ class PNL_SITE_NAME_EX_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "SiteNames",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.EntryCount,
             )
         ),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "SubnetNames",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.EntryCount,
             )
         ),
@@ -3615,8 +3592,8 @@ class LSA_FOREST_TRUST_DOMAIN_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(NDRPacketField("Sid", PRPC_SID(), PRPC_SID)),
-        NDRPacketField("DnsName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRPacketField("NetbiosName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
+        NDRPacketField("DnsName", UNICODE_STRING(), UNICODE_STRING),
+        NDRPacketField("NetbiosName", UNICODE_STRING(), UNICODE_STRING),
     ]
 
 
@@ -3639,9 +3616,7 @@ class PLSA_FOREST_TRUST_RECORD(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRPacketField(
-                        "ForestTrustData", RPC_UNICODE_STRING(), RPC_UNICODE_STRING
-                    ),
+                    NDRPacketField("ForestTrustData", UNICODE_STRING(), UNICODE_STRING),
                     (
                         (
                             lambda pkt: getattr(pkt, "ForestTrustType", None)
@@ -4066,8 +4041,8 @@ class PNL_GENERIC_RPC_DATA(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "UnicodeStringData",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
+                [PUNICODE_STRING()],
+                PUNICODE_STRING,
                 size_is=lambda pkt: pkt.UnicodeStringEntryCount,
             )
         ),
@@ -4384,7 +4359,16 @@ LOGON_OPNUMS = {
     49: DceRpcOp(
         NetrChainSetClientAttributes_Request, NetrChainSetClientAttributes_Response
     ),
-    50: DceRpcOp(
+    # 50: Opnum50NotUsedOnWire,
+    # 51: Opnum51NotUsedOnWire,
+    # 52: Opnum52NotUsedOnWire,
+    # 53: Opnum53NotUsedOnWire,
+    # 54: Opnum54NotUsedOnWire,
+    # 55: Opnum55NotUsedOnWire,
+    # 56: Opnum56NotUsedOnWire,
+    # 57: Opnum57NotUsedOnWire,
+    # 58: Opnum58NotUsedOnWire,
+    59: DceRpcOp(
         NetrServerAuthenticateKerberos_Request, NetrServerAuthenticateKerberos_Response
     ),
 }

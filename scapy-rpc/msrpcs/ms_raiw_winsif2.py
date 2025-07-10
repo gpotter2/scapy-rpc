@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-raiw_winsif2.idl compiled on 05/07/2025
+# ms-raiw_winsif2.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - winsi2 (v1.0): 811109bf-a4e1-11d1-ab54-00a0c91e9b45

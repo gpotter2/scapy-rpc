@@ -1,12 +1,12 @@
  import "ms-dtyp.idl";
   
- //[                       
- //uuid(14a8831c-bc82-11d2-8a64-0008c7457e5d),
- //version(1.0),
- //pointer_default(unique)
- //]
- //interface ExtendedError
- //{
+ [                       
+ uuid(14a8831c-bc82-11d2-8a64-0008c7457e5d),
+ version(1.0),
+ pointer_default(unique)
+ ]
+ interface ExtendedError
+ {
   
  typedef struct tagEEAString
  {
@@ -83,5 +83,5 @@
  } ExtendedErrorInfo;
   
  typedef ExtendedErrorInfo *ExtendedErrorInfoPtr;
- //}
+ }
   

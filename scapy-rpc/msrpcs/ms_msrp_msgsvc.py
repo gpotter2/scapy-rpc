@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-msrp_msgsvc.idl compiled on 05/07/2025
+# ms-msrp_msgsvc.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - msgsvc (v1.0): 17FDD703-1827-4E34-79D4-24A55C53BB37

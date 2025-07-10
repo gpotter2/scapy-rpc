@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-dfsrh.idl compiled on 05/07/2025
+# ms-dfsrh.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - IADProxy (v0.0): 4BB8AB1D-9EF9-4100-8EB6-DD4B4E418B72

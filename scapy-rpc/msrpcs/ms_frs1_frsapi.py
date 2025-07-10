@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-frs1_frsapi.idl compiled on 05/07/2025
+# ms-frs1_frsapi.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - NtFrsApi (v1.1): D049B186-814F-11D1-9A3C-00C04FC9B232

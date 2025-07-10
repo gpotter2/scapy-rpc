@@ -866,7 +866,7 @@
   
  typedef struct {
      RPC_EPrintPropertyType ePropertyType;
-     [switch_is(ePropertyType), switch_type(RPC_EPrintPropertyType)] union {
+     [switch_is(ePropertyType)] union {
          [case(kRpcPropertyTypeString)] [string] wchar_t *propertyString;
          [case(kRpcPropertyTypeInt32)]  LONG              propertyInt32;
          [case(kRpcPropertyTypeInt64)]  LONGLONG          propertyInt64;

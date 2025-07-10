@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-rdpesc.idl compiled on 05/07/2025
+# ms-rdpesc.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - type_scard_pack (v1.0): A35AF600-9CF4-11CD-A076-08002B2BD711

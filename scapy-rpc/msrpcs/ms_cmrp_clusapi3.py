@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-cmrp_clusapi3.idl compiled on 05/07/2025
+# ms-cmrp_clusapi3.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - clusapi (v3.0): b97db8b2-4c63-11cf-bff6-08002be23f2f

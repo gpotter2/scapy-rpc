@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-dltw.idl compiled on 05/07/2025
+# ms-dltw.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - trkwks (v1.2): 300f3532-38cc-11d0-a3f0-0020af6b0add

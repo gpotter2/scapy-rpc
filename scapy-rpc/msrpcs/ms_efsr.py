@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-efsr.idl compiled on 05/07/2025
+# ms-efsr.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - efsrpc (v1.0): c681d488-d850-11d0-8c52-00c04fd90f7e

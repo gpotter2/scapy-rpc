@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-rrasm.idl compiled on 05/07/2025
+# ms-rrasm.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - dimsvc (v0.0): 8f09f000-b7ed-11ce-bbd2-00001a181cad

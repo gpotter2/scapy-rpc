@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-dhcpm.idl compiled on 05/07/2025
+# ms-dhcpm.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - dhcpsrv (v1.0): 6BFFD098-A112-3610-9833-46C3F874532D

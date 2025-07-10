@@ -2,42 +2,6 @@ diff --git a/midl-to-scapy/idl/win/ms-vds.idl b/midl-to-scapy/idl/win/ms-vds.idl
 index e51b1c9..00ee6c3 100644
 --- a/midl-to-scapy/idl/win/ms-vds.idl
 +++ b/midl-to-scapy/idl/win/ms-vds.idl
-@@ -394,7 +394,7 @@
-  typedef struct _VDS_NOTIFICATION
-  {
-      VDS_NOTIFICATION_TARGET_TYPE        objectType;
--     [switch_is(objectType)] union
-+     [switch_is(objectType), switch_type(_VDS_NOTIFICATION_TARGET_TYPE)] union
-      {
-      [case(VDS_NTT_PACK)]
-          VDS_PACK_NOTIFICATION           Pack;
-@@ -416,7 +416,7 @@
-   
-  typedef struct _VDS_ASYNC_OUTPUT {
-      VDS_ASYNC_OUTPUT_TYPE type;
--     [switch_is(type)] union
-+     [switch_is(type), switch_type(_VDS_ASYNC_OUTPUT_TYPE)] union
-      {
-      [case(VDS_ASYNCOUT_CREATEPARTITION)]
-          struct _cp
-@@ -554,7 +554,7 @@
-      unsigned long                   ulPartitionNumber;
-      ULONGLONG                       ullOffset;
-      ULONGLONG                       ullSize;
--     [switch_is(PartitionStyle)] union
-+     [switch_is(PartitionStyle), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-      [case(VDS_PST_MBR)]
-          VDS_PARTITION_INFO_MBR      Mbr;
-@@ -575,7 +575,7 @@
-  typedef struct _CREATE_PARTITION_PARAMETERS
-  {
-      VDS_PARTITION_STYLE style;
--     [switch_is(style)] union
-+     [switch_is(style), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-      [case(VDS_PST_MBR)] 
-          struct
 @@ -808,7 +808,7 @@
   typedef struct VDS_REPARSE_POINT_PROP
   {
@@ -47,48 +11,3 @@ index e51b1c9..00ee6c3 100644
   } VDS_REPARSE_POINT_PROP, *PVDS_REPARSE_POINT_PROP;
    
   typedef struct _VDS_DRIVE_LETTER_PROP
-@@ -846,7 +846,7 @@
-  typedef struct _CHANGE_ATTRIBUTES_PARAMETERS
-  {
-      VDS_PARTITION_STYLE style;   // legal values: MBR or GPT
--     [switch_is(style)] union
-+     [switch_is(style), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-          [case(VDS_PST_MBR)] 
-          struct
-@@ -867,7 +867,7 @@
-  typedef struct _CHANGE_PARTITION_TYPE_PARAMETERS
-  {
-      VDS_PARTITION_STYLE style;
--     [switch_is(style)] union
-+     [switch_is(style), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-          [case(VDS_PST_MBR)]
-          struct
-@@ -974,7 +974,7 @@
-      unsigned long                   ulFlags;
-      VDS_STORAGE_BUS_TYPE            BusType;
-      VDS_PARTITION_STYLE             PartitionStyle;
--     [switch_is(PartitionStyle)] union
-+     [switch_is(PartitionStyle), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-          [case(VDS_PST_MBR)]
-          DWORD                       dwSignature;
-@@ -1004,7 +1004,7 @@
-      unsigned long                   ulFlags;
-      VDS_STORAGE_BUS_TYPE            BusType;
-      VDS_PARTITION_STYLE             PartitionStyle;
--     [switch_is(PartitionStyle)] union
-+     [switch_is(PartitionStyle), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-          [case(VDS_PST_MBR)]
-          DWORD                       dwSignature;
-@@ -1042,7 +1042,7 @@
-      VDS_HEALTH          health;
-      VDS_STORAGE_BUS_TYPE BusType;
-      VDS_PARTITION_STYLE PartitionStyle;
--     [switch_is(PartitionStyle)] union
-+     [switch_is(PartitionStyle), switch_type(_VDS_PARTITION_STYLE)] union
-      {
-      [case(VDS_PST_MBR)]
-          DWORD               dwSignature;    

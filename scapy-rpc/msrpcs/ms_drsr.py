@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-drsr.idl compiled on 05/07/2025
+# ms-drsr.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - drsuapi (v4.0): e3514235-4b06-11d1-ab04-00c04fc2dcd2

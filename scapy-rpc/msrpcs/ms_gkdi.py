@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # This file is part of Scapy RPC
 # See https://scapy.net/ for more information
+# Copyright (C) Gabriel Potter
 
-# ms-gkdi.idl compiled on 05/07/2025
+# ms-gkdi.idl compiled on 10/07/2025
 """
 RPC definitions for the following interfaces:
 - ISDKey (v1.0): b9785960-524f-11df-8b6d-83dcded72085
