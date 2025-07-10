@@ -1,3 +1,4 @@
+// [ms-fax] v29.0 (Tue, 23 Apr 2024)
  import "ms-fax_faxdatatypes.idl";
 
  #define HCALL DWORD

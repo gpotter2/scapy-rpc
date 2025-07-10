@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-even.idl compiled on 10/07/2025
+# [ms-even] v26.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - eventlog (v0.0): 82273FDC-E32A-18C3-3F78-827929DC23EA

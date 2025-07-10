@@ -1,3 +1,4 @@
+// [ms-oaut] v21.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
  import "ms-dcom.idl";
   
@@ -265,7 +266,7 @@
      USHORT wReserved1;
      USHORT wReserved2;
      USHORT wReserved3;
-     [switch_type(ULONG), switch_is(vt)] 
+     [switch_type(VARENUM), switch_is(vt)]
      union {
          [case(VT_I8)]
            LONGLONG llVal;
@@ -420,7 +421,7 @@
  } HYPER_SIZEDARR;
   
  typedef union _wireSAFEARRAY_UNION
-     switch_type(tagSF_TYPE) u {
+     switch_type(SF_TYPE) u {
      case SF_BSTR:      SAFEARR_BSTR     BstrStr;
      case SF_UNKNOWN:   SAFEARR_UNKNOWN  UnknownStr;
      case SF_DISPATCH:  SAFEARR_DISPATCH DispatchStr;

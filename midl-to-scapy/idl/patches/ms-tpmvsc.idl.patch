@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-tpmvsc.idl b/midl-to-scapy/idl/win/ms-tpmv
 index df10c71..02d5133 100644
 --- a/midl-to-scapy/idl/win/ms-tpmvsc.idl
 +++ b/midl-to-scapy/idl/win/ms-tpmvsc.idl
-@@ -1,5 +1,4 @@
+@@ -2,5 +2,4 @@
 - import "oaidl.idl";
 - import "ocidl.idl";
 + import "ms-dtyp.idl";

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-lsat.idl compiled on 10/07/2025
+# [ms-lsat] v33.0 (Wed, 01 May 2024)
+
 """
 RPC definitions for the following interfaces:
 - lsarpc (v0.0): 12345778-1234-ABCD-EF00-0123456789AB

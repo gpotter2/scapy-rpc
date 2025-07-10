@@ -1,3 +1,4 @@
+// [ms-even6] v25.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   
  const int MAX_PAYLOAD = 2 * 1024 * 1024;

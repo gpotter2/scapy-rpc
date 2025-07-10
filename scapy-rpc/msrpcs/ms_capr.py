@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-capr.idl compiled on 10/07/2025
+# [ms-capr] v9.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - lsacap (v1.0): afc07e2e-311c-4435-808c-c483ffeec7c9

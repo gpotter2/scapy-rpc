@@ -1,3 +1,4 @@
+// [ms-dmrp] v8.2 (Thu, 01 Jun 2017)
  import "ms-dtyp.idl";
  import "ms-dcom.idl";
   

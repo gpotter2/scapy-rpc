@@ -1,3 +1,4 @@
+// [ms-mqrr] v28.0 (Tue, 09 Jul 2024)
   
  import "ms-dtyp.idl";
  import "ms-mqmq.idl";

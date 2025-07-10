@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dhcpm.idl compiled on 10/07/2025
+# [ms-dhcpm] v36.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - dhcpsrv (v1.0): 6BFFD098-A112-3610-9833-46C3F874532D

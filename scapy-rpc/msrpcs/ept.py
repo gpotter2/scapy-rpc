@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ept.idl compiled on 10/07/2025
+# This is from [MS-RPCE] and [C706] Appendix O
+
 """
 RPC definitions for the following interfaces:
 - ept (v3.0): e1af8308-5d1f-11c9-91a4-08002b14a0fa

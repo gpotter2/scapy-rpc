@@ -1,3 +1,4 @@
+// [ms-oxabref] v15.0 (Tue, 20 May 2025)
  import "ms-dtyp.idl";
  [ uuid (1544f5e0-613c-11d1-93df-00c04fd7bd09),
    version(1.0),

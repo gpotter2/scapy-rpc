@@ -1,3 +1,4 @@
+// [ms-dtyp] v42.0 (Tue, 19 Nov 2024)
  typedef unsigned short wchar_t;
  typedef void* ADCONNECTION_HANDLE;
  typedef int BOOL, *PBOOL, *LPBOOL;

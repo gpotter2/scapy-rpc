@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-csra.idl compiled on 10/07/2025
+# [ms-csra] v44.0 (Mon, 12 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - ICertAdminD (v0.0): d99e6e71-fc88-11d0-b498-00a0c90312f3
@@ -635,34 +636,6 @@ class SetOfficerRights_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
-class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
-    DEPORTED_CONFORMANTS = ["asData"]
-    fields_desc = [
-        NDRIntField("cBytes", 0),
-        NDRIntField("clSize", None, size_of="asData"),
-        NDRConfStrLenFieldUtf16(
-            "asData", "", size_is=lambda pkt: pkt.clSize, conformant_in_struct=True
-        ),
-    ]
-
-
-class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
-    DEPORTED_CONFORMANTS = ["abData"]
-    fields_desc = [
-        NDRIntField("ulCntData", None, size_of="abData"),
-        NDRConfStrLenField(
-            "abData", "", size_is=lambda pkt: pkt.ulCntData, conformant_in_struct=True
-        ),
-    ]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -700,6 +673,34 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
+
+
+class FLAGGED_WORD_BLOB(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["asData"]
+    fields_desc = [
+        NDRIntField("cBytes", 0),
+        NDRIntField("clSize", None, size_of="asData"),
+        NDRConfStrLenFieldUtf16(
+            "asData", "", size_is=lambda pkt: pkt.clSize, conformant_in_struct=True
+        ),
+    ]
+
+
+class MInterfacePointer(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["abData"]
+    fields_desc = [
+        NDRIntField("ulCntData", None, size_of="abData"),
+        NDRConfStrLenField(
+            "abData", "", size_is=lambda pkt: pkt.ulCntData, conformant_in_struct=True
+        ),
+    ]
 
 
 class SF_TYPE(IntEnum):

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rprn.idl compiled on 10/07/2025
+# [ms-rprn] v38.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - winspool (v1.0): 12345678-1234-ABCD-EF00-0123456789AB

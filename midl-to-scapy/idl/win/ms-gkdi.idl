@@ -1,3 +1,4 @@
+// [ms-gkdi] v10.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
  [uuid(b9785960-524f-11df-8b6d-83dcded72085)]
  [version(1.0)]

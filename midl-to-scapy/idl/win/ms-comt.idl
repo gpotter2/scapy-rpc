@@ -1,3 +1,4 @@
+// [ms-comt] v10.0 (Tue, 23 Apr 2024)
  import "ms-dcom.idl";
  import "ms-dtyp.idl";
  import "ms-oaut.idl";

@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-tsts_legacy.idl b/midl-to-scapy/idl/win/ms
 index c2ce937..a39891b 100644
 --- a/midl-to-scapy/idl/win/ms-tsts_legacy.idl
 +++ b/midl-to-scapy/idl/win/ms-tsts_legacy.idl
-@@ -1,11 +1,11 @@
+@@ -2,11 +2,11 @@
   import "ms-dtyp.idl";
    
 - #include "ms-tsts_allproc.h"

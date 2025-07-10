@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-mqmp.idl compiled on 10/07/2025
+# [ms-mqmp] v31.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - qmcomm (v1.0): fdb3a030-065f-11d1-bb9b-00a024ea5525

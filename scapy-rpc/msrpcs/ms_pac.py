@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-pac.idl compiled on 10/07/2025
+# [ms-pac] v26.0 (Mon, 10 Jun 2024)
+
 """
 RPC definitions for the following interfaces:
 -

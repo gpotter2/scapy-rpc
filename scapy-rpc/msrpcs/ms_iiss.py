@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-iiss.idl compiled on 10/07/2025
+# [ms-iiss] v12.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IIisServiceControl (v0.0): E8FB8620-588F-11D2-9D61-00C04F79C5FE

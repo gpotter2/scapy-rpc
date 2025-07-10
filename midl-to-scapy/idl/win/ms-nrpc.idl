@@ -1,3 +1,4 @@
+// [ms-nrpc] v45.0 (Tue, 08 Jul 2025)
  import "ms-dtyp.idl";
  [
     uuid(12345678-1234-ABCD-EF00-01234567CFFB),

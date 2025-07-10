@@ -1,3 +1,4 @@
+// [ms-oxnspi] v15.0 (Tue, 20 May 2025)
  import "ms-dtyp.idl";
   
  typedef long NTSTATUS;

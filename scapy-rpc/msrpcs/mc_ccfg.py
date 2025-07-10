@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# mc-ccfg.idl compiled on 10/07/2025
+# [mc-ccfg] v1.2 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - IClusCfgAsyncEvictCleanup (v0.0): 52C80B95-C1AD-4240-8D89-72E9FA84025E

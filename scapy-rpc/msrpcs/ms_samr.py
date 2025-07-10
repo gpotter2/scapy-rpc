@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-samr.idl compiled on 10/07/2025
+# [ms-samr] v49.0 (Mon, 10 Feb 2025)
+
 """
 RPC definitions for the following interfaces:
 - samr (v1.0): 12345778-1234-ABCD-EF00-0123456789AC

@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl b/midl-to-scapy/idl/win/
 index 7ab6d1b..0e2eeae 100644
 --- a/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl
 +++ b/midl-to-scapy/idl/win/ms-cmrp_clusapi3.idl
-@@ -1,10 +1,11 @@
+@@ -2,10 +2,11 @@
      import "ms-dtyp.idl";
      
 +    #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF

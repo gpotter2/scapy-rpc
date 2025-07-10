@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rrasm.idl compiled on 10/07/2025
+# [ms-rrasm] v26.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - dimsvc (v0.0): 8f09f000-b7ed-11ce-bbd2-00001a181cad

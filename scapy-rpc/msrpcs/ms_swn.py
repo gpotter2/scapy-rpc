@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-swn.idl compiled on 10/07/2025
+# [ms-swn] v14.0 (Tue, 19 Nov 2024)
+
 """
 RPC definitions for the following interfaces:
 - Witness (v1.1): ccd8c074-d0e5-4a40-92b4-d074faa6ba28

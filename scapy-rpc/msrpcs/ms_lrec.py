@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-lrec.idl compiled on 10/07/2025
+# [ms-lrec] v5.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - NetEventForwarder (v1.0): 22e5386d-8b12-4bf0-b0ec-6a1ea419e366

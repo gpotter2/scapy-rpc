@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-eerr.idl compiled on 10/07/2025
+# [ms-eerr] v16.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - ExtendedError (v1.0): 14a8831c-bc82-11d2-8a64-0008c7457e5d

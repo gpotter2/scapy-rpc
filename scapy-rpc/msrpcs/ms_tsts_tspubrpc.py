@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsts_tspubrpc.idl compiled on 10/07/2025
+# [ms-tsts] v31.0 (Fri, 23 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - TermSrvSession (v1.0): 484809d6-4239-471b-b5bc-61df8c23ac48

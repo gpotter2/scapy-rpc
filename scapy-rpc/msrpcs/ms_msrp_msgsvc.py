@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-msrp_msgsvc.idl compiled on 10/07/2025
+# [ms-msrp] v10.3 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - msgsvc (v1.0): 17FDD703-1827-4E34-79D4-24A55C53BB37

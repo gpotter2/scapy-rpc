@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-comev.idl compiled on 10/07/2025
+# [ms-comev] v8.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IEventObjectCollection (v0.0): f89ac270-d4eb-11d1-b682-00805fc79216
@@ -80,11 +81,6 @@ class FLAGGED_WORD_BLOB(NDRPacket):
     ]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -122,6 +118,11 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
 
 
 class SF_TYPE(IntEnum):

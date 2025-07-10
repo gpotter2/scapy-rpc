@@ -1,3 +1,4 @@
+// [ms-mqds] v24.1 (Thu, 01 Jun 2017)
  import "ms-dtyp.idl";
  import "ms-mqmq.idl";
   

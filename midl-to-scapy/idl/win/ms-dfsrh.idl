@@ -1,3 +1,4 @@
+// [ms-dfsrh] v17.0 (Tue, 23 Apr 2024)
  import "ms-oaut.idl";
   
  //#define SAFEARRAY(datatype) SAFEARRAY*

@@ -1,3 +1,4 @@
+// [ms-tsts] v31.0 (Fri, 23 May 2025)
  import "ms-dtyp.idl";
   
  // [MS-TSTS] specific defines

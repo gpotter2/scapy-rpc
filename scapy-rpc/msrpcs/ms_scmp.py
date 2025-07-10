@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-scmp.idl compiled on 10/07/2025
+# [ms-scmp] v10.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IVssSnapshotMgmt (v0.0): FA7DF749-66E7-4986-A27F-E2F04AE53772

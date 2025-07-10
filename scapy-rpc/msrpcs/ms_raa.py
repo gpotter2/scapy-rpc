@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-raa.idl compiled on 10/07/2025
+# [ms-raa] v11.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - authzr (v0.0): 0b1c2170-5732-4e0e-8cd3-d9b16f3b84d7

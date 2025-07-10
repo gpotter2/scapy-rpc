@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-msrp_msgsvcsend.idl compiled on 10/07/2025
+# [ms-msrp] v10.3 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - msgsvcsend (v1.0): 5a7b91f8-ff00-11d0-a9b2-00c04fb6e6fc

@@ -1,3 +1,4 @@
+// [ms-lsat] v33.0 (Wed, 01 May 2024)
  import "ms-dtyp.idl";
   
  typedef struct _LSAPR_SID_INFORMATION {

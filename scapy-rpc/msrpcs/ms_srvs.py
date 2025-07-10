@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-srvs.idl compiled on 10/07/2025
+# [ms-srvs] v39.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - srvsvc (v3.0): 4B324FC8-1670-01D3-1278-5A47BF6EE188

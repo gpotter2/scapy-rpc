@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-nrpc.idl compiled on 10/07/2025
+# [ms-nrpc] v45.0 (Tue, 08 Jul 2025)
+
 """
 RPC definitions for the following interfaces:
 - logon (v1.0): 12345678-1234-ABCD-EF00-01234567CFFB

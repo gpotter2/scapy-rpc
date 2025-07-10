@@ -1,3 +1,4 @@
+// [ms-msrp] v10.3 (Thu, 01 Jun 2017)
  import "ms-dtyp.idl";
   
 //  #if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)

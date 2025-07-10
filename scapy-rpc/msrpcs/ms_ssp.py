@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-ssp.idl compiled on 10/07/2025
+# [ms-ssp] v7.0 (Tue, 05 Oct 2021)
+
 """
 RPC definitions for the following interfaces:
 - ISingleSignonRemoteMasterSecret (v1.0): 9D07CA0D-8F02-4ed5-B727-ACF37FEA5BBC

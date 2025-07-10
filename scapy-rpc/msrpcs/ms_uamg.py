@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-uamg.idl compiled on 10/07/2025
+# [ms-uamg] v14.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - ICategoryCollection (v0.0): 3a56bfb8-576c-43f7-9335-fe4838fd7e37
@@ -311,11 +312,6 @@ class get_Categories_Response(NDRPacket):
     ]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -353,6 +349,11 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
 
 
 class SF_TYPE(IntEnum):

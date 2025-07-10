@@ -1,5 +1,4 @@
-import "ms-dtyp.idl";
-
+// [ms-rsp] v12.0 (Tue, 23 Apr 2024)
  typedef struct _REG_UNICODE_STRING {
      unsigned short Length;
      unsigned short MaximumLength;

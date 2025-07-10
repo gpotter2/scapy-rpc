@@ -1,3 +1,4 @@
+// [ms-dssp] v16.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   [
      uuid(3919286a-b10c-11d0-9ba8-00c04fd92ef5),

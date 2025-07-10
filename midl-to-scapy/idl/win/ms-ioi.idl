@@ -1,3 +1,4 @@
+// [ms-ioi] v20.0 (Wed, 13 Mar 2019)
  import "ms-oaut.idl";
   
  #ifdef _64BIT

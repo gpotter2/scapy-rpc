@@ -1,3 +1,4 @@
+// [ms-fasp] v34.0 (Tue, 19 Nov 2024)
 // import "wtypes.h";
  import "ms-dtyp.idl";
  // define PWSTR

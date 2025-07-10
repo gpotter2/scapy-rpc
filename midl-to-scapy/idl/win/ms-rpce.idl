@@ -1,3 +1,4 @@
+// [ms-rpce] v35.0 (Mon, 16 Sep 2024)
  typedef struct _GUID
  {
      unsigned long  Data1;

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-frs1_frsapi.idl compiled on 10/07/2025
+# [ms-frs1] v29.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - NtFrsApi (v1.1): D049B186-814F-11D1-9A3C-00C04FC9B232

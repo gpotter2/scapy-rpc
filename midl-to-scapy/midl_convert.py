@@ -44,9 +44,10 @@ BUILTIN_TYPES = {
     "float": "f",
     "double": "d",
     "handle_t": "Q",
+    "error_status_t": "L",
     # Special [MS-RPCE]
     "void": "void",
-    "wchar_t": ("H", "H"),
+    "wchar_t": "H",
     "__int3264": ("__int3264", "__uint3264"),
 }
 
@@ -261,7 +262,9 @@ class Function:
                 # conflict on the 'status' name
                 sname = "comm_status"
             # add implicit 'status' out argument
-            self.out_args.append(BuiltinType(c, ("id", sname), ["unsigned", "long"], []))
+            self.out_args.append(
+                BuiltinType(c, ("id", sname), ["unsigned", "long"], [])
+            )
 
     def __repr__(self):
         return (Colors.GREEN + "<Function %s(%s) -> (%s)>" + Colors.RESET) % (

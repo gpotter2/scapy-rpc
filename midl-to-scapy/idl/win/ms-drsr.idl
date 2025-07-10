@@ -1,3 +1,4 @@
+// [ms-drsr] v44.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
  [
      uuid (e3514235-4b06-11d1-ab04-00c04fc2dcd2), version(4.0),

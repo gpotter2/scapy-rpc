@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dltm.idl compiled on 10/07/2025
+# [ms-dltm] v9.1 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - trksvr (v1.0): 4da1c422-943d-11d1-acae-00c04fc2aa3f

@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-lsat.idl b/midl-to-scapy/idl/win/ms-lsat.i
 index 2c23a25..29eef0f 100644
 --- a/midl-to-scapy/idl/win/ms-lsat.idl
 +++ b/midl-to-scapy/idl/win/ms-lsat.idl
-@@ -1,5 +1,9 @@
+@@ -2,5 +2,9 @@
   import "ms-dtyp.idl";
    
 + typedef struct _LSAPR_SID_INFORMATION {

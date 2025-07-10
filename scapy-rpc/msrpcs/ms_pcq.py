@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-pcq.idl compiled on 10/07/2025
+# [ms-pcq] v18.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - PerflibV2 (v1.0): da5a86c5-12c2-4943-ab30-7f74a813d853

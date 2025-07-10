@@ -1,3 +1,4 @@
+// [ms-wcce] v50.0 (Mon, 12 May 2025)
   
  import "ms-dcom.idl";
  typedef byte BYTE;

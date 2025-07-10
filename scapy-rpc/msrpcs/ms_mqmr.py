@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-mqmr.idl compiled on 10/07/2025
+# [ms-mqmr] v18.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - qmmgmt (v1.0): 41208ee0-e970-11d1-9b9e-00e02c064c39

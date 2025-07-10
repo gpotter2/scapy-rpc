@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl b/midl-to-scapy/idl/win/ms
 index c1662d9..70d67f6 100644
 --- a/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl
 +++ b/midl-to-scapy/idl/win/ms-msrp_msgsvc.idl
-@@ -1,10 +1,10 @@
+@@ -2,10 +2,10 @@
   import "ms-dtyp.idl";
    
 - #if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)

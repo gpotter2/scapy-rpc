@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-w32t.idl compiled on 10/07/2025
+# [ms-w32t] v23.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - W32Time (v4.1): 8fb6d884-2388-11d0-8c35-00c04fda2795

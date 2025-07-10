@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-mqds.idl compiled on 10/07/2025
+# [ms-mqds] v24.1 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - dscomm (v1.0): 77df7a80-f298-11d0-8358-00a024c480a8

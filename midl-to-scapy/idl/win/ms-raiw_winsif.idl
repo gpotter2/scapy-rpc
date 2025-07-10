@@ -1,3 +1,4 @@
+// [ms-raiw] v14.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   
  #define WINSINTF_MAX_NO_RPL_PNRS 25

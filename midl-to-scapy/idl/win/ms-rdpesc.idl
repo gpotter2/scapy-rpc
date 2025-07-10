@@ -1,3 +1,4 @@
+// [ms-rdpesc] v17.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
  import "ms-dcom.idl";
   

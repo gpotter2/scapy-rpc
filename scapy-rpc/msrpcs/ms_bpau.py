@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-bpau.idl compiled on 10/07/2025
+# [ms-bpau] v4.2 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - BitsPeerAuth (v1.0): e3d0d746-d2af-40fd-8a7a-0d7078bb7092

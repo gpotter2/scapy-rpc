@@ -143,12 +143,11 @@ def main(fname):
     # 1. Print license
     print(LICENSE)
 
-    # 2. Show build time and file
-    current_time = datetime.now(timezone.utc)
-    print(
-        "# %s compiled on %s"
-        % (os.path.basename(fname), current_time.strftime("%d/%m/%Y"))
-    )
+    # 2. Port comment from the IDL
+    with open(fname, "r") as fd:
+        firstline = fd.readline()
+        if firstline.startswith("//"):
+            print("#" + firstline[2:])
 
     if FILTER:
         print("# This file is a stripped version ! Use scapy-rpc for the full.")

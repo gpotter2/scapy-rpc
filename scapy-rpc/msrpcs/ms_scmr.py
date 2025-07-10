@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-scmr.idl compiled on 10/07/2025
+# [ms-scmr] v34.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - svcctl (v2.0): 367ABB81-9844-35F1-AD32-98F038001003

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsts_SessEnvRpc.idl compiled on 10/07/2025
+# [ms-tsts] v31.0 (Fri, 23 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - SessEnvPublicRpc (v1.0): 1257B580-CE2F-4109-82D6-A9459D0BF6BC

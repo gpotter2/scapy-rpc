@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-mqrr.idl compiled on 10/07/2025
+# [ms-mqrr] v28.0 (Tue, 09 Jul 2024)
+
 """
 RPC definitions for the following interfaces:
 - RemoteRead (v1.0): 1a9134dd-7b39-45ba-ad88-44d01ca47f28

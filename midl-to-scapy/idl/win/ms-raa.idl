@@ -1,3 +1,4 @@
+// [ms-raa] v11.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   
  [uuid(0b1c2170-5732-4e0e-8cd3-d9b16f3b84d7)]

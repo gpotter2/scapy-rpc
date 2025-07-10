@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dmrp_dmintf.idl compiled on 10/07/2025
+# [ms-dmrp] v8.2 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - IVolumeClient (v0.0): D2D79DF5-3400-11d0-B40B-00AA005FF586

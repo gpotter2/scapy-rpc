@@ -1,3 +1,4 @@
+// [ms-csvp] v33.0 (Mon, 16 Sep 2024)
  import "ms-oaut.idl";
     //#define SAFEARRAY(type) SAFEARRAY
     

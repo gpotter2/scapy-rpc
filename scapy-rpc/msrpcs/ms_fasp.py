@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-fasp.idl compiled on 10/07/2025
+# [ms-fasp] v34.0 (Tue, 19 Nov 2024)
+
 """
 RPC definitions for the following interfaces:
 - RemoteFW (v1.0): 6b5bdd1e-528c-422c-af8c-a4079be4fe48

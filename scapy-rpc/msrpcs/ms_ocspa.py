@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-ocspa.idl compiled on 10/07/2025
+# [ms-ocspa] v13.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IOCSPAdminD (v0.0): 784b693d-95f3-420b-8126-365c098659f2
@@ -45,22 +46,6 @@ class FLAGGED_WORD_BLOB(NDRPacket):
     ]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
-class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
-    DEPORTED_CONFORMANTS = ["abData"]
-    fields_desc = [
-        NDRIntField("ulCntData", None, size_of="abData"),
-        NDRConfStrLenField(
-            "abData", "", size_is=lambda pkt: pkt.ulCntData, conformant_in_struct=True
-        ),
-    ]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -98,6 +83,22 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
+
+
+class MInterfacePointer(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["abData"]
+    fields_desc = [
+        NDRIntField("ulCntData", None, size_of="abData"),
+        NDRConfStrLenField(
+            "abData", "", size_is=lambda pkt: pkt.ulCntData, conformant_in_struct=True
+        ),
+    ]
 
 
 class SF_TYPE(IntEnum):

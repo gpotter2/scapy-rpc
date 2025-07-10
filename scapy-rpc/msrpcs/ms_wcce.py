@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-wcce.idl compiled on 10/07/2025
+# [ms-wcce] v50.0 (Mon, 12 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - ICertRequestD (v0.0): d99e6e70-fc88-11d0-b498-00a0c90312f3

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-frs1_frsrpc.idl compiled on 10/07/2025
+# [ms-frs1] v29.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - frsrpc (v1.1): F5CC59B4-4264-101A-8C59-08002B2F8426

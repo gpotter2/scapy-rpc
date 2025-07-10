@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-csvp.idl compiled on 10/07/2025
+# [ms-csvp] v33.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - IClusterStorage2 (v0.0): None

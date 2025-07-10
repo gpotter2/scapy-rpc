@@ -1,3 +1,4 @@
+// [ms-adtg] v19.1 (Fri, 30 May 2025)
  import "ms-oaut.idl";
   
  //midl_pragma warning (disable: 2400)

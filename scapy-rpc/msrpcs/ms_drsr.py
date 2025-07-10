@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-drsr.idl compiled on 10/07/2025
+# [ms-drsr] v44.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - drsuapi (v4.0): e3514235-4b06-11d1-ab04-00c04fc2dcd2

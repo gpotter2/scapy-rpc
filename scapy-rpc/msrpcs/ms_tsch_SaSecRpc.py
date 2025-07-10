@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsch_SaSecRpc.idl compiled on 10/07/2025
+# [ms-tsch] v28.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - sasec (v1.0): 378E52B0-C0A9-11CF-822D-00AA0051E40F

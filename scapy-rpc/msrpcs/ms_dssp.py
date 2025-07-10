@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dssp.idl compiled on 10/07/2025
+# [ms-dssp] v16.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - dssetup (v0.0): 3919286a-b10c-11d0-9ba8-00c04fd92ef5

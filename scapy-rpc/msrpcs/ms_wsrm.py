@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-wsrm.idl compiled on 10/07/2025
+# [ms-wsrm] v14.2 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - IResourceManager (v0.0): C5CEBEE2-9DF5-4CDD-A08C-C2471BC144B4

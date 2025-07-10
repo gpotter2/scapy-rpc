@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-par.idl compiled on 10/07/2025
+# [ms-par] v18.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - IRemoteWinspool (v1.0): 76F03F96-CDFD-44fc-A22C-64950A001209

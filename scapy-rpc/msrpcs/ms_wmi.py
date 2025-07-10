@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-wmi.idl compiled on 10/07/2025
+# [ms-wmi] v32.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IWbemClassObject (v0.0): dc12a681-737f-11cf-884d-00aa004b2e24

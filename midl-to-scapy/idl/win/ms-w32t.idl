@@ -1,5 +1,4 @@
- import "ms-dtyp.idl";
-
+// [ms-w32t] v23.0 (Tue, 23 Apr 2024)
  typedef struct {
      unsigned __int32 ulSize;
      unsigned __int32 ulResolveAttempts;

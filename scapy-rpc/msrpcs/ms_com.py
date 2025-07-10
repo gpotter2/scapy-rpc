@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-com.idl compiled on 10/07/2025
+# [ms-com] v12.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - ITransactionStream (v0.0): 97199110-DB2E-11d1-A251-0000F805CA53

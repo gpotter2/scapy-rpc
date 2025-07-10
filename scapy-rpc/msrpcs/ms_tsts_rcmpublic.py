@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsts_rcmpublic.idl compiled on 10/07/2025
+# [ms-tsts] v31.0 (Fri, 23 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - RCMPublic (v1.0): bde95fdf-eee0-45de-9e12-e5a61cd0d4fe

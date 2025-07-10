@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-fax_fax.idl b/midl-to-scapy/idl/win/ms-fax
 index 5b787ae..e674b91 100644
 --- a/midl-to-scapy/idl/win/ms-fax_fax.idl
 +++ b/midl-to-scapy/idl/win/ms-fax_fax.idl
-@@ -1,15 +1,17 @@
+@@ -2,15 +2,17 @@
   import "ms-fax_faxdatatypes.idl";
 - [
 -     uuid(ea0a3165-4834-11d2-a6f8-00c04fa346cc),

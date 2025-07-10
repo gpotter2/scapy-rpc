@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rsmp.idl compiled on 10/07/2025
+# [ms-rsmp] v11.0 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - IUnknown (v0.0): 00000000-0000-0000-C000-000000000046

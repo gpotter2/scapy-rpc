@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# mc-iisa.idl compiled on 10/07/2025
+# [mc-iisa] v15.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IAppHostMethod (v0.0): 7883ca1c-1112-4447-84c3-52fbeb38069d
@@ -173,11 +174,6 @@ class Execute_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -215,6 +211,11 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
 
 
 class SF_TYPE(IntEnum):

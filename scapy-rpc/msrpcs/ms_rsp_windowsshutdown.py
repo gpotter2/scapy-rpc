@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rsp_windowsshutdown.idl compiled on 10/07/2025
+# [ms-rsp] v12.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - WindowsShutdown (v1.0): d95afe70-a6d5-4259-822e-2c84da1ddb0d

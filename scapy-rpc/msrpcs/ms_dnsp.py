@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dnsp.idl compiled on 10/07/2025
+# [ms-dnsp] v38.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - DnsServer (v5.0): 50abc2a4-574d-40b3-9d66-ee4fd5fba076

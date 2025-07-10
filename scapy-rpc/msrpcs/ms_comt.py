@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-comt.idl compiled on 10/07/2025
+# [ms-comt] v10.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IGetTrackingData (v0.0): B60040E0-BCF3-11D1-861D-0080C729264D

@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-coma.idl compiled on 10/07/2025
+# [ms-coma] v15.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - ICatalogSession (v0.0): 182C40FA-32E4-11D0-818B-00A0C9231C29

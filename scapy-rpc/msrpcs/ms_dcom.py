@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dcom.idl compiled on 10/07/2025
+# [ms-dcom] v25.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - IActivation (v0.0): 4d9f4ab8-7d1c-11cf-861e-0020af6e7c57

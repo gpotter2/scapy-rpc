@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-bkrp.idl compiled on 10/07/2025
+# [ms-bkrp] v27.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - BackupKey (v1.0): 3dde7c30-165d-11d1-ab8f-00805f14db40

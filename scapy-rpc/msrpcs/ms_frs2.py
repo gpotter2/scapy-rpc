@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-frs2.idl compiled on 10/07/2025
+# [ms-frs2] v30.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - FrsTransport (v1.0): 897e2e5f-93f3-4376-9c9c-fd2277495c27

@@ -178,8 +178,6 @@ class Resolver:
                         return 16
                     elif typ2.name == "GUID":
                         return 16
-                    elif typ2.name == "wchar_t":
-                        return 2
                     raise Exception("Unimplemented: size for " + typ2.name)
         elif x[0] == "id":
             # Try to resolve a global value. If it fails, it's probably

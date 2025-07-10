@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-fsrvp.idl compiled on 10/07/2025
+# [ms-fsrvp] v16.0 (Tue, 19 Nov 2024)
+
 """
 RPC definitions for the following interfaces:
 - FileServerVssAgent (v1.0): A8E0653C-2744-4389-A61D-7373DF8B2292

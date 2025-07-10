@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-even6.idl compiled on 10/07/2025
+# [ms-even6] v25.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IEventService (v1.0): f6beaff7-1e19-4fbb-9f8f-b89e2018337c

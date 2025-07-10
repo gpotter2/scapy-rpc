@@ -1,5 +1,5 @@
+// [ms-oxcrpc] v25.0 (Tue, 20 May 2025)
  import "ms-rpce.idl";
- import "ms-dtyp.idl";
   
  typedef [context_handle] void * CXH;
  typedef [context_handle] void * ACXH;

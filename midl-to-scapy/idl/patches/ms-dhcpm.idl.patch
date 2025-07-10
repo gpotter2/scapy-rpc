@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-dhcpm.idl b/midl-to-scapy/idl/win/ms-dhcpm
 index c397615..3f13401 100644
 --- a/midl-to-scapy/idl/win/ms-dhcpm.idl
 +++ b/midl-to-scapy/idl/win/ms-dhcpm.idl
-@@ -1,6 +1,5 @@
+@@ -2,6 +2,5 @@
       import "ms-dtyp.idl";
        
 -      #define LPWSTR [string] wchar_t*

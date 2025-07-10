@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rrp.idl compiled on 10/07/2025
+# [ms-rrp] v39.0 (Mon, 21 Oct 2024)
+
 """
 RPC definitions for the following interfaces:
 - winreg (v1.0): 338CD001-2244-31F1-AAAA-900038001003

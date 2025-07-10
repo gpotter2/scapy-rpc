@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-raiw_winsif.idl compiled on 10/07/2025
+# [ms-raiw] v14.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - winsif (v1.0): 45F52C28-7F9F-101A-B52B-08002B2EFABE

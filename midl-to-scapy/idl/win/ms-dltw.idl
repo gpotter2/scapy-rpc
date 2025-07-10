@@ -1,3 +1,4 @@
+// [ms-dltw] v17.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   
  typedef signed long SequenceNumber;

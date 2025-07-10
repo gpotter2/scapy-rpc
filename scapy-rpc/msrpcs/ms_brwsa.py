@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-brwsa.idl compiled on 10/07/2025
+# [ms-brwsa] v15.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - browser (v0.0): 6BFFD098-A112-3610-9833-012892020162

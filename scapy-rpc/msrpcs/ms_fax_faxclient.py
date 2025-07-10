@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-fax_faxclient.idl compiled on 10/07/2025
+# [ms-fax] v29.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - faxclient (v3.0): 6099fc12-3eff-11d0-abd0-00c04fd91a4e

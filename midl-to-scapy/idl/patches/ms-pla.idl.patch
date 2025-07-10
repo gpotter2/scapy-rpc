@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-pla.idl b/midl-to-scapy/idl/win/ms-pla.idl
 index 204c94b..8431716 100644
 --- a/midl-to-scapy/idl/win/ms-pla.idl
 +++ b/midl-to-scapy/idl/win/ms-pla.idl
-@@ -1,6 +1,6 @@
+@@ -2,6 +2,6 @@
   import "ms-dtyp.idl";
   import "ms-oaut.idl";
 - #define SAFEARRAY(item) SAFEARRAY 

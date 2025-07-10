@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-nspi.idl compiled on 10/07/2025
+# [ms-nspi] v16.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - nspi (v56.0): F5CC5A18-4264-101A-8C59-08002B2F8426

@@ -1,3 +1,4 @@
+// [ms-dfsnm] v33.0 (Tue, 23 Apr 2024)
  import "ms-dtyp.idl";
   
  /* ----- structures and methods described [MS-DFSNM], section 2 and 3 ----- */

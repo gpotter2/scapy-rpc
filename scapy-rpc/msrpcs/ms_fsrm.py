@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-fsrm.idl compiled on 10/07/2025
+# [ms-fsrm] v36.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IFsrmObject (v0.0): 22bcef93-4a3f-4183-89f9-2f8b8a628aee
@@ -194,11 +195,6 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -236,6 +232,11 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
 
 
 class SF_TYPE(IntEnum):

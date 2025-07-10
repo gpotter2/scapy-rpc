@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-fasp.idl b/midl-to-scapy/idl/win/ms-fasp.i
 index bed2481..05eba10 100644
 --- a/midl-to-scapy/idl/win/ms-fasp.idl
 +++ b/midl-to-scapy/idl/win/ms-fasp.idl
-@@ -1,11 +1,12 @@
+@@ -2,11 +2,12 @@
 - import "wtypes.h";
 +// import "wtypes.h";
 + import "ms-dtyp.idl";

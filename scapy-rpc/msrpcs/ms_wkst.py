@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-wkst.idl compiled on 10/07/2025
+# [ms-wkst] v32.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - wkssvc (v1.0): 6BFFD098-A112-3610-9833-46C3F87E345A

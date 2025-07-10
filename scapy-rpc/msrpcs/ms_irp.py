@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-irp.idl compiled on 10/07/2025
+# [ms-irp] v13.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - inetinfo (v2.0): 82ad4280-036b-11cf-972c-00aa006887b0

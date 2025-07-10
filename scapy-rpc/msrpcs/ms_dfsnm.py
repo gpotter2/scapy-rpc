@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-dfsnm.idl compiled on 10/07/2025
+# [ms-dfsnm] v33.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - netdfs (v3.0): 4fc742e0-4a10-11cf-8273-00aa004ae673

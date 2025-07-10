@@ -1,3 +1,4 @@
+// [ms-rrasm] v26.0 (Tue, 23 Apr 2024)
  import "ms-oaut.idl";
   
  #define IN

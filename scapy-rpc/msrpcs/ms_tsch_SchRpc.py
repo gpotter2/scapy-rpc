@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsch_SchRpc.idl compiled on 10/07/2025
+# [ms-tsch] v28.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - ITaskSchedulerService (v1.0): 86D35949-83C9-4044-B424-DB363231FD0C

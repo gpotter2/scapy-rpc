@@ -1,3 +1,4 @@
+// [ms-rai] v12.0 (Tue, 23 Apr 2024)
  import "ms-oaut.idl";
  //#define SAFEARRAY(type) SAFEARRAY
  #define DISPID_PCH_BASE                           0x08010000

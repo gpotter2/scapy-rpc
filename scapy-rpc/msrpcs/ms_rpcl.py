@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-rpcl.idl compiled on 10/07/2025
+# [ms-rpcl] v12.1 (Thu, 01 Jun 2017)
+
 """
 RPC definitions for the following interfaces:
 - LocToLoc (v1.0): e33c0cc4-0482-101a-bc0c-02608c6ba218

@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-csvp.idl b/midl-to-scapy/idl/win/ms-csvp.i
 index 8325d02..ec9a705 100644
 --- a/midl-to-scapy/idl/win/ms-csvp.idl
 +++ b/midl-to-scapy/idl/win/ms-csvp.idl
-@@ -1,5 +1,5 @@
+@@ -2,5 +2,5 @@
   import "ms-oaut.idl";
 -    #define SAFEARRAY(type) SAFEARRAY
 +    //#define SAFEARRAY(type) SAFEARRAY

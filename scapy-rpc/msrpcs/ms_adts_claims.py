@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-adts-claims.idl compiled on 10/07/2025
+# [ms-adts] v62.0 (Mon, 19 May 2025)
+
 """
 RPC definitions for the following interfaces:
 -

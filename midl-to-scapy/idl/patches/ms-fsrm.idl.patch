@@ -2,7 +2,7 @@ diff --git a/midl-to-scapy/idl/win/ms-fsrm.idl b/midl-to-scapy/idl/win/ms-fsrm.i
 index 474d1ef..5a580db 100644
 --- a/midl-to-scapy/idl/win/ms-fsrm.idl
 +++ b/midl-to-scapy/idl/win/ms-fsrm.idl
-@@ -1,7 +1,7 @@
+@@ -2,7 +2,7 @@
   import "ms-dtyp.idl";
   import "ms-oaut.idl";
    

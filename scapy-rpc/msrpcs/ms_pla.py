@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-pla.idl compiled on 10/07/2025
+# [ms-pla] v26.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - IDataCollectorSet (v0.0): 03837520-098b-11d8-9414-505054503030

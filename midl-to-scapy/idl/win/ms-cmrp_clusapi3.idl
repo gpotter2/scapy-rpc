@@ -1,3 +1,4 @@
+// [ms-cmrp] v43.0 (Tue, 23 Apr 2024)
     import "ms-dtyp.idl";
     
     #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF

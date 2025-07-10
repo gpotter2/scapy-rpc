@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-cmrp_clusapi3.idl compiled on 10/07/2025
+# [ms-cmrp] v43.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - clusapi (v3.0): b97db8b2-4c63-11cf-bff6-08002be23f2f

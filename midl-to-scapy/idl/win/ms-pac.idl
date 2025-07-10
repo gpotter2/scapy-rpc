@@ -1,3 +1,4 @@
+// [ms-pac] v26.0 (Mon, 10 Jun 2024)
  import "ms-adts-claims.idl";
   
  typedef struct _RPC_SID *PISID;

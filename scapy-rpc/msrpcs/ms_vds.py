@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-vds.idl compiled on 10/07/2025
+# [ms-vds] v31.0 (Mon, 16 Sep 2024)
+
 """
 RPC definitions for the following interfaces:
 - IEnumVdsObject (v0.0): 118610b7-8d94-4030-b5b8-500889788e4e

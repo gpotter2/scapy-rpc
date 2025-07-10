@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-mqqp.idl compiled on 10/07/2025
+# [ms-mqqp] v25.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - qm2qm (v1.0): 1088a980-eae5-11d0-8d9b-00a02453c337

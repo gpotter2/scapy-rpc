@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-adtg.idl compiled on 10/07/2025
+# [ms-adtg] v19.1 (Fri, 30 May 2025)
+
 """
 RPC definitions for the following interfaces:
 - IDataFactory (v0.0): 0EAC4842-8763-11cf-A743-00AA00A3F00D
@@ -98,11 +99,6 @@ class ConvertToString_Response(NDRPacket):
     ]
 
 
-class CURRENCY(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [NDRSignedLongField("int64", 0)]
-
-
 class VARENUM(IntEnum):
     VT_EMPTY = 0
     VT_NULL = 1
@@ -140,6 +136,11 @@ class VARENUM(IntEnum):
     VT_UINT_PTR = 38
     VT_ARRAY = 8192
     VT_BYREF = 16384
+
+
+class CURRENCY(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [NDRSignedLongField("int64", 0)]
 
 
 class SF_TYPE(IntEnum):

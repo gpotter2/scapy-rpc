@@ -1,3 +1,4 @@
+// [ms-swn] v14.0 (Tue, 19 Nov 2024)
   
  import "ms-dtyp.idl";
  typedef [context_handle] void * PCONTEXT_HANDLE;

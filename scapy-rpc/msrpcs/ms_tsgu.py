@@ -3,7 +3,8 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# ms-tsgu.idl compiled on 10/07/2025
+# [ms-tsgu] v42.0 (Tue, 23 Apr 2024)
+
 """
 RPC definitions for the following interfaces:
 - TsProxyRpcInterface (v1.3): 44e265dd-7daf-42cd-8560-3cdb6e7a2729
