@@ -17,6 +17,7 @@ import re
 import requests
 import sys
 
+import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
@@ -26,6 +27,7 @@ PROTOCOLS = [
         "folder": "win",
         "root": "https://docs.microsoft.com/en-us/openspecs/windows_protocols",
         "list": "https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-winprotlp/e36c976a-6263-42a8-b119-7a3cc41ddd2a",
+        "rss": "https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/",
         "extras": [
             # Protocols not listed in the "list"
             "ms-dltm",
@@ -39,6 +41,7 @@ PROTOCOLS = [
         "folder": "win",
         "root": "https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols",
         "list": "https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxprotlp/229f77ea-6518-4fe7-84fe-bd535fc6c32e",
+        "rss": "https://officeprotocoldoc.z19.web.core.windows.net/files/",
         "extras": [
             # Protocols not listed in the "list"
             "ms-oxcrpc",
@@ -49,10 +52,25 @@ PROTOCOLS = [
         "folder": "win",
         "root": "https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols",
         "list": "https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols/MS-SPPROTLP/51f9ccbf-ea59-4bb5-9fe6-27bc5af855ff",
+        "rss": "https://officeprotocoldoc.z19.web.core.windows.net/files/",
     },
 ]
 
 DEFAULT = "DEFAULT"
+
+
+def get_version(VERSION_URL, protocol):
+    """
+    Get the version + date of the current online protocol.
+    """
+    rss = requests.get(
+        VERSION_URL + protocol.upper() + "/[" + protocol.upper() + "].rss"
+    ).content
+    root = ET.fromstring(rss)
+    item = root.find("channel").find("item")
+    version = re.search(r"\(Version ([0-9.]+)\)", item.find("title").text).group(1)
+    pubdate = item.find("pubDate").text
+    return version, pubdate
 
 
 def get_protocol_list(TECHNICAL_DOCS_URL):
@@ -171,6 +189,9 @@ def download_protocol_idls(protocol_name, entry, output):
     """
     num_files_saved = 0
 
+    # 0. Get IDL version
+    version, pubdate = get_version(entry["rss"], protocol_name)
+
     # 1. Get potential IDL URLs
     idl_urls = get_idl_urls(protocol_name, entry["root"])
     if not idl_urls:
@@ -198,6 +219,16 @@ def download_protocol_idls(protocol_name, entry, output):
         # Write it to disk
         with open(output / file_name, "w") as f:
             try:
+                # Write header
+                f.write(
+                    "// [%s] v%s (%s)\n"
+                    % (
+                        protocol_name,
+                        version,
+                        pubdate,
+                    )
+                )
+                # Write content
                 f.write(idl_file)
                 num_files_saved += 1
             except (TypeError, AttributeError) as e:
