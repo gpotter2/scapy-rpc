@@ -137,6 +137,7 @@ FILTER = {}
 
 # --- Main
 
+
 def main(fname):
     # We use stdout.
     # 1. Print license

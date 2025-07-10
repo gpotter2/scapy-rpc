@@ -241,7 +241,11 @@ def _rslv_case_expr(switch_attr, switch_type, expr):
     )
     if isinstance(expr, list):
         assert switch_type[0] == "custom", "Unknown enum type ! %s" % repr(expr)
-        identifier = switch_type[1].name
+        if isinstance(switch_type[1], str):
+            # implicit
+            identifier = switch_type[1]
+        else:
+            identifier = switch_type[1].name
         vals = [
             "%s.%s"
             % (
@@ -690,11 +694,14 @@ class ScapyStruct:
 
     def match_struct_attributes(self, fields):
         """
-        List all `length_is` and `size_is` in fields and mirror into `length_of` and `count_of`
+        List all `length_is` and `size_is` in fields and mirror into `length_of` and `count_of`.
+        Also handles implicit switch_type of union fields
         """
         if not isinstance(fields, list):  # ScapyEnum
             return fields
         mapped_fields = {x.name: x for x in fields}
+
+        # Handle length_is/size_is
         for fld in (
             x
             for x in fields
@@ -725,6 +732,26 @@ class ScapyStruct:
                 # if length and size point to the same, prioritize length
                 if sizefld and (not lengthfld or lengthfld != sizefld):
                     _procfld(sizefld, size_is)
+
+        # handle switch_is
+        for fld in (
+            x for x in fields if any(y[0] == "switch_is" for y in x.idl_attributes)
+        ):
+            # Field might have an implicit switch_type, in which case we shall add it.
+            switch_is = _lkp(fld.idl_attributes, "switch_is")[0]
+            switch_type = _lkp(fld.idl_attributes, "switch_type")
+
+            if not switch_type and isinstance(switch_is, str):
+                # inline: add implicit switch_type for processing
+                reffld = mapped_fields[switch_is]
+                # This only makes sense if the subtype is an enum
+                if isinstance(reffld, ScapyStructField) and isinstance(
+                    reffld.subtype, ScapyEnum
+                ):
+                    fld.idl_attributes.append(
+                        ("switch_type", ("custom", reffld.field_type))
+                    )
+
         return fields
 
     def __repr__(self):

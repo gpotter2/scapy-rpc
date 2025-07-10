@@ -61,10 +61,7 @@ class Resolver:
         if interfaces:
             # File contains interfaces
             for i in interfaces:
-                self.resolve_interface(
-                    i,
-                    filter=filter.get(i.name, None)
-                )
+                self.resolve_interface(i, filter=filter.get(i.name, None))
         else:
             # Has no interface: export everything
             exported = []
