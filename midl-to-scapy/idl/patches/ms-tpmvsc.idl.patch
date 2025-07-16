@@ -5,7 +5,7 @@ index df10c71..02d5133 100644
 @@ -2,5 +2,4 @@
 - import "oaidl.idl";
 - import "ocidl.idl";
-+ import "ms-dtyp.idl";
++ import "ms-dcom.idl";
    
   typedef [v1_enum] enum TPMVSC_ATTESTATION_TYPE
   {

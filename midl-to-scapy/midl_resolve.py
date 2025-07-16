@@ -55,15 +55,39 @@ class Resolver:
         :param filter: a dict filter: {"interfacename": [opnums, ...]}
                        to only include some filters for certain interfaces.
         """
-        interfaces = [
-            x
-            for x in self.input_data.values()
-            if isinstance(x, Interface) and getattr(x, "origin", None) == fname
+        # All interfaces
+        all_interfaces = {
+            x.name: x for x in self.input_data.values() if isinstance(x, Interface)
+        }
+        # Scope to file
+        interfaces_scoped = [
+            x for x in all_interfaces.values() if getattr(x, "origin", None) == fname
         ]
-        if interfaces:
+        if interfaces_scoped:
             # File contains interfaces
-            for i in interfaces:
-                self.resolve_interface(i, filter=filter.get(i.name, None))
+
+            _resolved_interfaces = {}
+
+            def _resolve_interface_rec(iface):
+                parent = None
+                # If cached, return instantly
+                if iface.name in _resolved_interfaces:
+                    return _resolved_interfaces[iface.name]
+                # If interface has a parent class, resolve it first
+                if iface.parent_class:
+                    parent = _resolved_interfaces[iface.parent_class] = (
+                        _resolve_interface_rec(all_interfaces[iface.parent_class])
+                    )
+                # Resolve the interface
+                iface = _resolved_interfaces[iface.name] = self.resolve_interface(
+                    iface,
+                    parent=parent,
+                    filter=filter.get(iface.name, None),
+                )
+                return iface
+
+            for i in interfaces_scoped:
+                _resolve_interface_rec(i)
         else:
             # Has no interface: export everything
             exported = []
@@ -109,10 +133,11 @@ class Resolver:
                 assert False, "Unknown interface idl_attribute: %s" % repr(attr)
         return res
 
-    def resolve_interface(self, interface, filter=None):
+    def resolve_interface(self, interface, parent=None, filter=None):
         """
         Process an interface into Scapy packets and functions.
 
+        :param parent: a parent interface, if any.
         :param filter: a list of opnums to allow.
         """
         self.current_interface = interface
@@ -140,14 +165,22 @@ class Resolver:
             scapy_func = ScapyFunc(func.name, return_type, in_args, out_args, opnum=i)
             self.environment.append(scapy_func)
             interface_opnums[i] = scapy_func
+        # Process the idl attributes of the interface
         interface_idl_attrs = self.resolve_interface_idl_attributes(interface.idl_attrs)
-        self.environment.append(
-            ScapyInterfaceDefinition(
-                interface.name,
-                interface_idl_attrs,
-                interface_opnums,
-            )
+        # Build the final interface
+        iface = ScapyInterfaceDefinition(
+            name=interface.name,
+            idl_attributes=interface_idl_attrs,
+            opnums=interface_opnums,
         )
+        # If we have a parent interface, add its opnums
+        if parent is not None and parent.opnums:
+            max_opnum = max(parent.opnums.keys()) + 1
+            iface.opnums = {i + max_opnum: func for i, func in iface.opnums.items()}
+            iface.opnums.update(parent.opnums)
+        # Finally append to the environment
+        self.environment.append(iface)
+        return iface
 
     def _resolve_arithm_values(self, x, env):
         """

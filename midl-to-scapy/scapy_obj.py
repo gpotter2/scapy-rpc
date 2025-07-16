@@ -945,7 +945,7 @@ class ScapyInterfaceDefinition:
                     if not isinstance(v, str)
                     else ("# %s: %s" % (k, v))
                 )
-                for k, v in self.opnums.items()
+                for k, v in sorted(self.opnums.items(), key=lambda x: x[0])
             ),
         ) + "%s(name='%s', uuid=uuid.UUID('%s'), %s opnums=%s)" % (
             ("register_com_interface" if self.object else "register_dcerpc_interface"),
