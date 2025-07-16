@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IDispatch (v0.0): 00020400-0000-0000-C000-000000000046
 - ITypeLib (v0.0): 00020402-0000-0000-C000-000000000046
 - ITypeInfo (v0.0): 00020401-0000-0000-C000-000000000046
@@ -48,6 +49,16 @@ from scapy.layers.dcerpc import (
     NDRSignedShortField,
     NDRUnionField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -315,11 +326,13 @@ class Invoke_Response(NDRPacket):
     ]
 
 
-IDISPATCH_OPNUMS = {
-    0: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
-    1: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
-    2: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
-    3: DceRpcOp(Invoke_Request, Invoke_Response),
+IDISPATCH_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
 }
 register_com_interface(
     name="IDispatch",
@@ -493,17 +506,19 @@ class FindName_Response(NDRPacket):
     ]
 
 
-ITYPELIB_OPNUMS = {
-    0: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
-    1: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
-    2: DceRpcOp(GetTypeInfoType_Request, GetTypeInfoType_Response),
-    3: DceRpcOp(GetTypeInfoOfGuid_Request, GetTypeInfoOfGuid_Response),
-    4: DceRpcOp(GetLibAttr_Request, GetLibAttr_Response),
-    5: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
-    6: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
-    7: DceRpcOp(IsName_Request, IsName_Response),
-    8: DceRpcOp(FindName_Request, FindName_Response),
-    # 9: Opnum12NotUsedOnWire
+ITYPELIB_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetTypeInfoType_Request, GetTypeInfoType_Response),
+    6: DceRpcOp(GetTypeInfoOfGuid_Request, GetTypeInfoOfGuid_Response),
+    7: DceRpcOp(GetLibAttr_Request, GetLibAttr_Response),
+    8: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
+    9: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
+    10: DceRpcOp(IsName_Request, IsName_Response),
+    11: DceRpcOp(FindName_Request, FindName_Response),
+    # 12: Opnum12NotUsedOnWire
 }
 register_com_interface(
     name="ITypeLib",
@@ -856,26 +871,28 @@ class GetContainingTypeLib_Response(NDRPacket):
     ]
 
 
-ITYPEINFO_OPNUMS = {
-    0: DceRpcOp(GetTypeAttr_Request, GetTypeAttr_Response),
-    1: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
-    2: DceRpcOp(GetFuncDesc_Request, GetFuncDesc_Response),
-    3: DceRpcOp(GetVarDesc_Request, GetVarDesc_Response),
-    4: DceRpcOp(GetNames_Request, GetNames_Response),
-    5: DceRpcOp(GetRefTypeOfImplType_Request, GetRefTypeOfImplType_Response),
-    6: DceRpcOp(GetImplTypeFlags_Request, GetImplTypeFlags_Response),
-    # 7: Opnum10NotUsedOnWire,
-    # 8: Opnum11NotUsedOnWire,
-    9: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
-    10: DceRpcOp(GetDllEntry_Request, GetDllEntry_Response),
-    11: DceRpcOp(GetRefTypeInfo_Request, GetRefTypeInfo_Response),
-    # 12: Opnum15NotUsedOnWire,
-    13: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
-    14: DceRpcOp(GetMops_Request, GetMops_Response),
-    15: DceRpcOp(GetContainingTypeLib_Request, GetContainingTypeLib_Response),
-    # 16: Opnum19NotUsedOnWire,
-    # 17: Opnum20NotUsedOnWire,
-    # 18: Opnum21NotUsedOnWire
+ITYPEINFO_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeAttr_Request, GetTypeAttr_Response),
+    4: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
+    5: DceRpcOp(GetFuncDesc_Request, GetFuncDesc_Response),
+    6: DceRpcOp(GetVarDesc_Request, GetVarDesc_Response),
+    7: DceRpcOp(GetNames_Request, GetNames_Response),
+    8: DceRpcOp(GetRefTypeOfImplType_Request, GetRefTypeOfImplType_Response),
+    9: DceRpcOp(GetImplTypeFlags_Request, GetImplTypeFlags_Response),
+    # 10: Opnum10NotUsedOnWire,
+    # 11: Opnum11NotUsedOnWire,
+    12: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
+    13: DceRpcOp(GetDllEntry_Request, GetDllEntry_Response),
+    14: DceRpcOp(GetRefTypeInfo_Request, GetRefTypeInfo_Response),
+    # 15: Opnum15NotUsedOnWire,
+    16: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
+    17: DceRpcOp(GetMops_Request, GetMops_Response),
+    18: DceRpcOp(GetContainingTypeLib_Request, GetContainingTypeLib_Response),
+    # 19: Opnum19NotUsedOnWire,
+    # 20: Opnum20NotUsedOnWire,
+    # 21: Opnum21NotUsedOnWire
 }
 register_com_interface(
     name="ITypeInfo",
@@ -932,11 +949,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IENUMVARIANT_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IENUMVARIANT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IEnumVARIANT",
@@ -993,9 +1012,11 @@ class BindType_Response(NDRPacket):
     ]
 
 
-ITYPECOMP_OPNUMS = {
-    0: DceRpcOp(Bind_Request, Bind_Response),
-    1: DceRpcOp(BindType_Request, BindType_Response),
+ITYPECOMP_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Bind_Request, Bind_Response),
+    4: DceRpcOp(BindType_Request, BindType_Response),
 }
 register_com_interface(
     name="ITypeComp",
@@ -1206,22 +1227,43 @@ class GetAllImplTypeCustData_Response(NDRPacket):
     ]
 
 
-ITYPEINFO2_OPNUMS = {
-    0: DceRpcOp(GetTypeKind_Request, GetTypeKind_Response),
-    1: DceRpcOp(GetTypeFlags_Request, GetTypeFlags_Response),
-    2: DceRpcOp(GetFuncIndexOfMemId_Request, GetFuncIndexOfMemId_Response),
-    3: DceRpcOp(GetVarIndexOfMemId_Request, GetVarIndexOfMemId_Response),
-    4: DceRpcOp(GetCustData_Request, GetCustData_Response),
-    5: DceRpcOp(GetFuncCustData_Request, GetFuncCustData_Response),
-    6: DceRpcOp(GetParamCustData_Request, GetParamCustData_Response),
-    7: DceRpcOp(GetVarCustData_Request, GetVarCustData_Response),
-    8: DceRpcOp(GetImplTypeCustData_Request, GetImplTypeCustData_Response),
-    9: DceRpcOp(GetDocumentation2_Request, GetDocumentation2_Response),
-    10: DceRpcOp(GetAllCustData_Request, GetAllCustData_Response),
-    11: DceRpcOp(GetAllFuncCustData_Request, GetAllFuncCustData_Response),
-    12: DceRpcOp(GetAllParamCustData_Request, GetAllParamCustData_Response),
-    13: DceRpcOp(GetAllVarCustData_Request, GetAllVarCustData_Response),
-    14: DceRpcOp(GetAllImplTypeCustData_Request, GetAllImplTypeCustData_Response),
+ITYPEINFO2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeAttr_Request, GetTypeAttr_Response),
+    4: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
+    5: DceRpcOp(GetFuncDesc_Request, GetFuncDesc_Response),
+    6: DceRpcOp(GetVarDesc_Request, GetVarDesc_Response),
+    7: DceRpcOp(GetNames_Request, GetNames_Response),
+    8: DceRpcOp(GetRefTypeOfImplType_Request, GetRefTypeOfImplType_Response),
+    9: DceRpcOp(GetImplTypeFlags_Request, GetImplTypeFlags_Response),
+    # 10: Opnum10NotUsedOnWire,
+    # 11: Opnum11NotUsedOnWire,
+    12: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
+    13: DceRpcOp(GetDllEntry_Request, GetDllEntry_Response),
+    14: DceRpcOp(GetRefTypeInfo_Request, GetRefTypeInfo_Response),
+    # 15: Opnum15NotUsedOnWire,
+    16: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
+    17: DceRpcOp(GetMops_Request, GetMops_Response),
+    18: DceRpcOp(GetContainingTypeLib_Request, GetContainingTypeLib_Response),
+    # 19: Opnum19NotUsedOnWire,
+    # 20: Opnum20NotUsedOnWire,
+    # 21: Opnum21NotUsedOnWire,
+    22: DceRpcOp(GetTypeKind_Request, GetTypeKind_Response),
+    23: DceRpcOp(GetTypeFlags_Request, GetTypeFlags_Response),
+    24: DceRpcOp(GetFuncIndexOfMemId_Request, GetFuncIndexOfMemId_Response),
+    25: DceRpcOp(GetVarIndexOfMemId_Request, GetVarIndexOfMemId_Response),
+    26: DceRpcOp(GetCustData_Request, GetCustData_Response),
+    27: DceRpcOp(GetFuncCustData_Request, GetFuncCustData_Response),
+    28: DceRpcOp(GetParamCustData_Request, GetParamCustData_Response),
+    29: DceRpcOp(GetVarCustData_Request, GetVarCustData_Response),
+    30: DceRpcOp(GetImplTypeCustData_Request, GetImplTypeCustData_Response),
+    31: DceRpcOp(GetDocumentation2_Request, GetDocumentation2_Response),
+    32: DceRpcOp(GetAllCustData_Request, GetAllCustData_Response),
+    33: DceRpcOp(GetAllFuncCustData_Request, GetAllFuncCustData_Response),
+    34: DceRpcOp(GetAllParamCustData_Request, GetAllParamCustData_Response),
+    35: DceRpcOp(GetAllVarCustData_Request, GetAllVarCustData_Response),
+    36: DceRpcOp(GetAllImplTypeCustData_Request, GetAllImplTypeCustData_Response),
 }
 register_com_interface(
     name="ITypeInfo2",
@@ -1287,11 +1329,23 @@ class GetAllCustData_Response(NDRPacket):
     ]
 
 
-ITYPELIB2_OPNUMS = {
-    0: DceRpcOp(GetCustData_Request, GetCustData_Response),
-    1: DceRpcOp(GetLibStatistics_Request, GetLibStatistics_Response),
-    2: DceRpcOp(GetDocumentation2_Request, GetDocumentation2_Response),
-    3: DceRpcOp(GetAllCustData_Request, GetAllCustData_Response),
+ITYPELIB2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetTypeInfoType_Request, GetTypeInfoType_Response),
+    6: DceRpcOp(GetTypeInfoOfGuid_Request, GetTypeInfoOfGuid_Response),
+    7: DceRpcOp(GetLibAttr_Request, GetLibAttr_Response),
+    8: DceRpcOp(GetTypeComp_Request, GetTypeComp_Response),
+    9: DceRpcOp(GetDocumentation_Request, GetDocumentation_Response),
+    10: DceRpcOp(IsName_Request, IsName_Response),
+    11: DceRpcOp(FindName_Request, FindName_Response),
+    # 12: Opnum12NotUsedOnWire,
+    13: DceRpcOp(GetCustData_Request, GetCustData_Response),
+    14: DceRpcOp(GetLibStatistics_Request, GetLibStatistics_Response),
+    15: DceRpcOp(GetDocumentation2_Request, GetDocumentation2_Response),
+    16: DceRpcOp(GetAllCustData_Request, GetAllCustData_Response),
 }
 register_com_interface(
     name="ITypeLib2",

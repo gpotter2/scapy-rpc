@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IVssSnapshotMgmt (v0.0): FA7DF749-66E7-4986-A27F-E2F04AE53772
 - IVssDifferentialSoftwareSnapshotMgmt (v0.0): 214A0F28-B737-4026-B847-4F9E37D79529
 - IVssEnumObject (v0.0): AE1C7110-2F60-11d3-8A39-00C04F72D8E3
@@ -35,6 +36,16 @@ from scapy.layers.dcerpc import (
     NDRSignedLongField,
     NDRUnionField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -107,13 +118,15 @@ class QuerySnapshotsByVolume_Response(NDRPacket):
     ]
 
 
-IVSSSNAPSHOTMGMT_OPNUMS = {
-    0: DceRpcOp(GetProviderMgmtInterface_Request, GetProviderMgmtInterface_Response),
-    1: DceRpcOp(
+IVSSSNAPSHOTMGMT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProviderMgmtInterface_Request, GetProviderMgmtInterface_Response),
+    4: DceRpcOp(
         QueryVolumesSupportedForSnapshots_Request,
         QueryVolumesSupportedForSnapshots_Response,
     ),
-    2: DceRpcOp(QuerySnapshotsByVolume_Request, QuerySnapshotsByVolume_Response),
+    5: DceRpcOp(QuerySnapshotsByVolume_Request, QuerySnapshotsByVolume_Response),
 }
 register_com_interface(
     name="IVssSnapshotMgmt",
@@ -185,16 +198,18 @@ class QueryDiffAreasOnVolume_Response(NDRPacket):
     ]
 
 
-IVSSDIFFERENTIALSOFTWARESNAPSHOTMGMT_OPNUMS = {
-    0: DceRpcOp(AddDiffArea_Request, AddDiffArea_Response),
-    1: DceRpcOp(ChangeDiffAreaMaximumSize_Request, ChangeDiffAreaMaximumSize_Response),
-    2: DceRpcOp(
+IVSSDIFFERENTIALSOFTWARESNAPSHOTMGMT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(AddDiffArea_Request, AddDiffArea_Response),
+    4: DceRpcOp(ChangeDiffAreaMaximumSize_Request, ChangeDiffAreaMaximumSize_Response),
+    5: DceRpcOp(
         QueryVolumesSupportedForDiffAreas_Request,
         QueryVolumesSupportedForDiffAreas_Response,
     ),
-    3: DceRpcOp(QueryDiffAreasForVolume_Request, QueryDiffAreasForVolume_Response),
-    4: DceRpcOp(QueryDiffAreasOnVolume_Request, QueryDiffAreasOnVolume_Response),
-    # 5: Opnum08NotUsedOnWire
+    6: DceRpcOp(QueryDiffAreasForVolume_Request, QueryDiffAreasForVolume_Response),
+    7: DceRpcOp(QueryDiffAreasOnVolume_Request, QueryDiffAreasOnVolume_Response),
+    # 8: Opnum08NotUsedOnWire
 }
 register_com_interface(
     name="IVssDifferentialSoftwareSnapshotMgmt",
@@ -345,11 +360,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IVSSENUMOBJECT_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IVSSENUMOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IVssEnumObject",
@@ -504,11 +521,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IVSSENUMMGMTOBJECT_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IVSSENUMMGMTOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IVssEnumMgmtObject",

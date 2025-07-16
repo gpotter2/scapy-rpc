@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IWbemClassObject (v0.0): dc12a681-737f-11cf-884d-00aa004b2e24
 - IWbemServices (v0.0): 9556dc99-828c-11cf-a37e-00aa003240c7
 - IWbemObjectSink (v0.0): 7c857801-7381-11cf-884d-00aa004b2e24
@@ -54,7 +55,19 @@ from scapy.layers.dcerpc import (
     register_dcerpc_interface,
 )
 
-IWBEMCLASSOBJECT_OPNUMS = {}
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
+)
+IWBEMCLASSOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
 register_com_interface(
     name="IWbemClassObject",
     uuid=uuid.UUID("dc12a681-737f-11cf-884d-00aa004b2e24"),
@@ -514,32 +527,34 @@ class ExecMethodAsync_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMSERVICES_OPNUMS = {
-    0: DceRpcOp(OpenNamespace_Request, OpenNamespace_Response),
-    1: DceRpcOp(CancelAsyncCall_Request, CancelAsyncCall_Response),
-    2: DceRpcOp(QueryObjectSink_Request, QueryObjectSink_Response),
-    3: DceRpcOp(GetObject_Request, GetObject_Response),
-    4: DceRpcOp(GetObjectAsync_Request, GetObjectAsync_Response),
-    5: DceRpcOp(PutClass_Request, PutClass_Response),
-    6: DceRpcOp(PutClassAsync_Request, PutClassAsync_Response),
-    7: DceRpcOp(DeleteClass_Request, DeleteClass_Response),
-    8: DceRpcOp(DeleteClassAsync_Request, DeleteClassAsync_Response),
-    9: DceRpcOp(CreateClassEnum_Request, CreateClassEnum_Response),
-    10: DceRpcOp(CreateClassEnumAsync_Request, CreateClassEnumAsync_Response),
-    11: DceRpcOp(PutInstance_Request, PutInstance_Response),
-    12: DceRpcOp(PutInstanceAsync_Request, PutInstanceAsync_Response),
-    13: DceRpcOp(DeleteInstance_Request, DeleteInstance_Response),
-    14: DceRpcOp(DeleteInstanceAsync_Request, DeleteInstanceAsync_Response),
-    15: DceRpcOp(CreateInstanceEnum_Request, CreateInstanceEnum_Response),
-    16: DceRpcOp(CreateInstanceEnumAsync_Request, CreateInstanceEnumAsync_Response),
-    17: DceRpcOp(ExecQuery_Request, ExecQuery_Response),
-    18: DceRpcOp(ExecQueryAsync_Request, ExecQueryAsync_Response),
-    19: DceRpcOp(ExecNotificationQuery_Request, ExecNotificationQuery_Response),
-    20: DceRpcOp(
+IWBEMSERVICES_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(OpenNamespace_Request, OpenNamespace_Response),
+    4: DceRpcOp(CancelAsyncCall_Request, CancelAsyncCall_Response),
+    5: DceRpcOp(QueryObjectSink_Request, QueryObjectSink_Response),
+    6: DceRpcOp(GetObject_Request, GetObject_Response),
+    7: DceRpcOp(GetObjectAsync_Request, GetObjectAsync_Response),
+    8: DceRpcOp(PutClass_Request, PutClass_Response),
+    9: DceRpcOp(PutClassAsync_Request, PutClassAsync_Response),
+    10: DceRpcOp(DeleteClass_Request, DeleteClass_Response),
+    11: DceRpcOp(DeleteClassAsync_Request, DeleteClassAsync_Response),
+    12: DceRpcOp(CreateClassEnum_Request, CreateClassEnum_Response),
+    13: DceRpcOp(CreateClassEnumAsync_Request, CreateClassEnumAsync_Response),
+    14: DceRpcOp(PutInstance_Request, PutInstance_Response),
+    15: DceRpcOp(PutInstanceAsync_Request, PutInstanceAsync_Response),
+    16: DceRpcOp(DeleteInstance_Request, DeleteInstance_Response),
+    17: DceRpcOp(DeleteInstanceAsync_Request, DeleteInstanceAsync_Response),
+    18: DceRpcOp(CreateInstanceEnum_Request, CreateInstanceEnum_Response),
+    19: DceRpcOp(CreateInstanceEnumAsync_Request, CreateInstanceEnumAsync_Response),
+    20: DceRpcOp(ExecQuery_Request, ExecQuery_Response),
+    21: DceRpcOp(ExecQueryAsync_Request, ExecQueryAsync_Response),
+    22: DceRpcOp(ExecNotificationQuery_Request, ExecNotificationQuery_Response),
+    23: DceRpcOp(
         ExecNotificationQueryAsync_Request, ExecNotificationQueryAsync_Response
     ),
-    21: DceRpcOp(ExecMethod_Request, ExecMethod_Response),
-    22: DceRpcOp(ExecMethodAsync_Request, ExecMethodAsync_Response),
+    24: DceRpcOp(ExecMethod_Request, ExecMethod_Response),
+    25: DceRpcOp(ExecMethodAsync_Request, ExecMethodAsync_Response),
 }
 register_com_interface(
     name="IWbemServices",
@@ -578,9 +593,11 @@ class SetStatus_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMOBJECTSINK_OPNUMS = {
-    0: DceRpcOp(Indicate_Request, Indicate_Response),
-    1: DceRpcOp(SetStatus_Request, SetStatus_Response),
+IWBEMOBJECTSINK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Indicate_Request, Indicate_Response),
+    4: DceRpcOp(SetStatus_Request, SetStatus_Response),
 }
 register_com_interface(
     name="IWbemObjectSink",
@@ -648,12 +665,14 @@ class Skip_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IENUMWBEMCLASSOBJECT_OPNUMS = {
-    0: DceRpcOp(Reset_Request, Reset_Response),
-    1: DceRpcOp(Next_Request, Next_Response),
-    2: DceRpcOp(NextAsync_Request, NextAsync_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
-    4: DceRpcOp(Skip_Request, Skip_Response),
+IENUMWBEMCLASSOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Reset_Request, Reset_Response),
+    4: DceRpcOp(Next_Request, Next_Response),
+    5: DceRpcOp(NextAsync_Request, NextAsync_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
+    7: DceRpcOp(Skip_Request, Skip_Response),
 }
 register_com_interface(
     name="IEnumWbemClassObject",
@@ -709,18 +728,23 @@ class GetCallStatus_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("plStatus", 0), NDRIntField("status", 0)]
 
 
-IWBEMCALLRESULT_OPNUMS = {
-    0: DceRpcOp(GetResultObject_Request, GetResultObject_Response),
-    1: DceRpcOp(GetResultString_Request, GetResultString_Response),
-    2: DceRpcOp(GetResultServices_Request, GetResultServices_Response),
-    3: DceRpcOp(GetCallStatus_Request, GetCallStatus_Response),
+IWBEMCALLRESULT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetResultObject_Request, GetResultObject_Response),
+    4: DceRpcOp(GetResultString_Request, GetResultString_Response),
+    5: DceRpcOp(GetResultServices_Request, GetResultServices_Response),
+    6: DceRpcOp(GetCallStatus_Request, GetCallStatus_Response),
 }
 register_com_interface(
     name="IWbemCallResult",
     uuid=uuid.UUID("44aca675-e8fc-11d0-a07c-00c04fb68820"),
     opnums=IWBEMCALLRESULT_OPNUMS,
 )
-IWBEMCONTEXT_OPNUMS = {}
+IWBEMCONTEXT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
 register_com_interface(
     name="IWbemContext",
     uuid=uuid.UUID("44aca674-e8fc-11d0-a07c-00c04fb68820"),
@@ -750,9 +774,11 @@ class Restore_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMBACKUPRESTORE_OPNUMS = {
-    0: DceRpcOp(Backup_Request, Backup_Response),
-    1: DceRpcOp(Restore_Request, Restore_Response),
+IWBEMBACKUPRESTORE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Backup_Request, Backup_Response),
+    4: DceRpcOp(Restore_Request, Restore_Response),
 }
 register_com_interface(
     name="IWbemBackupRestore",
@@ -777,9 +803,13 @@ class Resume_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMBACKUPRESTOREEX_OPNUMS = {
-    0: DceRpcOp(Pause_Request, Pause_Response),
-    1: DceRpcOp(Resume_Request, Resume_Response),
+IWBEMBACKUPRESTOREEX_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Backup_Request, Backup_Response),
+    4: DceRpcOp(Restore_Request, Restore_Response),
+    5: DceRpcOp(Pause_Request, Pause_Response),
+    6: DceRpcOp(Resume_Request, Resume_Response),
 }
 register_com_interface(
     name="IWbemBackupRestoreEx",
@@ -800,7 +830,11 @@ class SetClientInfo_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMLOGINCLIENTID_OPNUMS = {0: DceRpcOp(SetClientInfo_Request, SetClientInfo_Response)}
+IWBEMLOGINCLIENTID_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SetClientInfo_Request, SetClientInfo_Response)
+}
 register_com_interface(
     name="IWbemLoginClientID",
     uuid=uuid.UUID("d4781cd6-e5d3-44df-ad94-930efe48a887"),
@@ -873,11 +907,13 @@ class NTLMLogin_Response(NDRPacket):
     ]
 
 
-IWBEMLEVEL1LOGIN_OPNUMS = {
-    0: DceRpcOp(EstablishPosition_Request, EstablishPosition_Response),
-    1: DceRpcOp(RequestChallenge_Request, RequestChallenge_Response),
-    2: DceRpcOp(WBEMLogin_Request, WBEMLogin_Response),
-    3: DceRpcOp(NTLMLogin_Request, NTLMLogin_Response),
+IWBEMLEVEL1LOGIN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(EstablishPosition_Request, EstablishPosition_Response),
+    4: DceRpcOp(RequestChallenge_Request, RequestChallenge_Response),
+    5: DceRpcOp(WBEMLogin_Request, WBEMLogin_Response),
+    6: DceRpcOp(NTLMLogin_Request, NTLMLogin_Response),
 }
 register_com_interface(
     name="IWbemLevel1Login",
@@ -894,7 +930,11 @@ class SetEvent_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IWBEMLOGINHELPER_OPNUMS = {0: DceRpcOp(SetEvent_Request, SetEvent_Response)}
+IWBEMLOGINHELPER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SetEvent_Request, SetEvent_Response)
+}
 register_com_interface(
     name="IWbemLoginHelper",
     uuid=uuid.UUID("541679AB-2E5F-11d3-B34E-00104BCC4B4A"),
@@ -970,10 +1010,12 @@ class Opnum5NotUsedOnWire_Response(NDRPacket):
     fields_desc = [NDRPacketField("pGuid", GUID(), GUID), NDRIntField("status", 0)]
 
 
-IWBEMREMOTEREFRESHER_OPNUMS = {
-    0: DceRpcOp(RemoteRefresh_Request, RemoteRefresh_Response),
-    1: DceRpcOp(StopRefreshing_Request, StopRefreshing_Response),
-    2: DceRpcOp(Opnum5NotUsedOnWire_Request, Opnum5NotUsedOnWire_Response),
+IWBEMREMOTEREFRESHER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(RemoteRefresh_Request, RemoteRefresh_Response),
+    4: DceRpcOp(StopRefreshing_Request, StopRefreshing_Response),
+    5: DceRpcOp(Opnum5NotUsedOnWire_Request, Opnum5NotUsedOnWire_Response),
 }
 register_dcerpc_interface(
     name="IWbemRemoteRefresher",
@@ -1214,15 +1256,17 @@ class ReconnectRemoteRefresher_Response(NDRPacket):
     ]
 
 
-IWBEMREFRESHINGSERVICES_OPNUMS = {
-    0: DceRpcOp(AddObjectToRefresher_Request, AddObjectToRefresher_Response),
-    1: DceRpcOp(
+IWBEMREFRESHINGSERVICES_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(AddObjectToRefresher_Request, AddObjectToRefresher_Response),
+    4: DceRpcOp(
         AddObjectToRefresherByTemplate_Request, AddObjectToRefresherByTemplate_Response
     ),
-    2: DceRpcOp(AddEnumToRefresher_Request, AddEnumToRefresher_Response),
-    3: DceRpcOp(RemoveObjectFromRefresher_Request, RemoveObjectFromRefresher_Response),
-    4: DceRpcOp(GetRemoteRefresher_Request, GetRemoteRefresher_Response),
-    5: DceRpcOp(ReconnectRemoteRefresher_Request, ReconnectRemoteRefresher_Response),
+    5: DceRpcOp(AddEnumToRefresher_Request, AddEnumToRefresher_Response),
+    6: DceRpcOp(RemoveObjectFromRefresher_Request, RemoveObjectFromRefresher_Response),
+    7: DceRpcOp(GetRemoteRefresher_Request, GetRemoteRefresher_Response),
+    8: DceRpcOp(ReconnectRemoteRefresher_Request, ReconnectRemoteRefresher_Response),
 }
 register_dcerpc_interface(
     name="IWbemRefreshingServices",
@@ -1249,7 +1293,11 @@ class Next_Response(NDRPacket):
     ]
 
 
-IWBEMWCOSMARTENUM_OPNUMS = {0: DceRpcOp(Next_Request, Next_Response)}
+IWBEMWCOSMARTENUM_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response)
+}
 register_com_interface(
     name="IWbemWCOSmartEnum",
     uuid=uuid.UUID("423EC01E-2E35-11d2-B604-00104B703EFD"),
@@ -1270,7 +1318,11 @@ class GetSmartEnum_Response(NDRPacket):
     ]
 
 
-IWBEMFETCHSMARTENUM_OPNUMS = {0: DceRpcOp(GetSmartEnum_Request, GetSmartEnum_Response)}
+IWBEMFETCHSMARTENUM_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetSmartEnum_Request, GetSmartEnum_Response)
+}
 register_com_interface(
     name="IWbemFetchSmartEnum",
     uuid=uuid.UUID("1C1C45EE-4395-11d2-B60B-00104B703EFD"),

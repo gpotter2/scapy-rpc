@@ -7,6 +7,8 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
+- IDispatch (v0.0): 00020400-0000-0000-C000-000000000046
 - IFsrmObject (v0.0): 22bcef93-4a3f-4183-89f9-2f8b8a628aee
 - IFsrmCollection (v0.0): f76fbf3b-8ddd-4b42-b05a-cb1c3ff1fee8
 - IFsrmMutableCollection (v0.0): 1bb617b8-3886-49dc-af82-a6c90fa35dda
@@ -70,10 +72,13 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIEEEDoubleField,
     NDRInt3264EnumField,
+    NDRInt3264Field,
     NDRIntField,
     NDRPacketField,
     NDRRecursiveField,
@@ -87,88 +92,23 @@ from scapy.layers.dcerpc import (
     register_dcerpc_interface,
 )
 
-
-class GUID(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [
-        NDRIntField("Data1", 0),
-        NDRShortField("Data2", 0),
-        NDRShortField("Data3", 0),
-        StrFixedLenField("Data4", "", length=8),
-    ]
-
-
-class get_Id_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_Id_Response(NDRPacket):
-    fields_desc = [NDRPacketField("id", GUID(), GUID), NDRIntField("status", 0)]
-
-
-class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
-    DEPORTED_CONFORMANTS = ["asData"]
-    fields_desc = [
-        NDRIntField("cBytes", 0),
-        NDRIntField("clSize", None, size_of="asData"),
-        NDRConfStrLenFieldUtf16(
-            "asData", "", size_is=lambda pkt: pkt.clSize, conformant_in_struct=True
-        ),
-    ]
-
-
-class get_Description_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_Description_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-class put_Description_Request(NDRPacket):
-    fields_desc = [
-        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-    ]
-
-
-class put_Description_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class Delete_Request(NDRPacket):
-    fields_desc = []
-
-
-class Delete_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class Commit_Request(NDRPacket):
-    fields_desc = []
-
-
-class Commit_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-IFSRMOBJECT_OPNUMS = {
-    0: DceRpcOp(get_Id_Request, get_Id_Response),
-    1: DceRpcOp(get_Description_Request, get_Description_Response),
-    2: DceRpcOp(put_Description_Request, put_Description_Response),
-    3: DceRpcOp(Delete_Request, Delete_Response),
-    4: DceRpcOp(Commit_Request, Commit_Response),
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
 }
 register_com_interface(
-    name="IFsrmObject",
-    uuid=uuid.UUID("22bcef93-4a3f-4183-89f9-2f8b8a628aee"),
-    opnums=IFSRMOBJECT_OPNUMS,
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
+
+
+class GetTypeInfoCount_Request(NDRPacket):
+    fields_desc = []
+
+
+class GetTypeInfoCount_Response(NDRPacket):
+    fields_desc = [NDRIntField("pctinfo", 0), NDRIntField("status", 0)]
 
 
 class MInterfacePointer(NDRPacket):
@@ -182,14 +122,42 @@ class MInterfacePointer(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
-    fields_desc = []
+class GetTypeInfo_Request(NDRPacket):
+    fields_desc = [NDRIntField("iTInfo", 0), NDRIntField("lcid", 0)]
 
 
-class get__NewEnum_Response(NDRPacket):
+class GetTypeInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("unknown", MInterfacePointer(), MInterfacePointer)
+            NDRPacketField("ppTInfo", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class GUID(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("Data1", 0),
+        NDRShortField("Data2", 0),
+        NDRShortField("Data3", 0),
+        StrFixedLenField("Data4", "", length=8),
+    ]
+
+
+class GetIDsOfNames_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("riid", GUID(), GUID),
+        NDRConfVarStrLenFieldUtf16("rgszNames", "", size_is=lambda pkt: pkt.cNames),
+        NDRIntField("cNames", None, size_of="rgszNames"),
+        NDRIntField("lcid", 0),
+    ]
+
+
+class GetIDsOfNames_Response(NDRPacket):
+    fields_desc = [
+        NDRConfFieldListField(
+            "rgDispId", [], NDRSignedIntField("", 0), size_is=lambda pkt: pkt.cNames
         ),
         NDRIntField("status", 0),
     ]
@@ -237,6 +205,18 @@ class VARENUM(IntEnum):
 class CURRENCY(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [NDRSignedLongField("int64", 0)]
+
+
+class FLAGGED_WORD_BLOB(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["asData"]
+    fields_desc = [
+        NDRIntField("cBytes", 0),
+        NDRIntField("clSize", None, size_of="asData"),
+        NDRConfStrLenFieldUtf16(
+            "asData", "", size_is=lambda pkt: pkt.clSize, conformant_in_struct=True
+        ),
+    ]
 
 
 class SF_TYPE(IntEnum):
@@ -299,6 +279,186 @@ class wireVARIANTStr(NDRPacket):
         NDRShortField("wReserved2", 0),
         NDRShortField("wReserved3", 0),
         NDRRecursiveField("_varUnion"),
+    ]
+
+
+class DISPPARAMS(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRFullEmbPointerField(
+            NDRConfPacketListField(
+                "rgvarg",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cArgs,
+                ptr_pack=True,
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "rgdispidNamedArgs",
+                [],
+                NDRSignedIntField("rgdispidNamedArgs", 0),
+                size_is=lambda pkt: pkt.cNamedArgs,
+            )
+        ),
+        NDRIntField("cArgs", None, size_of="rgvarg"),
+        NDRIntField("cNamedArgs", None, size_of="rgdispidNamedArgs"),
+    ]
+
+
+class EXCEPINFO(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRShortField("wCode", 0),
+        NDRShortField("wReserved", 0),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrSource", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("dwHelpContext", 0),
+        NDRInt3264Field("pvReserved", 0),
+        NDRInt3264Field("pfnDeferredFillIn", 0),
+        NDRSignedIntField("scode", 0),
+    ]
+
+
+class Invoke_Request(NDRPacket):
+    fields_desc = [
+        NDRSignedIntField("dispIdMember", 0),
+        NDRPacketField("riid", GUID(), GUID),
+        NDRIntField("lcid", 0),
+        NDRIntField("dwFlags", 0),
+        NDRPacketField("pDispParams", DISPPARAMS(), DISPPARAMS),
+        NDRIntField("cVarRef", None, size_of="rgVarRef"),
+        NDRConfFieldListField(
+            "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
+        ),
+        NDRConfPacketListField(
+            "rgVarRef",
+            [],
+            wireVARIANTStr,
+            size_is=lambda pkt: pkt.cVarRef,
+            ptr_pack=True,
+        ),
+    ]
+
+
+class Invoke_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+        ),
+        NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
+        NDRIntField("pArgErr", 0),
+        NDRConfPacketListField(
+            "rgVarRef",
+            [],
+            wireVARIANTStr,
+            size_is=lambda pkt: pkt.cVarRef,
+            ptr_pack=True,
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+IDISPATCH_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+}
+register_com_interface(
+    name="IDispatch",
+    uuid=uuid.UUID("00020400-0000-0000-C000-000000000046"),
+    opnums=IDISPATCH_OPNUMS,
+)
+
+
+class get_Id_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_Id_Response(NDRPacket):
+    fields_desc = [NDRPacketField("id", GUID(), GUID), NDRIntField("status", 0)]
+
+
+class get_Description_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_Description_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class put_Description_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+    ]
+
+
+class put_Description_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class Delete_Request(NDRPacket):
+    fields_desc = []
+
+
+class Delete_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class Commit_Request(NDRPacket):
+    fields_desc = []
+
+
+class Commit_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+IFSRMOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+}
+register_com_interface(
+    name="IFsrmObject",
+    uuid=uuid.UUID("22bcef93-4a3f-4183-89f9-2f8b8a628aee"),
+    opnums=IFSRMOBJECT_OPNUMS,
+)
+
+
+class get__NewEnum_Request(NDRPacket):
+    fields_desc = []
+
+
+class get__NewEnum_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("unknown", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRIntField("status", 0),
     ]
 
 
@@ -366,14 +526,20 @@ class GetById_Response(NDRPacket):
     ]
 
 
-IFSRMCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
-    2: DceRpcOp(get_Count_Request, get_Count_Response),
-    3: DceRpcOp(get_State_Request, get_State_Response),
-    4: DceRpcOp(Cancel_Request, Cancel_Response),
-    5: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
-    6: DceRpcOp(GetById_Request, GetById_Response),
+IFSRMCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    8: DceRpcOp(get_Item_Request, get_Item_Response),
+    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    10: DceRpcOp(get_State_Request, get_State_Response),
+    11: DceRpcOp(Cancel_Request, Cancel_Response),
+    12: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
+    13: DceRpcOp(GetById_Request, GetById_Response),
 }
 register_com_interface(
     name="IFsrmCollection",
@@ -419,11 +585,24 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IFSRMMUTABLECOLLECTION_OPNUMS = {
-    0: DceRpcOp(Add_Request, Add_Response),
-    1: DceRpcOp(Remove_Request, Remove_Response),
-    2: DceRpcOp(RemoveById_Request, RemoveById_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IFSRMMUTABLECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    8: DceRpcOp(get_Item_Request, get_Item_Response),
+    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    10: DceRpcOp(get_State_Request, get_State_Response),
+    11: DceRpcOp(Cancel_Request, Cancel_Response),
+    12: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
+    13: DceRpcOp(GetById_Request, GetById_Response),
+    14: DceRpcOp(Add_Request, Add_Response),
+    15: DceRpcOp(Remove_Request, Remove_Response),
+    16: DceRpcOp(RemoveById_Request, RemoveById_Response),
+    17: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IFsrmMutableCollection",
@@ -450,7 +629,26 @@ class Commit_Response(NDRPacket):
     ]
 
 
-IFSRMCOMMITTABLECOLLECTION_OPNUMS = {0: DceRpcOp(Commit_Request, Commit_Response)}
+IFSRMCOMMITTABLECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    8: DceRpcOp(get_Item_Request, get_Item_Response),
+    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    10: DceRpcOp(get_State_Request, get_State_Response),
+    11: DceRpcOp(Cancel_Request, Cancel_Response),
+    12: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
+    13: DceRpcOp(GetById_Request, GetById_Response),
+    14: DceRpcOp(Add_Request, Add_Response),
+    15: DceRpcOp(Remove_Request, Remove_Response),
+    16: DceRpcOp(RemoveById_Request, RemoveById_Response),
+    17: DceRpcOp(Clone_Request, Clone_Response),
+    18: DceRpcOp(Commit_Request, Commit_Response),
+}
 register_com_interface(
     name="IFsrmCommittableCollection",
     uuid=uuid.UUID("96deb3b5-8b91-4a2a-9d93-80a35d8aa847"),
@@ -509,12 +707,18 @@ class Delete_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTION_OPNUMS = {
-    0: DceRpcOp(get_Id_Request, get_Id_Response),
-    1: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
-    2: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
-    3: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
-    4: DceRpcOp(Delete_Request, Delete_Response),
+IFSRMACTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
 }
 register_com_interface(
     name="IFsrmAction",
@@ -676,21 +880,32 @@ class put_MessageText_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTIONEMAIL_OPNUMS = {
-    0: DceRpcOp(get_MailFrom_Request, get_MailFrom_Response),
-    1: DceRpcOp(put_MailFrom_Request, put_MailFrom_Response),
-    2: DceRpcOp(get_MailReplyTo_Request, get_MailReplyTo_Response),
-    3: DceRpcOp(put_MailReplyTo_Request, put_MailReplyTo_Response),
-    4: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
-    5: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
-    6: DceRpcOp(get_MailCc_Request, get_MailCc_Response),
-    7: DceRpcOp(put_MailCc_Request, put_MailCc_Response),
-    8: DceRpcOp(get_MailBcc_Request, get_MailBcc_Response),
-    9: DceRpcOp(put_MailBcc_Request, put_MailBcc_Response),
-    10: DceRpcOp(get_MailSubject_Request, get_MailSubject_Response),
-    11: DceRpcOp(put_MailSubject_Request, put_MailSubject_Response),
-    12: DceRpcOp(get_MessageText_Request, get_MessageText_Response),
-    13: DceRpcOp(put_MessageText_Request, put_MessageText_Response),
+IFSRMACTIONEMAIL_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(get_MailFrom_Request, get_MailFrom_Response),
+    13: DceRpcOp(put_MailFrom_Request, put_MailFrom_Response),
+    14: DceRpcOp(get_MailReplyTo_Request, get_MailReplyTo_Response),
+    15: DceRpcOp(put_MailReplyTo_Request, put_MailReplyTo_Response),
+    16: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
+    17: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
+    18: DceRpcOp(get_MailCc_Request, get_MailCc_Response),
+    19: DceRpcOp(put_MailCc_Request, put_MailCc_Response),
+    20: DceRpcOp(get_MailBcc_Request, get_MailBcc_Response),
+    21: DceRpcOp(put_MailBcc_Request, put_MailBcc_Response),
+    22: DceRpcOp(get_MailSubject_Request, get_MailSubject_Response),
+    23: DceRpcOp(put_MailSubject_Request, put_MailSubject_Response),
+    24: DceRpcOp(get_MessageText_Request, get_MessageText_Response),
+    25: DceRpcOp(put_MessageText_Request, put_MessageText_Response),
 }
 register_com_interface(
     name="IFsrmActionEmail",
@@ -939,11 +1154,22 @@ class put_MailTo_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTIONREPORT_OPNUMS = {
-    0: DceRpcOp(get_ReportTypes_Request, get_ReportTypes_Response),
-    1: DceRpcOp(put_ReportTypes_Request, put_ReportTypes_Response),
-    2: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
-    3: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
+IFSRMACTIONREPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(get_ReportTypes_Request, get_ReportTypes_Response),
+    13: DceRpcOp(put_ReportTypes_Request, put_ReportTypes_Response),
+    14: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
+    15: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
 }
 register_com_interface(
     name="IFsrmActionReport",
@@ -1001,11 +1227,22 @@ class put_MessageText_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTIONEVENTLOG_OPNUMS = {
-    0: DceRpcOp(get_EventType_Request, get_EventType_Response),
-    1: DceRpcOp(put_EventType_Request, put_EventType_Response),
-    2: DceRpcOp(get_MessageText_Request, get_MessageText_Response),
-    3: DceRpcOp(put_MessageText_Request, put_MessageText_Response),
+IFSRMACTIONEVENTLOG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(get_EventType_Request, get_EventType_Response),
+    13: DceRpcOp(put_EventType_Request, put_EventType_Response),
+    14: DceRpcOp(get_MessageText_Request, get_MessageText_Response),
+    15: DceRpcOp(put_MessageText_Request, put_MessageText_Response),
 }
 register_com_interface(
     name="IFsrmActionEventLog",
@@ -1158,21 +1395,32 @@ class put_LogResult_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTIONCOMMAND_OPNUMS = {
-    0: DceRpcOp(get_ExecutablePath_Request, get_ExecutablePath_Response),
-    1: DceRpcOp(put_ExecutablePath_Request, put_ExecutablePath_Response),
-    2: DceRpcOp(get_Arguments_Request, get_Arguments_Response),
-    3: DceRpcOp(put_Arguments_Request, put_Arguments_Response),
-    4: DceRpcOp(get_Account_Request, get_Account_Response),
-    5: DceRpcOp(put_Account_Request, put_Account_Response),
-    6: DceRpcOp(get_WorkingDirectory_Request, get_WorkingDirectory_Response),
-    7: DceRpcOp(put_WorkingDirectory_Request, put_WorkingDirectory_Response),
-    8: DceRpcOp(get_MonitorCommand_Request, get_MonitorCommand_Response),
-    9: DceRpcOp(put_MonitorCommand_Request, put_MonitorCommand_Response),
-    10: DceRpcOp(get_KillTimeOut_Request, get_KillTimeOut_Response),
-    11: DceRpcOp(put_KillTimeOut_Request, put_KillTimeOut_Response),
-    12: DceRpcOp(get_LogResult_Request, get_LogResult_Response),
-    13: DceRpcOp(put_LogResult_Request, put_LogResult_Response),
+IFSRMACTIONCOMMAND_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(get_ExecutablePath_Request, get_ExecutablePath_Response),
+    13: DceRpcOp(put_ExecutablePath_Request, put_ExecutablePath_Response),
+    14: DceRpcOp(get_Arguments_Request, get_Arguments_Response),
+    15: DceRpcOp(put_Arguments_Request, put_Arguments_Response),
+    16: DceRpcOp(get_Account_Request, get_Account_Response),
+    17: DceRpcOp(put_Account_Request, put_Account_Response),
+    18: DceRpcOp(get_WorkingDirectory_Request, get_WorkingDirectory_Response),
+    19: DceRpcOp(put_WorkingDirectory_Request, put_WorkingDirectory_Response),
+    20: DceRpcOp(get_MonitorCommand_Request, get_MonitorCommand_Response),
+    21: DceRpcOp(put_MonitorCommand_Request, put_MonitorCommand_Response),
+    22: DceRpcOp(get_KillTimeOut_Request, get_KillTimeOut_Response),
+    23: DceRpcOp(put_KillTimeOut_Request, put_KillTimeOut_Response),
+    24: DceRpcOp(get_LogResult_Request, get_LogResult_Response),
+    25: DceRpcOp(put_LogResult_Request, put_LogResult_Response),
 }
 register_com_interface(
     name="IFsrmActionCommand",
@@ -1309,20 +1557,26 @@ class GetActionRunLimitInterval_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("delayTimeMinutes", 0), NDRIntField("status", 0)]
 
 
-IFSRMSETTING_OPNUMS = {
-    0: DceRpcOp(get_SmtpServer_Request, get_SmtpServer_Response),
-    1: DceRpcOp(put_SmtpServer_Request, put_SmtpServer_Response),
-    2: DceRpcOp(get_MailFrom_Request, get_MailFrom_Response),
-    3: DceRpcOp(put_MailFrom_Request, put_MailFrom_Response),
-    4: DceRpcOp(get_AdminEmail_Request, get_AdminEmail_Response),
-    5: DceRpcOp(put_AdminEmail_Request, put_AdminEmail_Response),
-    6: DceRpcOp(get_DisableCommandLine_Request, get_DisableCommandLine_Response),
-    7: DceRpcOp(put_DisableCommandLine_Request, put_DisableCommandLine_Response),
-    8: DceRpcOp(get_EnableScreeningAudit_Request, get_EnableScreeningAudit_Response),
-    9: DceRpcOp(put_EnableScreeningAudit_Request, put_EnableScreeningAudit_Response),
-    10: DceRpcOp(EmailTest_Request, EmailTest_Response),
-    11: DceRpcOp(SetActionRunLimitInterval_Request, SetActionRunLimitInterval_Response),
-    12: DceRpcOp(GetActionRunLimitInterval_Request, GetActionRunLimitInterval_Response),
+IFSRMSETTING_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_SmtpServer_Request, get_SmtpServer_Response),
+    8: DceRpcOp(put_SmtpServer_Request, put_SmtpServer_Response),
+    9: DceRpcOp(get_MailFrom_Request, get_MailFrom_Response),
+    10: DceRpcOp(put_MailFrom_Request, put_MailFrom_Response),
+    11: DceRpcOp(get_AdminEmail_Request, get_AdminEmail_Response),
+    12: DceRpcOp(put_AdminEmail_Request, put_AdminEmail_Response),
+    13: DceRpcOp(get_DisableCommandLine_Request, get_DisableCommandLine_Response),
+    14: DceRpcOp(put_DisableCommandLine_Request, put_DisableCommandLine_Response),
+    15: DceRpcOp(get_EnableScreeningAudit_Request, get_EnableScreeningAudit_Response),
+    16: DceRpcOp(put_EnableScreeningAudit_Request, put_EnableScreeningAudit_Response),
+    17: DceRpcOp(EmailTest_Request, EmailTest_Response),
+    18: DceRpcOp(SetActionRunLimitInterval_Request, SetActionRunLimitInterval_Response),
+    19: DceRpcOp(GetActionRunLimitInterval_Request, GetActionRunLimitInterval_Response),
 }
 register_com_interface(
     name="IFsrmSetting",
@@ -1342,8 +1596,14 @@ class GetSharePathsForLocalPath_Response(NDRPacket):
     ]
 
 
-IFSRMPATHMAPPER_OPNUMS = {
-    0: DceRpcOp(GetSharePathsForLocalPath_Request, GetSharePathsForLocalPath_Response)
+IFSRMPATHMAPPER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(GetSharePathsForLocalPath_Request, GetSharePathsForLocalPath_Response),
 }
 register_com_interface(
     name="IFsrmPathMapper",
@@ -1371,11 +1631,36 @@ class put_AttachmentFileListSize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMACTIONEMAIL2_OPNUMS = {
-    0: DceRpcOp(
+IFSRMACTIONEMAIL2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_ActionType_Request, get_ActionType_Response),
+    9: DceRpcOp(get_RunLimitInterval_Request, get_RunLimitInterval_Response),
+    10: DceRpcOp(put_RunLimitInterval_Request, put_RunLimitInterval_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(get_MailFrom_Request, get_MailFrom_Response),
+    13: DceRpcOp(put_MailFrom_Request, put_MailFrom_Response),
+    14: DceRpcOp(get_MailReplyTo_Request, get_MailReplyTo_Response),
+    15: DceRpcOp(put_MailReplyTo_Request, put_MailReplyTo_Response),
+    16: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
+    17: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
+    18: DceRpcOp(get_MailCc_Request, get_MailCc_Response),
+    19: DceRpcOp(put_MailCc_Request, put_MailCc_Response),
+    20: DceRpcOp(get_MailBcc_Request, get_MailBcc_Response),
+    21: DceRpcOp(put_MailBcc_Request, put_MailBcc_Response),
+    22: DceRpcOp(get_MailSubject_Request, get_MailSubject_Response),
+    23: DceRpcOp(put_MailSubject_Request, put_MailSubject_Response),
+    24: DceRpcOp(get_MessageText_Request, get_MessageText_Response),
+    25: DceRpcOp(put_MessageText_Request, put_MessageText_Response),
+    26: DceRpcOp(
         get_AttachmentFileListSize_Request, get_AttachmentFileListSize_Response
     ),
-    1: DceRpcOp(
+    27: DceRpcOp(
         put_AttachmentFileListSize_Request, put_AttachmentFileListSize_Response
     ),
 }
@@ -1412,9 +1697,15 @@ class get_Results_Response(NDRPacket):
     ]
 
 
-IFSRMDERIVEDOBJECTSRESULT_OPNUMS = {
-    0: DceRpcOp(get_DerivedObjects_Request, get_DerivedObjects_Response),
-    1: DceRpcOp(get_Results_Request, get_Results_Response),
+IFSRMDERIVEDOBJECTSRESULT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_DerivedObjects_Request, get_DerivedObjects_Response),
+    8: DceRpcOp(get_Results_Request, get_Results_Response),
 }
 register_com_interface(
     name="IFsrmDerivedObjectsResult",
@@ -1534,17 +1825,28 @@ class put_Parameters_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMPROPERTYDEFINITION_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(get_Type_Request, get_Type_Response),
-    3: DceRpcOp(put_Type_Request, put_Type_Response),
-    4: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
-    5: DceRpcOp(put_PossibleValues_Request, put_PossibleValues_Response),
-    6: DceRpcOp(get_ValueDescriptions_Request, get_ValueDescriptions_Response),
-    7: DceRpcOp(put_ValueDescriptions_Request, put_ValueDescriptions_Response),
-    8: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
-    9: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+IFSRMPROPERTYDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_Type_Request, get_Type_Response),
+    15: DceRpcOp(put_Type_Request, put_Type_Response),
+    16: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
+    17: DceRpcOp(put_PossibleValues_Request, put_PossibleValues_Response),
+    18: DceRpcOp(get_ValueDescriptions_Request, get_ValueDescriptions_Response),
+    19: DceRpcOp(put_ValueDescriptions_Request, put_ValueDescriptions_Response),
+    20: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    21: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
 }
 register_com_interface(
     name="IFsrmPropertyDefinition",
@@ -1606,14 +1908,35 @@ class get_ValueDefinitions_Response(NDRPacket):
     ]
 
 
-IFSRMPROPERTYDEFINITION2_OPNUMS = {
-    0: DceRpcOp(
+IFSRMPROPERTYDEFINITION2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_Type_Request, get_Type_Response),
+    15: DceRpcOp(put_Type_Request, put_Type_Response),
+    16: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
+    17: DceRpcOp(put_PossibleValues_Request, put_PossibleValues_Response),
+    18: DceRpcOp(get_ValueDescriptions_Request, get_ValueDescriptions_Response),
+    19: DceRpcOp(put_ValueDescriptions_Request, put_ValueDescriptions_Response),
+    20: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    21: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    22: DceRpcOp(
         get_PropertyDefinitionFlags_Request, get_PropertyDefinitionFlags_Response
     ),
-    1: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
-    2: DceRpcOp(put_DisplayName_Request, put_DisplayName_Response),
-    3: DceRpcOp(get_AppliesTo_Request, get_AppliesTo_Response),
-    4: DceRpcOp(get_ValueDefinitions_Request, get_ValueDefinitions_Response),
+    23: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
+    24: DceRpcOp(put_DisplayName_Request, put_DisplayName_Response),
+    25: DceRpcOp(get_AppliesTo_Request, get_AppliesTo_Response),
+    26: DceRpcOp(get_ValueDefinitions_Request, get_ValueDefinitions_Response),
 }
 register_com_interface(
     name="IFsrmPropertyDefinition2",
@@ -1674,11 +1997,17 @@ class get_UniqueID_Response(NDRPacket):
     ]
 
 
-IFSRMPROPERTYDEFINITIONVALUE_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
-    2: DceRpcOp(get_Description_Request, get_Description_Response),
-    3: DceRpcOp(get_UniqueID_Request, get_UniqueID_Response),
+IFSRMPROPERTYDEFINITIONVALUE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Name_Request, get_Name_Response),
+    8: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
+    9: DceRpcOp(get_Description_Request, get_Description_Response),
+    10: DceRpcOp(get_UniqueID_Request, get_UniqueID_Response),
 }
 register_com_interface(
     name="IFsrmPropertyDefinitionValue",
@@ -1732,11 +2061,17 @@ class get_PropertyFlags_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("flags", 0), NDRIntField("status", 0)]
 
 
-IFSRMPROPERTY_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Value_Request, get_Value_Response),
-    2: DceRpcOp(get_Sources_Request, get_Sources_Response),
-    3: DceRpcOp(get_PropertyFlags_Request, get_PropertyFlags_Response),
+IFSRMPROPERTY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Name_Request, get_Name_Response),
+    8: DceRpcOp(get_Value_Request, get_Value_Response),
+    9: DceRpcOp(get_Sources_Request, get_Sources_Response),
+    10: DceRpcOp(get_PropertyFlags_Request, get_PropertyFlags_Response),
 }
 register_com_interface(
     name="IFsrmProperty",
@@ -1870,19 +2205,30 @@ class get_LastModified_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("lastModified", 0), NDRIntField("status", 0)]
 
 
-IFSRMRULE_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(get_RuleType_Request, get_RuleType_Response),
-    3: DceRpcOp(get_ModuleDefinitionName_Request, get_ModuleDefinitionName_Response),
-    4: DceRpcOp(put_ModuleDefinitionName_Request, put_ModuleDefinitionName_Response),
-    5: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
-    6: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
-    7: DceRpcOp(get_RuleFlags_Request, get_RuleFlags_Response),
-    8: DceRpcOp(put_RuleFlags_Request, put_RuleFlags_Response),
-    9: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
-    10: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
-    11: DceRpcOp(get_LastModified_Request, get_LastModified_Response),
+IFSRMRULE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_RuleType_Request, get_RuleType_Response),
+    15: DceRpcOp(get_ModuleDefinitionName_Request, get_ModuleDefinitionName_Response),
+    16: DceRpcOp(put_ModuleDefinitionName_Request, put_ModuleDefinitionName_Response),
+    17: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
+    18: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
+    19: DceRpcOp(get_RuleFlags_Request, get_RuleFlags_Response),
+    20: DceRpcOp(put_RuleFlags_Request, put_RuleFlags_Response),
+    21: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    22: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    23: DceRpcOp(get_LastModified_Request, get_LastModified_Response),
 }
 register_com_interface(
     name="IFsrmRule",
@@ -1959,13 +2305,36 @@ class put_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMCLASSIFICATIONRULE_OPNUMS = {
-    0: DceRpcOp(get_ExecutionOption_Request, get_ExecutionOption_Response),
-    1: DceRpcOp(put_ExecutionOption_Request, put_ExecutionOption_Response),
-    2: DceRpcOp(get_PropertyAffected_Request, get_PropertyAffected_Response),
-    3: DceRpcOp(put_PropertyAffected_Request, put_PropertyAffected_Response),
-    4: DceRpcOp(get_Value_Request, get_Value_Response),
-    5: DceRpcOp(put_Value_Request, put_Value_Response),
+IFSRMCLASSIFICATIONRULE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_RuleType_Request, get_RuleType_Response),
+    15: DceRpcOp(get_ModuleDefinitionName_Request, get_ModuleDefinitionName_Response),
+    16: DceRpcOp(put_ModuleDefinitionName_Request, put_ModuleDefinitionName_Response),
+    17: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
+    18: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
+    19: DceRpcOp(get_RuleFlags_Request, get_RuleFlags_Response),
+    20: DceRpcOp(put_RuleFlags_Request, put_RuleFlags_Response),
+    21: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    22: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    23: DceRpcOp(get_LastModified_Request, get_LastModified_Response),
+    24: DceRpcOp(get_ExecutionOption_Request, get_ExecutionOption_Response),
+    25: DceRpcOp(put_ExecutionOption_Request, put_ExecutionOption_Response),
+    26: DceRpcOp(get_PropertyAffected_Request, get_PropertyAffected_Response),
+    27: DceRpcOp(put_PropertyAffected_Request, put_PropertyAffected_Response),
+    28: DceRpcOp(get_Value_Request, get_Value_Response),
+    29: DceRpcOp(put_Value_Request, put_Value_Response),
 }
 register_com_interface(
     name="IFsrmClassificationRule",
@@ -2168,26 +2537,37 @@ class put_Parameters_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMPIPELINEMODULEDEFINITION_OPNUMS = {
-    0: DceRpcOp(get_ModuleClsid_Request, get_ModuleClsid_Response),
-    1: DceRpcOp(put_ModuleClsid_Request, put_ModuleClsid_Response),
-    2: DceRpcOp(get_Name_Request, get_Name_Response),
-    3: DceRpcOp(put_Name_Request, put_Name_Response),
-    4: DceRpcOp(get_Company_Request, get_Company_Response),
-    5: DceRpcOp(put_Company_Request, put_Company_Response),
-    6: DceRpcOp(get_Version_Request, get_Version_Response),
-    7: DceRpcOp(put_Version_Request, put_Version_Response),
-    8: DceRpcOp(get_ModuleType_Request, get_ModuleType_Response),
-    9: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    10: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    11: DceRpcOp(get_NeedsFileContent_Request, get_NeedsFileContent_Response),
-    12: DceRpcOp(put_NeedsFileContent_Request, put_NeedsFileContent_Response),
-    13: DceRpcOp(get_Account_Request, get_Account_Response),
-    14: DceRpcOp(put_Account_Request, put_Account_Response),
-    15: DceRpcOp(get_SupportedExtensions_Request, get_SupportedExtensions_Response),
-    16: DceRpcOp(put_SupportedExtensions_Request, put_SupportedExtensions_Response),
-    17: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
-    18: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+IFSRMPIPELINEMODULEDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_ModuleClsid_Request, get_ModuleClsid_Response),
+    13: DceRpcOp(put_ModuleClsid_Request, put_ModuleClsid_Response),
+    14: DceRpcOp(get_Name_Request, get_Name_Response),
+    15: DceRpcOp(put_Name_Request, put_Name_Response),
+    16: DceRpcOp(get_Company_Request, get_Company_Response),
+    17: DceRpcOp(put_Company_Request, put_Company_Response),
+    18: DceRpcOp(get_Version_Request, get_Version_Response),
+    19: DceRpcOp(put_Version_Request, put_Version_Response),
+    20: DceRpcOp(get_ModuleType_Request, get_ModuleType_Response),
+    21: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
+    22: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
+    23: DceRpcOp(get_NeedsFileContent_Request, get_NeedsFileContent_Response),
+    24: DceRpcOp(put_NeedsFileContent_Request, put_NeedsFileContent_Response),
+    25: DceRpcOp(get_Account_Request, get_Account_Response),
+    26: DceRpcOp(put_Account_Request, put_Account_Response),
+    27: DceRpcOp(get_SupportedExtensions_Request, get_SupportedExtensions_Response),
+    28: DceRpcOp(put_SupportedExtensions_Request, put_SupportedExtensions_Response),
+    29: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    30: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
 }
 register_com_interface(
     name="IFsrmPipelineModuleDefinition",
@@ -2255,13 +2635,43 @@ class put_NeedsExplicitValue_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMCLASSIFIERMODULEDEFINITION_OPNUMS = {
-    0: DceRpcOp(get_PropertiesAffected_Request, get_PropertiesAffected_Response),
-    1: DceRpcOp(put_PropertiesAffected_Request, put_PropertiesAffected_Response),
-    2: DceRpcOp(get_PropertiesUsed_Request, get_PropertiesUsed_Response),
-    3: DceRpcOp(put_PropertiesUsed_Request, put_PropertiesUsed_Response),
-    4: DceRpcOp(get_NeedsExplicitValue_Request, get_NeedsExplicitValue_Response),
-    5: DceRpcOp(put_NeedsExplicitValue_Request, put_NeedsExplicitValue_Response),
+IFSRMCLASSIFIERMODULEDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_ModuleClsid_Request, get_ModuleClsid_Response),
+    13: DceRpcOp(put_ModuleClsid_Request, put_ModuleClsid_Response),
+    14: DceRpcOp(get_Name_Request, get_Name_Response),
+    15: DceRpcOp(put_Name_Request, put_Name_Response),
+    16: DceRpcOp(get_Company_Request, get_Company_Response),
+    17: DceRpcOp(put_Company_Request, put_Company_Response),
+    18: DceRpcOp(get_Version_Request, get_Version_Response),
+    19: DceRpcOp(put_Version_Request, put_Version_Response),
+    20: DceRpcOp(get_ModuleType_Request, get_ModuleType_Response),
+    21: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
+    22: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
+    23: DceRpcOp(get_NeedsFileContent_Request, get_NeedsFileContent_Response),
+    24: DceRpcOp(put_NeedsFileContent_Request, put_NeedsFileContent_Response),
+    25: DceRpcOp(get_Account_Request, get_Account_Response),
+    26: DceRpcOp(put_Account_Request, put_Account_Response),
+    27: DceRpcOp(get_SupportedExtensions_Request, get_SupportedExtensions_Response),
+    28: DceRpcOp(put_SupportedExtensions_Request, put_SupportedExtensions_Response),
+    29: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    30: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    31: DceRpcOp(get_PropertiesAffected_Request, get_PropertiesAffected_Response),
+    32: DceRpcOp(put_PropertiesAffected_Request, put_PropertiesAffected_Response),
+    33: DceRpcOp(get_PropertiesUsed_Request, get_PropertiesUsed_Response),
+    34: DceRpcOp(put_PropertiesUsed_Request, put_PropertiesUsed_Response),
+    35: DceRpcOp(get_NeedsExplicitValue_Request, get_NeedsExplicitValue_Response),
+    36: DceRpcOp(put_NeedsExplicitValue_Request, put_NeedsExplicitValue_Response),
 }
 register_com_interface(
     name="IFsrmClassifierModuleDefinition",
@@ -2625,61 +3035,67 @@ class ClearFileProperty_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMCLASSIFICATIONMANAGER_OPNUMS = {
-    0: DceRpcOp(
+IFSRMCLASSIFICATIONMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(
         get_ClassificationReportFormats_Request,
         get_ClassificationReportFormats_Response,
     ),
-    1: DceRpcOp(
+    8: DceRpcOp(
         put_ClassificationReportFormats_Request,
         put_ClassificationReportFormats_Response,
     ),
-    2: DceRpcOp(get_Logging_Request, get_Logging_Response),
-    3: DceRpcOp(put_Logging_Request, put_Logging_Response),
-    4: DceRpcOp(
+    9: DceRpcOp(get_Logging_Request, get_Logging_Response),
+    10: DceRpcOp(put_Logging_Request, put_Logging_Response),
+    11: DceRpcOp(
         get_ClassificationReportMailTo_Request, get_ClassificationReportMailTo_Response
     ),
-    5: DceRpcOp(
+    12: DceRpcOp(
         put_ClassificationReportMailTo_Request, put_ClassificationReportMailTo_Response
     ),
-    6: DceRpcOp(
+    13: DceRpcOp(
         get_ClassificationReportEnabled_Request,
         get_ClassificationReportEnabled_Response,
     ),
-    7: DceRpcOp(
+    14: DceRpcOp(
         put_ClassificationReportEnabled_Request,
         put_ClassificationReportEnabled_Response,
     ),
-    8: DceRpcOp(
+    15: DceRpcOp(
         get_ClassificationLastReportPathWithoutExtension_Request,
         get_ClassificationLastReportPathWithoutExtension_Response,
     ),
-    9: DceRpcOp(
+    16: DceRpcOp(
         get_ClassificationLastError_Request, get_ClassificationLastError_Response
     ),
-    10: DceRpcOp(
+    17: DceRpcOp(
         get_ClassificationRunningStatus_Request,
         get_ClassificationRunningStatus_Response,
     ),
-    11: DceRpcOp(EnumPropertyDefinitions_Request, EnumPropertyDefinitions_Response),
-    12: DceRpcOp(CreatePropertyDefinition_Request, CreatePropertyDefinition_Response),
-    13: DceRpcOp(GetPropertyDefinition_Request, GetPropertyDefinition_Response),
-    14: DceRpcOp(EnumRules_Request, EnumRules_Response),
-    15: DceRpcOp(CreateRule_Request, CreateRule_Response),
-    16: DceRpcOp(GetRule_Request, GetRule_Response),
-    17: DceRpcOp(EnumModuleDefinitions_Request, EnumModuleDefinitions_Response),
-    18: DceRpcOp(CreateModuleDefinition_Request, CreateModuleDefinition_Response),
-    19: DceRpcOp(GetModuleDefinition_Request, GetModuleDefinition_Response),
-    20: DceRpcOp(RunClassification_Request, RunClassification_Response),
-    21: DceRpcOp(
+    18: DceRpcOp(EnumPropertyDefinitions_Request, EnumPropertyDefinitions_Response),
+    19: DceRpcOp(CreatePropertyDefinition_Request, CreatePropertyDefinition_Response),
+    20: DceRpcOp(GetPropertyDefinition_Request, GetPropertyDefinition_Response),
+    21: DceRpcOp(EnumRules_Request, EnumRules_Response),
+    22: DceRpcOp(CreateRule_Request, CreateRule_Response),
+    23: DceRpcOp(GetRule_Request, GetRule_Response),
+    24: DceRpcOp(EnumModuleDefinitions_Request, EnumModuleDefinitions_Response),
+    25: DceRpcOp(CreateModuleDefinition_Request, CreateModuleDefinition_Response),
+    26: DceRpcOp(GetModuleDefinition_Request, GetModuleDefinition_Response),
+    27: DceRpcOp(RunClassification_Request, RunClassification_Response),
+    28: DceRpcOp(
         WaitForClassificationCompletion_Request,
         WaitForClassificationCompletion_Response,
     ),
-    22: DceRpcOp(CancelClassification_Request, CancelClassification_Response),
-    23: DceRpcOp(EnumFileProperties_Request, EnumFileProperties_Response),
-    24: DceRpcOp(GetFileProperty_Request, GetFileProperty_Response),
-    25: DceRpcOp(SetFileProperty_Request, SetFileProperty_Response),
-    26: DceRpcOp(ClearFileProperty_Request, ClearFileProperty_Response),
+    29: DceRpcOp(CancelClassification_Request, CancelClassification_Response),
+    30: DceRpcOp(EnumFileProperties_Request, EnumFileProperties_Response),
+    31: DceRpcOp(GetFileProperty_Request, GetFileProperty_Response),
+    32: DceRpcOp(SetFileProperty_Request, SetFileProperty_Response),
+    33: DceRpcOp(ClearFileProperty_Request, ClearFileProperty_Response),
 }
 register_com_interface(
     name="IFsrmClassificationManager",
@@ -2761,13 +3177,43 @@ class put_UpdatesFileContent_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMSTORAGEMODULEDEFINITION_OPNUMS = {
-    0: DceRpcOp(get_Capabilities_Request, get_Capabilities_Response),
-    1: DceRpcOp(put_Capabilities_Request, put_Capabilities_Response),
-    2: DceRpcOp(get_StorageType_Request, get_StorageType_Response),
-    3: DceRpcOp(put_StorageType_Request, put_StorageType_Response),
-    4: DceRpcOp(get_UpdatesFileContent_Request, get_UpdatesFileContent_Response),
-    5: DceRpcOp(put_UpdatesFileContent_Request, put_UpdatesFileContent_Response),
+IFSRMSTORAGEMODULEDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_ModuleClsid_Request, get_ModuleClsid_Response),
+    13: DceRpcOp(put_ModuleClsid_Request, put_ModuleClsid_Response),
+    14: DceRpcOp(get_Name_Request, get_Name_Response),
+    15: DceRpcOp(put_Name_Request, put_Name_Response),
+    16: DceRpcOp(get_Company_Request, get_Company_Response),
+    17: DceRpcOp(put_Company_Request, put_Company_Response),
+    18: DceRpcOp(get_Version_Request, get_Version_Response),
+    19: DceRpcOp(put_Version_Request, put_Version_Response),
+    20: DceRpcOp(get_ModuleType_Request, get_ModuleType_Response),
+    21: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
+    22: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
+    23: DceRpcOp(get_NeedsFileContent_Request, get_NeedsFileContent_Response),
+    24: DceRpcOp(put_NeedsFileContent_Request, put_NeedsFileContent_Response),
+    25: DceRpcOp(get_Account_Request, get_Account_Response),
+    26: DceRpcOp(put_Account_Request, put_Account_Response),
+    27: DceRpcOp(get_SupportedExtensions_Request, get_SupportedExtensions_Response),
+    28: DceRpcOp(put_SupportedExtensions_Request, put_SupportedExtensions_Response),
+    29: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    30: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    31: DceRpcOp(get_Capabilities_Request, get_Capabilities_Response),
+    32: DceRpcOp(put_Capabilities_Request, put_Capabilities_Response),
+    33: DceRpcOp(get_StorageType_Request, get_StorageType_Response),
+    34: DceRpcOp(put_StorageType_Request, put_StorageType_Response),
+    35: DceRpcOp(get_UpdatesFileContent_Request, get_UpdatesFileContent_Response),
+    36: DceRpcOp(put_UpdatesFileContent_Request, put_UpdatesFileContent_Response),
 }
 register_com_interface(
     name="IFsrmStorageModuleDefinition",
@@ -2880,17 +3326,28 @@ class EnumThresholdActions_Response(NDRPacket):
     ]
 
 
-IFSRMQUOTABASE_OPNUMS = {
-    0: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
-    1: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
-    2: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
-    3: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
-    4: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
-    5: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
-    6: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
-    7: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
-    8: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
-    9: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+IFSRMQUOTABASE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
 }
 register_com_interface(
     name="IFsrmQuotaBase",
@@ -2969,13 +3426,34 @@ class ApplyTemplate_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMQUOTAOBJECT_OPNUMS = {
-    0: DceRpcOp(get_Path_Request, get_Path_Response),
-    1: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
-    2: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
-    3: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
-    4: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
-    5: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
+IFSRMQUOTAOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+    22: DceRpcOp(get_Path_Request, get_Path_Response),
+    23: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
+    24: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
+    25: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
+    26: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
+    27: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
 }
 register_com_interface(
     name="IFsrmQuotaObject",
@@ -3032,12 +3510,39 @@ class RefreshUsageProperties_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMQUOTA_OPNUMS = {
-    0: DceRpcOp(get_QuotaUsed_Request, get_QuotaUsed_Response),
-    1: DceRpcOp(get_QuotaPeakUsage_Request, get_QuotaPeakUsage_Response),
-    2: DceRpcOp(get_QuotaPeakUsageTime_Request, get_QuotaPeakUsageTime_Response),
-    3: DceRpcOp(ResetPeakUsage_Request, ResetPeakUsage_Response),
-    4: DceRpcOp(RefreshUsageProperties_Request, RefreshUsageProperties_Response),
+IFSRMQUOTA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+    22: DceRpcOp(get_Path_Request, get_Path_Response),
+    23: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
+    24: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
+    25: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
+    26: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
+    27: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
+    28: DceRpcOp(get_QuotaUsed_Request, get_QuotaUsed_Response),
+    29: DceRpcOp(get_QuotaPeakUsage_Request, get_QuotaPeakUsage_Response),
+    30: DceRpcOp(get_QuotaPeakUsageTime_Request, get_QuotaPeakUsageTime_Response),
+    31: DceRpcOp(ResetPeakUsage_Request, ResetPeakUsage_Response),
+    32: DceRpcOp(RefreshUsageProperties_Request, RefreshUsageProperties_Response),
 }
 register_com_interface(
     name="IFsrmQuota",
@@ -3088,10 +3593,37 @@ class CommitAndUpdateDerived_Response(NDRPacket):
     ]
 
 
-IFSRMAUTOAPPLYQUOTA_OPNUMS = {
-    0: DceRpcOp(get_ExcludeFolders_Request, get_ExcludeFolders_Response),
-    1: DceRpcOp(put_ExcludeFolders_Request, put_ExcludeFolders_Response),
-    2: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
+IFSRMAUTOAPPLYQUOTA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+    22: DceRpcOp(get_Path_Request, get_Path_Response),
+    23: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
+    24: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
+    25: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
+    26: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
+    27: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
+    28: DceRpcOp(get_ExcludeFolders_Request, get_ExcludeFolders_Response),
+    29: DceRpcOp(put_ExcludeFolders_Request, put_ExcludeFolders_Response),
+    30: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
 }
 register_com_interface(
     name="IFsrmAutoApplyQuota",
@@ -3259,21 +3791,27 @@ class CreateQuotaCollection_Response(NDRPacket):
     ]
 
 
-IFSRMQUOTAMANAGER_OPNUMS = {
-    0: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
-    1: DceRpcOp(
+IFSRMQUOTAMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
+    8: DceRpcOp(
         get_ActionVariableDescriptions_Request, get_ActionVariableDescriptions_Response
     ),
-    2: DceRpcOp(CreateQuota_Request, CreateQuota_Response),
-    3: DceRpcOp(CreateAutoApplyQuota_Request, CreateAutoApplyQuota_Response),
-    4: DceRpcOp(GetQuota_Request, GetQuota_Response),
-    5: DceRpcOp(GetAutoApplyQuota_Request, GetAutoApplyQuota_Response),
-    6: DceRpcOp(GetRestrictiveQuota_Request, GetRestrictiveQuota_Response),
-    7: DceRpcOp(EnumQuotas_Request, EnumQuotas_Response),
-    8: DceRpcOp(EnumAutoApplyQuotas_Request, EnumAutoApplyQuotas_Response),
-    9: DceRpcOp(EnumEffectiveQuotas_Request, EnumEffectiveQuotas_Response),
-    10: DceRpcOp(Scan_Request, Scan_Response),
-    11: DceRpcOp(CreateQuotaCollection_Request, CreateQuotaCollection_Response),
+    9: DceRpcOp(CreateQuota_Request, CreateQuota_Response),
+    10: DceRpcOp(CreateAutoApplyQuota_Request, CreateAutoApplyQuota_Response),
+    11: DceRpcOp(GetQuota_Request, GetQuota_Response),
+    12: DceRpcOp(GetAutoApplyQuota_Request, GetAutoApplyQuota_Response),
+    13: DceRpcOp(GetRestrictiveQuota_Request, GetRestrictiveQuota_Response),
+    14: DceRpcOp(EnumQuotas_Request, EnumQuotas_Response),
+    15: DceRpcOp(EnumAutoApplyQuotas_Request, EnumAutoApplyQuotas_Response),
+    16: DceRpcOp(EnumEffectiveQuotas_Request, EnumEffectiveQuotas_Response),
+    17: DceRpcOp(Scan_Request, Scan_Response),
+    18: DceRpcOp(CreateQuotaCollection_Request, CreateQuotaCollection_Response),
 }
 register_com_interface(
     name="IFsrmQuotaManager",
@@ -3331,11 +3869,32 @@ class CommitAndUpdateDerived_Response(NDRPacket):
     ]
 
 
-IFSRMQUOTATEMPLATE_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
-    3: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
+IFSRMQUOTATEMPLATE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+    22: DceRpcOp(get_Name_Request, get_Name_Response),
+    23: DceRpcOp(put_Name_Request, put_Name_Response),
+    24: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
+    25: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
 }
 register_com_interface(
     name="IFsrmQuotaTemplate",
@@ -3360,9 +3919,34 @@ class put_OverwriteOnCommit_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMQUOTATEMPLATEIMPORTED_OPNUMS = {
-    0: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
-    1: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
+IFSRMQUOTATEMPLATEIMPORTED_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_QuotaLimit_Request, get_QuotaLimit_Response),
+    13: DceRpcOp(put_QuotaLimit_Request, put_QuotaLimit_Response),
+    14: DceRpcOp(get_QuotaFlags_Request, get_QuotaFlags_Response),
+    15: DceRpcOp(put_QuotaFlags_Request, put_QuotaFlags_Response),
+    16: DceRpcOp(get_Thresholds_Request, get_Thresholds_Response),
+    17: DceRpcOp(AddThreshold_Request, AddThreshold_Response),
+    18: DceRpcOp(DeleteThreshold_Request, DeleteThreshold_Response),
+    19: DceRpcOp(ModifyThreshold_Request, ModifyThreshold_Response),
+    20: DceRpcOp(CreateThresholdAction_Request, CreateThresholdAction_Response),
+    21: DceRpcOp(EnumThresholdActions_Request, EnumThresholdActions_Response),
+    22: DceRpcOp(get_Name_Request, get_Name_Response),
+    23: DceRpcOp(put_Name_Request, put_Name_Response),
+    24: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
+    25: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
+    26: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
+    27: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
 }
 register_com_interface(
     name="IFsrmQuotaTemplateImported",
@@ -3449,12 +4033,18 @@ class ImportTemplates_Response(NDRPacket):
     ]
 
 
-IFSRMQUOTATEMPLATEMANAGER_OPNUMS = {
-    0: DceRpcOp(CreateTemplate_Request, CreateTemplate_Response),
-    1: DceRpcOp(GetTemplate_Request, GetTemplate_Response),
-    2: DceRpcOp(EnumTemplates_Request, EnumTemplates_Response),
-    3: DceRpcOp(ExportTemplates_Request, ExportTemplates_Response),
-    4: DceRpcOp(ImportTemplates_Request, ImportTemplates_Response),
+IFSRMQUOTATEMPLATEMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(CreateTemplate_Request, CreateTemplate_Response),
+    8: DceRpcOp(GetTemplate_Request, GetTemplate_Response),
+    9: DceRpcOp(EnumTemplates_Request, EnumTemplates_Response),
+    10: DceRpcOp(ExportTemplates_Request, ExportTemplates_Response),
+    11: DceRpcOp(ImportTemplates_Request, ImportTemplates_Response),
 }
 register_com_interface(
     name="IFsrmQuotaTemplateManager",
@@ -3474,8 +4064,28 @@ class IsAffectedByQuota_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("affected", 0), NDRIntField("status", 0)]
 
 
-IFSRMQUOTAMANAGEREX_OPNUMS = {
-    0: DceRpcOp(IsAffectedByQuota_Request, IsAffectedByQuota_Response)
+IFSRMQUOTAMANAGEREX_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
+    8: DceRpcOp(
+        get_ActionVariableDescriptions_Request, get_ActionVariableDescriptions_Response
+    ),
+    9: DceRpcOp(CreateQuota_Request, CreateQuota_Response),
+    10: DceRpcOp(CreateAutoApplyQuota_Request, CreateAutoApplyQuota_Response),
+    11: DceRpcOp(GetQuota_Request, GetQuota_Response),
+    12: DceRpcOp(GetAutoApplyQuota_Request, GetAutoApplyQuota_Response),
+    13: DceRpcOp(GetRestrictiveQuota_Request, GetRestrictiveQuota_Response),
+    14: DceRpcOp(EnumQuotas_Request, EnumQuotas_Response),
+    15: DceRpcOp(EnumAutoApplyQuotas_Request, EnumAutoApplyQuotas_Response),
+    16: DceRpcOp(EnumEffectiveQuotas_Request, EnumEffectiveQuotas_Response),
+    17: DceRpcOp(Scan_Request, Scan_Response),
+    18: DceRpcOp(CreateQuotaCollection_Request, CreateQuotaCollection_Response),
+    19: DceRpcOp(IsAffectedByQuota_Request, IsAffectedByQuota_Response),
 }
 register_com_interface(
     name="IFsrmQuotaManagerEx",
@@ -3653,19 +4263,25 @@ class SetReportSizeLimit_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMREPORTMANAGER_OPNUMS = {
-    0: DceRpcOp(EnumReportJobs_Request, EnumReportJobs_Response),
-    1: DceRpcOp(CreateReportJob_Request, CreateReportJob_Response),
-    2: DceRpcOp(GetReportJob_Request, GetReportJob_Response),
-    3: DceRpcOp(GetOutputDirectory_Request, GetOutputDirectory_Response),
-    4: DceRpcOp(SetOutputDirectory_Request, SetOutputDirectory_Response),
-    5: DceRpcOp(
+IFSRMREPORTMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(EnumReportJobs_Request, EnumReportJobs_Response),
+    8: DceRpcOp(CreateReportJob_Request, CreateReportJob_Response),
+    9: DceRpcOp(GetReportJob_Request, GetReportJob_Response),
+    10: DceRpcOp(GetOutputDirectory_Request, GetOutputDirectory_Response),
+    11: DceRpcOp(SetOutputDirectory_Request, SetOutputDirectory_Response),
+    12: DceRpcOp(
         IsFilterValidForReportType_Request, IsFilterValidForReportType_Response
     ),
-    6: DceRpcOp(GetDefaultFilter_Request, GetDefaultFilter_Response),
-    7: DceRpcOp(SetDefaultFilter_Request, SetDefaultFilter_Response),
-    8: DceRpcOp(GetReportSizeLimit_Request, GetReportSizeLimit_Response),
-    9: DceRpcOp(SetReportSizeLimit_Request, SetReportSizeLimit_Response),
+    13: DceRpcOp(GetDefaultFilter_Request, GetDefaultFilter_Response),
+    14: DceRpcOp(SetDefaultFilter_Request, SetDefaultFilter_Response),
+    15: DceRpcOp(GetReportSizeLimit_Request, GetReportSizeLimit_Response),
+    16: DceRpcOp(SetReportSizeLimit_Request, SetReportSizeLimit_Response),
 }
 register_dcerpc_interface(
     name="IFsrmReportManager",
@@ -3850,26 +4466,37 @@ class Cancel_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMREPORTJOB_OPNUMS = {
-    0: DceRpcOp(get_Task_Request, get_Task_Response),
-    1: DceRpcOp(put_Task_Request, put_Task_Response),
-    2: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
-    3: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
-    4: DceRpcOp(get_Formats_Request, get_Formats_Response),
-    5: DceRpcOp(put_Formats_Request, put_Formats_Response),
-    6: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
-    7: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
-    8: DceRpcOp(get_RunningStatus_Request, get_RunningStatus_Response),
-    9: DceRpcOp(get_LastRun_Request, get_LastRun_Response),
-    10: DceRpcOp(get_LastError_Request, get_LastError_Response),
-    11: DceRpcOp(
+IFSRMREPORTJOB_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Task_Request, get_Task_Response),
+    13: DceRpcOp(put_Task_Request, put_Task_Response),
+    14: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
+    15: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
+    16: DceRpcOp(get_Formats_Request, get_Formats_Response),
+    17: DceRpcOp(put_Formats_Request, put_Formats_Response),
+    18: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
+    19: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
+    20: DceRpcOp(get_RunningStatus_Request, get_RunningStatus_Response),
+    21: DceRpcOp(get_LastRun_Request, get_LastRun_Response),
+    22: DceRpcOp(get_LastError_Request, get_LastError_Response),
+    23: DceRpcOp(
         get_LastGeneratedInDirectory_Request, get_LastGeneratedInDirectory_Response
     ),
-    12: DceRpcOp(EnumReports_Request, EnumReports_Response),
-    13: DceRpcOp(CreateReport_Request, CreateReport_Response),
-    14: DceRpcOp(Run_Request, Run_Response),
-    15: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
-    16: DceRpcOp(Cancel_Request, Cancel_Response),
+    24: DceRpcOp(EnumReports_Request, EnumReports_Response),
+    25: DceRpcOp(CreateReport_Request, CreateReport_Response),
+    26: DceRpcOp(Run_Request, Run_Response),
+    27: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
+    28: DceRpcOp(Cancel_Request, Cancel_Response),
 }
 register_dcerpc_interface(
     name="IFsrmReportJob",
@@ -3979,19 +4606,25 @@ class Delete_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMREPORT_OPNUMS = {
-    0: DceRpcOp(get_Type_Request, get_Type_Response),
-    1: DceRpcOp(get_Name_Request, get_Name_Response),
-    2: DceRpcOp(put_Name_Request, put_Name_Response),
-    3: DceRpcOp(get_Description_Request, get_Description_Response),
-    4: DceRpcOp(put_Description_Request, put_Description_Response),
-    5: DceRpcOp(
+IFSRMREPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Type_Request, get_Type_Response),
+    8: DceRpcOp(get_Name_Request, get_Name_Response),
+    9: DceRpcOp(put_Name_Request, put_Name_Response),
+    10: DceRpcOp(get_Description_Request, get_Description_Response),
+    11: DceRpcOp(put_Description_Request, put_Description_Response),
+    12: DceRpcOp(
         get_LastGeneratedFileNamePrefix_Request,
         get_LastGeneratedFileNamePrefix_Response,
     ),
-    6: DceRpcOp(GetFilter_Request, GetFilter_Response),
-    7: DceRpcOp(SetFilter_Request, SetFilter_Response),
-    8: DceRpcOp(Delete_Request, Delete_Response),
+    13: DceRpcOp(GetFilter_Request, GetFilter_Response),
+    14: DceRpcOp(SetFilter_Request, SetFilter_Response),
+    15: DceRpcOp(Delete_Request, Delete_Response),
 }
 register_dcerpc_interface(
     name="IFsrmReport",
@@ -4062,14 +4695,20 @@ class GetFileManagementJob_Response(NDRPacket):
     ]
 
 
-IFSRMFILEMANAGEMENTJOBMANAGER_OPNUMS = {
-    0: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
-    1: DceRpcOp(
+IFSRMFILEMANAGEMENTJOBMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
+    8: DceRpcOp(
         get_ActionVariableDescriptions_Request, get_ActionVariableDescriptions_Response
     ),
-    2: DceRpcOp(EnumFileManagementJobs_Request, EnumFileManagementJobs_Response),
-    3: DceRpcOp(CreateFileManagementJob_Request, CreateFileManagementJob_Response),
-    4: DceRpcOp(GetFileManagementJob_Request, GetFileManagementJob_Response),
+    9: DceRpcOp(EnumFileManagementJobs_Request, EnumFileManagementJobs_Response),
+    10: DceRpcOp(CreateFileManagementJob_Request, CreateFileManagementJob_Response),
+    11: DceRpcOp(GetFileManagementJob_Request, GetFileManagementJob_Response),
 }
 register_dcerpc_interface(
     name="IFsrmFileManagementJobManager",
@@ -4572,67 +5211,78 @@ class CreateCustomAction_Response(NDRPacket):
     ]
 
 
-IFSRMFILEMANAGEMENTJOB_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
-    3: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
-    4: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    5: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    6: DceRpcOp(get_OperationType_Request, get_OperationType_Response),
-    7: DceRpcOp(put_OperationType_Request, put_OperationType_Response),
-    8: DceRpcOp(get_ExpirationDirectory_Request, get_ExpirationDirectory_Response),
-    9: DceRpcOp(put_ExpirationDirectory_Request, put_ExpirationDirectory_Response),
-    10: DceRpcOp(get_CustomAction_Request, get_CustomAction_Response),
-    11: DceRpcOp(get_Notifications_Request, get_Notifications_Response),
-    12: DceRpcOp(get_Logging_Request, get_Logging_Response),
-    13: DceRpcOp(put_Logging_Request, put_Logging_Response),
-    14: DceRpcOp(get_ReportEnabled_Request, get_ReportEnabled_Response),
-    15: DceRpcOp(put_ReportEnabled_Request, put_ReportEnabled_Response),
-    16: DceRpcOp(get_Formats_Request, get_Formats_Response),
-    17: DceRpcOp(put_Formats_Request, put_Formats_Response),
-    18: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
-    19: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
-    20: DceRpcOp(get_DaysSinceFileCreated_Request, get_DaysSinceFileCreated_Response),
-    21: DceRpcOp(put_DaysSinceFileCreated_Request, put_DaysSinceFileCreated_Response),
-    22: DceRpcOp(
+IFSRMFILEMANAGEMENTJOB_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_NamespaceRoots_Request, get_NamespaceRoots_Response),
+    15: DceRpcOp(put_NamespaceRoots_Request, put_NamespaceRoots_Response),
+    16: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
+    17: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
+    18: DceRpcOp(get_OperationType_Request, get_OperationType_Response),
+    19: DceRpcOp(put_OperationType_Request, put_OperationType_Response),
+    20: DceRpcOp(get_ExpirationDirectory_Request, get_ExpirationDirectory_Response),
+    21: DceRpcOp(put_ExpirationDirectory_Request, put_ExpirationDirectory_Response),
+    22: DceRpcOp(get_CustomAction_Request, get_CustomAction_Response),
+    23: DceRpcOp(get_Notifications_Request, get_Notifications_Response),
+    24: DceRpcOp(get_Logging_Request, get_Logging_Response),
+    25: DceRpcOp(put_Logging_Request, put_Logging_Response),
+    26: DceRpcOp(get_ReportEnabled_Request, get_ReportEnabled_Response),
+    27: DceRpcOp(put_ReportEnabled_Request, put_ReportEnabled_Response),
+    28: DceRpcOp(get_Formats_Request, get_Formats_Response),
+    29: DceRpcOp(put_Formats_Request, put_Formats_Response),
+    30: DceRpcOp(get_MailTo_Request, get_MailTo_Response),
+    31: DceRpcOp(put_MailTo_Request, put_MailTo_Response),
+    32: DceRpcOp(get_DaysSinceFileCreated_Request, get_DaysSinceFileCreated_Response),
+    33: DceRpcOp(put_DaysSinceFileCreated_Request, put_DaysSinceFileCreated_Response),
+    34: DceRpcOp(
         get_DaysSinceFileLastAccessed_Request, get_DaysSinceFileLastAccessed_Response
     ),
-    23: DceRpcOp(
+    35: DceRpcOp(
         put_DaysSinceFileLastAccessed_Request, put_DaysSinceFileLastAccessed_Response
     ),
-    24: DceRpcOp(
+    36: DceRpcOp(
         get_DaysSinceFileLastModified_Request, get_DaysSinceFileLastModified_Response
     ),
-    25: DceRpcOp(
+    37: DceRpcOp(
         put_DaysSinceFileLastModified_Request, put_DaysSinceFileLastModified_Response
     ),
-    26: DceRpcOp(get_PropertyConditions_Request, get_PropertyConditions_Response),
-    27: DceRpcOp(get_FromDate_Request, get_FromDate_Response),
-    28: DceRpcOp(put_FromDate_Request, put_FromDate_Response),
-    29: DceRpcOp(get_Task_Request, get_Task_Response),
-    30: DceRpcOp(put_Task_Request, put_Task_Response),
-    31: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
-    32: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
-    33: DceRpcOp(get_RunningStatus_Request, get_RunningStatus_Response),
-    34: DceRpcOp(get_LastError_Request, get_LastError_Response),
-    35: DceRpcOp(
+    38: DceRpcOp(get_PropertyConditions_Request, get_PropertyConditions_Response),
+    39: DceRpcOp(get_FromDate_Request, get_FromDate_Response),
+    40: DceRpcOp(put_FromDate_Request, put_FromDate_Response),
+    41: DceRpcOp(get_Task_Request, get_Task_Response),
+    42: DceRpcOp(put_Task_Request, put_Task_Response),
+    43: DceRpcOp(get_Parameters_Request, get_Parameters_Response),
+    44: DceRpcOp(put_Parameters_Request, put_Parameters_Response),
+    45: DceRpcOp(get_RunningStatus_Request, get_RunningStatus_Response),
+    46: DceRpcOp(get_LastError_Request, get_LastError_Response),
+    47: DceRpcOp(
         get_LastReportPathWithoutExtension_Request,
         get_LastReportPathWithoutExtension_Response,
     ),
-    36: DceRpcOp(get_LastRun_Request, get_LastRun_Response),
-    37: DceRpcOp(get_FileNamePattern_Request, get_FileNamePattern_Response),
-    38: DceRpcOp(put_FileNamePattern_Request, put_FileNamePattern_Response),
-    39: DceRpcOp(Run_Request, Run_Response),
-    40: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
-    41: DceRpcOp(Cancel_Request, Cancel_Response),
-    42: DceRpcOp(AddNotification_Request, AddNotification_Response),
-    43: DceRpcOp(DeleteNotification_Request, DeleteNotification_Response),
-    44: DceRpcOp(ModifyNotification_Request, ModifyNotification_Response),
-    45: DceRpcOp(CreateNotificationAction_Request, CreateNotificationAction_Response),
-    46: DceRpcOp(EnumNotificationActions_Request, EnumNotificationActions_Response),
-    47: DceRpcOp(CreatePropertyCondition_Request, CreatePropertyCondition_Response),
-    48: DceRpcOp(CreateCustomAction_Request, CreateCustomAction_Response),
+    48: DceRpcOp(get_LastRun_Request, get_LastRun_Response),
+    49: DceRpcOp(get_FileNamePattern_Request, get_FileNamePattern_Response),
+    50: DceRpcOp(put_FileNamePattern_Request, put_FileNamePattern_Response),
+    51: DceRpcOp(Run_Request, Run_Response),
+    52: DceRpcOp(WaitForCompletion_Request, WaitForCompletion_Response),
+    53: DceRpcOp(Cancel_Request, Cancel_Response),
+    54: DceRpcOp(AddNotification_Request, AddNotification_Response),
+    55: DceRpcOp(DeleteNotification_Request, DeleteNotification_Response),
+    56: DceRpcOp(ModifyNotification_Request, ModifyNotification_Response),
+    57: DceRpcOp(CreateNotificationAction_Request, CreateNotificationAction_Response),
+    58: DceRpcOp(EnumNotificationActions_Request, EnumNotificationActions_Response),
+    59: DceRpcOp(CreatePropertyCondition_Request, CreatePropertyCondition_Response),
+    60: DceRpcOp(CreateCustomAction_Request, CreateCustomAction_Response),
 }
 register_dcerpc_interface(
     name="IFsrmFileManagementJob",
@@ -4727,14 +5377,20 @@ class Delete_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMPROPERTYCONDITION_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(get_Type_Request, get_Type_Response),
-    3: DceRpcOp(put_Type_Request, put_Type_Response),
-    4: DceRpcOp(get_Value_Request, get_Value_Response),
-    5: DceRpcOp(put_Value_Request, put_Value_Response),
-    6: DceRpcOp(Delete_Request, Delete_Response),
+IFSRMPROPERTYCONDITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Name_Request, get_Name_Response),
+    8: DceRpcOp(put_Name_Request, put_Name_Response),
+    9: DceRpcOp(get_Type_Request, get_Type_Response),
+    10: DceRpcOp(put_Type_Request, put_Type_Response),
+    11: DceRpcOp(get_Value_Request, get_Value_Response),
+    12: DceRpcOp(put_Value_Request, put_Value_Response),
+    13: DceRpcOp(Delete_Request, Delete_Response),
 }
 register_dcerpc_interface(
     name="IFsrmPropertyCondition",
@@ -4792,11 +5448,17 @@ class DeleteScheduleTask_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMREPORTSCHEDULER_OPNUMS = {
-    0: DceRpcOp(VerifyNamespaces_Request, VerifyNamespaces_Response),
-    1: DceRpcOp(CreateScheduleTask_Request, CreateScheduleTask_Response),
-    2: DceRpcOp(ModifyScheduleTask_Request, ModifyScheduleTask_Response),
-    3: DceRpcOp(DeleteScheduleTask_Request, DeleteScheduleTask_Response),
+IFSRMREPORTSCHEDULER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(VerifyNamespaces_Request, VerifyNamespaces_Response),
+    8: DceRpcOp(CreateScheduleTask_Request, CreateScheduleTask_Response),
+    9: DceRpcOp(ModifyScheduleTask_Request, ModifyScheduleTask_Response),
+    10: DceRpcOp(DeleteScheduleTask_Request, DeleteScheduleTask_Response),
 }
 register_dcerpc_interface(
     name="IFsrmReportScheduler",
@@ -4869,13 +5531,24 @@ class put_NonMembers_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMFILEGROUP_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(get_Members_Request, get_Members_Response),
-    3: DceRpcOp(put_Members_Request, put_Members_Response),
-    4: DceRpcOp(get_NonMembers_Request, get_NonMembers_Response),
-    5: DceRpcOp(put_NonMembers_Request, put_NonMembers_Response),
+IFSRMFILEGROUP_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_Members_Request, get_Members_Response),
+    15: DceRpcOp(put_Members_Request, put_Members_Response),
+    16: DceRpcOp(get_NonMembers_Request, get_NonMembers_Response),
+    17: DceRpcOp(put_NonMembers_Request, put_NonMembers_Response),
 }
 register_com_interface(
     name="IFsrmFileGroup",
@@ -4900,9 +5573,26 @@ class put_OverwriteOnCommit_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMFILEGROUPIMPORTED_OPNUMS = {
-    0: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
-    1: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
+IFSRMFILEGROUPIMPORTED_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Name_Request, get_Name_Response),
+    13: DceRpcOp(put_Name_Request, put_Name_Response),
+    14: DceRpcOp(get_Members_Request, get_Members_Response),
+    15: DceRpcOp(put_Members_Request, put_Members_Response),
+    16: DceRpcOp(get_NonMembers_Request, get_NonMembers_Response),
+    17: DceRpcOp(put_NonMembers_Request, put_NonMembers_Response),
+    18: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
+    19: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
 }
 register_com_interface(
     name="IFsrmFileGroupImported",
@@ -4987,12 +5677,18 @@ class ImportFileGroups_Response(NDRPacket):
     ]
 
 
-IFSRMFILEGROUPMANAGER_OPNUMS = {
-    0: DceRpcOp(CreateFileGroup_Request, CreateFileGroup_Response),
-    1: DceRpcOp(GetFileGroup_Request, GetFileGroup_Response),
-    2: DceRpcOp(EnumFileGroups_Request, EnumFileGroups_Response),
-    3: DceRpcOp(ExportFileGroups_Request, ExportFileGroups_Response),
-    4: DceRpcOp(ImportFileGroups_Request, ImportFileGroups_Response),
+IFSRMFILEGROUPMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(CreateFileGroup_Request, CreateFileGroup_Response),
+    8: DceRpcOp(GetFileGroup_Request, GetFileGroup_Response),
+    9: DceRpcOp(EnumFileGroups_Request, EnumFileGroups_Response),
+    10: DceRpcOp(ExportFileGroups_Request, ExportFileGroups_Response),
+    11: DceRpcOp(ImportFileGroups_Request, ImportFileGroups_Response),
 }
 register_com_interface(
     name="IFsrmFileGroupManager",
@@ -5064,13 +5760,24 @@ class EnumActions_Response(NDRPacket):
     ]
 
 
-IFSRMFILESCREENBASE_OPNUMS = {
-    0: DceRpcOp(get_BlockedFileGroups_Request, get_BlockedFileGroups_Response),
-    1: DceRpcOp(put_BlockedFileGroups_Request, put_BlockedFileGroups_Response),
-    2: DceRpcOp(get_FileScreenFlags_Request, get_FileScreenFlags_Response),
-    3: DceRpcOp(put_FileScreenFlags_Request, put_FileScreenFlags_Response),
-    4: DceRpcOp(CreateAction_Request, CreateAction_Response),
-    5: DceRpcOp(EnumActions_Request, EnumActions_Response),
+IFSRMFILESCREENBASE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_BlockedFileGroups_Request, get_BlockedFileGroups_Response),
+    13: DceRpcOp(put_BlockedFileGroups_Request, put_BlockedFileGroups_Response),
+    14: DceRpcOp(get_FileScreenFlags_Request, get_FileScreenFlags_Response),
+    15: DceRpcOp(put_FileScreenFlags_Request, put_FileScreenFlags_Response),
+    16: DceRpcOp(CreateAction_Request, CreateAction_Response),
+    17: DceRpcOp(EnumActions_Request, EnumActions_Response),
 }
 register_com_interface(
     name="IFsrmFileScreenBase",
@@ -5151,13 +5858,30 @@ class ApplyTemplate_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMFILESCREEN_OPNUMS = {
-    0: DceRpcOp(get_Path_Request, get_Path_Response),
-    1: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
-    2: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
-    3: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
-    4: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
-    5: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
+IFSRMFILESCREEN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_BlockedFileGroups_Request, get_BlockedFileGroups_Response),
+    13: DceRpcOp(put_BlockedFileGroups_Request, put_BlockedFileGroups_Response),
+    14: DceRpcOp(get_FileScreenFlags_Request, get_FileScreenFlags_Response),
+    15: DceRpcOp(put_FileScreenFlags_Request, put_FileScreenFlags_Response),
+    16: DceRpcOp(CreateAction_Request, CreateAction_Response),
+    17: DceRpcOp(EnumActions_Request, EnumActions_Response),
+    18: DceRpcOp(get_Path_Request, get_Path_Response),
+    19: DceRpcOp(get_SourceTemplateName_Request, get_SourceTemplateName_Response),
+    20: DceRpcOp(get_MatchesSourceTemplate_Request, get_MatchesSourceTemplate_Response),
+    21: DceRpcOp(get_UserSid_Request, get_UserSid_Response),
+    22: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
+    23: DceRpcOp(ApplyTemplate_Request, ApplyTemplate_Response),
 }
 register_com_interface(
     name="IFsrmFileScreen",
@@ -5200,10 +5924,21 @@ class put_AllowedFileGroups_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMFILESCREENEXCEPTION_OPNUMS = {
-    0: DceRpcOp(get_Path_Request, get_Path_Response),
-    1: DceRpcOp(get_AllowedFileGroups_Request, get_AllowedFileGroups_Response),
-    2: DceRpcOp(put_AllowedFileGroups_Request, put_AllowedFileGroups_Response),
+IFSRMFILESCREENEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_Path_Request, get_Path_Response),
+    13: DceRpcOp(get_AllowedFileGroups_Request, get_AllowedFileGroups_Response),
+    14: DceRpcOp(put_AllowedFileGroups_Request, put_AllowedFileGroups_Response),
 }
 register_com_interface(
     name="IFsrmFileScreenException",
@@ -5337,18 +6072,24 @@ class CreateFileScreenCollection_Response(NDRPacket):
     ]
 
 
-IFSRMFILESCREENMANAGER_OPNUMS = {
-    0: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
-    1: DceRpcOp(
+IFSRMFILESCREENMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_ActionVariables_Request, get_ActionVariables_Response),
+    8: DceRpcOp(
         get_ActionVariableDescriptions_Request, get_ActionVariableDescriptions_Response
     ),
-    2: DceRpcOp(CreateFileScreen_Request, CreateFileScreen_Response),
-    3: DceRpcOp(GetFileScreen_Request, GetFileScreen_Response),
-    4: DceRpcOp(EnumFileScreens_Request, EnumFileScreens_Response),
-    5: DceRpcOp(CreateFileScreenException_Request, CreateFileScreenException_Response),
-    6: DceRpcOp(GetFileScreenException_Request, GetFileScreenException_Response),
-    7: DceRpcOp(EnumFileScreenExceptions_Request, EnumFileScreenExceptions_Response),
-    8: DceRpcOp(
+    9: DceRpcOp(CreateFileScreen_Request, CreateFileScreen_Response),
+    10: DceRpcOp(GetFileScreen_Request, GetFileScreen_Response),
+    11: DceRpcOp(EnumFileScreens_Request, EnumFileScreens_Response),
+    12: DceRpcOp(CreateFileScreenException_Request, CreateFileScreenException_Response),
+    13: DceRpcOp(GetFileScreenException_Request, GetFileScreenException_Response),
+    14: DceRpcOp(EnumFileScreenExceptions_Request, EnumFileScreenExceptions_Response),
+    15: DceRpcOp(
         CreateFileScreenCollection_Request, CreateFileScreenCollection_Response
     ),
 }
@@ -5408,11 +6149,28 @@ class CommitAndUpdateDerived_Response(NDRPacket):
     ]
 
 
-IFSRMFILESCREENTEMPLATE_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(put_Name_Request, put_Name_Response),
-    2: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
-    3: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
+IFSRMFILESCREENTEMPLATE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_BlockedFileGroups_Request, get_BlockedFileGroups_Response),
+    13: DceRpcOp(put_BlockedFileGroups_Request, put_BlockedFileGroups_Response),
+    14: DceRpcOp(get_FileScreenFlags_Request, get_FileScreenFlags_Response),
+    15: DceRpcOp(put_FileScreenFlags_Request, put_FileScreenFlags_Response),
+    16: DceRpcOp(CreateAction_Request, CreateAction_Response),
+    17: DceRpcOp(EnumActions_Request, EnumActions_Response),
+    18: DceRpcOp(get_Name_Request, get_Name_Response),
+    19: DceRpcOp(put_Name_Request, put_Name_Response),
+    20: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
+    21: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
 }
 register_com_interface(
     name="IFsrmFileScreenTemplate",
@@ -5437,9 +6195,30 @@ class put_OverwriteOnCommit_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IFSRMFILESCREENTEMPLATEIMPORTED_OPNUMS = {
-    0: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
-    1: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
+IFSRMFILESCREENTEMPLATEIMPORTED_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(get_Id_Request, get_Id_Response),
+    8: DceRpcOp(get_Description_Request, get_Description_Response),
+    9: DceRpcOp(put_Description_Request, put_Description_Response),
+    10: DceRpcOp(Delete_Request, Delete_Response),
+    11: DceRpcOp(Commit_Request, Commit_Response),
+    12: DceRpcOp(get_BlockedFileGroups_Request, get_BlockedFileGroups_Response),
+    13: DceRpcOp(put_BlockedFileGroups_Request, put_BlockedFileGroups_Response),
+    14: DceRpcOp(get_FileScreenFlags_Request, get_FileScreenFlags_Response),
+    15: DceRpcOp(put_FileScreenFlags_Request, put_FileScreenFlags_Response),
+    16: DceRpcOp(CreateAction_Request, CreateAction_Response),
+    17: DceRpcOp(EnumActions_Request, EnumActions_Response),
+    18: DceRpcOp(get_Name_Request, get_Name_Response),
+    19: DceRpcOp(put_Name_Request, put_Name_Response),
+    20: DceRpcOp(CopyTemplate_Request, CopyTemplate_Response),
+    21: DceRpcOp(CommitAndUpdateDerived_Request, CommitAndUpdateDerived_Response),
+    22: DceRpcOp(get_OverwriteOnCommit_Request, get_OverwriteOnCommit_Response),
+    23: DceRpcOp(put_OverwriteOnCommit_Request, put_OverwriteOnCommit_Response),
 }
 register_com_interface(
     name="IFsrmFileScreenTemplateImported",
@@ -5534,12 +6313,18 @@ class ImportTemplates_Response(NDRPacket):
     ]
 
 
-IFSRMFILESCREENTEMPLATEMANAGER_OPNUMS = {
-    0: DceRpcOp(CreateTemplate_Request, CreateTemplate_Response),
-    1: DceRpcOp(GetTemplate_Request, GetTemplate_Response),
-    2: DceRpcOp(EnumTemplates_Request, EnumTemplates_Response),
-    3: DceRpcOp(ExportTemplates_Request, ExportTemplates_Response),
-    4: DceRpcOp(ImportTemplates_Request, ImportTemplates_Response),
+IFSRMFILESCREENTEMPLATEMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+    7: DceRpcOp(CreateTemplate_Request, CreateTemplate_Response),
+    8: DceRpcOp(GetTemplate_Request, GetTemplate_Response),
+    9: DceRpcOp(EnumTemplates_Request, EnumTemplates_Response),
+    10: DceRpcOp(ExportTemplates_Request, ExportTemplates_Response),
+    11: DceRpcOp(ImportTemplates_Request, ImportTemplates_Response),
 }
 register_com_interface(
     name="IFsrmFileScreenTemplateManager",

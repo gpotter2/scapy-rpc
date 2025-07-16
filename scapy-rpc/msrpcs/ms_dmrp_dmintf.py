@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IVolumeClient (v0.0): D2D79DF5-3400-11d0-B40B-00AA005FF586
 - IDMNotify (v0.0): D2D79DF7-3400-11d0-B40B-00AA005FF586
 - IDMRemoteServer (v0.0): 3A410F21-553F-11d1-8E5E-00A0C92C9D5D
@@ -35,6 +36,16 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRSignedLongField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -1451,102 +1462,104 @@ class DeleteAccessPath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVOLUMECLIENT_OPNUMS = {
-    0: DceRpcOp(EnumDisks_Request, EnumDisks_Response),
-    1: DceRpcOp(EnumDiskRegions_Request, EnumDiskRegions_Response),
-    2: DceRpcOp(CreatePartition_Request, CreatePartition_Response),
-    3: DceRpcOp(
+IVOLUMECLIENT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(EnumDisks_Request, EnumDisks_Response),
+    4: DceRpcOp(EnumDiskRegions_Request, EnumDiskRegions_Response),
+    5: DceRpcOp(CreatePartition_Request, CreatePartition_Response),
+    6: DceRpcOp(
         CreatePartitionAssignAndFormat_Request, CreatePartitionAssignAndFormat_Response
     ),
-    4: DceRpcOp(
+    7: DceRpcOp(
         CreatePartitionAssignAndFormatEx_Request,
         CreatePartitionAssignAndFormatEx_Response,
     ),
-    5: DceRpcOp(DeletePartition_Request, DeletePartition_Response),
-    6: DceRpcOp(WriteSignature_Request, WriteSignature_Response),
-    7: DceRpcOp(MarkActivePartition_Request, MarkActivePartition_Response),
-    8: DceRpcOp(Eject_Request, Eject_Response),
-    9: DceRpcOp(Reserved_Opnum12_Request, Reserved_Opnum12_Response),
-    10: DceRpcOp(FTEnumVolumes_Request, FTEnumVolumes_Response),
-    11: DceRpcOp(FTEnumLogicalDiskMembers_Request, FTEnumLogicalDiskMembers_Response),
-    12: DceRpcOp(FTDeleteVolume_Request, FTDeleteVolume_Response),
-    13: DceRpcOp(FTBreakMirror_Request, FTBreakMirror_Response),
-    14: DceRpcOp(FTResyncMirror_Request, FTResyncMirror_Response),
-    15: DceRpcOp(FTRegenerateParityStripe_Request, FTRegenerateParityStripe_Response),
-    16: DceRpcOp(FTReplaceMirrorPartition_Request, FTReplaceMirrorPartition_Response),
-    17: DceRpcOp(
+    8: DceRpcOp(DeletePartition_Request, DeletePartition_Response),
+    9: DceRpcOp(WriteSignature_Request, WriteSignature_Response),
+    10: DceRpcOp(MarkActivePartition_Request, MarkActivePartition_Response),
+    11: DceRpcOp(Eject_Request, Eject_Response),
+    12: DceRpcOp(Reserved_Opnum12_Request, Reserved_Opnum12_Response),
+    13: DceRpcOp(FTEnumVolumes_Request, FTEnumVolumes_Response),
+    14: DceRpcOp(FTEnumLogicalDiskMembers_Request, FTEnumLogicalDiskMembers_Response),
+    15: DceRpcOp(FTDeleteVolume_Request, FTDeleteVolume_Response),
+    16: DceRpcOp(FTBreakMirror_Request, FTBreakMirror_Response),
+    17: DceRpcOp(FTResyncMirror_Request, FTResyncMirror_Response),
+    18: DceRpcOp(FTRegenerateParityStripe_Request, FTRegenerateParityStripe_Response),
+    19: DceRpcOp(FTReplaceMirrorPartition_Request, FTReplaceMirrorPartition_Response),
+    20: DceRpcOp(
         FTReplaceParityStripePartition_Request, FTReplaceParityStripePartition_Response
     ),
-    18: DceRpcOp(EnumDriveLetters_Request, EnumDriveLetters_Response),
-    19: DceRpcOp(AssignDriveLetter_Request, AssignDriveLetter_Response),
-    20: DceRpcOp(FreeDriveLetter_Request, FreeDriveLetter_Response),
-    21: DceRpcOp(EnumLocalFileSystems_Request, EnumLocalFileSystems_Response),
-    22: DceRpcOp(GetInstalledFileSystems_Request, GetInstalledFileSystems_Response),
-    23: DceRpcOp(Format_Request, Format_Response),
-    24: DceRpcOp(Reserved27_Request, Reserved27_Response),
-    25: DceRpcOp(EnumVolumes_Request, EnumVolumes_Response),
-    26: DceRpcOp(EnumVolumeMembers_Request, EnumVolumeMembers_Response),
-    27: DceRpcOp(CreateVolume_Request, CreateVolume_Response),
-    28: DceRpcOp(
+    21: DceRpcOp(EnumDriveLetters_Request, EnumDriveLetters_Response),
+    22: DceRpcOp(AssignDriveLetter_Request, AssignDriveLetter_Response),
+    23: DceRpcOp(FreeDriveLetter_Request, FreeDriveLetter_Response),
+    24: DceRpcOp(EnumLocalFileSystems_Request, EnumLocalFileSystems_Response),
+    25: DceRpcOp(GetInstalledFileSystems_Request, GetInstalledFileSystems_Response),
+    26: DceRpcOp(Format_Request, Format_Response),
+    27: DceRpcOp(Reserved27_Request, Reserved27_Response),
+    28: DceRpcOp(EnumVolumes_Request, EnumVolumes_Response),
+    29: DceRpcOp(EnumVolumeMembers_Request, EnumVolumeMembers_Response),
+    30: DceRpcOp(CreateVolume_Request, CreateVolume_Response),
+    31: DceRpcOp(
         CreateVolumeAssignAndFormat_Request, CreateVolumeAssignAndFormat_Response
     ),
-    29: DceRpcOp(
+    32: DceRpcOp(
         CreateVolumeAssignAndFormatEx_Request, CreateVolumeAssignAndFormatEx_Response
     ),
-    30: DceRpcOp(GetVolumeMountName_Request, GetVolumeMountName_Response),
-    31: DceRpcOp(GrowVolume_Request, GrowVolume_Response),
-    32: DceRpcOp(DeleteVolume_Request, DeleteVolume_Response),
-    33: DceRpcOp(AddMirror_Request, AddMirror_Response),
-    34: DceRpcOp(RemoveMirror_Request, RemoveMirror_Response),
-    35: DceRpcOp(SplitMirror_Request, SplitMirror_Response),
-    36: DceRpcOp(InitializeDisk_Request, InitializeDisk_Response),
-    37: DceRpcOp(UninitializeDisk_Request, UninitializeDisk_Response),
-    38: DceRpcOp(ReConnectDisk_Request, ReConnectDisk_Response),
-    39: DceRpcOp(Reserved_Opnum42_Request, Reserved_Opnum42_Response),
-    40: DceRpcOp(ImportDiskGroup_Request, ImportDiskGroup_Response),
-    41: DceRpcOp(DiskMergeQuery_Request, DiskMergeQuery_Response),
-    42: DceRpcOp(DiskMerge_Request, DiskMerge_Response),
-    43: DceRpcOp(Reserved_Opnum46_Request, Reserved_Opnum46_Response),
-    44: DceRpcOp(ReAttachDisk_Request, ReAttachDisk_Response),
-    45: DceRpcOp(Reserved_Opnum48_Request, Reserved_Opnum48_Response),
-    46: DceRpcOp(Reserved_Opnum49_Request, Reserved_Opnum49_Response),
-    47: DceRpcOp(Reserved_Opnum50_Request, Reserved_Opnum50_Response),
-    48: DceRpcOp(ReplaceRaid5Column_Request, ReplaceRaid5Column_Response),
-    49: DceRpcOp(RestartVolume_Request, RestartVolume_Response),
-    50: DceRpcOp(GetEncapsulateDiskInfo_Request, GetEncapsulateDiskInfo_Response),
-    51: DceRpcOp(EncapsulateDisk_Request, EncapsulateDisk_Response),
-    52: DceRpcOp(
+    33: DceRpcOp(GetVolumeMountName_Request, GetVolumeMountName_Response),
+    34: DceRpcOp(GrowVolume_Request, GrowVolume_Response),
+    35: DceRpcOp(DeleteVolume_Request, DeleteVolume_Response),
+    36: DceRpcOp(AddMirror_Request, AddMirror_Response),
+    37: DceRpcOp(RemoveMirror_Request, RemoveMirror_Response),
+    38: DceRpcOp(SplitMirror_Request, SplitMirror_Response),
+    39: DceRpcOp(InitializeDisk_Request, InitializeDisk_Response),
+    40: DceRpcOp(UninitializeDisk_Request, UninitializeDisk_Response),
+    41: DceRpcOp(ReConnectDisk_Request, ReConnectDisk_Response),
+    42: DceRpcOp(Reserved_Opnum42_Request, Reserved_Opnum42_Response),
+    43: DceRpcOp(ImportDiskGroup_Request, ImportDiskGroup_Response),
+    44: DceRpcOp(DiskMergeQuery_Request, DiskMergeQuery_Response),
+    45: DceRpcOp(DiskMerge_Request, DiskMerge_Response),
+    46: DceRpcOp(Reserved_Opnum46_Request, Reserved_Opnum46_Response),
+    47: DceRpcOp(ReAttachDisk_Request, ReAttachDisk_Response),
+    48: DceRpcOp(Reserved_Opnum48_Request, Reserved_Opnum48_Response),
+    49: DceRpcOp(Reserved_Opnum49_Request, Reserved_Opnum49_Response),
+    50: DceRpcOp(Reserved_Opnum50_Request, Reserved_Opnum50_Response),
+    51: DceRpcOp(ReplaceRaid5Column_Request, ReplaceRaid5Column_Response),
+    52: DceRpcOp(RestartVolume_Request, RestartVolume_Response),
+    53: DceRpcOp(GetEncapsulateDiskInfo_Request, GetEncapsulateDiskInfo_Response),
+    54: DceRpcOp(EncapsulateDisk_Request, EncapsulateDisk_Response),
+    55: DceRpcOp(
         QueryChangePartitionNumbers_Request, QueryChangePartitionNumbers_Response
     ),
-    53: DceRpcOp(
+    56: DceRpcOp(
         DeletePartitionNumberInfoFromRegistry_Request,
         DeletePartitionNumberInfoFromRegistry_Response,
     ),
-    54: DceRpcOp(SetDontShow_Request, SetDontShow_Response),
-    55: DceRpcOp(GetDontShow_Request, GetDontShow_Response),
-    56: DceRpcOp(Reserved0_Request, Reserved0_Response),
-    57: DceRpcOp(Reserved1_Request, Reserved1_Response),
-    58: DceRpcOp(Reserved2_Request, Reserved2_Response),
-    59: DceRpcOp(Reserved3_Request, Reserved3_Response),
-    60: DceRpcOp(Reserved4_Request, Reserved4_Response),
-    61: DceRpcOp(Reserved5_Request, Reserved5_Response),
-    62: DceRpcOp(Reserved6_Request, Reserved6_Response),
-    63: DceRpcOp(Reserved7_Request, Reserved7_Response),
-    64: DceRpcOp(EnumTasks_Request, EnumTasks_Response),
-    65: DceRpcOp(GetTaskDetail_Request, GetTaskDetail_Response),
-    66: DceRpcOp(AbortTask_Request, AbortTask_Response),
-    67: DceRpcOp(HrGetErrorData_Request, HrGetErrorData_Response),
-    68: DceRpcOp(Initialize_Request, Initialize_Response),
-    69: DceRpcOp(Uninitialize_Request, Uninitialize_Response),
-    70: DceRpcOp(Refresh_Request, Refresh_Response),
-    71: DceRpcOp(RescanDisks_Request, RescanDisks_Response),
-    72: DceRpcOp(RefreshFileSys_Request, RefreshFileSys_Response),
-    73: DceRpcOp(SecureSystemPartition_Request, SecureSystemPartition_Response),
-    74: DceRpcOp(ShutDownSystem_Request, ShutDownSystem_Response),
-    75: DceRpcOp(EnumAccessPath_Request, EnumAccessPath_Response),
-    76: DceRpcOp(EnumAccessPathForVolume_Request, EnumAccessPathForVolume_Response),
-    77: DceRpcOp(AddAccessPath_Request, AddAccessPath_Response),
-    78: DceRpcOp(DeleteAccessPath_Request, DeleteAccessPath_Response),
+    57: DceRpcOp(SetDontShow_Request, SetDontShow_Response),
+    58: DceRpcOp(GetDontShow_Request, GetDontShow_Response),
+    59: DceRpcOp(Reserved0_Request, Reserved0_Response),
+    60: DceRpcOp(Reserved1_Request, Reserved1_Response),
+    61: DceRpcOp(Reserved2_Request, Reserved2_Response),
+    62: DceRpcOp(Reserved3_Request, Reserved3_Response),
+    63: DceRpcOp(Reserved4_Request, Reserved4_Response),
+    64: DceRpcOp(Reserved5_Request, Reserved5_Response),
+    65: DceRpcOp(Reserved6_Request, Reserved6_Response),
+    66: DceRpcOp(Reserved7_Request, Reserved7_Response),
+    67: DceRpcOp(EnumTasks_Request, EnumTasks_Response),
+    68: DceRpcOp(GetTaskDetail_Request, GetTaskDetail_Response),
+    69: DceRpcOp(AbortTask_Request, AbortTask_Response),
+    70: DceRpcOp(HrGetErrorData_Request, HrGetErrorData_Response),
+    71: DceRpcOp(Initialize_Request, Initialize_Response),
+    72: DceRpcOp(Uninitialize_Request, Uninitialize_Response),
+    73: DceRpcOp(Refresh_Request, Refresh_Response),
+    74: DceRpcOp(RescanDisks_Request, RescanDisks_Response),
+    75: DceRpcOp(RefreshFileSys_Request, RefreshFileSys_Response),
+    76: DceRpcOp(SecureSystemPartition_Request, SecureSystemPartition_Response),
+    77: DceRpcOp(ShutDownSystem_Request, ShutDownSystem_Response),
+    78: DceRpcOp(EnumAccessPath_Request, EnumAccessPath_Response),
+    79: DceRpcOp(EnumAccessPathForVolume_Request, EnumAccessPathForVolume_Response),
+    80: DceRpcOp(AddAccessPath_Request, AddAccessPath_Response),
+    81: DceRpcOp(DeleteAccessPath_Request, DeleteAccessPath_Response),
 }
 register_com_interface(
     name="IVolumeClient",
@@ -1566,7 +1579,11 @@ class ObjectsChanged_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IDMNOTIFY_OPNUMS = {0: DceRpcOp(ObjectsChanged_Request, ObjectsChanged_Response)}
+IDMNOTIFY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ObjectsChanged_Request, ObjectsChanged_Response)
+}
 register_com_interface(
     name="IDMNotify",
     uuid=uuid.UUID("D2D79DF7-3400-11d0-B40B-00AA005FF586"),
@@ -1585,8 +1602,10 @@ class CreateRemoteObject_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IDMREMOTESERVER_OPNUMS = {
-    0: DceRpcOp(CreateRemoteObject_Request, CreateRemoteObject_Response)
+IDMREMOTESERVER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateRemoteObject_Request, CreateRemoteObject_Response)
 }
 register_com_interface(
     name="IDMRemoteServer",
@@ -1606,8 +1625,10 @@ class GetMaxAdjustedFreeSpace_Response(NDRPacket):
     ]
 
 
-IVOLUMECLIENT2_OPNUMS = {
-    0: DceRpcOp(GetMaxAdjustedFreeSpace_Request, GetMaxAdjustedFreeSpace_Response)
+IVOLUMECLIENT2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetMaxAdjustedFreeSpace_Request, GetMaxAdjustedFreeSpace_Response)
 }
 register_com_interface(
     name="IVolumeClient2",

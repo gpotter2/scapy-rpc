@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IAppHostMethod (v0.0): 7883ca1c-1112-4447-84c3-52fbeb38069d
 - IAppHostMethodInstance (v0.0): b80f3c42-60e0-4ae0-9007-f52852d3dbed
 - IAppHostElement (v0.0): 64ff8ccc-b287-4dae-b08a-a72cbf45f453
@@ -63,6 +64,16 @@ from scapy.layers.dcerpc import (
     NDRSignedShortField,
     NDRUnionField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -128,10 +139,12 @@ class CreateInstance_Response(NDRPacket):
     ]
 
 
-IAPPHOSTMETHOD_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Schema_Request, get_Schema_Response),
-    2: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
+IAPPHOSTMETHOD_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    5: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
 }
 register_com_interface(
     name="IAppHostMethod",
@@ -305,12 +318,14 @@ class SetMetadata_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTMETHODINSTANCE_OPNUMS = {
-    0: DceRpcOp(get_Input_Request, get_Input_Response),
-    1: DceRpcOp(get_Output_Request, get_Output_Response),
-    2: DceRpcOp(Execute_Request, Execute_Response),
-    3: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    4: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+IAPPHOSTMETHODINSTANCE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Input_Request, get_Input_Response),
+    4: DceRpcOp(get_Output_Request, get_Output_Response),
+    5: DceRpcOp(Execute_Request, Execute_Response),
+    6: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    7: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
 }
 register_com_interface(
     name="IAppHostMethodInstance",
@@ -459,18 +474,20 @@ class get_Methods_Response(NDRPacket):
     ]
 
 
-IAPPHOSTELEMENT_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Collection_Request, get_Collection_Response),
-    2: DceRpcOp(get_Properties_Request, get_Properties_Response),
-    3: DceRpcOp(get_ChildElements_Request, get_ChildElements_Response),
-    4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    6: DceRpcOp(get_Schema_Request, get_Schema_Response),
-    7: DceRpcOp(GetElementByName_Request, GetElementByName_Response),
-    8: DceRpcOp(GetPropertyByName_Request, GetPropertyByName_Response),
-    9: DceRpcOp(Clear_Request, Clear_Response),
-    10: DceRpcOp(get_Methods_Request, get_Methods_Response),
+IAPPHOSTELEMENT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Collection_Request, get_Collection_Response),
+    5: DceRpcOp(get_Properties_Request, get_Properties_Response),
+    6: DceRpcOp(get_ChildElements_Request, get_ChildElements_Response),
+    7: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    8: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+    9: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    10: DceRpcOp(GetElementByName_Request, GetElementByName_Response),
+    11: DceRpcOp(GetPropertyByName_Request, GetPropertyByName_Response),
+    12: DceRpcOp(Clear_Request, Clear_Response),
+    13: DceRpcOp(get_Methods_Request, get_Methods_Response),
 }
 register_com_interface(
     name="IAppHostElement",
@@ -584,16 +601,18 @@ class get_Schema_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPROPERTY_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Value_Request, get_Value_Response),
-    2: DceRpcOp(put_Value_Request, put_Value_Response),
-    3: DceRpcOp(Clear_Request, Clear_Response),
-    4: DceRpcOp(get_StringValue_Request, get_StringValue_Response),
-    5: DceRpcOp(get_Exception_Request, get_Exception_Response),
-    6: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    7: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    8: DceRpcOp(get_Schema_Request, get_Schema_Response),
+IAPPHOSTPROPERTY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Value_Request, get_Value_Response),
+    5: DceRpcOp(put_Value_Request, put_Value_Response),
+    6: DceRpcOp(Clear_Request, Clear_Response),
+    7: DceRpcOp(get_StringValue_Request, get_StringValue_Response),
+    8: DceRpcOp(get_Exception_Request, get_Exception_Response),
+    9: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    10: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+    11: DceRpcOp(get_Schema_Request, get_Schema_Response),
 }
 register_com_interface(
     name="IAppHostProperty",
@@ -659,12 +678,14 @@ class DeleteConfigSection_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTCONFIGLOCATION_OPNUMS = {
-    0: DceRpcOp(get_Path_Request, get_Path_Response),
-    1: DceRpcOp(get_Count_Request, get_Count_Response),
-    2: DceRpcOp(get_Item_Request, get_Item_Response),
-    3: DceRpcOp(AddConfigSection_Request, AddConfigSection_Response),
-    4: DceRpcOp(DeleteConfigSection_Request, DeleteConfigSection_Response),
+IAPPHOSTCONFIGLOCATION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Path_Request, get_Path_Response),
+    4: DceRpcOp(get_Count_Request, get_Count_Response),
+    5: DceRpcOp(get_Item_Request, get_Item_Response),
+    6: DceRpcOp(AddConfigSection_Request, AddConfigSection_Response),
+    7: DceRpcOp(DeleteConfigSection_Request, DeleteConfigSection_Response),
 }
 register_com_interface(
     name="IAppHostConfigLocation",
@@ -760,17 +781,19 @@ class get_IsCollectionDefault_Response(NDRPacket):
     ]
 
 
-IAPPHOSTELEMENTSCHEMA_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(
+IAPPHOSTELEMENTSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(
         get_DoesAllowUnschematizedProperties_Request,
         get_DoesAllowUnschematizedProperties_Response,
     ),
-    2: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    3: DceRpcOp(get_CollectionSchema_Request, get_CollectionSchema_Response),
-    4: DceRpcOp(get_ChildElementSchemas_Request, get_ChildElementSchemas_Response),
-    5: DceRpcOp(get_PropertySchemas_Request, get_PropertySchemas_Response),
-    6: DceRpcOp(get_IsCollectionDefault_Request, get_IsCollectionDefault_Response),
+    5: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    6: DceRpcOp(get_CollectionSchema_Request, get_CollectionSchema_Response),
+    7: DceRpcOp(get_ChildElementSchemas_Request, get_ChildElementSchemas_Response),
+    8: DceRpcOp(get_PropertySchemas_Request, get_PropertySchemas_Response),
+    9: DceRpcOp(get_IsCollectionDefault_Request, get_IsCollectionDefault_Response),
 }
 register_com_interface(
     name="IAppHostElementSchema",
@@ -948,22 +971,24 @@ class get_TimeSpanFormat_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPROPERTYSCHEMA_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Type_Request, get_Type_Response),
-    2: DceRpcOp(get_DefaultValue_Request, get_DefaultValue_Response),
-    3: DceRpcOp(get_IsRequired_Request, get_IsRequired_Response),
-    4: DceRpcOp(get_IsUniqueKey_Request, get_IsUniqueKey_Response),
-    5: DceRpcOp(get_IsCombinedKey_Request, get_IsCombinedKey_Response),
-    6: DceRpcOp(get_IsExpanded_Request, get_IsExpanded_Response),
-    7: DceRpcOp(get_ValidationType_Request, get_ValidationType_Response),
-    8: DceRpcOp(get_ValidationParameter_Request, get_ValidationParameter_Response),
-    9: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    10: DceRpcOp(get_IsCaseSensitive_Request, get_IsCaseSensitive_Response),
-    11: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
-    12: DceRpcOp(get_DoesAllowInfinite_Request, get_DoesAllowInfinite_Response),
-    13: DceRpcOp(get_IsEncrypted_Request, get_IsEncrypted_Response),
-    14: DceRpcOp(get_TimeSpanFormat_Request, get_TimeSpanFormat_Response),
+IAPPHOSTPROPERTYSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Type_Request, get_Type_Response),
+    5: DceRpcOp(get_DefaultValue_Request, get_DefaultValue_Response),
+    6: DceRpcOp(get_IsRequired_Request, get_IsRequired_Response),
+    7: DceRpcOp(get_IsUniqueKey_Request, get_IsUniqueKey_Response),
+    8: DceRpcOp(get_IsCombinedKey_Request, get_IsCombinedKey_Response),
+    9: DceRpcOp(get_IsExpanded_Request, get_IsExpanded_Response),
+    10: DceRpcOp(get_ValidationType_Request, get_ValidationType_Response),
+    11: DceRpcOp(get_ValidationParameter_Request, get_ValidationParameter_Response),
+    12: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    13: DceRpcOp(get_IsCaseSensitive_Request, get_IsCaseSensitive_Response),
+    14: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
+    15: DceRpcOp(get_DoesAllowInfinite_Request, get_DoesAllowInfinite_Response),
+    16: DceRpcOp(get_IsEncrypted_Request, get_IsEncrypted_Response),
+    17: DceRpcOp(get_TimeSpanFormat_Request, get_TimeSpanFormat_Response),
 }
 register_com_interface(
     name="IAppHostPropertySchema",
@@ -993,9 +1018,11 @@ class get_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("pdwValue", 0), NDRIntField("status", 0)]
 
 
-IAPPHOSTCONSTANTVALUE_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Value_Request, get_Value_Response),
+IAPPHOSTCONSTANTVALUE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Value_Request, get_Value_Response),
 }
 register_com_interface(
     name="IAppHostConstantValue",
@@ -1034,9 +1061,11 @@ class GetUniqueConfigPath_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCONFIGMANAGER_OPNUMS = {
-    0: DceRpcOp(GetConfigFile_Request, GetConfigFile_Response),
-    1: DceRpcOp(GetUniqueConfigPath_Request, GetUniqueConfigPath_Response),
+IAPPHOSTCONFIGMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetConfigFile_Request, GetConfigFile_Response),
+    4: DceRpcOp(GetUniqueConfigPath_Request, GetUniqueConfigPath_Response),
 }
 register_com_interface(
     name="IAppHostConfigManager",
@@ -1107,11 +1136,13 @@ class MapPath_Response(NDRPacket):
     ]
 
 
-IAPPHOSTMAPPINGEXTENSION_OPNUMS = {
-    0: DceRpcOp(GetSiteNameFromSiteId_Request, GetSiteNameFromSiteId_Response),
-    1: DceRpcOp(GetSiteIdFromSiteName_Request, GetSiteIdFromSiteName_Response),
-    2: DceRpcOp(GetSiteElementFromSiteId_Request, GetSiteElementFromSiteId_Response),
-    3: DceRpcOp(MapPath_Request, MapPath_Response),
+IAPPHOSTMAPPINGEXTENSION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetSiteNameFromSiteId_Request, GetSiteNameFromSiteId_Response),
+    4: DceRpcOp(GetSiteIdFromSiteName_Request, GetSiteIdFromSiteName_Response),
+    5: DceRpcOp(GetSiteElementFromSiteId_Request, GetSiteElementFromSiteId_Response),
+    6: DceRpcOp(MapPath_Request, MapPath_Response),
 }
 register_com_interface(
     name="IAppHostMappingExtension",
@@ -1141,9 +1172,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCHILDELEMENTCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTCHILDELEMENTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostChildElementCollection",
@@ -1173,9 +1206,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPROPERTYCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTPROPERTYCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostPropertyCollection",
@@ -1228,11 +1263,13 @@ class DeleteLocation_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTCONFIGLOCATIONCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
-    2: DceRpcOp(AddLocation_Request, AddLocation_Response),
-    3: DceRpcOp(DeleteLocation_Request, DeleteLocation_Response),
+IAPPHOSTCONFIGLOCATIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    5: DceRpcOp(AddLocation_Request, AddLocation_Response),
+    6: DceRpcOp(DeleteLocation_Request, DeleteLocation_Response),
 }
 register_com_interface(
     name="IAppHostConfigLocationCollection",
@@ -1262,9 +1299,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTMETHODCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTMETHODCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostMethodCollection",
@@ -1294,9 +1333,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTELEMENTSCHEMACOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTELEMENTSCHEMACOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostElementSchemaCollection",
@@ -1326,9 +1367,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPROPERTYSCHEMACOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTPROPERTYSCHEMACOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostPropertySchemaCollection",
@@ -1358,9 +1401,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCONSTANTVALUECOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
+IAPPHOSTCONSTANTVALUECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
 }
 register_com_interface(
     name="IAppHostConstantValueCollection",
@@ -1455,14 +1500,16 @@ class get_DoesAllowDuplicates_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCOLLECTIONSCHEMA_OPNUMS = {
-    0: DceRpcOp(get_AddElementNames_Request, get_AddElementNames_Response),
-    1: DceRpcOp(GetAddElementSchema_Request, GetAddElementSchema_Response),
-    2: DceRpcOp(get_RemoveElementSchema_Request, get_RemoveElementSchema_Response),
-    3: DceRpcOp(get_ClearElementSchema_Request, get_ClearElementSchema_Response),
-    4: DceRpcOp(get_IsMergeAppend_Request, get_IsMergeAppend_Response),
-    5: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    6: DceRpcOp(get_DoesAllowDuplicates_Request, get_DoesAllowDuplicates_Response),
+IAPPHOSTCOLLECTIONSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_AddElementNames_Request, get_AddElementNames_Response),
+    4: DceRpcOp(GetAddElementSchema_Request, GetAddElementSchema_Response),
+    5: DceRpcOp(get_RemoveElementSchema_Request, get_RemoveElementSchema_Response),
+    6: DceRpcOp(get_ClearElementSchema_Request, get_ClearElementSchema_Response),
+    7: DceRpcOp(get_IsMergeAppend_Request, get_IsMergeAppend_Response),
+    8: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    9: DceRpcOp(get_DoesAllowDuplicates_Request, get_DoesAllowDuplicates_Response),
 }
 register_com_interface(
     name="IAppHostCollectionSchema",
@@ -1523,11 +1570,13 @@ class GetMetadata_Response(NDRPacket):
     ]
 
 
-IAPPHOSTMETHODSCHEMA_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_InputSchema_Request, get_InputSchema_Response),
-    2: DceRpcOp(get_OutputSchema_Request, get_OutputSchema_Response),
-    3: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+IAPPHOSTMETHODSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_InputSchema_Request, get_InputSchema_Response),
+    5: DceRpcOp(get_OutputSchema_Request, get_OutputSchema_Response),
+    6: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
 }
 register_com_interface(
     name="IAppHostMethodSchema",
@@ -1622,14 +1671,16 @@ class get_ErrorString_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCONFIGEXCEPTION_OPNUMS = {
-    0: DceRpcOp(get_LineNumber_Request, get_LineNumber_Response),
-    1: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    2: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
-    3: DceRpcOp(get_ErrorLine_Request, get_ErrorLine_Response),
-    4: DceRpcOp(get_PreErrorLine_Request, get_PreErrorLine_Response),
-    5: DceRpcOp(get_PostErrorLine_Request, get_PostErrorLine_Response),
-    6: DceRpcOp(get_ErrorString_Request, get_ErrorString_Response),
+IAPPHOSTCONFIGEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_LineNumber_Request, get_LineNumber_Response),
+    4: DceRpcOp(get_FileName_Request, get_FileName_Response),
+    5: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
+    6: DceRpcOp(get_ErrorLine_Request, get_ErrorLine_Response),
+    7: DceRpcOp(get_PreErrorLine_Request, get_PreErrorLine_Response),
+    8: DceRpcOp(get_PostErrorLine_Request, get_PostErrorLine_Response),
+    9: DceRpcOp(get_ErrorString_Request, get_ErrorString_Response),
 }
 register_com_interface(
     name="IAppHostConfigException",
@@ -1887,12 +1938,21 @@ class get_ValidationFailureParameters_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPROPERTYEXCEPTION_OPNUMS = {
-    0: DceRpcOp(get_InvalidValue_Request, get_InvalidValue_Response),
-    1: DceRpcOp(
+IAPPHOSTPROPERTYEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_LineNumber_Request, get_LineNumber_Response),
+    4: DceRpcOp(get_FileName_Request, get_FileName_Response),
+    5: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
+    6: DceRpcOp(get_ErrorLine_Request, get_ErrorLine_Response),
+    7: DceRpcOp(get_PreErrorLine_Request, get_PreErrorLine_Response),
+    8: DceRpcOp(get_PostErrorLine_Request, get_PostErrorLine_Response),
+    9: DceRpcOp(get_ErrorString_Request, get_ErrorString_Response),
+    10: DceRpcOp(get_InvalidValue_Request, get_InvalidValue_Response),
+    11: DceRpcOp(
         get_ValidationFailureReason_Request, get_ValidationFailureReason_Response
     ),
-    2: DceRpcOp(
+    12: DceRpcOp(
         get_ValidationFailureParameters_Request,
         get_ValidationFailureParameters_Response,
     ),
@@ -1980,14 +2040,16 @@ class get_Schema_Response(NDRPacket):
     ]
 
 
-IAPPHOSTELEMENTCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
-    2: DceRpcOp(AddElement_Request, AddElement_Response),
-    3: DceRpcOp(DeleteElement_Request, DeleteElement_Response),
-    4: DceRpcOp(Clear_Request, Clear_Response),
-    5: DceRpcOp(CreateNewElement_Request, CreateNewElement_Response),
-    6: DceRpcOp(get_Schema_Request, get_Schema_Response),
+IAPPHOSTELEMENTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    5: DceRpcOp(AddElement_Request, AddElement_Response),
+    6: DceRpcOp(DeleteElement_Request, DeleteElement_Response),
+    7: DceRpcOp(Clear_Request, Clear_Response),
+    8: DceRpcOp(CreateNewElement_Request, CreateNewElement_Response),
+    9: DceRpcOp(get_Schema_Request, get_Schema_Response),
 }
 register_com_interface(
     name="IAppHostElementCollection",
@@ -2105,16 +2167,18 @@ class put_AllowLocation_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTSECTIONDEFINITION_OPNUMS = {
-    0: DceRpcOp(get_Name_Request, get_Name_Response),
-    1: DceRpcOp(get_Type_Request, get_Type_Response),
-    2: DceRpcOp(put_Type_Request, put_Type_Response),
-    3: DceRpcOp(get_OverrideModeDefault_Request, get_OverrideModeDefault_Response),
-    4: DceRpcOp(put_OverrideModeDefault_Request, put_OverrideModeDefault_Response),
-    5: DceRpcOp(get_AllowDefinition_Request, get_AllowDefinition_Response),
-    6: DceRpcOp(put_AllowDefinition_Request, put_AllowDefinition_Response),
-    7: DceRpcOp(get_AllowLocation_Request, get_AllowLocation_Response),
-    8: DceRpcOp(put_AllowLocation_Request, put_AllowLocation_Response),
+IAPPHOSTSECTIONDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    4: DceRpcOp(get_Type_Request, get_Type_Response),
+    5: DceRpcOp(put_Type_Request, put_Type_Response),
+    6: DceRpcOp(get_OverrideModeDefault_Request, get_OverrideModeDefault_Response),
+    7: DceRpcOp(put_OverrideModeDefault_Request, put_OverrideModeDefault_Response),
+    8: DceRpcOp(get_AllowDefinition_Request, get_AllowDefinition_Response),
+    9: DceRpcOp(put_AllowDefinition_Request, put_AllowDefinition_Response),
+    10: DceRpcOp(get_AllowLocation_Request, get_AllowLocation_Response),
+    11: DceRpcOp(put_AllowLocation_Request, put_AllowLocation_Response),
 }
 register_com_interface(
     name="IAppHostSectionDefinition",
@@ -2167,11 +2231,13 @@ class DeleteSection_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTSECTIONDEFINITIONCOLLECTION_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
-    2: DceRpcOp(AddSection_Request, AddSection_Response),
-    3: DceRpcOp(DeleteSection_Request, DeleteSection_Response),
+IAPPHOSTSECTIONDEFINITIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    5: DceRpcOp(AddSection_Request, AddSection_Response),
+    6: DceRpcOp(DeleteSection_Request, DeleteSection_Response),
 }
 register_com_interface(
     name="IAppHostSectionDefinitionCollection",
@@ -2271,15 +2337,17 @@ class put_Type_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTSECTIONGROUP_OPNUMS = {
-    0: DceRpcOp(get_Count_Request, get_Count_Response),
-    1: DceRpcOp(get_Item_Request, get_Item_Response),
-    2: DceRpcOp(get_Sections_Request, get_Sections_Response),
-    3: DceRpcOp(AddSectionGroup_Request, AddSectionGroup_Response),
-    4: DceRpcOp(DeleteSectionGroup_Request, DeleteSectionGroup_Response),
-    5: DceRpcOp(get_Name_Request, get_Name_Response),
-    6: DceRpcOp(get_Type_Request, get_Type_Response),
-    7: DceRpcOp(put_Type_Request, put_Type_Response),
+IAPPHOSTSECTIONGROUP_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_Count_Request, get_Count_Response),
+    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    5: DceRpcOp(get_Sections_Request, get_Sections_Response),
+    6: DceRpcOp(AddSectionGroup_Request, AddSectionGroup_Response),
+    7: DceRpcOp(DeleteSectionGroup_Request, DeleteSectionGroup_Response),
+    8: DceRpcOp(get_Name_Request, get_Name_Response),
+    9: DceRpcOp(get_Type_Request, get_Type_Response),
+    10: DceRpcOp(put_Type_Request, put_Type_Response),
 }
 register_com_interface(
     name="IAppHostSectionGroup",
@@ -2388,15 +2456,17 @@ class get_RootSectionGroup_Response(NDRPacket):
     ]
 
 
-IAPPHOSTCONFIGFILE_OPNUMS = {
-    0: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
-    1: DceRpcOp(get_FilePath_Request, get_FilePath_Response),
-    2: DceRpcOp(get_Locations_Request, get_Locations_Response),
-    3: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
-    4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    6: DceRpcOp(ClearInvalidSections_Request, ClearInvalidSections_Response),
-    7: DceRpcOp(get_RootSectionGroup_Request, get_RootSectionGroup_Response),
+IAPPHOSTCONFIGFILE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
+    4: DceRpcOp(get_FilePath_Request, get_FilePath_Response),
+    5: DceRpcOp(get_Locations_Request, get_Locations_Response),
+    6: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
+    7: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    8: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+    9: DceRpcOp(ClearInvalidSections_Request, ClearInvalidSections_Response),
+    10: DceRpcOp(get_RootSectionGroup_Request, get_RootSectionGroup_Response),
 }
 register_com_interface(
     name="IAppHostConfigFile",
@@ -2425,7 +2495,11 @@ class MapPath_Response(NDRPacket):
     ]
 
 
-IAPPHOSTPATHMAPPER_OPNUMS = {0: DceRpcOp(MapPath_Request, MapPath_Response)}
+IAPPHOSTPATHMAPPER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(MapPath_Request, MapPath_Response)
+}
 register_com_interface(
     name="IAppHostPathMapper",
     uuid=uuid.UUID("e7927575-5cc3-403b-822e-328a6b904bee"),
@@ -2444,8 +2518,10 @@ class OnSectionChanges_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTCHANGEHANDLER_OPNUMS = {
-    0: DceRpcOp(OnSectionChanges_Request, OnSectionChanges_Response)
+IAPPHOSTCHANGEHANDLER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(OnSectionChanges_Request, OnSectionChanges_Response)
 }
 register_com_interface(
     name="IAppHostChangeHandler",
@@ -2507,11 +2583,13 @@ class get_ConfigManager_Response(NDRPacket):
     ]
 
 
-IAPPHOSTADMINMANAGER_OPNUMS = {
-    0: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
-    1: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    2: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    3: DceRpcOp(get_ConfigManager_Request, get_ConfigManager_Response),
+IAPPHOSTADMINMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
+    4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+    6: DceRpcOp(get_ConfigManager_Request, get_ConfigManager_Response),
 }
 register_com_interface(
     name="IAppHostAdminManager",
@@ -2551,10 +2629,16 @@ class put_CommitPath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IAPPHOSTWRITABLEADMINMANAGER_OPNUMS = {
-    0: DceRpcOp(CommitChanges_Request, CommitChanges_Response),
-    1: DceRpcOp(get_CommitPath_Request, get_CommitPath_Response),
-    2: DceRpcOp(put_CommitPath_Request, put_CommitPath_Response),
+IAPPHOSTWRITABLEADMINMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
+    4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
+    5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
+    6: DceRpcOp(get_ConfigManager_Request, get_ConfigManager_Response),
+    7: DceRpcOp(CommitChanges_Request, CommitChanges_Response),
+    8: DceRpcOp(get_CommitPath_Request, get_CommitPath_Response),
+    9: DceRpcOp(put_CommitPath_Request, put_CommitPath_Response),
 }
 register_com_interface(
     name="IAppHostWritableAdminManager",

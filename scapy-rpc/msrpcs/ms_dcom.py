@@ -446,10 +446,12 @@ class RemRelease_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IREMUNKNOWN_OPNUMS = {
-    0: DceRpcOp(RemQueryInterface_Request, RemQueryInterface_Response),
-    1: DceRpcOp(RemAddRef_Request, RemAddRef_Response),
-    2: DceRpcOp(RemRelease_Request, RemRelease_Response),
+IREMUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(RemQueryInterface_Request, RemQueryInterface_Response),
+    4: DceRpcOp(RemAddRef_Request, RemAddRef_Response),
+    5: DceRpcOp(RemRelease_Request, RemRelease_Response),
 }
 register_com_interface(
     name="IRemUnknown",
@@ -478,8 +480,13 @@ class RemQueryInterface2_Response(NDRPacket):
     ]
 
 
-IREMUNKNOWN2_OPNUMS = {
-    0: DceRpcOp(RemQueryInterface2_Request, RemQueryInterface2_Response)
+IREMUNKNOWN2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(RemQueryInterface_Request, RemQueryInterface_Response),
+    4: DceRpcOp(RemAddRef_Request, RemAddRef_Response),
+    5: DceRpcOp(RemRelease_Request, RemRelease_Response),
+    6: DceRpcOp(RemQueryInterface2_Request, RemQueryInterface2_Response),
 }
 register_com_interface(
     name="IRemUnknown2",

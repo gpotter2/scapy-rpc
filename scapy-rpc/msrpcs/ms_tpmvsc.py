@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - ITpmVirtualSmartCardManagerStatusCallback (v0.0): 1A1BB35F-ABB8-451C-A1AE-33D98F1BEF4A
 - ITpmVirtualSmartCardManager (v0.0): 112B1DFF-D9DC-41F7-869F-D67FEE7CB591
 - ITpmVirtualSmartCardManager2 (v0.0): FDF8A2B9-02DE-47F4-BC26-AA85AB5E5267
@@ -31,6 +32,16 @@ from scapy.layers.dcerpc import (
     NDRPacketField,
     NDRSignedIntField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -89,9 +100,11 @@ class ReportError_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-ITPMVIRTUALSMARTCARDMANAGERSTATUSCALLBACK_OPNUMS = {
-    0: DceRpcOp(ReportProgress_Request, ReportProgress_Response),
-    1: DceRpcOp(ReportError_Request, ReportError_Response),
+ITPMVIRTUALSMARTCARDMANAGERSTATUSCALLBACK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ReportProgress_Request, ReportProgress_Response),
+    4: DceRpcOp(ReportError_Request, ReportError_Response),
 }
 register_com_interface(
     name="ITpmVirtualSmartCardManagerStatusCallback",
@@ -151,9 +164,11 @@ class DestroyVirtualSmartCard_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pfNeedReboot", 0), NDRIntField("status", 0)]
 
 
-ITPMVIRTUALSMARTCARDMANAGER_OPNUMS = {
-    0: DceRpcOp(CreateVirtualSmartCard_Request, CreateVirtualSmartCard_Response),
-    1: DceRpcOp(DestroyVirtualSmartCard_Request, DestroyVirtualSmartCard_Response),
+ITPMVIRTUALSMARTCARDMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateVirtualSmartCard_Request, CreateVirtualSmartCard_Response),
+    4: DceRpcOp(DestroyVirtualSmartCard_Request, DestroyVirtualSmartCard_Response),
 }
 register_com_interface(
     name="ITpmVirtualSmartCardManager",
@@ -191,11 +206,15 @@ class CreateVirtualSmartCardWithPinPolicy_Response(NDRPacket):
     ]
 
 
-ITPMVIRTUALSMARTCARDMANAGER2_OPNUMS = {
-    0: DceRpcOp(
+ITPMVIRTUALSMARTCARDMANAGER2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateVirtualSmartCard_Request, CreateVirtualSmartCard_Response),
+    4: DceRpcOp(DestroyVirtualSmartCard_Request, DestroyVirtualSmartCard_Response),
+    5: DceRpcOp(
         CreateVirtualSmartCardWithPinPolicy_Request,
         CreateVirtualSmartCardWithPinPolicy_Response,
-    )
+    ),
 }
 register_com_interface(
     name="ITpmVirtualSmartCardManager2",
@@ -239,11 +258,19 @@ class CreateVirtualSmartCardWithAttestation_Response(NDRPacket):
     ]
 
 
-ITPMVIRTUALSMARTCARDMANAGER3_OPNUMS = {
-    0: DceRpcOp(
+ITPMVIRTUALSMARTCARDMANAGER3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateVirtualSmartCard_Request, CreateVirtualSmartCard_Response),
+    4: DceRpcOp(DestroyVirtualSmartCard_Request, DestroyVirtualSmartCard_Response),
+    5: DceRpcOp(
+        CreateVirtualSmartCardWithPinPolicy_Request,
+        CreateVirtualSmartCardWithPinPolicy_Response,
+    ),
+    6: DceRpcOp(
         CreateVirtualSmartCardWithAttestation_Request,
         CreateVirtualSmartCardWithAttestation_Response,
-    )
+    ),
 }
 register_com_interface(
     name="ITpmVirtualSmartCardManager3",

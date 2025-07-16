@@ -8,6 +8,7 @@
 """
 RPC definitions for the following interfaces:
 - IClusterStorage2 (v0.0): None
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IClusterStorage3 (v0.0): 11942D87-A1DE-4E7F-83FB-A840D9C5928D
 - IClusterNetwork2 (v0.0): None
 - IClusterCleanup (v0.0): None
@@ -46,6 +47,16 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRUnionField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -324,24 +335,26 @@ class CprepDiskPRClear3_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-ICLUSTERSTORAGE3_OPNUMS = {
-    0: DceRpcOp(CprepDiskGetUniqueIds3_Request, CprepDiskGetUniqueIds3_Response),
-    1: DceRpcOp(CprepCheckNetFtBindings3_Request, CprepCheckNetFtBindings3_Response),
-    2: DceRpcOp(CprepCsvTestSetup3_Request, CprepCsvTestSetup3_Response),
-    3: DceRpcOp(CprepIsNodeClustered3_Request, CprepIsNodeClustered3_Response),
-    4: DceRpcOp(CprepCreateNewSmbShares3_Request, CprepCreateNewSmbShares3_Response),
-    5: DceRpcOp(
+ICLUSTERSTORAGE3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CprepDiskGetUniqueIds3_Request, CprepDiskGetUniqueIds3_Response),
+    4: DceRpcOp(CprepCheckNetFtBindings3_Request, CprepCheckNetFtBindings3_Response),
+    5: DceRpcOp(CprepCsvTestSetup3_Request, CprepCsvTestSetup3_Response),
+    6: DceRpcOp(CprepIsNodeClustered3_Request, CprepIsNodeClustered3_Response),
+    7: DceRpcOp(CprepCreateNewSmbShares3_Request, CprepCreateNewSmbShares3_Response),
+    8: DceRpcOp(
         CprepConnectToNewSmbShares3_Request, CprepConnectToNewSmbShares3_Response
     ),
-    6: DceRpcOp(CprepDiskGetProps3_Request, CprepDiskGetProps3_Response),
-    7: DceRpcOp(CprepDiskIsReadOnly3_Request, CprepDiskIsReadOnly3_Response),
-    8: DceRpcOp(CprepDiskPRRegister3_Request, CprepDiskPRRegister3_Response),
-    9: DceRpcOp(CprepDiskFindKey3_Request, CprepDiskFindKey3_Response),
-    10: DceRpcOp(CprepDiskPRPreempt3_Request, CprepDiskPRPreempt3_Response),
-    11: DceRpcOp(CprepDiskPRReserve3_Request, CprepDiskPRReserve3_Response),
-    12: DceRpcOp(CprepDiskIsPRPresent3_Request, CprepDiskIsPRPresent3_Response),
-    13: DceRpcOp(CprepDiskPRRelease3_Request, CprepDiskPRRelease3_Response),
-    14: DceRpcOp(CprepDiskPRClear3_Request, CprepDiskPRClear3_Response),
+    9: DceRpcOp(CprepDiskGetProps3_Request, CprepDiskGetProps3_Response),
+    10: DceRpcOp(CprepDiskIsReadOnly3_Request, CprepDiskIsReadOnly3_Response),
+    11: DceRpcOp(CprepDiskPRRegister3_Request, CprepDiskPRRegister3_Response),
+    12: DceRpcOp(CprepDiskFindKey3_Request, CprepDiskFindKey3_Response),
+    13: DceRpcOp(CprepDiskPRPreempt3_Request, CprepDiskPRPreempt3_Response),
+    14: DceRpcOp(CprepDiskPRReserve3_Request, CprepDiskPRReserve3_Response),
+    15: DceRpcOp(CprepDiskIsPRPresent3_Request, CprepDiskIsPRPresent3_Response),
+    16: DceRpcOp(CprepDiskPRRelease3_Request, CprepDiskPRRelease3_Response),
+    17: DceRpcOp(CprepDiskPRClear3_Request, CprepDiskPRClear3_Response),
 }
 register_com_interface(
     name="IClusterStorage3",
@@ -468,18 +481,20 @@ class GenerateNetftLog_Response(NDRPacket):
     ]
 
 
-ICLUSTERLOGEX_OPNUMS = {
-    0: DceRpcOp(GenerateClusterLog_Request, GenerateClusterLog_Response),
-    1: DceRpcOp(GenerateClusterHealthLog_Request, GenerateClusterHealthLog_Response),
-    2: DceRpcOp(GenerateClusterSetLog_Request, GenerateClusterSetLog_Response),
-    3: DceRpcOp(
+ICLUSTERLOGEX_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GenerateClusterLog_Request, GenerateClusterLog_Response),
+    4: DceRpcOp(GenerateClusterHealthLog_Request, GenerateClusterHealthLog_Response),
+    5: DceRpcOp(GenerateClusterSetLog_Request, GenerateClusterSetLog_Response),
+    6: DceRpcOp(
         GenerateClusterNetworkhLog_Request, GenerateClusterNetworkhLog_Response
     ),
-    4: DceRpcOp(
+    7: DceRpcOp(
         ExportClusterPerformanceHistory_Request,
         ExportClusterPerformanceHistory_Response,
     ),
-    5: DceRpcOp(GenerateNetftLog_Request, GenerateNetftLog_Response),
+    8: DceRpcOp(GenerateNetftLog_Request, GenerateNetftLog_Response),
 }
 register_com_interface(
     name="IClusterLogEx",
@@ -535,10 +550,23 @@ class GetLogFilePath_Response(NDRPacket):
     ]
 
 
-ICLUSTERLOGEX2_OPNUMS = {
-    0: DceRpcOp(GenerateLogEx_Request, GenerateLogEx_Response),
-    1: DceRpcOp(GetCountLogs_Request, GetCountLogs_Response),
-    2: DceRpcOp(GetLogFilePath_Request, GetLogFilePath_Response),
+ICLUSTERLOGEX2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GenerateClusterLog_Request, GenerateClusterLog_Response),
+    4: DceRpcOp(GenerateClusterHealthLog_Request, GenerateClusterHealthLog_Response),
+    5: DceRpcOp(GenerateClusterSetLog_Request, GenerateClusterSetLog_Response),
+    6: DceRpcOp(
+        GenerateClusterNetworkhLog_Request, GenerateClusterNetworkhLog_Response
+    ),
+    7: DceRpcOp(
+        ExportClusterPerformanceHistory_Request,
+        ExportClusterPerformanceHistory_Response,
+    ),
+    8: DceRpcOp(GenerateNetftLog_Request, GenerateNetftLog_Response),
+    9: DceRpcOp(GenerateLogEx_Request, GenerateLogEx_Response),
+    10: DceRpcOp(GetCountLogs_Request, GetCountLogs_Response),
+    11: DceRpcOp(GetLogFilePath_Request, GetLogFilePath_Response),
 }
 register_com_interface(
     name="IClusterLogEx2",
@@ -570,7 +598,25 @@ class GenerateLogEx2_Response(NDRPacket):
     ]
 
 
-ICLUSTERLOGEX3_OPNUMS = {0: DceRpcOp(GenerateLogEx2_Request, GenerateLogEx2_Response)}
+ICLUSTERLOGEX3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GenerateClusterLog_Request, GenerateClusterLog_Response),
+    4: DceRpcOp(GenerateClusterHealthLog_Request, GenerateClusterHealthLog_Response),
+    5: DceRpcOp(GenerateClusterSetLog_Request, GenerateClusterSetLog_Response),
+    6: DceRpcOp(
+        GenerateClusterNetworkhLog_Request, GenerateClusterNetworkhLog_Response
+    ),
+    7: DceRpcOp(
+        ExportClusterPerformanceHistory_Request,
+        ExportClusterPerformanceHistory_Response,
+    ),
+    8: DceRpcOp(GenerateNetftLog_Request, GenerateNetftLog_Response),
+    9: DceRpcOp(GenerateLogEx_Request, GenerateLogEx_Response),
+    10: DceRpcOp(GetCountLogs_Request, GetCountLogs_Response),
+    11: DceRpcOp(GetLogFilePath_Request, GetLogFilePath_Response),
+    12: DceRpcOp(GenerateLogEx2_Request, GenerateLogEx2_Response),
+}
 register_com_interface(
     name="IClusterLogEx3",
     uuid=uuid.UUID("E6D3C166-560F-4B58-B31A-FDEA05FB606F"),

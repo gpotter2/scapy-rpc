@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IADProxy (v0.0): 4BB8AB1D-9EF9-4100-8EB6-DD4B4E418B72
 - IADProxy2 (v0.0): C4B0C7D9-ABE0-4733-A1E1-9FDEDF260C7A
 - IServerHealthReport (v0.0): E65E8028-83E8-491b-9AF7-AAF6BD51A0CE
@@ -33,6 +34,16 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRSignedLongField,
     register_com_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -215,10 +226,12 @@ class ModifyObject_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IADPROXY_OPNUMS = {
-    0: DceRpcOp(CreateObject_Request, CreateObject_Response),
-    1: DceRpcOp(DeleteObject_Request, DeleteObject_Response),
-    2: DceRpcOp(ModifyObject_Request, ModifyObject_Response),
+IADPROXY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateObject_Request, CreateObject_Response),
+    4: DceRpcOp(DeleteObject_Request, DeleteObject_Response),
+    5: DceRpcOp(ModifyObject_Request, ModifyObject_Response),
 }
 register_com_interface(
     name="IADProxy",
@@ -274,10 +287,15 @@ class ModifyObject_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IADPROXY2_OPNUMS = {
-    0: DceRpcOp(CreateObject_Request, CreateObject_Response),
-    1: DceRpcOp(DeleteObject_Request, DeleteObject_Response),
-    2: DceRpcOp(ModifyObject_Request, ModifyObject_Response),
+IADPROXY2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateObject_Request, CreateObject_Response),
+    4: DceRpcOp(DeleteObject_Request, DeleteObject_Response),
+    5: DceRpcOp(ModifyObject_Request, ModifyObject_Response),
+    6: DceRpcOp(CreateObject_Request, CreateObject_Response),
+    7: DceRpcOp(DeleteObject_Request, DeleteObject_Response),
+    8: DceRpcOp(ModifyObject_Request, ModifyObject_Response),
 }
 register_com_interface(
     name="IADProxy2",
@@ -385,15 +403,17 @@ class GetReferenceBacklogCounts_Response(NDRPacket):
     ]
 
 
-ISERVERHEALTHREPORT_OPNUMS = {
-    0: DceRpcOp(GetReport_Request, GetReport_Response),
-    1: DceRpcOp(GetCompressedReport_Request, GetCompressedReport_Response),
-    2: DceRpcOp(GetRawReportEx_Request, GetRawReportEx_Response),
-    3: DceRpcOp(
+ISERVERHEALTHREPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetReport_Request, GetReport_Response),
+    4: DceRpcOp(GetCompressedReport_Request, GetCompressedReport_Response),
+    5: DceRpcOp(GetRawReportEx_Request, GetRawReportEx_Response),
+    6: DceRpcOp(
         GetReferenceVersionVectors_Request, GetReferenceVersionVectors_Response
     ),
-    # 4: Opnum7NotUsedOnWire,
-    5: DceRpcOp(GetReferenceBacklogCounts_Request, GetReferenceBacklogCounts_Response),
+    # 7: Opnum7NotUsedOnWire,
+    8: DceRpcOp(GetReferenceBacklogCounts_Request, GetReferenceBacklogCounts_Response),
 }
 register_com_interface(
     name="IServerHealthReport",
@@ -451,9 +471,19 @@ class GetCompressedReport_Response(NDRPacket):
     ]
 
 
-ISERVERHEALTHREPORT2_OPNUMS = {
-    0: DceRpcOp(GetReport_Request, GetReport_Response),
-    1: DceRpcOp(GetCompressedReport_Request, GetCompressedReport_Response),
+ISERVERHEALTHREPORT2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetReport_Request, GetReport_Response),
+    4: DceRpcOp(GetCompressedReport_Request, GetCompressedReport_Response),
+    5: DceRpcOp(GetRawReportEx_Request, GetRawReportEx_Response),
+    6: DceRpcOp(
+        GetReferenceVersionVectors_Request, GetReferenceVersionVectors_Response
+    ),
+    # 7: Opnum7NotUsedOnWire,
+    8: DceRpcOp(GetReferenceBacklogCounts_Request, GetReferenceBacklogCounts_Response),
+    9: DceRpcOp(GetReport_Request, GetReport_Response),
+    10: DceRpcOp(GetCompressedReport_Request, GetCompressedReport_Response),
 }
 register_com_interface(
     name="IServerHealthReport2",

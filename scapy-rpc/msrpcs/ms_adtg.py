@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IDataFactory (v0.0): 0EAC4842-8763-11cf-A743-00AA00A3F00D
 - IDataFactory2 (v0.0): 070669EB-B52F-11d1-9270-00C04FBBBFB3
 - IDataFactory3 (v0.0): 4639DB2A-BFC5-11d2-9318-00C04FBBBFB3
@@ -31,7 +32,18 @@ from scapy.layers.dcerpc import (
     NDRShortField,
     NDRSignedIntField,
     NDRSignedLongField,
+    register_com_interface,
     register_dcerpc_interface,
+)
+
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
 )
 
 
@@ -219,11 +231,13 @@ class CreateRecordSet_Response(NDRPacket):
     ]
 
 
-IDATAFACTORY_OPNUMS = {
-    0: DceRpcOp(Query_Request, Query_Response),
-    1: DceRpcOp(SubmitChanges_Request, SubmitChanges_Response),
-    2: DceRpcOp(ConvertToString_Request, ConvertToString_Response),
-    3: DceRpcOp(CreateRecordSet_Request, CreateRecordSet_Response),
+IDATAFACTORY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Query_Request, Query_Response),
+    4: DceRpcOp(SubmitChanges_Request, SubmitChanges_Response),
+    5: DceRpcOp(ConvertToString_Request, ConvertToString_Response),
+    6: DceRpcOp(CreateRecordSet_Request, CreateRecordSet_Response),
 }
 register_dcerpc_interface(
     name="IDataFactory",
@@ -289,9 +303,15 @@ class Synchronize21_Response(NDRPacket):
     ]
 
 
-IDATAFACTORY2_OPNUMS = {
-    0: DceRpcOp(Execute21_Request, Execute21_Response),
-    1: DceRpcOp(Synchronize21_Request, Synchronize21_Response),
+IDATAFACTORY2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Query_Request, Query_Response),
+    4: DceRpcOp(SubmitChanges_Request, SubmitChanges_Response),
+    5: DceRpcOp(ConvertToString_Request, ConvertToString_Response),
+    6: DceRpcOp(CreateRecordSet_Request, CreateRecordSet_Response),
+    7: DceRpcOp(Execute21_Request, Execute21_Response),
+    8: DceRpcOp(Synchronize21_Request, Synchronize21_Response),
 }
 register_dcerpc_interface(
     name="IDataFactory2",
@@ -371,9 +391,17 @@ class Synchronize_Response(NDRPacket):
     ]
 
 
-IDATAFACTORY3_OPNUMS = {
-    0: DceRpcOp(Execute_Request, Execute_Response),
-    1: DceRpcOp(Synchronize_Request, Synchronize_Response),
+IDATAFACTORY3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Query_Request, Query_Response),
+    4: DceRpcOp(SubmitChanges_Request, SubmitChanges_Response),
+    5: DceRpcOp(ConvertToString_Request, ConvertToString_Response),
+    6: DceRpcOp(CreateRecordSet_Request, CreateRecordSet_Response),
+    7: DceRpcOp(Execute21_Request, Execute21_Response),
+    8: DceRpcOp(Synchronize21_Request, Synchronize21_Response),
+    9: DceRpcOp(Execute_Request, Execute_Response),
+    10: DceRpcOp(Synchronize_Request, Synchronize_Response),
 }
 register_dcerpc_interface(
     name="IDataFactory3",

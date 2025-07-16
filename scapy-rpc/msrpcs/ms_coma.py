@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - ICatalogSession (v0.0): 182C40FA-32E4-11D0-818B-00A0C9231C29
 - ICatalog64BitSupport (v0.0): 1D118904-94B3-4A64-9FA6-ED432666A7B9
 - ICatalogTableInfo (v0.0): A8927A41-D3CE-11D1-8472-006008B0E5CA
@@ -55,6 +56,16 @@ from scapy.layers.dcerpc import (
     register_com_interface,
 )
 
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
+)
+
 
 class InitializeSession_Request(NDRPacket):
     fields_desc = [
@@ -84,12 +95,15 @@ class GetServerInformation_Response(NDRPacket):
     ]
 
 
-ICATALOGSESSION_OPNUMS = {  # 0: Opnum3NotUsedOnWire,
-    # 1: Opnum4NotUsedOnWire,
-    # 2: Opnum5NotUsedOnWire,
-    # 3: Opnum6NotUsedOnWire,
-    4: DceRpcOp(InitializeSession_Request, InitializeSession_Response),
-    5: DceRpcOp(GetServerInformation_Request, GetServerInformation_Response),
+ICATALOGSESSION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    # 3: Opnum3NotUsedOnWire,
+    # 4: Opnum4NotUsedOnWire,
+    # 5: Opnum5NotUsedOnWire,
+    # 6: Opnum6NotUsedOnWire,
+    7: DceRpcOp(InitializeSession_Request, InitializeSession_Response),
+    8: DceRpcOp(GetServerInformation_Request, GetServerInformation_Response),
 }
 register_com_interface(
     name="ICatalogSession",
@@ -120,9 +134,11 @@ class Initialize64BitQueryCellSupport_Response(NDRPacket):
     ]
 
 
-ICATALOG64BITSUPPORT_OPNUMS = {
-    0: DceRpcOp(SupportsMultipleBitness_Request, SupportsMultipleBitness_Response),
-    1: DceRpcOp(
+ICATALOG64BITSUPPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SupportsMultipleBitness_Request, SupportsMultipleBitness_Response),
+    4: DceRpcOp(
         Initialize64BitQueryCellSupport_Request,
         Initialize64BitQueryCellSupport_Response,
     ),
@@ -199,8 +215,10 @@ class GetClientTableInfo_Response(NDRPacket):
     ]
 
 
-ICATALOGTABLEINFO_OPNUMS = {
-    0: DceRpcOp(GetClientTableInfo_Request, GetClientTableInfo_Response)
+ICATALOGTABLEINFO_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetClientTableInfo_Request, GetClientTableInfo_Response)
 }
 register_com_interface(
     name="ICatalogTableInfo",
@@ -248,7 +266,11 @@ class ReadTable_Response(NDRPacket):
     ]
 
 
-ICATALOGTABLEREAD_OPNUMS = {0: DceRpcOp(ReadTable_Request, ReadTable_Response)}
+ICATALOGTABLEREAD_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ReadTable_Request, ReadTable_Response)
+}
 register_com_interface(
     name="ICatalogTableRead",
     uuid=uuid.UUID("0E3D6630-B46B-11D1-9D2D-006008B0E5CA"),
@@ -297,7 +319,11 @@ class WriteTable_Response(NDRPacket):
     ]
 
 
-ICATALOGTABLEWRITE_OPNUMS = {0: DceRpcOp(WriteTable_Request, WriteTable_Response)}
+ICATALOGTABLEWRITE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(WriteTable_Request, WriteTable_Response)
+}
 register_com_interface(
     name="ICatalogTableWrite",
     uuid=uuid.UUID("0E3D6631-B46B-11D1-9D2D-006008B0E5CA"),
@@ -352,9 +378,11 @@ class RegisterModule_Response(NDRPacket):
     ]
 
 
-IREGISTER_OPNUMS = {
-    0: DceRpcOp(RegisterModule_Request, RegisterModule_Response),
-    # 1: Opnum4NotUsedOnWire
+IREGISTER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(RegisterModule_Request, RegisterModule_Response),
+    # 4: Opnum4NotUsedOnWire
 }
 register_com_interface(
     name="IRegister",
@@ -454,16 +482,18 @@ class RegisterModule2_Response(NDRPacket):
     ]
 
 
-IREGISTER2_OPNUMS = {
-    0: DceRpcOp(CreateFullConfiguration_Request, CreateFullConfiguration_Response),
-    1: DceRpcOp(CreateLegacyConfiguration_Request, CreateLegacyConfiguration_Response),
-    2: DceRpcOp(
+IREGISTER2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateFullConfiguration_Request, CreateFullConfiguration_Response),
+    4: DceRpcOp(CreateLegacyConfiguration_Request, CreateLegacyConfiguration_Response),
+    5: DceRpcOp(
         PromoteLegacyConfiguration_Request, PromoteLegacyConfiguration_Response
     ),
-    # 3: Opnum6NotUsedOnWire,
-    # 4: Opnum7NotUsedOnWire,
-    5: DceRpcOp(RegisterModule2_Request, RegisterModule2_Response),
-    # 6: Opnum9NotUsedOnWire
+    # 6: Opnum6NotUsedOnWire,
+    # 7: Opnum7NotUsedOnWire,
+    8: DceRpcOp(RegisterModule2_Request, RegisterModule2_Response),
+    # 9: Opnum9NotUsedOnWire
 }
 register_com_interface(
     name="IRegister2",
@@ -546,11 +576,13 @@ class QueryFile_Response(NDRPacket):
     ]
 
 
-IIMPORT_OPNUMS = {
-    0: DceRpcOp(ImportFromFile_Request, ImportFromFile_Response),
-    1: DceRpcOp(QueryFile_Request, QueryFile_Response),
-    # 2: Opnum5NotUsedOnWire,
-    # 3: Opnum6NotUsedOnWire
+IIMPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ImportFromFile_Request, ImportFromFile_Response),
+    4: DceRpcOp(QueryFile_Request, QueryFile_Response),
+    # 5: Opnum5NotUsedOnWire,
+    # 6: Opnum6NotUsedOnWire
 }
 register_com_interface(
     name="IImport",
@@ -567,10 +599,12 @@ class SetPartition_Response(NDRPacket):
     fields_desc = [NDRPacketField("pReserved", GUID(), GUID), NDRIntField("status", 0)]
 
 
-IIMPORT2_OPNUMS = {
-    0: DceRpcOp(SetPartition_Request, SetPartition_Response),
-    # 1: Opnum4NotUsedOnWire,
-    # 2: Opnum5NotUsedOnWire
+IIMPORT2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SetPartition_Request, SetPartition_Response),
+    # 4: Opnum4NotUsedOnWire,
+    # 5: Opnum5NotUsedOnWire
 }
 register_com_interface(
     name="IImport2",
@@ -592,11 +626,13 @@ class ExportConglomeration_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IEXPORT_OPNUMS = {
-    0: DceRpcOp(ExportConglomeration_Request, ExportConglomeration_Response),
-    # 1: Opnum4NotUsedOnWire,
-    # 2: Opnum5NotUsedOnWire,
-    # 3: Opnum6NotUsedOnWire
+IEXPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ExportConglomeration_Request, ExportConglomeration_Response),
+    # 4: Opnum4NotUsedOnWire,
+    # 5: Opnum5NotUsedOnWire,
+    # 6: Opnum6NotUsedOnWire
 }
 register_com_interface(
     name="IExport",
@@ -618,7 +654,11 @@ class ExportPartition_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IEXPORT2_OPNUMS = {0: DceRpcOp(ExportPartition_Request, ExportPartition_Response)}
+IEXPORT2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ExportPartition_Request, ExportPartition_Response)
+}
 register_com_interface(
     name="IExport2",
     uuid=uuid.UUID("F131EA3E-B7BE-480E-A60D-51CB2785779E"),
@@ -663,9 +703,11 @@ class DeleteConfiguration_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IALTERNATELAUNCH_OPNUMS = {
-    0: DceRpcOp(CreateConfiguration_Request, CreateConfiguration_Response),
-    1: DceRpcOp(DeleteConfiguration_Request, DeleteConfiguration_Response),
+IALTERNATELAUNCH_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateConfiguration_Request, CreateConfiguration_Response),
+    4: DceRpcOp(DeleteConfiguration_Request, DeleteConfiguration_Response),
 }
 register_com_interface(
     name="IAlternateLaunch",
@@ -713,10 +755,12 @@ class GetEventClassesForIID_Response(NDRPacket):
     ]
 
 
-ICATALOGUTILS_OPNUMS = {
-    0: DceRpcOp(ValidateUser_Request, ValidateUser_Response),
-    1: DceRpcOp(WaitForEndWrites_Request, WaitForEndWrites_Response),
-    2: DceRpcOp(GetEventClassesForIID_Request, GetEventClassesForIID_Response),
+ICATALOGUTILS_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ValidateUser_Request, ValidateUser_Response),
+    4: DceRpcOp(WaitForEndWrites_Request, WaitForEndWrites_Response),
+    5: DceRpcOp(GetEventClassesForIID_Request, GetEventClassesForIID_Response),
 }
 register_com_interface(
     name="ICatalogUtils",
@@ -894,20 +938,22 @@ class GetComponentVersions_Response(NDRPacket):
     ]
 
 
-ICATALOGUTILS2_OPNUMS = {
-    0: DceRpcOp(CopyConglomerations_Request, CopyConglomerations_Response),
-    1: DceRpcOp(
+ICATALOGUTILS2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CopyConglomerations_Request, CopyConglomerations_Response),
+    4: DceRpcOp(
         CopyComponentConfiguration_Request, CopyComponentConfiguration_Response
     ),
-    2: DceRpcOp(AliasComponent_Request, AliasComponent_Response),
-    3: DceRpcOp(
+    5: DceRpcOp(AliasComponent_Request, AliasComponent_Response),
+    6: DceRpcOp(
         MoveComponentConfiguration_Request, MoveComponentConfiguration_Response
     ),
-    4: DceRpcOp(GetEventClassesForIID2_Request, GetEventClassesForIID2_Response),
-    5: DceRpcOp(IsSafeToDelete_Request, IsSafeToDelete_Response),
-    6: DceRpcOp(FlushPartitionCache_Request, FlushPartitionCache_Response),
-    7: DceRpcOp(EnumerateSRPLevels_Request, EnumerateSRPLevels_Response),
-    8: DceRpcOp(GetComponentVersions_Request, GetComponentVersions_Response),
+    7: DceRpcOp(GetEventClassesForIID2_Request, GetEventClassesForIID2_Response),
+    8: DceRpcOp(IsSafeToDelete_Request, IsSafeToDelete_Response),
+    9: DceRpcOp(FlushPartitionCache_Request, FlushPartitionCache_Response),
+    10: DceRpcOp(EnumerateSRPLevels_Request, EnumerateSRPLevels_Response),
+    11: DceRpcOp(GetComponentVersions_Request, GetComponentVersions_Response),
 }
 register_com_interface(
     name="ICatalogUtils2",
@@ -966,14 +1012,16 @@ class IsRunning_Response(NDRPacket):
     ]
 
 
-ICAPABILITYSUPPORT_OPNUMS = {
-    0: DceRpcOp(Start_Request, Start_Response),
-    1: DceRpcOp(Stop_Request, Stop_Response),
-    # 2: Opnum5NotUsedOnWire,
-    # 3: Opnum6NotUsedOnWire,
-    4: DceRpcOp(IsInstalled_Request, IsInstalled_Response),
-    5: DceRpcOp(IsRunning_Request, IsRunning_Response),
-    # 6: Opnum9NotUsedOnWire
+ICAPABILITYSUPPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Start_Request, Start_Response),
+    4: DceRpcOp(Stop_Request, Stop_Response),
+    # 5: Opnum5NotUsedOnWire,
+    # 6: Opnum6NotUsedOnWire,
+    7: DceRpcOp(IsInstalled_Request, IsInstalled_Response),
+    8: DceRpcOp(IsRunning_Request, IsRunning_Response),
+    # 9: Opnum9NotUsedOnWire
 }
 register_com_interface(
     name="ICapabilitySupport",
@@ -1006,10 +1054,12 @@ class RefreshComponents_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-ICONTAINERCONTROL_OPNUMS = {
-    0: DceRpcOp(CreateContainer_Request, CreateContainer_Response),
-    1: DceRpcOp(ShutdownContainers_Request, ShutdownContainers_Response),
-    2: DceRpcOp(RefreshComponents_Request, RefreshComponents_Response),
+ICONTAINERCONTROL_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateContainer_Request, CreateContainer_Response),
+    4: DceRpcOp(ShutdownContainers_Request, ShutdownContainers_Response),
+    5: DceRpcOp(RefreshComponents_Request, RefreshComponents_Response),
 }
 register_com_interface(
     name="IContainerControl",
@@ -1118,17 +1168,19 @@ class GetContainerIDFromConglomerationID_Response(NDRPacket):
     ]
 
 
-ICONTAINERCONTROL2_OPNUMS = {
-    0: DceRpcOp(ShutdownContainer_Request, ShutdownContainer_Response),
-    1: DceRpcOp(PauseContainer_Request, PauseContainer_Response),
-    2: DceRpcOp(ResumeContainer_Request, ResumeContainer_Response),
-    3: DceRpcOp(IsContainerPaused_Request, IsContainerPaused_Response),
-    4: DceRpcOp(GetRunningContainers_Request, GetRunningContainers_Response),
-    5: DceRpcOp(
+ICONTAINERCONTROL2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ShutdownContainer_Request, ShutdownContainer_Response),
+    4: DceRpcOp(PauseContainer_Request, PauseContainer_Response),
+    5: DceRpcOp(ResumeContainer_Request, ResumeContainer_Response),
+    6: DceRpcOp(IsContainerPaused_Request, IsContainerPaused_Response),
+    7: DceRpcOp(GetRunningContainers_Request, GetRunningContainers_Response),
+    8: DceRpcOp(
         GetContainerIDFromProcessID_Request, GetContainerIDFromProcessID_Response
     ),
-    6: DceRpcOp(RecycleContainer_Request, RecycleContainer_Response),
-    7: DceRpcOp(
+    9: DceRpcOp(RecycleContainer_Request, RecycleContainer_Response),
+    10: DceRpcOp(
         GetContainerIDFromConglomerationID_Request,
         GetContainerIDFromConglomerationID_Response,
     ),
@@ -1195,15 +1247,17 @@ class CreateReplicationDir_Response(NDRPacket):
     ]
 
 
-IREPLICATIONUTIL_OPNUMS = {
-    0: DceRpcOp(CreateShare_Request, CreateShare_Response),
-    1: DceRpcOp(CreateEmptyDir_Request, CreateEmptyDir_Response),
-    2: DceRpcOp(RemoveShare_Request, RemoveShare_Response),
-    3: DceRpcOp(BeginReplicationAsTarget_Request, BeginReplicationAsTarget_Response),
-    4: DceRpcOp(
+IREPLICATIONUTIL_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateShare_Request, CreateShare_Response),
+    4: DceRpcOp(CreateEmptyDir_Request, CreateEmptyDir_Response),
+    5: DceRpcOp(RemoveShare_Request, RemoveShare_Response),
+    6: DceRpcOp(BeginReplicationAsTarget_Request, BeginReplicationAsTarget_Response),
+    7: DceRpcOp(
         QueryConglomerationPassword_Request, QueryConglomerationPassword_Response
     ),
-    5: DceRpcOp(CreateReplicationDir_Request, CreateReplicationDir_Response),
+    8: DceRpcOp(CreateReplicationDir_Request, CreateReplicationDir_Response),
 }
 register_com_interface(
     name="IReplicationUtil",

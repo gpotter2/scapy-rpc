@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IEnumVdsObject (v0.0): 118610b7-8d94-4030-b5b8-500889788e4e
 - IVdsAdviseSink (v0.0): 8326cd1d-cf59-4936-b786-5efc08798e25
 - IVdsAsync (v0.0): d5d23b6d-5a55-4492-9889-397a3c2d2dbc
@@ -83,6 +84,16 @@ from scapy.layers.dcerpc import (
     register_com_interface,
 )
 
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
+)
+
 
 class MInterfacePointer(NDRPacket):
     ALIGNMENT = (4, 8)
@@ -143,11 +154,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IENUMVDSOBJECT_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IENUMVDSOBJECT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IEnumVdsObject",
@@ -402,7 +415,11 @@ class OnNotify_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSADVISESINK_OPNUMS = {0: DceRpcOp(OnNotify_Request, OnNotify_Response)}
+IVDSADVISESINK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(OnNotify_Request, OnNotify_Response)
+}
 register_com_interface(
     name="IVdsAdviseSink",
     uuid=uuid.UUID("8326cd1d-cf59-4936-b786-5efc08798e25"),
@@ -583,10 +600,12 @@ class QueryStatus_Response(NDRPacket):
     ]
 
 
-IVDSASYNC_OPNUMS = {
-    0: DceRpcOp(Cancel_Request, Cancel_Response),
-    1: DceRpcOp(Wait_Request, Wait_Response),
-    2: DceRpcOp(QueryStatus_Request, QueryStatus_Response),
+IVDSASYNC_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Cancel_Request, Cancel_Response),
+    4: DceRpcOp(Wait_Request, Wait_Response),
+    5: DceRpcOp(QueryStatus_Request, QueryStatus_Response),
 }
 register_com_interface(
     name="IVdsAsync",
@@ -610,7 +629,11 @@ class LoadService_Response(NDRPacket):
     ]
 
 
-IVDSSERVICELOADER_OPNUMS = {0: DceRpcOp(LoadService_Request, LoadService_Response)}
+IVDSSERVICELOADER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(LoadService_Request, LoadService_Response)
+}
 register_com_interface(
     name="IVdsServiceLoader",
     uuid=uuid.UUID("e0393303-90d4-4a97-ab71-e9b671ee2729"),
@@ -848,26 +871,28 @@ class ClearFlags_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSSERVICE_OPNUMS = {
-    0: DceRpcOp(IsServiceReady_Request, IsServiceReady_Response),
-    1: DceRpcOp(WaitForServiceReady_Request, WaitForServiceReady_Response),
-    2: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    3: DceRpcOp(QueryProviders_Request, QueryProviders_Response),
-    # 4: Opnum07NotUsedOnWire,
-    5: DceRpcOp(QueryUnallocatedDisks_Request, QueryUnallocatedDisks_Response),
-    6: DceRpcOp(GetObject_Request, GetObject_Response),
-    7: DceRpcOp(QueryDriveLetters_Request, QueryDriveLetters_Response),
-    8: DceRpcOp(QueryFileSystemTypes_Request, QueryFileSystemTypes_Response),
-    9: DceRpcOp(Reenumerate_Request, Reenumerate_Response),
-    10: DceRpcOp(Refresh_Request, Refresh_Response),
-    11: DceRpcOp(
+IVDSSERVICE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(IsServiceReady_Request, IsServiceReady_Response),
+    4: DceRpcOp(WaitForServiceReady_Request, WaitForServiceReady_Response),
+    5: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    6: DceRpcOp(QueryProviders_Request, QueryProviders_Response),
+    # 7: Opnum07NotUsedOnWire,
+    8: DceRpcOp(QueryUnallocatedDisks_Request, QueryUnallocatedDisks_Response),
+    9: DceRpcOp(GetObject_Request, GetObject_Response),
+    10: DceRpcOp(QueryDriveLetters_Request, QueryDriveLetters_Response),
+    11: DceRpcOp(QueryFileSystemTypes_Request, QueryFileSystemTypes_Response),
+    12: DceRpcOp(Reenumerate_Request, Reenumerate_Response),
+    13: DceRpcOp(Refresh_Request, Refresh_Response),
+    14: DceRpcOp(
         CleanupObsoleteMountPoints_Request, CleanupObsoleteMountPoints_Response
     ),
-    12: DceRpcOp(Advise_Request, Advise_Response),
-    13: DceRpcOp(Unadvise_Request, Unadvise_Response),
-    14: DceRpcOp(Reboot_Request, Reboot_Response),
-    15: DceRpcOp(SetFlags_Request, SetFlags_Response),
-    16: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
+    15: DceRpcOp(Advise_Request, Advise_Response),
+    16: DceRpcOp(Unadvise_Request, Unadvise_Response),
+    17: DceRpcOp(Reboot_Request, Reboot_Response),
+    18: DceRpcOp(SetFlags_Request, SetFlags_Response),
+    19: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
 }
 register_com_interface(
     name="IVdsService",
@@ -886,8 +911,10 @@ class Initialize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSSERVICEINITIALIZATION_OPNUMS = {
-    0: DceRpcOp(Initialize_Request, Initialize_Response)
+IVDSSERVICEINITIALIZATION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Initialize_Request, Initialize_Response)
 }
 register_com_interface(
     name="IVdsServiceInitialization",
@@ -1051,9 +1078,11 @@ class UninstallDisks_Response(NDRPacket):
     ]
 
 
-IVDSSERVICEUNINSTALLDISK_OPNUMS = {
-    0: DceRpcOp(GetDiskIdFromLunInfo_Request, GetDiskIdFromLunInfo_Response),
-    1: DceRpcOp(UninstallDisks_Request, UninstallDisks_Response),
+IVDSSERVICEUNINSTALLDISK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetDiskIdFromLunInfo_Request, GetDiskIdFromLunInfo_Response),
+    4: DceRpcOp(UninstallDisks_Request, UninstallDisks_Response),
 }
 register_com_interface(
     name="IVdsServiceUninstallDisk",
@@ -1075,7 +1104,11 @@ class QueryHbaPorts_Response(NDRPacket):
     ]
 
 
-IVDSSERVICEHBA_OPNUMS = {0: DceRpcOp(QueryHbaPorts_Request, QueryHbaPorts_Response)}
+IVDSSERVICEHBA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryHbaPorts_Request, QueryHbaPorts_Response)
+}
 register_com_interface(
     name="IVdsServiceHba",
     uuid=uuid.UUID("0ac13689-3134-47c6-a17c-4669216801be"),
@@ -1136,14 +1169,16 @@ class SetInitiatorSharedSecret_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSSERVICEISCSI_OPNUMS = {
-    0: DceRpcOp(GetInitiatorName_Request, GetInitiatorName_Response),
-    1: DceRpcOp(QueryInitiatorAdapters_Request, QueryInitiatorAdapters_Response),
-    # 2: Opnum05NotUsedOnWire,
-    # 3: Opnum06NotUsedOnWire,
-    # 4: Opnum07NotUsedOnWire,
-    5: DceRpcOp(SetInitiatorSharedSecret_Request, SetInitiatorSharedSecret_Response),
-    # 6: Opnum09NotUsedOnWire
+IVDSSERVICEISCSI_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetInitiatorName_Request, GetInitiatorName_Response),
+    4: DceRpcOp(QueryInitiatorAdapters_Request, QueryInitiatorAdapters_Response),
+    # 5: Opnum05NotUsedOnWire,
+    # 6: Opnum06NotUsedOnWire,
+    # 7: Opnum07NotUsedOnWire,
+    8: DceRpcOp(SetInitiatorSharedSecret_Request, SetInitiatorSharedSecret_Response),
+    # 9: Opnum09NotUsedOnWire
 }
 register_com_interface(
     name="IVdsServiceIscsi",
@@ -1180,9 +1215,11 @@ class SetSANPolicy_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSSERVICESAN_OPNUMS = {
-    0: DceRpcOp(GetSANPolicy_Request, GetSANPolicy_Response),
-    1: DceRpcOp(SetSANPolicy_Request, SetSANPolicy_Response),
+IVDSSERVICESAN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetSANPolicy_Request, GetSANPolicy_Response),
+    4: DceRpcOp(SetSANPolicy_Request, SetSANPolicy_Response),
 }
 register_com_interface(
     name="IVdsServiceSAN",
@@ -1204,7 +1241,11 @@ class GetDiskObject_Response(NDRPacket):
     ]
 
 
-IVDSSERVICESW_OPNUMS = {0: DceRpcOp(GetDiskObject_Request, GetDiskObject_Response)}
+IVDSSERVICESW_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetDiskObject_Request, GetDiskObject_Response)
+}
 register_com_interface(
     name="IVdsServiceSw",
     uuid=uuid.UUID("15fc031c-0652-4306-b2c3-f558b8f837e2"),
@@ -1280,9 +1321,11 @@ class SetAllPathStatuses_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSHBAPORT_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(SetAllPathStatuses_Request, SetAllPathStatuses_Response),
+IVDSHBAPORT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(SetAllPathStatuses_Request, SetAllPathStatuses_Response),
 }
 register_com_interface(
     name="IVdsHbaPort",
@@ -1327,11 +1370,13 @@ class QueryInitiatorPortals_Response(NDRPacket):
     ]
 
 
-IVDSISCSIINITIATORADAPTER_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(QueryInitiatorPortals_Request, QueryInitiatorPortals_Response),
-    # 2: Opnum05NotUsedOnWire,
-    # 3: Opnum06NotUsedOnWire
+IVDSISCSIINITIATORADAPTER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(QueryInitiatorPortals_Request, QueryInitiatorPortals_Response),
+    # 5: Opnum05NotUsedOnWire,
+    # 6: Opnum06NotUsedOnWire
 }
 register_com_interface(
     name="IVdsIscsiInitiatorAdapter",
@@ -1397,12 +1442,14 @@ class GetInitiatorAdapter_Response(NDRPacket):
     ]
 
 
-IVDSISCSIINITIATORPORTAL_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetInitiatorAdapter_Request, GetInitiatorAdapter_Response),
-    # 2: Opnum05NotUsedOnWire,
-    # 3: Opnum06NotUsedOnWire,
-    # 4: Opnum07NotUsedOnWire
+IVDSISCSIINITIATORPORTAL_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetInitiatorAdapter_Request, GetInitiatorAdapter_Response),
+    # 5: Opnum05NotUsedOnWire,
+    # 6: Opnum06NotUsedOnWire,
+    # 7: Opnum07NotUsedOnWire
 }
 register_com_interface(
     name="IVdsIscsiInitiatorPortal",
@@ -1444,7 +1491,11 @@ class GetProperties_Response(NDRPacket):
     ]
 
 
-IVDSPROVIDER_OPNUMS = {0: DceRpcOp(GetProperties_Request, GetProperties_Response)}
+IVDSPROVIDER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response)
+}
 register_com_interface(
     name="IVdsProvider",
     uuid=uuid.UUID("10c5e575-7984-4e81-a56b-431f5f92ae42"),
@@ -1478,9 +1529,11 @@ class CreatePack_Response(NDRPacket):
     ]
 
 
-IVDSSWPROVIDER_OPNUMS = {
-    0: DceRpcOp(QueryPacks_Request, QueryPacks_Response),
-    1: DceRpcOp(CreatePack_Request, CreatePack_Response),
+IVDSSWPROVIDER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryPacks_Request, QueryPacks_Response),
+    4: DceRpcOp(CreatePack_Request, CreatePack_Response),
 }
 register_com_interface(
     name="IVdsSwProvider",
@@ -1502,10 +1555,12 @@ class QuerySubSystems_Response(NDRPacket):
     ]
 
 
-IVDSHWPROVIDER_OPNUMS = {
-    0: DceRpcOp(QuerySubSystems_Request, QuerySubSystems_Response),
-    # 1: Opnum04NotUsedOnWire,
-    # 2: Opnum05NotUsedOnWire
+IVDSHWPROVIDER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QuerySubSystems_Request, QuerySubSystems_Response),
+    # 4: Opnum04NotUsedOnWire,
+    # 5: Opnum05NotUsedOnWire
 }
 register_com_interface(
     name="IVdsHwProvider",
@@ -1629,12 +1684,14 @@ class GetVDiskFromDisk_Response(NDRPacket):
     ]
 
 
-IVDSVDPROVIDER_OPNUMS = {
-    0: DceRpcOp(QueryVDisks_Request, QueryVDisks_Response),
-    1: DceRpcOp(CreateVDisk_Request, CreateVDisk_Response),
-    2: DceRpcOp(AddVDisk_Request, AddVDisk_Response),
-    3: DceRpcOp(GetDiskFromVDisk_Request, GetDiskFromVDisk_Response),
-    4: DceRpcOp(GetVDiskFromDisk_Request, GetVDiskFromDisk_Response),
+IVDSVDPROVIDER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryVDisks_Request, QueryVDisks_Response),
+    4: DceRpcOp(CreateVDisk_Request, CreateVDisk_Response),
+    5: DceRpcOp(AddVDisk_Request, AddVDisk_Response),
+    6: DceRpcOp(GetDiskFromVDisk_Request, GetDiskFromVDisk_Response),
+    7: DceRpcOp(GetVDiskFromDisk_Request, GetVDiskFromDisk_Response),
 }
 register_com_interface(
     name="IVdsVdProvider",
@@ -1664,9 +1721,11 @@ class SetImportTarget_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSSUBSYSTEMIMPORTTARGET_OPNUMS = {
-    0: DceRpcOp(GetImportTarget_Request, GetImportTarget_Response),
-    1: DceRpcOp(SetImportTarget_Request, SetImportTarget_Response),
+IVDSSUBSYSTEMIMPORTTARGET_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetImportTarget_Request, GetImportTarget_Response),
+    4: DceRpcOp(SetImportTarget_Request, SetImportTarget_Response),
 }
 register_com_interface(
     name="IVdsSubSystemImportTarget",
@@ -1847,17 +1906,19 @@ class Recover_Response(NDRPacket):
     ]
 
 
-IVDSPACK_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetProvider_Request, GetProvider_Response),
-    2: DceRpcOp(QueryVolumes_Request, QueryVolumes_Response),
-    3: DceRpcOp(QueryDisks_Request, QueryDisks_Response),
-    4: DceRpcOp(CreateVolume_Request, CreateVolume_Response),
-    5: DceRpcOp(AddDisk_Request, AddDisk_Response),
-    6: DceRpcOp(MigrateDisks_Request, MigrateDisks_Response),
-    # 7: Opnum10NotUsedOnWire,
-    8: DceRpcOp(RemoveMissingDisk_Request, RemoveMissingDisk_Response),
-    9: DceRpcOp(Recover_Request, Recover_Response),
+IVDSPACK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetProvider_Request, GetProvider_Response),
+    5: DceRpcOp(QueryVolumes_Request, QueryVolumes_Response),
+    6: DceRpcOp(QueryDisks_Request, QueryDisks_Response),
+    7: DceRpcOp(CreateVolume_Request, CreateVolume_Response),
+    8: DceRpcOp(AddDisk_Request, AddDisk_Response),
+    9: DceRpcOp(MigrateDisks_Request, MigrateDisks_Response),
+    # 10: Opnum10NotUsedOnWire,
+    11: DceRpcOp(RemoveMissingDisk_Request, RemoveMissingDisk_Response),
+    12: DceRpcOp(Recover_Request, Recover_Response),
 }
 register_com_interface(
     name="IVdsPack",
@@ -1890,7 +1951,11 @@ class CreateVolume2_Response(NDRPacket):
     ]
 
 
-IVDSPACK2_OPNUMS = {0: DceRpcOp(CreateVolume2_Request, CreateVolume2_Response)}
+IVDSPACK2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreateVolume2_Request, CreateVolume2_Response)
+}
 register_com_interface(
     name="IVdsPack2",
     uuid=uuid.UUID("13B50BFF-290A-47DD-8558-B7C58DB1A71A"),
@@ -2080,14 +2145,16 @@ class ClearFlags_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSDISK_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetPack_Request, GetPack_Response),
-    2: DceRpcOp(GetIdentificationData_Request, GetIdentificationData_Response),
-    3: DceRpcOp(QueryExtents_Request, QueryExtents_Response),
-    4: DceRpcOp(ConvertStyle_Request, ConvertStyle_Response),
-    5: DceRpcOp(SetFlags_Request, SetFlags_Response),
-    6: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
+IVDSDISK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetPack_Request, GetPack_Response),
+    5: DceRpcOp(GetIdentificationData_Request, GetIdentificationData_Response),
+    6: DceRpcOp(QueryExtents_Request, QueryExtents_Response),
+    7: DceRpcOp(ConvertStyle_Request, ConvertStyle_Response),
+    8: DceRpcOp(SetFlags_Request, SetFlags_Response),
+    9: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
 }
 register_com_interface(
     name="IVdsDisk",
@@ -2104,7 +2171,11 @@ class SetSANMode_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSDISK2_OPNUMS = {0: DceRpcOp(SetSANMode_Request, SetSANMode_Response)}
+IVDSDISK2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SetSANMode_Request, SetSANMode_Response)
+}
 register_com_interface(
     name="IVdsDisk2",
     uuid=uuid.UUID("40F73C8B-687D-4a13-8D96-3D7F2E683936"),
@@ -2202,9 +2273,11 @@ class QueryFreeExtents_Response(NDRPacket):
     ]
 
 
-IVDSDISK3_OPNUMS = {
-    0: DceRpcOp(GetProperties2_Request, GetProperties2_Response),
-    1: DceRpcOp(QueryFreeExtents_Request, QueryFreeExtents_Response),
+IVDSDISK3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties2_Request, GetProperties2_Response),
+    4: DceRpcOp(QueryFreeExtents_Request, QueryFreeExtents_Response),
 }
 register_com_interface(
     name="IVdsDisk3",
@@ -2506,17 +2579,19 @@ class Clean_Response(NDRPacket):
     ]
 
 
-IVDSADVANCEDDISK_OPNUMS = {
-    0: DceRpcOp(GetPartitionProperties_Request, GetPartitionProperties_Response),
-    1: DceRpcOp(QueryPartitions_Request, QueryPartitions_Response),
-    2: DceRpcOp(CreatePartition_Request, CreatePartition_Response),
-    3: DceRpcOp(DeletePartition_Request, DeletePartition_Response),
-    4: DceRpcOp(ChangeAttributes_Request, ChangeAttributes_Response),
-    5: DceRpcOp(AssignDriveLetter_Request, AssignDriveLetter_Response),
-    6: DceRpcOp(DeleteDriveLetter_Request, DeleteDriveLetter_Response),
-    7: DceRpcOp(GetDriveLetter_Request, GetDriveLetter_Response),
-    8: DceRpcOp(FormatPartition_Request, FormatPartition_Response),
-    9: DceRpcOp(Clean_Request, Clean_Response),
+IVDSADVANCEDDISK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetPartitionProperties_Request, GetPartitionProperties_Response),
+    4: DceRpcOp(QueryPartitions_Request, QueryPartitions_Response),
+    5: DceRpcOp(CreatePartition_Request, CreatePartition_Response),
+    6: DceRpcOp(DeletePartition_Request, DeletePartition_Response),
+    7: DceRpcOp(ChangeAttributes_Request, ChangeAttributes_Response),
+    8: DceRpcOp(AssignDriveLetter_Request, AssignDriveLetter_Response),
+    9: DceRpcOp(DeleteDriveLetter_Request, DeleteDriveLetter_Response),
+    10: DceRpcOp(GetDriveLetter_Request, GetDriveLetter_Response),
+    11: DceRpcOp(FormatPartition_Request, FormatPartition_Response),
+    12: DceRpcOp(Clean_Request, Clean_Response),
 }
 register_com_interface(
     name="IVdsAdvancedDisk",
@@ -2582,8 +2657,10 @@ class ChangePartitionType_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSADVANCEDDISK2_OPNUMS = {
-    0: DceRpcOp(ChangePartitionType_Request, ChangePartitionType_Response)
+IVDSADVANCEDDISK2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(ChangePartitionType_Request, ChangePartitionType_Response)
 }
 register_com_interface(
     name="IVdsAdvancedDisk2",
@@ -2669,9 +2746,11 @@ class GetUniqueId_Response(NDRPacket):
     ]
 
 
-IVDSADVANCEDDISK3_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetUniqueId_Request, GetUniqueId_Response),
+IVDSADVANCEDDISK3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetUniqueId_Request, GetUniqueId_Response),
 }
 register_com_interface(
     name="IVdsAdvancedDisk3",
@@ -2700,8 +2779,10 @@ class CreatePartitionEx_Response(NDRPacket):
     ]
 
 
-IVDSCREATEPARTITIONEX_OPNUMS = {
-    0: DceRpcOp(CreatePartitionEx_Request, CreatePartitionEx_Response)
+IVDSCREATEPARTITIONEX_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(CreatePartitionEx_Request, CreatePartitionEx_Response)
 }
 register_com_interface(
     name="IVdsCreatePartitionEx",
@@ -2726,9 +2807,11 @@ class Offline_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSDISKONLINE_OPNUMS = {
-    0: DceRpcOp(Online_Request, Online_Response),
-    1: DceRpcOp(Offline_Request, Offline_Response),
+IVDSDISKONLINE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Online_Request, Online_Response),
+    4: DceRpcOp(Offline_Request, Offline_Response),
 }
 register_com_interface(
     name="IVdsDiskOnline",
@@ -2830,19 +2913,21 @@ class FormatPartitionEx_Response(NDRPacket):
     ]
 
 
-IVDSDISKPARTITIONMF_OPNUMS = {
-    0: DceRpcOp(
+IVDSDISKPARTITIONMF_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(
         GetPartitionFileSystemProperties_Request,
         GetPartitionFileSystemProperties_Response,
     ),
-    1: DceRpcOp(
+    4: DceRpcOp(
         GetPartitionFileSystemTypeName_Request, GetPartitionFileSystemTypeName_Response
     ),
-    2: DceRpcOp(
+    5: DceRpcOp(
         QueryPartitionFileSystemFormatSupport_Request,
         QueryPartitionFileSystemFormatSupport_Response,
     ),
-    3: DceRpcOp(FormatPartitionEx_Request, FormatPartitionEx_Response),
+    6: DceRpcOp(FormatPartitionEx_Request, FormatPartitionEx_Response),
 }
 register_com_interface(
     name="IVdsDiskPartitionMF",
@@ -2871,8 +2956,10 @@ class FormatPartitionEx2_Response(NDRPacket):
     ]
 
 
-IVDSDISKPARTITIONMF2_OPNUMS = {
-    0: DceRpcOp(FormatPartitionEx2_Request, FormatPartitionEx2_Response)
+IVDSDISKPARTITIONMF2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(FormatPartitionEx2_Request, FormatPartitionEx2_Response)
 }
 register_com_interface(
     name="IVdsDiskPartitionMF2",
@@ -2897,9 +2984,11 @@ class Eject_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSREMOVABLE_OPNUMS = {
-    0: DceRpcOp(QueryMedia_Request, QueryMedia_Response),
-    1: DceRpcOp(Eject_Request, Eject_Response),
+IVDSREMOVABLE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryMedia_Request, QueryMedia_Response),
+    4: DceRpcOp(Eject_Request, Eject_Response),
 }
 register_com_interface(
     name="IVdsRemovable",
@@ -3073,18 +3162,20 @@ class ClearFlags_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSVOLUME_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetPack_Request, GetPack_Response),
-    2: DceRpcOp(QueryPlexes_Request, QueryPlexes_Response),
-    3: DceRpcOp(Extend_Request, Extend_Response),
-    4: DceRpcOp(Shrink_Request, Shrink_Response),
-    5: DceRpcOp(AddPlex_Request, AddPlex_Response),
-    6: DceRpcOp(BreakPlex_Request, BreakPlex_Response),
-    7: DceRpcOp(RemovePlex_Request, RemovePlex_Response),
-    8: DceRpcOp(Delete_Request, Delete_Response),
-    9: DceRpcOp(SetFlags_Request, SetFlags_Response),
-    10: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
+IVDSVOLUME_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetPack_Request, GetPack_Response),
+    5: DceRpcOp(QueryPlexes_Request, QueryPlexes_Response),
+    6: DceRpcOp(Extend_Request, Extend_Response),
+    7: DceRpcOp(Shrink_Request, Shrink_Response),
+    8: DceRpcOp(AddPlex_Request, AddPlex_Response),
+    9: DceRpcOp(BreakPlex_Request, BreakPlex_Response),
+    10: DceRpcOp(RemovePlex_Request, RemovePlex_Response),
+    11: DceRpcOp(Delete_Request, Delete_Response),
+    12: DceRpcOp(SetFlags_Request, SetFlags_Response),
+    13: DceRpcOp(ClearFlags_Request, ClearFlags_Response),
 }
 register_com_interface(
     name="IVdsVolume",
@@ -3123,7 +3214,11 @@ class GetProperties2_Response(NDRPacket):
     ]
 
 
-IVDSVOLUME2_OPNUMS = {0: DceRpcOp(GetProperties2_Request, GetProperties2_Response)}
+IVDSVOLUME2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties2_Request, GetProperties2_Response)
+}
 register_com_interface(
     name="IVdsVolume2",
     uuid=uuid.UUID("72AE6713-DCBB-4a03-B36B-371F6AC6B53D"),
@@ -3259,17 +3354,19 @@ class ClearFileSystemFlags_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSVOLUMEMF_OPNUMS = {
-    0: DceRpcOp(GetFileSystemProperties_Request, GetFileSystemProperties_Response),
-    1: DceRpcOp(Format_Request, Format_Response),
-    2: DceRpcOp(AddAccessPath_Request, AddAccessPath_Response),
-    3: DceRpcOp(QueryAccessPaths_Request, QueryAccessPaths_Response),
-    4: DceRpcOp(QueryReparsePoints_Request, QueryReparsePoints_Response),
-    5: DceRpcOp(DeleteAccessPath_Request, DeleteAccessPath_Response),
-    6: DceRpcOp(Mount_Request, Mount_Response),
-    7: DceRpcOp(Dismount_Request, Dismount_Response),
-    8: DceRpcOp(SetFileSystemFlags_Request, SetFileSystemFlags_Response),
-    9: DceRpcOp(ClearFileSystemFlags_Request, ClearFileSystemFlags_Response),
+IVDSVOLUMEMF_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetFileSystemProperties_Request, GetFileSystemProperties_Response),
+    4: DceRpcOp(Format_Request, Format_Response),
+    5: DceRpcOp(AddAccessPath_Request, AddAccessPath_Response),
+    6: DceRpcOp(QueryAccessPaths_Request, QueryAccessPaths_Response),
+    7: DceRpcOp(QueryReparsePoints_Request, QueryReparsePoints_Response),
+    8: DceRpcOp(DeleteAccessPath_Request, DeleteAccessPath_Response),
+    9: DceRpcOp(Mount_Request, Mount_Response),
+    10: DceRpcOp(Dismount_Request, Dismount_Response),
+    11: DceRpcOp(SetFileSystemFlags_Request, SetFileSystemFlags_Response),
+    12: DceRpcOp(ClearFileSystemFlags_Request, ClearFileSystemFlags_Response),
 }
 register_com_interface(
     name="IVdsVolumeMF",
@@ -3330,12 +3427,14 @@ class FormatEx_Response(NDRPacket):
     ]
 
 
-IVDSVOLUMEMF2_OPNUMS = {
-    0: DceRpcOp(GetFileSystemTypeName_Request, GetFileSystemTypeName_Response),
-    1: DceRpcOp(
+IVDSVOLUMEMF2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetFileSystemTypeName_Request, GetFileSystemTypeName_Response),
+    4: DceRpcOp(
         QueryFileSystemFormatSupport_Request, QueryFileSystemFormatSupport_Response
     ),
-    2: DceRpcOp(FormatEx_Request, FormatEx_Response),
+    5: DceRpcOp(FormatEx_Request, FormatEx_Response),
 }
 register_com_interface(
     name="IVdsVolumeMF2",
@@ -3385,10 +3484,12 @@ class OfflineVolume_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSVOLUMEMF3_OPNUMS = {
-    0: DceRpcOp(QueryVolumeGuidPathnames_Request, QueryVolumeGuidPathnames_Response),
-    1: DceRpcOp(FormatEx2_Request, FormatEx2_Response),
-    2: DceRpcOp(OfflineVolume_Request, OfflineVolume_Response),
+IVDSVOLUMEMF3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryVolumeGuidPathnames_Request, QueryVolumeGuidPathnames_Response),
+    4: DceRpcOp(FormatEx2_Request, FormatEx2_Response),
+    5: DceRpcOp(OfflineVolume_Request, OfflineVolume_Response),
 }
 register_com_interface(
     name="IVdsVolumeMF3",
@@ -3424,9 +3525,11 @@ class Shrink_Response(NDRPacket):
     ]
 
 
-IVDSVOLUMESHRINK_OPNUMS = {
-    0: DceRpcOp(QueryMaxReclaimableBytes_Request, QueryMaxReclaimableBytes_Response),
-    1: DceRpcOp(Shrink_Request, Shrink_Response),
+IVDSVOLUMESHRINK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(QueryMaxReclaimableBytes_Request, QueryMaxReclaimableBytes_Response),
+    4: DceRpcOp(Shrink_Request, Shrink_Response),
 }
 register_com_interface(
     name="IVdsVolumeShrink",
@@ -3443,7 +3546,11 @@ class Online_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IVDSVOLUMEONLINE_OPNUMS = {0: DceRpcOp(Online_Request, Online_Response)}
+IVDSVOLUMEONLINE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Online_Request, Online_Response)
+}
 register_com_interface(
     name="IVdsVolumeOnline",
     uuid=uuid.UUID("1BE2275A-B315-4f70-9E44-879B3A2A53F2"),
@@ -3543,11 +3650,13 @@ class Repair_Response(NDRPacket):
     ]
 
 
-IVDSVOLUMEPLEX_OPNUMS = {
-    0: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    1: DceRpcOp(GetVolume_Request, GetVolume_Response),
-    2: DceRpcOp(QueryExtents_Request, QueryExtents_Response),
-    3: DceRpcOp(Repair_Request, Repair_Response),
+IVDSVOLUMEPLEX_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    4: DceRpcOp(GetVolume_Request, GetVolume_Response),
+    5: DceRpcOp(QueryExtents_Request, QueryExtents_Response),
+    6: DceRpcOp(Repair_Request, Repair_Response),
 }
 register_com_interface(
     name="IVdsVolumePlex",
@@ -3682,11 +3791,13 @@ class GetDeviceName_Response(NDRPacket):
     ]
 
 
-IVDSVDISK_OPNUMS = {
-    0: DceRpcOp(Open_Request, Open_Response),
-    1: DceRpcOp(GetProperties_Request, GetProperties_Response),
-    2: DceRpcOp(GetHostVolume_Request, GetHostVolume_Response),
-    3: DceRpcOp(GetDeviceName_Request, GetDeviceName_Response),
+IVDSVDISK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Open_Request, Open_Response),
+    4: DceRpcOp(GetProperties_Request, GetProperties_Response),
+    5: DceRpcOp(GetHostVolume_Request, GetHostVolume_Response),
+    6: DceRpcOp(GetDeviceName_Request, GetDeviceName_Response),
 }
 register_com_interface(
     name="IVdsVDisk",
@@ -3807,13 +3918,15 @@ class Expand_Response(NDRPacket):
     ]
 
 
-IVDSOPENVDISK_OPNUMS = {
-    0: DceRpcOp(Attach_Request, Attach_Response),
-    1: DceRpcOp(Detach_Request, Detach_Response),
-    2: DceRpcOp(DetachAndDelete_Request, DetachAndDelete_Response),
-    3: DceRpcOp(Compact_Request, Compact_Response),
-    4: DceRpcOp(Merge_Request, Merge_Response),
-    5: DceRpcOp(Expand_Request, Expand_Response),
+IVDSOPENVDISK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Attach_Request, Attach_Response),
+    4: DceRpcOp(Detach_Request, Detach_Response),
+    5: DceRpcOp(DetachAndDelete_Request, DetachAndDelete_Response),
+    6: DceRpcOp(Compact_Request, Compact_Response),
+    7: DceRpcOp(Merge_Request, Merge_Response),
+    8: DceRpcOp(Expand_Request, Expand_Response),
 }
 register_com_interface(
     name="IVdsOpenVDisk",

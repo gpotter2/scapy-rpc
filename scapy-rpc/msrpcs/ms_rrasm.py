@@ -9,6 +9,7 @@
 RPC definitions for the following interfaces:
 - dimsvc (v0.0): 8f09f000-b7ed-11ce-bbd2-00001a181cad
 - rasrpc (v1.0): 20610036-fa22-11cf-9823-00a0c911e5df
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - IRemoteNetworkConfig (v0.0): 66a2db1b-d706-11d0-a37b-00c04fc9da04
 - IRemoteRouterRestart (v0.0): 66a2db20-d706-11d0-a37b-00c04fc9da04
 - IRemoteSetDnsConfig (v0.0): 66a2db21-d706-11d0-a37b-00c04fc9da04
@@ -44,6 +45,7 @@ from scapy.layers.dcerpc import (
     NDRShortField,
     NDRSignedIntField,
     NDRUnionField,
+    register_com_interface,
     register_dcerpc_interface,
 )
 
@@ -2056,6 +2058,15 @@ register_dcerpc_interface(
     version="1.0",
     opnums=RASRPC_OPNUMS,
 )
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
+)
 
 
 class UpgradeRouterConfig_Request(NDRPacket):
@@ -2077,9 +2088,11 @@ class SetUserConfig_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IREMOTENETWORKCONFIG_OPNUMS = {
-    0: DceRpcOp(UpgradeRouterConfig_Request, UpgradeRouterConfig_Response),
-    1: DceRpcOp(SetUserConfig_Request, SetUserConfig_Response),
+IREMOTENETWORKCONFIG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(UpgradeRouterConfig_Request, UpgradeRouterConfig_Response),
+    4: DceRpcOp(SetUserConfig_Request, SetUserConfig_Response),
 }
 register_dcerpc_interface(
     name="IRemoteNetworkConfig",
@@ -2097,8 +2110,10 @@ class RestartRouter_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IREMOTEROUTERRESTART_OPNUMS = {
-    0: DceRpcOp(RestartRouter_Request, RestartRouter_Response)
+IREMOTEROUTERRESTART_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(RestartRouter_Request, RestartRouter_Response)
 }
 register_dcerpc_interface(
     name="IRemoteRouterRestart",
@@ -2116,7 +2131,11 @@ class SetDnsConfig_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-IREMOTESETDNSCONFIG_OPNUMS = {0: DceRpcOp(SetDnsConfig_Request, SetDnsConfig_Response)}
+IREMOTESETDNSCONFIG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(SetDnsConfig_Request, SetDnsConfig_Response)
+}
 register_dcerpc_interface(
     name="IRemoteSetDnsConfig",
     uuid=uuid.UUID("66a2db21-d706-11d0-a37b-00c04fc9da04"),
@@ -2141,9 +2160,11 @@ class GetIcsEnabled_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("status", 0), NDRIntField("comm_status", 0)]
 
 
-IREMOTEICFICSCONFIG_OPNUMS = {
-    0: DceRpcOp(GetIcfEnabled_Request, GetIcfEnabled_Response),
-    1: DceRpcOp(GetIcsEnabled_Request, GetIcsEnabled_Response),
+IREMOTEICFICSCONFIG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetIcfEnabled_Request, GetIcfEnabled_Response),
+    4: DceRpcOp(GetIcsEnabled_Request, GetIcsEnabled_Response),
 }
 register_dcerpc_interface(
     name="IRemoteICFICSConfig",
@@ -2178,8 +2199,10 @@ class GetStringFromId_Response(NDRPacket):
     ]
 
 
-IREMOTESTRINGIDCONFIG_OPNUMS = {
-    0: DceRpcOp(GetStringFromId_Request, GetStringFromId_Response)
+IREMOTESTRINGIDCONFIG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetStringFromId_Request, GetStringFromId_Response)
 }
 register_dcerpc_interface(
     name="IRemoteStringIdConfig",
@@ -2214,8 +2237,10 @@ class GetAddressList_Response(NDRPacket):
     ]
 
 
-IREMOTEIPV6CONFIG_OPNUMS = {
-    0: DceRpcOp(GetAddressList_Request, GetAddressList_Response)
+IREMOTEIPV6CONFIG_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetAddressList_Request, GetAddressList_Response)
 }
 register_dcerpc_interface(
     name="IRemoteIPV6Config",
@@ -2249,8 +2274,10 @@ class CheckIfCertificateAllowedRR_Response(NDRPacket):
     ]
 
 
-IREMOTESSTPCERTCHECK_OPNUMS = {
-    0: DceRpcOp(
+IREMOTESSTPCERTCHECK_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(
         CheckIfCertificateAllowedRR_Request, CheckIfCertificateAllowedRR_Response
     )
 }

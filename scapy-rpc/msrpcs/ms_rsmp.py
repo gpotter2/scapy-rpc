@@ -316,33 +316,36 @@ class EndNtmsDeviceChangeDetection_Response(NDRPacket):
 
 
 INTMSLIBRARYCONTROL1_OPNUMS = {
-    0: DceRpcOp(EjectNtmsMedia_Request, EjectNtmsMedia_Response),
-    1: DceRpcOp(InjectNtmsMedia_Request, InjectNtmsMedia_Response),
-    2: DceRpcOp(AccessNtmsLibraryDoor_Request, AccessNtmsLibraryDoor_Response),
-    3: DceRpcOp(CleanNtmsDrive_Request, CleanNtmsDrive_Response),
-    4: DceRpcOp(DismountNtmsDrive_Request, DismountNtmsDrive_Response),
-    5: DceRpcOp(InventoryNtmsLibrary_Request, InventoryNtmsLibrary_Response),
-    6: DceRpcOp(
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(EjectNtmsMedia_Request, EjectNtmsMedia_Response),
+    4: DceRpcOp(InjectNtmsMedia_Request, InjectNtmsMedia_Response),
+    5: DceRpcOp(AccessNtmsLibraryDoor_Request, AccessNtmsLibraryDoor_Response),
+    6: DceRpcOp(CleanNtmsDrive_Request, CleanNtmsDrive_Response),
+    7: DceRpcOp(DismountNtmsDrive_Request, DismountNtmsDrive_Response),
+    8: DceRpcOp(InventoryNtmsLibrary_Request, InventoryNtmsLibrary_Response),
+    9: DceRpcOp(
         INtmsLibraryControl1_LocalOnlyOpnum09_Request,
         INtmsLibraryControl1_LocalOnlyOpnum09_Response,
     ),
-    7: DceRpcOp(CancelNtmsLibraryRequest_Request, CancelNtmsLibraryRequest_Response),
-    8: DceRpcOp(ReserveNtmsCleanerSlot_Request, ReserveNtmsCleanerSlot_Response),
-    9: DceRpcOp(ReleaseNtmsCleanerSlot_Request, ReleaseNtmsCleanerSlot_Response),
-    10: DceRpcOp(InjectNtmsCleaner_Request, InjectNtmsCleaner_Response),
-    11: DceRpcOp(EjectNtmsCleaner_Request, EjectNtmsCleaner_Response),
-    12: DceRpcOp(DeleteNtmsLibrary_Request, DeleteNtmsLibrary_Response),
-    13: DceRpcOp(DeleteNtmsDrive_Request, DeleteNtmsDrive_Response),
-    14: DceRpcOp(GetNtmsRequestOrder_Request, GetNtmsRequestOrder_Response),
-    15: DceRpcOp(SetNtmsRequestOrder_Request, SetNtmsRequestOrder_Response),
-    16: DceRpcOp(DeleteNtmsRequests_Request, DeleteNtmsRequests_Response),
-    17: DceRpcOp(
+    10: DceRpcOp(CancelNtmsLibraryRequest_Request, CancelNtmsLibraryRequest_Response),
+    11: DceRpcOp(ReserveNtmsCleanerSlot_Request, ReserveNtmsCleanerSlot_Response),
+    12: DceRpcOp(ReleaseNtmsCleanerSlot_Request, ReleaseNtmsCleanerSlot_Response),
+    13: DceRpcOp(InjectNtmsCleaner_Request, InjectNtmsCleaner_Response),
+    14: DceRpcOp(EjectNtmsCleaner_Request, EjectNtmsCleaner_Response),
+    15: DceRpcOp(DeleteNtmsLibrary_Request, DeleteNtmsLibrary_Response),
+    16: DceRpcOp(DeleteNtmsDrive_Request, DeleteNtmsDrive_Response),
+    17: DceRpcOp(GetNtmsRequestOrder_Request, GetNtmsRequestOrder_Response),
+    18: DceRpcOp(SetNtmsRequestOrder_Request, SetNtmsRequestOrder_Response),
+    19: DceRpcOp(DeleteNtmsRequests_Request, DeleteNtmsRequests_Response),
+    20: DceRpcOp(
         BeginNtmsDeviceChangeDetection_Request, BeginNtmsDeviceChangeDetection_Response
     ),
-    18: DceRpcOp(
+    21: DceRpcOp(
         SetNtmsDeviceChangeDetection_Request, SetNtmsDeviceChangeDetection_Response
     ),
-    19: DceRpcOp(
+    22: DceRpcOp(
         EndNtmsDeviceChangeDetection_Request, EndNtmsDeviceChangeDetection_Response
     ),
 }
@@ -647,24 +650,27 @@ class ChangeNtmsMediaType_Response(NDRPacket):
 
 
 INTMSMEDIASERVICES1_OPNUMS = {
-    0: DceRpcOp(MountNtmsMedia_Request, MountNtmsMedia_Response),
-    1: DceRpcOp(DismountNtmsMedia_Request, DismountNtmsMedia_Response),
-    # 2: Opnum5NotUsedOnWire,
-    3: DceRpcOp(AllocateNtmsMedia_Request, AllocateNtmsMedia_Response),
-    4: DceRpcOp(DeallocateNtmsMedia_Request, DeallocateNtmsMedia_Response),
-    5: DceRpcOp(SwapNtmsMedia_Request, SwapNtmsMedia_Response),
-    6: DceRpcOp(DecommissionNtmsMedia_Request, DecommissionNtmsMedia_Response),
-    7: DceRpcOp(SetNtmsMediaComplete_Request, SetNtmsMediaComplete_Response),
-    8: DceRpcOp(DeleteNtmsMedia_Request, DeleteNtmsMedia_Response),
-    9: DceRpcOp(CreateNtmsMediaPoolA_Request, CreateNtmsMediaPoolA_Response),
-    10: DceRpcOp(CreateNtmsMediaPoolW_Request, CreateNtmsMediaPoolW_Response),
-    11: DceRpcOp(GetNtmsMediaPoolNameA_Request, GetNtmsMediaPoolNameA_Response),
-    12: DceRpcOp(GetNtmsMediaPoolNameW_Request, GetNtmsMediaPoolNameW_Response),
-    13: DceRpcOp(MoveToNtmsMediaPool_Request, MoveToNtmsMediaPool_Response),
-    14: DceRpcOp(DeleteNtmsMediaPool_Request, DeleteNtmsMediaPool_Response),
-    15: DceRpcOp(AddNtmsMediaType_Request, AddNtmsMediaType_Response),
-    16: DceRpcOp(DeleteNtmsMediaType_Request, DeleteNtmsMediaType_Response),
-    17: DceRpcOp(ChangeNtmsMediaType_Request, ChangeNtmsMediaType_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(MountNtmsMedia_Request, MountNtmsMedia_Response),
+    4: DceRpcOp(DismountNtmsMedia_Request, DismountNtmsMedia_Response),
+    # 5: Opnum5NotUsedOnWire,
+    6: DceRpcOp(AllocateNtmsMedia_Request, AllocateNtmsMedia_Response),
+    7: DceRpcOp(DeallocateNtmsMedia_Request, DeallocateNtmsMedia_Response),
+    8: DceRpcOp(SwapNtmsMedia_Request, SwapNtmsMedia_Response),
+    9: DceRpcOp(DecommissionNtmsMedia_Request, DecommissionNtmsMedia_Response),
+    10: DceRpcOp(SetNtmsMediaComplete_Request, SetNtmsMediaComplete_Response),
+    11: DceRpcOp(DeleteNtmsMedia_Request, DeleteNtmsMedia_Response),
+    12: DceRpcOp(CreateNtmsMediaPoolA_Request, CreateNtmsMediaPoolA_Response),
+    13: DceRpcOp(CreateNtmsMediaPoolW_Request, CreateNtmsMediaPoolW_Response),
+    14: DceRpcOp(GetNtmsMediaPoolNameA_Request, GetNtmsMediaPoolNameA_Response),
+    15: DceRpcOp(GetNtmsMediaPoolNameW_Request, GetNtmsMediaPoolNameW_Response),
+    16: DceRpcOp(MoveToNtmsMediaPool_Request, MoveToNtmsMediaPool_Response),
+    17: DceRpcOp(DeleteNtmsMediaPool_Request, DeleteNtmsMediaPool_Response),
+    18: DceRpcOp(AddNtmsMediaType_Request, AddNtmsMediaType_Response),
+    19: DceRpcOp(DeleteNtmsMediaType_Request, DeleteNtmsMediaType_Response),
+    20: DceRpcOp(ChangeNtmsMediaType_Request, ChangeNtmsMediaType_Response),
 }
 register_com_interface(
     name="INtmsMediaServices1",
@@ -1708,18 +1714,21 @@ class CreateNtmsMediaW_Response(NDRPacket):
 
 
 INTMSOBJECTINFO1_OPNUMS = {
-    0: DceRpcOp(
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(
         GetNtmsServerObjectInformationA_Request,
         GetNtmsServerObjectInformationA_Response,
     ),
-    1: DceRpcOp(
+    4: DceRpcOp(
         GetNtmsServerObjectInformationW_Request,
         GetNtmsServerObjectInformationW_Response,
     ),
-    2: DceRpcOp(SetNtmsObjectInformationA_Request, SetNtmsObjectInformationA_Response),
-    3: DceRpcOp(SetNtmsObjectInformationW_Request, SetNtmsObjectInformationW_Response),
-    4: DceRpcOp(CreateNtmsMediaA_Request, CreateNtmsMediaA_Response),
-    5: DceRpcOp(CreateNtmsMediaW_Request, CreateNtmsMediaW_Response),
+    5: DceRpcOp(SetNtmsObjectInformationA_Request, SetNtmsObjectInformationA_Response),
+    6: DceRpcOp(SetNtmsObjectInformationW_Request, SetNtmsObjectInformationW_Response),
+    7: DceRpcOp(CreateNtmsMediaA_Request, CreateNtmsMediaA_Response),
+    8: DceRpcOp(CreateNtmsMediaW_Request, CreateNtmsMediaW_Response),
 }
 register_com_interface(
     name="INtmsObjectInfo1",
@@ -1875,15 +1884,18 @@ class EnableNtmsObject_Response(NDRPacket):
 
 
 INTMSOBJECTMANAGEMENT1_OPNUMS = {
-    0: DceRpcOp(GetNtmsObjectSecurity_Request, GetNtmsObjectSecurity_Response),
-    1: DceRpcOp(SetNtmsObjectSecurity_Request, SetNtmsObjectSecurity_Response),
-    2: DceRpcOp(GetNtmsObjectAttributeA_Request, GetNtmsObjectAttributeA_Response),
-    3: DceRpcOp(GetNtmsObjectAttributeW_Request, GetNtmsObjectAttributeW_Response),
-    4: DceRpcOp(SetNtmsObjectAttributeA_Request, SetNtmsObjectAttributeA_Response),
-    5: DceRpcOp(SetNtmsObjectAttributeW_Request, SetNtmsObjectAttributeW_Response),
-    6: DceRpcOp(EnumerateNtmsObject_Request, EnumerateNtmsObject_Response),
-    7: DceRpcOp(DisableNtmsObject_Request, DisableNtmsObject_Response),
-    8: DceRpcOp(EnableNtmsObject_Request, EnableNtmsObject_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(GetNtmsObjectSecurity_Request, GetNtmsObjectSecurity_Response),
+    4: DceRpcOp(SetNtmsObjectSecurity_Request, SetNtmsObjectSecurity_Response),
+    5: DceRpcOp(GetNtmsObjectAttributeA_Request, GetNtmsObjectAttributeA_Response),
+    6: DceRpcOp(GetNtmsObjectAttributeW_Request, GetNtmsObjectAttributeW_Response),
+    7: DceRpcOp(SetNtmsObjectAttributeA_Request, SetNtmsObjectAttributeA_Response),
+    8: DceRpcOp(SetNtmsObjectAttributeW_Request, SetNtmsObjectAttributeW_Response),
+    9: DceRpcOp(EnumerateNtmsObject_Request, EnumerateNtmsObject_Response),
+    10: DceRpcOp(DisableNtmsObject_Request, DisableNtmsObject_Response),
+    11: DceRpcOp(EnableNtmsObject_Request, EnableNtmsObject_Response),
 }
 register_com_interface(
     name="INtmsObjectManagement1",
@@ -1904,7 +1916,12 @@ class OnNotify_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-ICLIENTSINK_OPNUMS = {0: DceRpcOp(OnNotify_Request, OnNotify_Response)}
+ICLIENTSINK_OPNUMS = {
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(OnNotify_Request, OnNotify_Response),
+}
 register_com_interface(
     name="IClientSink",
     uuid=uuid.UUID("879C8BBE-41B0-11d1-BE11-00C04FB6BF70"),
@@ -1921,7 +1938,39 @@ class IdentifyNtmsSlot_Response(NDRPacket):
 
 
 INTMSLIBRARYCONTROL2_OPNUMS = {
-    0: DceRpcOp(IdentifyNtmsSlot_Request, IdentifyNtmsSlot_Response)
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(EjectNtmsMedia_Request, EjectNtmsMedia_Response),
+    4: DceRpcOp(InjectNtmsMedia_Request, InjectNtmsMedia_Response),
+    5: DceRpcOp(AccessNtmsLibraryDoor_Request, AccessNtmsLibraryDoor_Response),
+    6: DceRpcOp(CleanNtmsDrive_Request, CleanNtmsDrive_Response),
+    7: DceRpcOp(DismountNtmsDrive_Request, DismountNtmsDrive_Response),
+    8: DceRpcOp(InventoryNtmsLibrary_Request, InventoryNtmsLibrary_Response),
+    9: DceRpcOp(
+        INtmsLibraryControl1_LocalOnlyOpnum09_Request,
+        INtmsLibraryControl1_LocalOnlyOpnum09_Response,
+    ),
+    10: DceRpcOp(CancelNtmsLibraryRequest_Request, CancelNtmsLibraryRequest_Response),
+    11: DceRpcOp(ReserveNtmsCleanerSlot_Request, ReserveNtmsCleanerSlot_Response),
+    12: DceRpcOp(ReleaseNtmsCleanerSlot_Request, ReleaseNtmsCleanerSlot_Response),
+    13: DceRpcOp(InjectNtmsCleaner_Request, InjectNtmsCleaner_Response),
+    14: DceRpcOp(EjectNtmsCleaner_Request, EjectNtmsCleaner_Response),
+    15: DceRpcOp(DeleteNtmsLibrary_Request, DeleteNtmsLibrary_Response),
+    16: DceRpcOp(DeleteNtmsDrive_Request, DeleteNtmsDrive_Response),
+    17: DceRpcOp(GetNtmsRequestOrder_Request, GetNtmsRequestOrder_Response),
+    18: DceRpcOp(SetNtmsRequestOrder_Request, SetNtmsRequestOrder_Response),
+    19: DceRpcOp(DeleteNtmsRequests_Request, DeleteNtmsRequests_Response),
+    20: DceRpcOp(
+        BeginNtmsDeviceChangeDetection_Request, BeginNtmsDeviceChangeDetection_Response
+    ),
+    21: DceRpcOp(
+        SetNtmsDeviceChangeDetection_Request, SetNtmsDeviceChangeDetection_Response
+    ),
+    22: DceRpcOp(
+        EndNtmsDeviceChangeDetection_Request, EndNtmsDeviceChangeDetection_Response
+    ),
+    23: DceRpcOp(IdentifyNtmsSlot_Request, IdentifyNtmsSlot_Response),
 }
 register_com_interface(
     name="INtmsLibraryControl2",
@@ -2025,11 +2074,23 @@ class SetNtmsUIOptionsW_Response(NDRPacket):
 
 
 INTMSOBJECTMANAGEMENT2_OPNUMS = {
-    0: DceRpcOp(EnumerateNtmsObjectR_Request, EnumerateNtmsObjectR_Response),
-    1: DceRpcOp(GetNtmsUIOptionsA_Request, GetNtmsUIOptionsA_Response),
-    2: DceRpcOp(GetNtmsUIOptionsW_Request, GetNtmsUIOptionsW_Response),
-    3: DceRpcOp(SetNtmsUIOptionsA_Request, SetNtmsUIOptionsA_Response),
-    4: DceRpcOp(SetNtmsUIOptionsW_Request, SetNtmsUIOptionsW_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(GetNtmsObjectSecurity_Request, GetNtmsObjectSecurity_Response),
+    4: DceRpcOp(SetNtmsObjectSecurity_Request, SetNtmsObjectSecurity_Response),
+    5: DceRpcOp(GetNtmsObjectAttributeA_Request, GetNtmsObjectAttributeA_Response),
+    6: DceRpcOp(GetNtmsObjectAttributeW_Request, GetNtmsObjectAttributeW_Response),
+    7: DceRpcOp(SetNtmsObjectAttributeA_Request, SetNtmsObjectAttributeA_Response),
+    8: DceRpcOp(SetNtmsObjectAttributeW_Request, SetNtmsObjectAttributeW_Response),
+    9: DceRpcOp(EnumerateNtmsObject_Request, EnumerateNtmsObject_Response),
+    10: DceRpcOp(DisableNtmsObject_Request, DisableNtmsObject_Response),
+    11: DceRpcOp(EnableNtmsObject_Request, EnableNtmsObject_Response),
+    12: DceRpcOp(EnumerateNtmsObjectR_Request, EnumerateNtmsObjectR_Response),
+    13: DceRpcOp(GetNtmsUIOptionsA_Request, GetNtmsUIOptionsA_Response),
+    14: DceRpcOp(GetNtmsUIOptionsW_Request, GetNtmsUIOptionsW_Response),
+    15: DceRpcOp(SetNtmsUIOptionsA_Request, SetNtmsUIOptionsA_Response),
+    16: DceRpcOp(SetNtmsUIOptionsW_Request, SetNtmsUIOptionsW_Response),
 }
 register_com_interface(
     name="INtmsObjectManagement2",
@@ -2085,8 +2146,25 @@ class GetNtmsObjectAttributeWR_Response(NDRPacket):
 
 
 INTMSOBJECTMANAGEMENT3_OPNUMS = {
-    0: DceRpcOp(GetNtmsObjectAttributeAR_Request, GetNtmsObjectAttributeAR_Response),
-    1: DceRpcOp(GetNtmsObjectAttributeWR_Request, GetNtmsObjectAttributeWR_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(GetNtmsObjectSecurity_Request, GetNtmsObjectSecurity_Response),
+    4: DceRpcOp(SetNtmsObjectSecurity_Request, SetNtmsObjectSecurity_Response),
+    5: DceRpcOp(GetNtmsObjectAttributeA_Request, GetNtmsObjectAttributeA_Response),
+    6: DceRpcOp(GetNtmsObjectAttributeW_Request, GetNtmsObjectAttributeW_Response),
+    7: DceRpcOp(SetNtmsObjectAttributeA_Request, SetNtmsObjectAttributeA_Response),
+    8: DceRpcOp(SetNtmsObjectAttributeW_Request, SetNtmsObjectAttributeW_Response),
+    9: DceRpcOp(EnumerateNtmsObject_Request, EnumerateNtmsObject_Response),
+    10: DceRpcOp(DisableNtmsObject_Request, DisableNtmsObject_Response),
+    11: DceRpcOp(EnableNtmsObject_Request, EnableNtmsObject_Response),
+    12: DceRpcOp(EnumerateNtmsObjectR_Request, EnumerateNtmsObjectR_Response),
+    13: DceRpcOp(GetNtmsUIOptionsA_Request, GetNtmsUIOptionsA_Response),
+    14: DceRpcOp(GetNtmsUIOptionsW_Request, GetNtmsUIOptionsW_Response),
+    15: DceRpcOp(SetNtmsUIOptionsA_Request, SetNtmsUIOptionsA_Response),
+    16: DceRpcOp(SetNtmsUIOptionsW_Request, SetNtmsUIOptionsW_Response),
+    17: DceRpcOp(GetNtmsObjectAttributeAR_Request, GetNtmsObjectAttributeAR_Response),
+    18: DceRpcOp(GetNtmsObjectAttributeWR_Request, GetNtmsObjectAttributeWR_Response),
 }
 register_com_interface(
     name="INtmsObjectManagement3",
@@ -2138,8 +2216,29 @@ class GetNtmsMediaPoolNameWR_Response(NDRPacket):
 
 
 IROBUSTNTMSMEDIASERVICES1_OPNUMS = {
-    0: DceRpcOp(GetNtmsMediaPoolNameAR_Request, GetNtmsMediaPoolNameAR_Response),
-    1: DceRpcOp(GetNtmsMediaPoolNameWR_Request, GetNtmsMediaPoolNameWR_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(MountNtmsMedia_Request, MountNtmsMedia_Response),
+    4: DceRpcOp(DismountNtmsMedia_Request, DismountNtmsMedia_Response),
+    # 5: Opnum5NotUsedOnWire,
+    6: DceRpcOp(AllocateNtmsMedia_Request, AllocateNtmsMedia_Response),
+    7: DceRpcOp(DeallocateNtmsMedia_Request, DeallocateNtmsMedia_Response),
+    8: DceRpcOp(SwapNtmsMedia_Request, SwapNtmsMedia_Response),
+    9: DceRpcOp(DecommissionNtmsMedia_Request, DecommissionNtmsMedia_Response),
+    10: DceRpcOp(SetNtmsMediaComplete_Request, SetNtmsMediaComplete_Response),
+    11: DceRpcOp(DeleteNtmsMedia_Request, DeleteNtmsMedia_Response),
+    12: DceRpcOp(CreateNtmsMediaPoolA_Request, CreateNtmsMediaPoolA_Response),
+    13: DceRpcOp(CreateNtmsMediaPoolW_Request, CreateNtmsMediaPoolW_Response),
+    14: DceRpcOp(GetNtmsMediaPoolNameA_Request, GetNtmsMediaPoolNameA_Response),
+    15: DceRpcOp(GetNtmsMediaPoolNameW_Request, GetNtmsMediaPoolNameW_Response),
+    16: DceRpcOp(MoveToNtmsMediaPool_Request, MoveToNtmsMediaPool_Response),
+    17: DceRpcOp(DeleteNtmsMediaPool_Request, DeleteNtmsMediaPool_Response),
+    18: DceRpcOp(AddNtmsMediaType_Request, AddNtmsMediaType_Response),
+    19: DceRpcOp(DeleteNtmsMediaType_Request, DeleteNtmsMediaType_Response),
+    20: DceRpcOp(ChangeNtmsMediaType_Request, ChangeNtmsMediaType_Response),
+    21: DceRpcOp(GetNtmsMediaPoolNameAR_Request, GetNtmsMediaPoolNameAR_Response),
+    22: DceRpcOp(GetNtmsMediaPoolNameWR_Request, GetNtmsMediaPoolNameWR_Response),
 }
 register_com_interface(
     name="IRobustNtmsMediaServices1",
@@ -2186,8 +2285,11 @@ class RecallMessage_Response(NDRPacket):
 
 
 IMESSENGER_OPNUMS = {
-    0: DceRpcOp(SendMessage_Request, SendMessage_Response),
-    1: DceRpcOp(RecallMessage_Request, RecallMessage_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(SendMessage_Request, SendMessage_Response),
+    4: DceRpcOp(RecallMessage_Request, RecallMessage_Response),
 }
 register_com_interface(
     name="IMessenger",
@@ -2239,9 +2341,12 @@ class ReleaseCallback_Response(NDRPacket):
 
 
 INTMSNOTIFYSINK_OPNUMS = {
-    0: DceRpcOp(ConnectCallback_Request, ConnectCallback_Response),
-    1: DceRpcOp(OnNotify_Request, OnNotify_Response),
-    2: DceRpcOp(ReleaseCallback_Request, ReleaseCallback_Response),
+    0: DceRpcOp(QueryInterface_Request, QueryInterface_Response),
+    1: DceRpcOp(AddRef_Request, AddRef_Response),
+    2: DceRpcOp(Release_Request, Release_Response),
+    3: DceRpcOp(ConnectCallback_Request, ConnectCallback_Response),
+    4: DceRpcOp(OnNotify_Request, OnNotify_Response),
+    5: DceRpcOp(ReleaseCallback_Request, ReleaseCallback_Response),
 }
 register_com_interface(
     name="INtmsNotifySink",

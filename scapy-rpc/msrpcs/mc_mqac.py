@@ -7,6 +7,7 @@
 
 """
 RPC definitions for the following interfaces:
+- IUnknown (v0.0): 00000000-0000-0000-C000-000000000046
 - ITransaction (v0.0): 0fb15084-af41-11ce-bd2b-204c4f4f5020
 - IEnumConnections (v0.0): B196B287-BAB4-101A-B69C-00AA00341D07
 - IConnectionPointContainer (v0.0): B196B284-BAB4-101A-B69C-00AA00341D07
@@ -75,6 +76,16 @@ from scapy.layers.dcerpc import (
     register_com_interface,
 )
 
+IUNKNOWN_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire
+}
+register_com_interface(
+    name="IUnknown",
+    uuid=uuid.UUID("00000000-0000-0000-C000-000000000046"),
+    opnums=IUNKNOWN_OPNUMS,
+)
+
 
 class Commit_Request(NDRPacket):
     fields_desc = [
@@ -128,10 +139,12 @@ class GetTransactionInfo_Response(NDRPacket):
     ]
 
 
-ITRANSACTION_OPNUMS = {
-    0: DceRpcOp(Commit_Request, Commit_Response),
-    1: DceRpcOp(Abort_Request, Abort_Response),
-    2: DceRpcOp(GetTransactionInfo_Request, GetTransactionInfo_Response),
+ITRANSACTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Commit_Request, Commit_Response),
+    4: DceRpcOp(Abort_Request, Abort_Response),
+    5: DceRpcOp(GetTransactionInfo_Request, GetTransactionInfo_Response),
 }
 register_com_interface(
     name="ITransaction",
@@ -208,11 +221,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IENUMCONNECTIONS_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IENUMCONNECTIONS_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IEnumConnections",
@@ -257,9 +272,11 @@ class FindConnectionPoint_Response(NDRPacket):
     ]
 
 
-ICONNECTIONPOINTCONTAINER_OPNUMS = {
-    0: DceRpcOp(EnumConnectionPoints_Request, EnumConnectionPoints_Response),
-    1: DceRpcOp(FindConnectionPoint_Request, FindConnectionPoint_Response),
+ICONNECTIONPOINTCONTAINER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(EnumConnectionPoints_Request, EnumConnectionPoints_Response),
+    4: DceRpcOp(FindConnectionPoint_Request, FindConnectionPoint_Response),
 }
 register_com_interface(
     name="IConnectionPointContainer",
@@ -318,14 +335,16 @@ class EnumConnections_Response(NDRPacket):
     ]
 
 
-ICONNECTIONPOINT_OPNUMS = {
-    0: DceRpcOp(GetConnectionInterface_Request, GetConnectionInterface_Response),
-    1: DceRpcOp(
+ICONNECTIONPOINT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetConnectionInterface_Request, GetConnectionInterface_Response),
+    4: DceRpcOp(
         GetConnectionPointContainer_Request, GetConnectionPointContainer_Response
     ),
-    2: DceRpcOp(Advise_Request, Advise_Response),
-    3: DceRpcOp(Unadvise_Request, Unadvise_Response),
-    4: DceRpcOp(EnumConnections_Request, EnumConnections_Response),
+    5: DceRpcOp(Advise_Request, Advise_Response),
+    6: DceRpcOp(Unadvise_Request, Unadvise_Response),
+    7: DceRpcOp(EnumConnections_Request, EnumConnections_Response),
 }
 register_com_interface(
     name="IConnectionPoint",
@@ -382,11 +401,13 @@ class Clone_Response(NDRPacket):
     ]
 
 
-IENUMCONNECTIONPOINTS_OPNUMS = {
-    0: DceRpcOp(Next_Request, Next_Response),
-    1: DceRpcOp(Skip_Request, Skip_Response),
-    2: DceRpcOp(Reset_Request, Reset_Response),
-    3: DceRpcOp(Clone_Request, Clone_Response),
+IENUMCONNECTIONPOINTS_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(Next_Request, Next_Response),
+    4: DceRpcOp(Skip_Request, Skip_Response),
+    5: DceRpcOp(Reset_Request, Reset_Response),
+    6: DceRpcOp(Clone_Request, Clone_Response),
 }
 register_com_interface(
     name="IEnumConnectionPoints",
