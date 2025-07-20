@@ -8,7 +8,7 @@ This repo contains two sub-projects:
 
 ## midl-to-scapy
 
-A **Microsoft Interface Definition Language** (MIDL) parser that creates [Scapy](https://github.com/secdev/scapy) code, to interact with [MS-RPC](https://docs.microsoft.com/en-us/windows/win32/rpc) interfaces.
+A **Microsoft Interface Definition Language** (MIDL) compiler that generates [Scapy](https://github.com/secdev/scapy) code, to interact with [MS-RPC](https://docs.microsoft.com/en-us/windows/win32/rpc) interfaces.
 
 https://github.com/user-attachments/assets/044fb364-2a53-4ad7-97c9-e3c8e0c970fc
 
