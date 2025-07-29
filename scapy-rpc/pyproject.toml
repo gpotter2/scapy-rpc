@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scapy-rpc"
-version = "0.0.2"
+version = "0.0.3"
 dynamic = ["readme"]
+authors = [
+    { name="Gabriel POTTER" },
+]
+license = "GPL-2.0-only"
 requires-python = ">=3.7, <4"
 description = "Scapy RPC definitions"
 classifiers = [
     "Framework :: Scapy",
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
 ]
 
 [tool.setuptools.packages.find]
