@@ -12,8 +12,8 @@ import io
 import os
 import sys
 
-if sys.version_info[0] <= 2:
-    raise OSError("Scapy RED doesn't support Python 2 !")
+if sys.version_info < (3, 9):
+    raise OSError("Scapy RED needs Python 3.9+ !")
 
 try:
     from setuptools import setup
