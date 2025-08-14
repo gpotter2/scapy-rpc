@@ -10,9 +10,12 @@ from enum import Enum, auto
 import copy
 import os
 import sys
+import pathlib
 
 from midl_parser import parser, lexer
 from utils import Colors
+
+DCOM_PATH = pathlib.Path(__file__).parent / "idl/win/ms-dcom.idl"
 
 # Useful doc:
 # - pointers: https://docs.microsoft.com/en-us/windows/win32/rpc/kinds-of-pointers
@@ -213,14 +216,23 @@ class EnumType(Type):
         self.enum_name = enum_name
         self.origin = None
         cur = 0
+        curtup = None
         self.enums = {}
         for key, val in enums:
             if val is None:
                 cur += 1
-                self.enums[key] = cur
+                if curtup is not None:
+                    self.enums[key] = curtup + (cur,)
+                else:
+                    self.enums[key] = cur
             else:
                 self.enums[key] = val
-                cur = val
+                if isinstance(val, tuple):
+                    cur = 0
+                    curtup = val
+                else:
+                    cur = val
+                    curtup = None
 
 
 def is_builtin(typespec):
@@ -228,13 +240,21 @@ def is_builtin(typespec):
 
 
 class Function:
-    def __init__(self, c, name, return_type, arguments, idl_attrs):
+    def __init__(
+        self,
+        c,
+        name,
+        return_type,
+        arguments,
+        idl_attrs,
+        interface_name,
+    ):
         if ("id", "propget") in idl_attrs:
             # com stuff
-            name = "get_" + name
+            name = "get_" + interface_name + "_" + name
         elif ("id", "propput") in idl_attrs:
             # com stuff
-            name = "put_" + name
+            name = "put_" + interface_name + "_" + name
         self.name = name
         self.return_type = c.build_type(("id", "_ret"), return_type, idl_attrs)
         self.in_args = []
@@ -415,15 +435,19 @@ class Compiler:
             assert False, "Unimplemented typedef %s" % typedef[0]
         return env
 
-    def build_func(self, func, if_ptr=None):
+    def build_func(self, func, interface_name=None):
         """
         Build a function
         """
         _, idl_attributes, return_type, name, arguments = func
-        func = Function(self, name, return_type, arguments, idl_attributes)
-        if if_ptr:
-            self.chk_ptr_type(func, if_ptr)
-        return func
+        return Function(
+            self,
+            name,
+            return_type,
+            arguments,
+            idl_attributes,
+            interface_name,
+        )
 
     def build_interface(self, interface, env, fname=None):
         """
@@ -434,16 +458,15 @@ class Compiler:
         if ("id", "object") in idl_attrs and not self.loaded_dcom:
             self.loaded_dcom = True
             # DCOM
-            pth = os.path.join(os.path.dirname(fname), "ms-dcom.idl")
             # Parse it and update the environment
-            env.update(self.process_file(pth))
+            env.update(self.process_file(str(DCOM_PATH)))
         for e in expressions:
             if e[0] == "typedef":
                 ienv.update(self.build_typedef(e[1]))
             elif e[0] == "macro":
                 ienv.update(self.build_typedef(e))
             elif e[0] == "func":
-                func = self.build_func(e)
+                func = self.build_func(e, interface_name=name)
                 ienv[func.name] = func
             elif e[0] == "import" or e[0] == "#include":
                 # Find file in the same folder as current file
@@ -498,9 +521,10 @@ class Compiler:
                 else:
                     assert False, "Unexpected keyword %s" % e[0]
         # Add origin
+        orig = os.path.split(fname)[1]
         for obj in env.values():
             if isinstance(obj, (Interface, StructType, EnumType)):
-                obj.origin = obj.origin or fname
+                obj.origin = obj.origin or orig
         return env
 
 
@@ -522,5 +546,6 @@ if __name__ == "__main__":
                     "\n".join((" - " + k + ": " + repr(v)) for k, v in i.ienv.items())
                 )
             if not interfaces:
+                orig = os.path.split(fname)[1]
                 print("No interface found. Listing environment:")
-                print("\n".join(repr(x) for x in f.values() if x.origin == fname))
+                print("\n".join(repr(x) for x in f.values() if x.origin == orig))

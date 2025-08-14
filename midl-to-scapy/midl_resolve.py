@@ -7,9 +7,11 @@ Convert a MIDL AST into Scapy pseudo-packets, and perform
 the names resolution.
 """
 
+import os
 import re
-import sys
 import struct
+import sys
+
 from midl_convert import (
     Compiler,
     Function,
@@ -27,7 +29,6 @@ from scapy_obj import (
     ScapyField,
     ScapyFunc,
     ScapyInterfaceDefinition,
-    ScapyRecursiveField,
     ScapyStruct,
     ScapyStructField,
     ScapyUnion,
@@ -60,8 +61,9 @@ class Resolver:
             x.name: x for x in self.input_data.values() if isinstance(x, Interface)
         }
         # Scope to file
+        orig = os.path.split(fname)[1]
         interfaces_scoped = [
-            x for x in all_interfaces.values() if getattr(x, "origin", None) == fname
+            x for x in all_interfaces.values() if getattr(x, "origin", None) == orig
         ]
         if interfaces_scoped:
             # File contains interfaces
@@ -91,8 +93,9 @@ class Resolver:
         else:
             # Has no interface: export everything
             exported = []
+            orig = os.path.split(fname)[1]
             for k, obj in self.input_data.items():
-                if getattr(obj, "origin", None) != fname:
+                if getattr(obj, "origin", None) != orig:
                     continue
                 elt = self.resolve_type(k, self.input_data, toplevel=True)
                 struct_name = getattr(elt, "struct_name", None)
@@ -193,7 +196,16 @@ class Resolver:
                 self._resolve_arithm_values(x[2], env),
                 self._resolve_arithm_values(x[3], env),
             )
-        elif x[0] in ["cast", "monop"]:
+        elif x[0] == "cast":
+            # Resolve cast type if needed
+            if x[1][1] in BUILTIN_TYPES:
+                typ = x[1]
+            else:
+                restyp = env[x[1][1]]
+                assert restyp.TYPE == Types.BUILTIN, "Can only cast to builtin types !"
+                typ = ("id", restyp.type.split(" ")[-1])
+            return x[:1] + (typ, self._resolve_arithm_values(x[2], env))
+        elif x[0] == "monop":
             return x[:2] + (self._resolve_arithm_values(x[2], env),)
         elif x[0] == "call" and x[1] == "sizeof":
             assert all(x[0] == "id" for x in x[2]), "Unknown sizeof type"
@@ -304,6 +316,8 @@ class Resolver:
                     "helpstring",
                     "id",
                     "defaultvalue",
+                    "call_as",
+                    "annotation",
                 ]:  # ignore
                     pass
                 else:
@@ -324,7 +338,7 @@ class Resolver:
             self.globalnamespace[type] = field
             if isinstance(field, (ScapyStruct, ScapyEnum)) and not isinstance(
                 field, ScapyUnion
-            ):
+            ) and not getattr(field, "recursive", False):
                 self.globalnamespace[field.struct_name] = field
                 self.environment.append(field)
         if isinstance(self.globalnamespace[type], Interface):
@@ -357,13 +371,9 @@ class Resolver:
             new_ptr_lvl = arg.ptr_lvl
             if arg.TYPE == Types.CUSTOM:
                 # Do the resolution for CUSTOM fields
-                try:
-                    new_arg = self.resolve_type(
-                        arg.type, env, toplevel=toplevel, strct_types=strct_types
-                    )
-                except RecursionError as e:
-                    # resolve the RecursionErrors
-                    raise RecursionError(*e.args + (arg.name,))
+                new_arg = self.resolve_type(
+                    arg.type, env, toplevel=toplevel, strct_types=strct_types
+                )
                 idl_attributes += [
                     x
                     for x in new_arg.idl_attributes
@@ -377,7 +387,7 @@ class Resolver:
             if (
                 not subfld
                 and arg.TYPE != Types.ARRAY
-                and arg.ptr_lvl
+                and new_ptr_lvl
                 and any(x[0] in ("size_is", "max_is", "min_is") for x in idl_attributes)
             ):
                 # "...pointer..."
@@ -386,34 +396,30 @@ class Resolver:
                 from midl_convert import ArrayType
 
                 newarg = ArrayType(
-                    None, ("array", ("id", arg.name), None), None, []
+                    None, ("array", ("id", arg.name), "*"), None, []
                 )  # dummy
                 arg.ptr_lvl -= 1
                 if toplevel:
                     # "A parameter that is a pointer to a type is treated as an array of that type"
                     new_ptr_lvl = 0
                 else:
-                    # "If a structure field is a pointer ... then it is a pointer to an array of data."
+                    # "If a structure field is a pointer .. then it is a pointer to an array of data."
                     new_ptr_lvl = 1
-                    if not any(
-                        x[1] in ("ref", "unique", "ptr")
-                        for x in arg.idl_attributes
-                        if x[0] == "id"
-                    ):
-                        arg.idl_attributes.append(
-                            (
-                                "id",
-                                (
-                                    self.current_interface.pointer_default
-                                    if self.current_interface
-                                    else "unique"
-                                ),
-                            )
-                        )
+                idl_attributes = [
+                    x
+                    for x in idl_attributes
+                    if x[0] in ("size_is", "length_is", "max_is", "min_is", "case")
+                    or x in ("ref", "unique", "ptr")
+                ]
                 arg.idl_attributes = [
                     x
                     for x in arg.idl_attributes
-                    if x[0] != "call" or x[1] not in ("size_is", "max_is", "min_is")
+                    if (
+                        x[0] != "call"
+                        or x[1]
+                        not in ("size_is", "length_is", "max_is", "min_is", "case")
+                    )
+                    and (x[0] != "id" or x[1] not in ("ref", "unique", "ptr"))
                 ]
                 newarg.subtype = arg
                 arg = newarg
@@ -498,14 +504,21 @@ class Resolver:
                 arg.ptr_lvl,
                 sub_arg,
                 arg.array_length,
-                idl_attributes=idl_attributes + sub_arg.idl_attributes,
+                idl_attributes=idl_attributes,
             )
         elif arg.TYPE == Types.STRUCT:
             if arg.struct_name in strct_types:
-                # Recursion loop detected: most likely a struct containing a
-                # pointer to itself. Raise a RecursionError that the parent
-                # will handle
-                raise RecursionError(arg.struct_name)
+                # Recursion loop detected: most likely a struct containing somehow a
+                # pointer to itself.
+                return ScapyStruct(
+                    name=arg.name,
+                    ptr_lvl=arg.ptr_lvl,
+                    fields=[],
+                    idl_attributes=idl_attributes,
+                    struct_name=arg.struct_name,
+                    # Recursive flag: it's a virtual struct. Don't actually print it.
+                    recursive=True,
+                )
 
             def proc_f(v):
                 field = self.make_field(
@@ -527,37 +540,7 @@ class Resolver:
                     )
                 return field
 
-            try:
-                fields = [proc_f(v) for v in arg.fields]
-            except RecursionError as e:
-                if len(e.args) >= 2 and e.args[0] == arg.struct_name:
-                    # THIS current struct has recursion errors
-                    # Find the field that raised the error
-                    i, field = next(
-                        x for x in enumerate(arg.fields) if x[1].name == e.args[-1]
-                    )
-                    # Try to re-resolve. If a RecursionError happens, it's game over
-                    fields = [
-                        (
-                            self.make_field(
-                                v, env, strct_types=strct_types + [arg.struct_name]
-                            )
-                            if j != i
-                            else None
-                        )
-                        for j, v in enumerate(arg.fields)
-                    ]
-                    fields[i] = ScapyRecursiveField(
-                        field.name,
-                        arg.struct_name,
-                        arg.ptr_lvl,
-                        idl_attributes=self.resolve_idl_attributes(
-                            field.idl_attributes, env
-                        ),
-                    )
-                    assert all(x is not None for x in fields)
-                else:
-                    raise e
+            fields = [proc_f(v) for v in arg.fields]
             return ScapyStruct(
                 arg.name,
                 arg.ptr_lvl,
@@ -592,12 +575,9 @@ class Resolver:
                         "case",
                         [_rec_rslv_arithm(caseval, env)],
                     )
-                try:
-                    field = self.make_field(
-                        v, env, strct_types=strct_types + [arg.struct_name]
-                    )
-                except RecursionError as e:
-                    raise RecursionError(*e.args + (arg.name,))
+                field = self.make_field(
+                    v, env, strct_types=strct_types + [arg.struct_name]
+                )
                 if isinstance(field, ScapyStruct) and not isinstance(
                     field, (ScapyUnion, ScapyEnum)
                 ):
@@ -637,6 +617,9 @@ class Resolver:
                         r = self.resolve_type(enumname, env, toplevel=False)
                     else:
                         assert False, "Unknown enum key: %s" % val[1]
+                    # Optional additional offset
+                    if len(val) == 3:
+                        val += "+ %d" % val[2]
                 elif isinstance(val, tuple) and val[0] == "binop":
                     from scapy_obj import _rec_rslv_arithm
 
