@@ -24,6 +24,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
+    NDRConfVarFieldListField,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
@@ -35,7 +36,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedByteField,
@@ -586,7 +587,9 @@ class PROPERTY_META_DATA_EXT_VECTOR(NDRPacket):
 class REPLENTINFLIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRecursiveField("pNextEntInf"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pNextEntInf", None, NDRRecursiveClass("REPLENTINFLIST"))
+        ),
         NDRPacketField("Entinf", ENTINF(), ENTINF),
         NDRSignedIntField("fIsNCPrefix", 0),
         NDRFullEmbPointerField(NDRPacketField("pParentGuid", UUID(), UUID)),
@@ -1256,10 +1259,7 @@ class DRS_MSG_REVMEMB_REPLY_V1(NDRPacket):
         ),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "pAttributes",
-                [],
-                NDRIntField("pAttributes", 0),
-                size_is=lambda pkt: pkt.cDsNames,
+                "pAttributes", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cDsNames
             )
         ),
         NDRFullEmbPointerField(
@@ -1554,12 +1554,7 @@ class DRS_MSG_CRACKREQ_V1(NDRPacket):
         NDRIntField("formatDesired", 0),
         NDRIntField("cNames", None, size_of="rpNames"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "rpNames",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rpNames", "")),
-                size_is=lambda pkt: pkt.cNames,
-            )
+            NDRConfVarStrLenFieldUtf16("rpNames", "", size_is=lambda pkt: pkt.cNames)
         ),
     ]
 
@@ -1579,10 +1574,7 @@ class DS_NAME_RESULTW(NDRPacket):
         NDRIntField("cItems", None, size_of="rItems"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "rItems",
-                [PDS_NAME_RESULT_ITEMW()],
-                PDS_NAME_RESULT_ITEMW,
-                size_is=lambda pkt: pkt.cItems,
+                "rItems", [], PDS_NAME_RESULT_ITEMW, size_is=lambda pkt: pkt.cItems
             )
         ),
     ]
@@ -1651,12 +1643,7 @@ class DRS_MSG_SPNREQ_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAccount", "")),
         NDRIntField("cSPN", None, size_of="rpwszSPN"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "rpwszSPN",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rpwszSPN", "")),
-                size_is=lambda pkt: pkt.cSPN,
-            )
+            NDRConfVarStrLenFieldUtf16("rpwszSPN", "", size_is=lambda pkt: pkt.cSPN)
         ),
     ]
 
@@ -2047,7 +2034,9 @@ class DRS_MSG_ADDENTRYREQ_V1(NDRPacket):
 class ENTINFLIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRecursiveField("pNextEntInf"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pNextEntInf", None, NDRRecursiveClass("ENTINFLIST"))
+        ),
         NDRPacketField("Entinf", ENTINF(), ENTINF),
     ]
 
@@ -2125,7 +2114,11 @@ class INTFORMPROB_DRS_WIRE_V1(NDRPacket):
 class PROBLEMLIST_DRS_WIRE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRecursiveField("pNextProblem"),
+        NDRFullEmbPointerField(
+            NDRPacketField(
+                "pNextProblem", None, NDRRecursiveClass("PROBLEMLIST_DRS_WIRE_V1")
+            )
+        ),
         NDRPacketField("intprob", INTFORMPROB_DRS_WIRE_V1(), INTFORMPROB_DRS_WIRE_V1),
     ]
 
@@ -2169,9 +2162,10 @@ class RPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -2182,7 +2176,11 @@ class RPC_UNICODE_STRING(NDRPacket):
 class DSA_ADDRESS_LIST_DRS_WIRE_V1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRRecursiveField("pNextAddress"),
+        NDRFullEmbPointerField(
+            NDRPacketField(
+                "pNextAddress", None, NDRRecursiveClass("DSA_ADDRESS_LIST_DRS_WIRE_V1")
+            )
+        ),
         NDRFullEmbPointerField(
             NDRPacketField("pAddress", RPC_UNICODE_STRING(), RPC_UNICODE_STRING)
         ),
@@ -2203,7 +2201,11 @@ class CONTREF_DRS_WIRE_V1(NDRPacket):
                 "pDAL", DSA_ADDRESS_LIST_DRS_WIRE_V1(), DSA_ADDRESS_LIST_DRS_WIRE_V1
             )
         ),
-        NDRRecursiveField("pNextContRef"),
+        NDRFullEmbPointerField(
+            NDRPacketField(
+                "pNextContRef", None, NDRRecursiveClass("CONTREF_DRS_WIRE_V1")
+            )
+        ),
         NDRSignedIntField("bNewChoice", 0),
         NDRByteField("choice", 0),
     ]
@@ -3124,20 +3126,29 @@ class DRS_MSG_ADDSIDREQ_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("SrcDomainController", "")),
         NDRIntField("SrcCredsUserLength", None, size_of="SrcCredsUser"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "SrcCredsUser", "", size_is=lambda pkt: pkt.SrcCredsUserLength
+            NDRConfFieldListField(
+                "SrcCredsUser",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.SrcCredsUserLength,
             )
         ),
         NDRIntField("SrcCredsDomainLength", None, size_of="SrcCredsDomain"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "SrcCredsDomain", "", size_is=lambda pkt: pkt.SrcCredsDomainLength
+            NDRConfFieldListField(
+                "SrcCredsDomain",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.SrcCredsDomainLength,
             )
         ),
         NDRIntField("SrcCredsPasswordLength", None, size_of="SrcCredsPassword"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "SrcCredsPassword", "", size_is=lambda pkt: pkt.SrcCredsPasswordLength
+            NDRConfFieldListField(
+                "SrcCredsPassword",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.SrcCredsPasswordLength,
             )
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DstDomain", "")),
@@ -3386,11 +3397,8 @@ class DRS_MSG_QUERYSITESREQ_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFromSite", "")),
         NDRIntField("cToSites", None, size_of="rgszToSites"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "rgszToSites",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("rgszToSites", "")),
-                size_is=lambda pkt: pkt.cToSites,
+            NDRConfVarStrLenFieldUtf16(
+                "rgszToSites", "", size_is=lambda pkt: pkt.cToSites
             )
         ),
         NDRIntField("dwFlags", 0),
@@ -3673,8 +3681,11 @@ class DRS_MSG_ADDCLONEDCREPLY_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszSite", "")),
         NDRIntField("cPasswordLength", None, size_of="pwsNewDCAccountPassword"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pwsNewDCAccountPassword", "", size_is=lambda pkt: pkt.cPasswordLength
+            NDRConfFieldListField(
+                "pwsNewDCAccountPassword",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cPasswordLength,
             )
         ),
     ]

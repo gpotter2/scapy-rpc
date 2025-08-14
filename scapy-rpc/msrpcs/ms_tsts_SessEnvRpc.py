@@ -18,8 +18,8 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
-    NDRConfVarStrNullField,
-    NDRConfVarStrNullFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRInt3264EnumField,
     NDRIntField,
     register_dcerpc_interface,
@@ -60,7 +60,9 @@ class RpcShadow2_Request(NDRPacket):
 class RpcShadow2_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("pePermission", 0, SHADOW_REQUEST_RESPONSE),
-        NDRConfVarStrNullFieldUtf16("pszInvitation", ""),
+        NDRConfVarStrLenFieldUtf16(
+            "pszInvitation", "", size_is=lambda pkt: pkt.cchInvitation
+        ),
         NDRIntField("status", 0),
     ]
 

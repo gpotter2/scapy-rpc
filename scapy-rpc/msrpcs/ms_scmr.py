@@ -21,11 +21,8 @@ from scapy.layers.dcerpc import (
     NDRByteField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
-    NDRConfVarStrNullField,
-    NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
     NDRFullEmbPointerField,
     NDRFullPointerField,
@@ -165,7 +162,9 @@ class RUnlockServiceDatabase_Response(NDRPacket):
 
 class RNotifyBootConfigStatus_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("lpMachineName", "")),
+        NDRConfVarStrLenFieldUtf16(
+            "lpMachineName", "", size_is=lambda pkt: pkt.SC_MAX_COMPUTER_NAME_LENGTH
+        ),
         NDRIntField("BootAcceptable", 0),
     ]
 
@@ -187,18 +186,12 @@ class RChangeServiceConfigW_Request(NDRPacket):
             "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
         ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
         NDRConfVarStrLenFieldUtf16(
             "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
-        ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
         NDRConfVarStrLenFieldUtf16(
             "lpDisplayName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
@@ -233,18 +226,12 @@ class RCreateServiceW_Request(NDRPacket):
             "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
         ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
         NDRConfVarStrLenFieldUtf16(
             "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
-        ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
     ]
 
@@ -296,7 +283,9 @@ class REnumServicesStatusW_Response(NDRPacket):
 
 class ROpenSCManagerW_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("lpMachineName", "")),
+        NDRConfVarStrLenFieldUtf16(
+            "lpMachineName", "", size_is=lambda pkt: pkt.SC_MAX_COMPUTER_NAME_LENGTH
+        ),
         NDRConfVarStrLenFieldUtf16(
             "lpDatabaseName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
         ),
@@ -334,12 +323,32 @@ class LPQUERY_SERVICE_CONFIGW(NDRPacket):
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpBinaryPathName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpLoadOrderGroup", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpBinaryPathName", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpLoadOrderGroup", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
         NDRIntField("dwTagId", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDependencies", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpServiceStartName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDisplayName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpDependencies", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpServiceStartName", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpDisplayName", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
     ]
 
 
@@ -364,7 +373,11 @@ class LPQUERY_SERVICE_LOCK_STATUSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("fIsLocked", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpLockOwner", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpLockOwner", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
         NDRIntField("dwLockDuration", 0),
     ]
 
@@ -390,7 +403,7 @@ class LPSTRING_PTRSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
+            NDRConfVarStrLenFieldUtf16(
                 "StringPtr", "", size_is=lambda pkt: pkt.SC_MAX_ARGUMENT_LENGTH
             )
         )
@@ -401,10 +414,8 @@ class RStartServiceW_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hService", NDRContextHandle(), NDRContextHandle),
         NDRIntField("argc", None, size_of="argv"),
-        NDRFullPointerField(
-            NDRConfPacketListField(
-                "argv", [LPSTRING_PTRSW()], LPSTRING_PTRSW, size_is=lambda pkt: pkt.argc
-            )
+        NDRConfPacketListField(
+            "argv", [], LPSTRING_PTRSW, size_is=lambda pkt: pkt.argc
         ),
     ]
 
@@ -463,21 +474,23 @@ class RChangeServiceConfigA_Request(NDRPacket):
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRFullPointerField(NDRConfVarStrNullField("lpBinaryPathName", "")),
-        NDRFullPointerField(NDRConfVarStrNullField("lpLoadOrderGroup", "")),
+        NDRConfVarStrLenField(
+            "lpBinaryPathName", "", size_is=lambda pkt: pkt.SC_MAX_PATH_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
-        NDRFullPointerField(NDRConfVarStrNullField("lpServiceStartName", "")),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
+        NDRConfVarStrLenField(
+            "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
-        NDRFullPointerField(NDRConfVarStrNullField("lpDisplayName", "")),
+        NDRConfVarStrLenField(
+            "lpDisplayName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
     ]
 
 
@@ -491,25 +504,29 @@ class RChangeServiceConfigA_Response(NDRPacket):
 class RCreateServiceA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hSCManager", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrNullField("lpServiceName", ""),
-        NDRFullPointerField(NDRConfVarStrNullField("lpDisplayName", "")),
+        NDRConfVarStrLenField(
+            "lpServiceName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpDisplayName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("dwDesiredAccess", 0),
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRConfVarStrNullField("lpBinaryPathName", ""),
-        NDRFullPointerField(NDRConfVarStrNullField("lpLoadOrderGroup", "")),
+        NDRConfVarStrLenField(
+            "lpBinaryPathName", "", size_is=lambda pkt: pkt.SC_MAX_PATH_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
-        NDRFullPointerField(NDRConfVarStrNullField("lpServiceStartName", "")),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
+        NDRConfVarStrLenField(
+            "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
     ]
 
@@ -561,8 +578,12 @@ class REnumServicesStatusA_Response(NDRPacket):
 
 class ROpenSCManagerA_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRConfVarStrNullField("lpMachineName", "")),
-        NDRFullPointerField(NDRConfVarStrNullField("lpDatabaseName", "")),
+        NDRConfVarStrLenField(
+            "lpMachineName", "", size_is=lambda pkt: pkt.SC_MAX_COMPUTER_NAME_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpDatabaseName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("dwDesiredAccess", 0),
     ]
 
@@ -577,7 +598,9 @@ class ROpenSCManagerA_Response(NDRPacket):
 class ROpenServiceA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hSCManager", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrNullField("lpServiceName", ""),
+        NDRConfVarStrLenField(
+            "lpServiceName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("dwDesiredAccess", 0),
     ]
 
@@ -595,12 +618,28 @@ class LPQUERY_SERVICE_CONFIGA(NDRPacket):
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpBinaryPathName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpLoadOrderGroup", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField(
+                "lpBinaryPathName", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField(
+                "lpLoadOrderGroup", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
         NDRIntField("dwTagId", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpDependencies", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpServiceStartName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpDisplayName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField("lpDependencies", "", size_is=lambda pkt: (8 * 1024))
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField(
+                "lpServiceStartName", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField("lpDisplayName", "", size_is=lambda pkt: (8 * 1024))
+        ),
     ]
 
 
@@ -626,7 +665,7 @@ class LPQUERY_SERVICE_LOCK_STATUSA(NDRPacket):
     fields_desc = [
         NDRIntField("fIsLocked", 0),
         NDRFullEmbPointerField(
-            NDRConfStrLenField("lpLockOwner", "", size_is=lambda pkt: (8 * 1024))
+            NDRConfVarStrLenField("lpLockOwner", "", size_is=lambda pkt: (8 * 1024))
         ),
         NDRIntField("dwLockDuration", 0),
     ]
@@ -651,17 +690,21 @@ class RQueryServiceLockStatusA_Response(NDRPacket):
 
 class LPSTRING_PTRSA(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullField("StringPtr", ""))]
+    fields_desc = [
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField(
+                "StringPtr", "", size_is=lambda pkt: pkt.SC_MAX_ARGUMENT_LENGTH
+            )
+        )
+    ]
 
 
 class RStartServiceA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hService", NDRContextHandle(), NDRContextHandle),
         NDRIntField("argc", None, size_of="argv"),
-        NDRFullPointerField(
-            NDRConfPacketListField(
-                "argv", [LPSTRING_PTRSA()], LPSTRING_PTRSA, size_is=lambda pkt: pkt.argc
-            )
+        NDRConfPacketListField(
+            "argv", [], LPSTRING_PTRSA, size_is=lambda pkt: pkt.argc
         ),
     ]
 
@@ -673,14 +716,16 @@ class RStartServiceA_Response(NDRPacket):
 class RGetServiceDisplayNameA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hSCManager", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrNullField("lpServiceName", ""),
+        NDRConfVarStrLenField(
+            "lpServiceName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("lpcchBuffer", 0),
     ]
 
 
 class RGetServiceDisplayNameA_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullField("lpDisplayName", ""),
+        NDRConfVarStrLenField("lpDisplayName", "", size_is=lambda pkt: pkt.lpcchBuffer),
         NDRIntField("lpcchBuffer", None, size_of="lpDisplayName"),
         NDRIntField("status", 0),
     ]
@@ -689,14 +734,16 @@ class RGetServiceDisplayNameA_Response(NDRPacket):
 class RGetServiceKeyNameA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hSCManager", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrNullField("lpDisplayName", ""),
+        NDRConfVarStrLenField(
+            "lpDisplayName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("lpcchBuffer", 0),
     ]
 
 
 class RGetServiceKeyNameA_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullField("lpKeyName", ""),
+        NDRConfVarStrLenField("lpKeyName", "", size_is=lambda pkt: pkt.lpcchBuffer),
         NDRIntField("lpcchBuffer", None, size_of="lpKeyName"),
         NDRIntField("status", 0),
     ]
@@ -709,7 +756,9 @@ class REnumServiceGroupW_Request(NDRPacket):
         NDRIntField("dwServiceState", 0),
         NDRIntField("cbBufSize", 0),
         NDRFullPointerField(NDRIntField("lpResumeIndex", 0)),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszGroupName", "")),
+        NDRConfVarStrLenFieldUtf16(
+            "pszGroupName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
     ]
 
 
@@ -725,7 +774,11 @@ class REnumServiceGroupW_Response(NDRPacket):
 
 class LPSERVICE_DESCRIPTIONA(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullField("lpDescription", ""))]
+    fields_desc = [
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField("lpDescription", "", size_is=lambda pkt: (8 * 1024))
+        )
+    ]
 
 
 class SC_ACTION_TYPE(IntEnum):
@@ -744,8 +797,12 @@ class LPSERVICE_FAILURE_ACTIONSA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwResetPeriod", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpRebootMsg", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("lpCommand", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField("lpRebootMsg", "", size_is=lambda pkt: (8 * 1024))
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField("lpCommand", "", size_is=lambda pkt: (8 * 1024))
+        ),
         NDRIntField("cActions", None, size_of="lpsaActions"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -818,7 +875,7 @@ class PSERVICE_TRIGGER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pDataItems",
-                [PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM()],
+                [],
                 PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM,
                 size_is=lambda pkt: pkt.cDataItems,
             )
@@ -832,10 +889,7 @@ class PSERVICE_TRIGGER_INFO(NDRPacket):
         NDRIntField("cTriggers", None, size_of="pTriggers"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pTriggers",
-                [PSERVICE_TRIGGER()],
-                PSERVICE_TRIGGER,
-                size_is=lambda pkt: pkt.cTriggers,
+                "pTriggers", [], PSERVICE_TRIGGER, size_is=lambda pkt: pkt.cTriggers
             )
         ),
         NDRFullEmbPointerField(NDRByteField("pReserved", 0)),
@@ -986,7 +1040,11 @@ class RChangeServiceConfig2A_Response(NDRPacket):
 class LPSERVICE_DESCRIPTIONW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpDescription", ""))
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpDescription", "", size_is=lambda pkt: (8 * 1024)
+            )
+        )
     ]
 
 
@@ -994,8 +1052,14 @@ class LPSERVICE_FAILURE_ACTIONSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwResetPeriod", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpRebootMsg", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpCommand", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "lpRebootMsg", "", size_is=lambda pkt: (8 * 1024)
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("lpCommand", "", size_is=lambda pkt: (8 * 1024))
+        ),
         NDRIntField("cActions", None, size_of="lpsaActions"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -1205,7 +1269,9 @@ class REnumServicesStatusExA_Request(NDRPacket):
         NDRIntField("dwServiceState", 0),
         NDRIntField("cbBufSize", 0),
         NDRFullPointerField(NDRIntField("lpResumeIndex", 0)),
-        NDRFullPointerField(NDRConfVarStrNullField("pszGroupName", "")),
+        NDRConfVarStrLenField(
+            "pszGroupName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
     ]
 
 
@@ -1227,7 +1293,9 @@ class REnumServicesStatusExW_Request(NDRPacket):
         NDRIntField("dwServiceState", 0),
         NDRIntField("cbBufSize", 0),
         NDRFullPointerField(NDRIntField("lpResumeIndex", 0)),
-        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszGroupName", "")),
+        NDRConfVarStrLenFieldUtf16(
+            "pszGroupName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
     ]
 
 
@@ -1244,25 +1312,29 @@ class REnumServicesStatusExW_Response(NDRPacket):
 class RCreateServiceWOW64A_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hSCManager", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrNullField("lpServiceName", ""),
-        NDRFullPointerField(NDRConfVarStrNullField("lpDisplayName", "")),
+        NDRConfVarStrLenField(
+            "lpServiceName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpDisplayName", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRIntField("dwDesiredAccess", 0),
         NDRIntField("dwServiceType", 0),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRConfVarStrNullField("lpBinaryPathName", ""),
-        NDRFullPointerField(NDRConfVarStrNullField("lpLoadOrderGroup", "")),
+        NDRConfVarStrLenField(
+            "lpBinaryPathName", "", size_is=lambda pkt: pkt.SC_MAX_PATH_LENGTH
+        ),
+        NDRConfVarStrLenField(
+            "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
+        ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
-        NDRFullPointerField(NDRConfVarStrNullField("lpServiceStartName", "")),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
+        NDRConfVarStrLenField(
+            "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
     ]
 
@@ -1295,18 +1367,12 @@ class RCreateServiceWOW64W_Request(NDRPacket):
             "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
         ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
         NDRConfVarStrLenFieldUtf16(
             "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
-        ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
     ]
 
@@ -1362,7 +1428,11 @@ class PSERVICE_NOTIFY_STATUS_CHANGE_PARAMS_2(NDRPacket):
         NDRIntField("dwNotificationStatus", 0),
         NDRIntField("dwSequence", 0),
         NDRIntField("dwNotificationTriggered", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszServiceNames", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "pszServiceNames", "", size_is=lambda pkt: (64 * 1024)
+            )
+        ),
     ]
 
 
@@ -1471,7 +1541,11 @@ class PSERVICE_CONTROL_STATUS_REASON_IN_PARAMSA(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwReason", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullField("pszComment", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenField(
+                "pszComment", "", size_is=lambda pkt: pkt.SC_MAX_COMMENT_LENGTH
+            )
+        ),
     ]
 
 
@@ -1542,7 +1616,11 @@ class PSERVICE_CONTROL_STATUS_REASON_IN_PARAMSW(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("dwReason", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszComment", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "pszComment", "", size_is=lambda pkt: pkt.SC_MAX_COMMENT_LENGTH
+            )
+        ),
     ]
 
 
@@ -1634,18 +1712,12 @@ class RCreateWowService_Request(NDRPacket):
             "lpLoadOrderGroup", "", size_is=lambda pkt: pkt.SC_MAX_NAME_LENGTH
         ),
         NDRFullPointerField(NDRIntField("lpdwTagId", 0)),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize
-            )
-        ),
+        NDRConfStrLenField("lpDependencies", "", size_is=lambda pkt: pkt.dwDependSize),
         NDRIntField("dwDependSize", None, size_of="lpDependencies"),
         NDRConfVarStrLenFieldUtf16(
             "lpServiceStartName", "", size_is=lambda pkt: pkt.SC_MAX_ACCOUNT_NAME_LENGTH
         ),
-        NDRFullPointerField(
-            NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize)
-        ),
+        NDRConfStrLenField("lpPassword", "", size_is=lambda pkt: pkt.dwPwSize),
         NDRIntField("dwPwSize", None, size_of="lpPassword"),
         NDRShortField("dwServiceWowType", 0),
     ]

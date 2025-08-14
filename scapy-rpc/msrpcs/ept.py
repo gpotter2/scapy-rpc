@@ -61,7 +61,7 @@ class ept_entry_t(NDRPacket):
     fields_desc = [
         NDRPacketField("object", UUID(), UUID),
         NDRFullEmbPointerField(NDRPacketField("tower", twr_p_t(), twr_p_t)),
-        NDRVarStrLenField("annotation", ""),
+        NDRVarStrLenField("annotation", "", length_is=lambda _: 64),
     ]
 
 

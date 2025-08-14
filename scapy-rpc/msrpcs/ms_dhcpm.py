@@ -115,7 +115,7 @@ class LPDHCP_IP_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "Elements", [], NDRIntField, size_is=lambda pkt: pkt.NumElements
+                "Elements", [], NDRIntField("", 0), size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -294,7 +294,7 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_SUBNET_ELEMENT_DATA()],
+                [],
                 LPDHCP_SUBNET_ELEMENT_DATA,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -518,7 +518,7 @@ class DHCP_OPTION_DATA(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_OPTION_DATA_ELEMENT()],
+                [],
                 LPDHCP_OPTION_DATA_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -697,7 +697,7 @@ class LPDHCP_OPTION_DATA(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_OPTION_DATA_ELEMENT()],
+                [],
                 LPDHCP_OPTION_DATA_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -753,10 +753,7 @@ class LPDHCP_OPTION_VALUE_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Values"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Values",
-                [LPDHCP_OPTION_VALUE()],
-                LPDHCP_OPTION_VALUE,
-                size_is=lambda pkt: pkt.NumElements,
+                "Values", [], LPDHCP_OPTION_VALUE, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -1027,10 +1024,7 @@ class LPDHCP_MIB_INFO(NDRPacket):
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ScopeInfo",
-                [LPSCOPE_MIB_INFO()],
-                LPSCOPE_MIB_INFO,
-                size_is=lambda pkt: pkt.Scopes,
+                "ScopeInfo", [], LPSCOPE_MIB_INFO, size_is=lambda pkt: pkt.Scopes
             )
         ),
     ]
@@ -1057,10 +1051,7 @@ class LPDHCP_OPTION_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Options"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Options",
-                [LPDHCP_OPTION()],
-                LPDHCP_OPTION,
-                size_is=lambda pkt: pkt.NumElements,
+                "Options", [], LPDHCP_OPTION, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -1329,7 +1320,7 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V4(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_SUBNET_ELEMENT_DATA_V4()],
+                [],
                 LPDHCP_SUBNET_ELEMENT_DATA_V4,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -1689,10 +1680,7 @@ class LPDHCP_MIB_INFO_VQ(NDRPacket):
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ScopeInfo",
-                [LPSCOPE_MIB_INFO_VQ()],
-                LPSCOPE_MIB_INFO_VQ,
-                size_is=lambda pkt: pkt.Scopes,
+                "ScopeInfo", [], LPSCOPE_MIB_INFO_VQ, size_is=lambda pkt: pkt.Scopes
             )
         ),
     ]
@@ -2049,8 +2037,9 @@ class LPDHCP_MSCOPE_TABLE(NDRPacket):
             NDRConfFieldListField(
                 "pMScopeNames",
                 [],
-                NDRFullEmbPointerField(NDRShortField("pMScopeNames", 0)),
+                NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.NumElements,
+                ptr_pack=True,
             )
         ),
     ]
@@ -2531,10 +2520,7 @@ class LPDHCP_CLASS_INFO_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Classes"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Classes",
-                [LPDHCP_CLASS_INFO()],
-                LPDHCP_CLASS_INFO,
-                size_is=lambda pkt: pkt.NumElements,
+                "Classes", [], LPDHCP_CLASS_INFO, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -2596,7 +2582,7 @@ class LPDHCP_ALL_OPTIONS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "VendorOptions_DHCP_ALL_OPTIONS",
-                [VendorOptions_DHCP_ALL_OPTIONS()],
+                [],
                 VendorOptions_DHCP_ALL_OPTIONS,
                 size_is=lambda pkt: pkt.NumVendorOptions,
             )
@@ -2642,7 +2628,7 @@ class LPDHCP_ALL_OPTION_VALUES(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options_DHCP_ALL_OPTION_VALUES",
-                [Options_DHCP_ALL_OPTION_VALUES()],
+                [],
                 Options_DHCP_ALL_OPTION_VALUES,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -2697,10 +2683,7 @@ class LPDHCP_MCAST_MIB_INFO(NDRPacket):
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ScopeInfo",
-                [LPMSCOPE_MIB_INFO()],
-                LPMSCOPE_MIB_INFO,
-                size_is=lambda pkt: pkt.Scopes,
+                "ScopeInfo", [], LPMSCOPE_MIB_INFO, size_is=lambda pkt: pkt.Scopes
             )
         ),
     ]
@@ -2811,10 +2794,7 @@ class LPDHCP_ATTRIB_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="DhcpAttribs"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "DhcpAttribs",
-                [LPDHCP_ATTRIB()],
-                LPDHCP_ATTRIB,
-                size_is=lambda pkt: pkt.NumElements,
+                "DhcpAttribs", [], LPDHCP_ATTRIB, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -2826,7 +2806,10 @@ class R_DhcpServerQueryAttributes_Request(NDRPacket):
         NDRIntField("dwReserved", 0),
         NDRIntField("dwAttribCount", None, size_of="pDhcpAttribs"),
         NDRConfFieldListField(
-            "pDhcpAttribs", [], NDRIntField, size_is=lambda pkt: pkt.dwAttribCount
+            "pDhcpAttribs",
+            [],
+            NDRIntField("", 0),
+            size_is=lambda pkt: pkt.dwAttribCount,
         ),
     ]
 
@@ -2977,7 +2960,7 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V5(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_SUBNET_ELEMENT_DATA_V5()],
+                [],
                 LPDHCP_SUBNET_ELEMENT_DATA_V5,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -3049,10 +3032,7 @@ class LPDHCP_BIND_ELEMENT_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_BIND_ELEMENT()],
-                LPDHCP_BIND_ELEMENT,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_BIND_ELEMENT, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -3102,8 +3082,12 @@ class R_DhcpQueryDnsRegCredentials_Request(NDRPacket):
 
 class R_DhcpQueryDnsRegCredentials_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16("Uname", "", size_is=lambda pkt: pkt.UnameSize),
-        NDRConfStrLenFieldUtf16("Domain", "", size_is=lambda pkt: pkt.DomainSize),
+        NDRConfFieldListField(
+            "Uname", [], NDRShortField("", 0), size_is=lambda pkt: pkt.UnameSize
+        ),
+        NDRConfFieldListField(
+            "Domain", [], NDRShortField("", 0), size_is=lambda pkt: pkt.DomainSize
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -3482,10 +3466,7 @@ class LPDHCPV6_IP_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_IPV6_ADDRESS()],
-                LPDHCP_IPV6_ADDRESS,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_IPV6_ADDRESS, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -3620,7 +3601,7 @@ class LPDHCP_SUBNET_ELEMENT_INFO_ARRAY_V6(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCP_SUBNET_ELEMENT_DATA_V6()],
+                [],
                 LPDHCP_SUBNET_ELEMENT_DATA_V6,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -3855,10 +3836,7 @@ class LPDHCP_MIB_INFO_V6(NDRPacket):
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ScopeInfo",
-                [LPSCOPE_MIB_INFO_V6()],
-                LPSCOPE_MIB_INFO_V6,
-                size_is=lambda pkt: pkt.Scopes,
+                "ScopeInfo", [], LPSCOPE_MIB_INFO_V6, size_is=lambda pkt: pkt.Scopes
             )
         ),
     ]
@@ -3902,7 +3880,7 @@ class LPDHCPV6_BIND_ELEMENT_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Elements",
-                [LPDHCPV6_BIND_ELEMENT()],
+                [],
                 LPDHCPV6_BIND_ELEMENT,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -4102,10 +4080,7 @@ class LPDHCP_CLASS_INFO_ARRAY_V6(NDRPacket):
         NDRIntField("NumElements", None, size_of="Classes"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Classes",
-                [LPDHCP_CLASS_INFO_V6()],
-                LPDHCP_CLASS_INFO_V6,
-                size_is=lambda pkt: pkt.NumElements,
+                "Classes", [], LPDHCP_CLASS_INFO_V6, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -4215,10 +4190,7 @@ class LPDHCP_MIB_INFO_V5(NDRPacket):
         NDRIntField("Scopes", None, size_of="ScopeInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ScopeInfo",
-                [LPSCOPE_MIB_INFO_V5()],
-                LPSCOPE_MIB_INFO_V5,
-                size_is=lambda pkt: pkt.Scopes,
+                "ScopeInfo", [], LPSCOPE_MIB_INFO_V5, size_is=lambda pkt: pkt.Scopes
             )
         ),
     ]
@@ -4349,7 +4321,7 @@ class LPDHCP_FILTER_ENUM_INFO(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pEnumRecords",
-                [LPDHCP_FILTER_RECORD()],
+                [],
                 LPDHCP_FILTER_RECORD,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -4569,7 +4541,7 @@ class LPDHCP_FAILOVER_RELATIONSHIP_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pRelationships",
-                [LPDHCP_FAILOVER_RELATIONSHIP()],
+                [],
                 LPDHCP_FAILOVER_RELATIONSHIP,
                 size_is=lambda pkt: pkt.numElements,
             )
@@ -4848,7 +4820,7 @@ class LPDHCP_ALL_OPTION_VALUES_PB(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Options_DHCP_ALL_OPTION_VALUES_PB",
-                [Options_DHCP_ALL_OPTION_VALUES_PB()],
+                [],
                 Options_DHCP_ALL_OPTION_VALUES_PB,
                 size_is=lambda pkt: pkt.NumElements,
             )
@@ -4941,10 +4913,7 @@ class LPDHCP_POL_COND_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_POL_COND()],
-                LPDHCP_POL_COND,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_POL_COND, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -4969,10 +4938,7 @@ class LPDHCP_POL_EXPR_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_POL_EXPR()],
-                LPDHCP_POL_EXPR,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_POL_EXPR, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -4989,10 +4955,7 @@ class LPDHCP_IP_RANGE_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_IP_RANGE()],
-                LPDHCP_IP_RANGE,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_IP_RANGE, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -5082,10 +5045,7 @@ class LPDHCP_POLICY_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_POLICY()],
-                LPDHCP_POLICY,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_POLICY, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -5250,7 +5210,7 @@ class LPDHCPV6_STATELESS_STATS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ScopeStats",
-                [LPDHCPV6_STATELESS_SCOPE_STATS()],
+                [],
                 LPDHCPV6_STATELESS_SCOPE_STATS,
                 size_is=lambda pkt: pkt.NumScopes,
             )
@@ -5506,10 +5466,7 @@ class LPDHCP_PROPERTY_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_PROPERTY()],
-                LPDHCP_PROPERTY,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_PROPERTY, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]
@@ -5591,10 +5548,7 @@ class LPDHCP_POLICY_EX_ARRAY(NDRPacket):
         NDRIntField("NumElements", None, size_of="Elements"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Elements",
-                [LPDHCP_POLICY_EX()],
-                LPDHCP_POLICY_EX,
-                size_is=lambda pkt: pkt.NumElements,
+                "Elements", [], LPDHCP_POLICY_EX, size_is=lambda pkt: pkt.NumElements
             )
         ),
     ]

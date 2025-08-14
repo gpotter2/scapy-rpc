@@ -79,7 +79,7 @@ class W32TIME_NTP_PROVIDER_DATA(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pPeerInfo",
-                [PW32TIME_NTP_PEER_INFO()],
+                [],
                 PW32TIME_NTP_PEER_INFO,
                 size_is=lambda pkt: pkt.cPeerInfo,
             )
@@ -205,10 +205,7 @@ class PW32TIME_NTPCLIENT_PROVIDER_CONFIG_DATA(NDRPacket):
         NDRIntField("cEntries", None, size_of="pEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pEntries",
-                [PW32TIME_ENTRY()],
-                PW32TIME_ENTRY,
-                size_is=lambda pkt: pkt.cEntries,
+                "pEntries", [], PW32TIME_ENTRY, size_is=lambda pkt: pkt.cEntries
             )
         ),
     ]
@@ -225,10 +222,7 @@ class PW32TIME_NTPSERVER_PROVIDER_CONFIG_DATA(NDRPacket):
         NDRIntField("cEntries", None, size_of="pEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pEntries",
-                [PW32TIME_ENTRY()],
-                PW32TIME_ENTRY,
-                size_is=lambda pkt: pkt.cEntries,
+                "pEntries", [], PW32TIME_ENTRY, size_is=lambda pkt: pkt.cEntries
             )
         ),
     ]
@@ -408,10 +402,7 @@ class PW32TIME_CONFIGURATION_INFO(NDRPacket):
         NDRIntField("cEntries", None, size_of="pEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pEntries",
-                [PW32TIME_ENTRY()],
-                PW32TIME_ENTRY,
-                size_is=lambda pkt: pkt.cEntries,
+                "pEntries", [], PW32TIME_ENTRY, size_is=lambda pkt: pkt.cEntries
             )
         ),
     ]
@@ -457,10 +448,7 @@ class PW32TIME_STATUS_INFO(NDRPacket):
         NDRIntField("cEntries", None, size_of="pEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pEntries",
-                [PW32TIME_ENTRY()],
-                PW32TIME_ENTRY,
-                size_is=lambda pkt: pkt.cEntries,
+                "pEntries", [], PW32TIME_ENTRY, size_is=lambda pkt: pkt.cEntries
             )
         ),
     ]

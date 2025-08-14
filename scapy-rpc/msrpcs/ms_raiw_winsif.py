@@ -21,6 +21,7 @@ from scapy.layers.dcerpc import (
     NDRByteField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -80,10 +81,7 @@ class PWINSINTF_RECORD_ACTION_T(NDRPacket):
         NDRIntField("NoOfAdds", None, size_of="pAdd"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pAdd",
-                [PWINSINTF_ADD_T()],
-                PWINSINTF_ADD_T,
-                size_is=lambda pkt: pkt.NoOfAdds,
+                "pAdd", [], PWINSINTF_ADD_T, size_is=lambda pkt: pkt.NoOfAdds
             )
         ),
         NDRPacketField("Add", WINSINTF_ADD_T(), WINSINTF_ADD_T),
@@ -208,7 +206,7 @@ class WINSINTF_STAT_T(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pRplPnrs",
-                [PWINSINTF_RPL_COUNTERS_T()],
+                [],
                 PWINSINTF_RPL_COUNTERS_T,
                 size_is=lambda pkt: pkt.NoOfPnrs,
             )
@@ -221,7 +219,10 @@ class PWINSINTF_RESULTS_T(NDRPacket):
     fields_desc = [
         NDRIntField("NoOfOwners", 0),
         PacketListField(
-            "AddVersMaps", [], WINSINTF_ADD_VERS_MAP_T, count_from=lambda _: 25
+            "AddVersMaps",
+            [WINSINTF_ADD_VERS_MAP_T()] * 25,
+            WINSINTF_ADD_VERS_MAP_T,
+            count_from=lambda _: 25,
         ),
         NDRPacketField("MyMaxVersNo", LARGE_INTEGER(), LARGE_INTEGER),
         NDRIntField("RefreshInterval", 0),
@@ -293,10 +294,7 @@ class PWINSINTF_RECS_T(NDRPacket):
         NDRIntField("BuffSize", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "pRow",
-                [PWINSINTF_RECORD_ACTION_T()],
-                PWINSINTF_RECORD_ACTION_T,
-                size_is=lambda pkt: pkt.NoOfRecs,
+                "pRow", [], PWINSINTF_RECORD_ACTION_T, size_is=lambda pkt: pkt.NoOfRecs
             )
         ),
         NDRIntField("NoOfRecs", None, size_of="pRow"),
@@ -406,7 +404,7 @@ class R_WinsGetNameAndAdd_Request(NDRPacket):
 class R_WinsGetNameAndAdd_Response(NDRPacket):
     fields_desc = [
         NDRPacketField("pWinsAdd", PWINSINTF_ADD_T(), PWINSINTF_ADD_T),
-        NDRConfVarStrNullField("pUncName", ""),
+        NDRConfVarStrLenField("pUncName", "", size_is=lambda pkt: 80),
         NDRIntField("status", 0),
     ]
 
@@ -426,7 +424,7 @@ class PWINSINTF_BROWSER_NAMES_T(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pInfo",
-                [PWINSINTF_BROWSER_INFO_T()],
+                [],
                 PWINSINTF_BROWSER_INFO_T,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -497,9 +495,7 @@ class R_WinsGetDbRecsByName_Request(NDRPacket):
             NDRPacketField("pWinsAdd", PWINSINTF_ADD_T(), PWINSINTF_ADD_T)
         ),
         NDRIntField("Location", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField("pName", "", size_is=lambda pkt: (pkt.NameLen + 1))
-        ),
+        NDRConfStrLenField("pName", "", size_is=lambda pkt: (pkt.NameLen + 1)),
         NDRIntField("NameLen", None, size_of="pName", adjust=lambda _, x: (x - 1)),
         NDRIntField("NoOfRecsDesired", 0),
         NDRIntField("fOnlyStatic", 0),
@@ -528,7 +524,7 @@ class PWINSINTF_RESULTS_NEW_T(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "pAddVersMaps",
-                [PWINSINTF_ADD_VERS_MAP_T()],
+                [],
                 PWINSINTF_ADD_VERS_MAP_T,
                 size_is=lambda pkt: pkt.NoOfOwners,
             )

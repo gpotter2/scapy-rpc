@@ -45,7 +45,13 @@ class FAX_GetServicePrinters_Request(NDRPacket):
 
 class FAX_GetServicePrinters_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("lpBuffer", "", size_is=lambda pkt: pkt.lpdwBufferSize),
+        NDRConfFieldListField(
+            "lpBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwBufferSize", None, size_of="lpBuffer"),
         NDRIntField("lpdwPrintersReturned", 0),
         NDRIntField("status", 0),
@@ -97,7 +103,13 @@ class FAX_EnumJobs_Request(NDRPacket):
 
 class FAX_EnumJobs_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("JobsReturned", 0),
         NDRIntField("status", 0),
@@ -110,7 +122,13 @@ class FAX_GetJob_Request(NDRPacket):
 
 class FAX_GetJob_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -134,7 +152,13 @@ class FAX_GetPageData_Request(NDRPacket):
 
 class FAX_GetPageData_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("ImageWidth", 0),
         NDRIntField("ImageHeight", 0),
@@ -150,7 +174,13 @@ class FAX_GetDeviceStatus_Request(NDRPacket):
 
 class FAX_GetDeviceStatus_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("StatusBuffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "StatusBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="StatusBuffer"),
         NDRIntField("status", 0),
     ]
@@ -170,7 +200,13 @@ class FAX_EnumPorts_Request(NDRPacket):
 
 class FAX_EnumPorts_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("PortBuffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "PortBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="PortBuffer"),
         NDRIntField("PortsReturned", 0),
         NDRIntField("status", 0),
@@ -185,7 +221,13 @@ class FAX_GetPort_Request(NDRPacket):
 
 class FAX_GetPort_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("PortBuffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "PortBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="PortBuffer"),
         NDRIntField("status", 0),
     ]
@@ -225,8 +267,12 @@ class FAX_EnumRoutingMethods_Request(NDRPacket):
 
 class FAX_EnumRoutingMethods_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "RoutingInfoBuffer", "", size_is=lambda pkt: pkt.RoutingInfoBufferSize
+        NDRConfFieldListField(
+            "RoutingInfoBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.RoutingInfoBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("RoutingInfoBufferSize", None, size_of="RoutingInfoBuffer"),
         NDRIntField("PortsReturned", 0),
@@ -255,8 +301,12 @@ class FAX_GetRoutingInfo_Request(NDRPacket):
 
 class FAX_GetRoutingInfo_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "RoutingInfoBuffer", "", size_is=lambda pkt: pkt.RoutingInfoBufferSize
+        NDRConfFieldListField(
+            "RoutingInfoBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.RoutingInfoBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("RoutingInfoBufferSize", None, size_of="RoutingInfoBuffer"),
         NDRIntField("status", 0),
@@ -284,8 +334,12 @@ class FAX_EnumGlobalRoutingInfo_Request(NDRPacket):
 
 class FAX_EnumGlobalRoutingInfo_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "RoutingInfoBuffer", "", size_is=lambda pkt: pkt.RoutingInfoBufferSize
+        NDRConfFieldListField(
+            "RoutingInfoBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.RoutingInfoBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("RoutingInfoBufferSize", None, size_of="RoutingInfoBuffer"),
         NDRIntField("MethodsReturned", 0),
@@ -326,7 +380,13 @@ class FAX_GetConfiguration_Request(NDRPacket):
 
 class FAX_GetConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -372,7 +432,13 @@ class FAX_GetLoggingCategories_Request(NDRPacket):
 
 class FAX_GetLoggingCategories_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("NumberCategories", 0),
         NDRIntField("status", 0),
@@ -381,9 +447,7 @@ class FAX_GetLoggingCategories_Response(NDRPacket):
 
 class FAX_SetLoggingCategories_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize)
-        ),
+        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("NumberCategories", 0),
     ]
@@ -399,8 +463,12 @@ class FAX_GetSecurity_Request(NDRPacket):
 
 class FAX_GetSecurity_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.lpdwBufferSize
+        NDRConfFieldListField(
+            "pSecurityDescriptor",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("lpdwBufferSize", None, size_of="pSecurityDescriptor"),
         NDRIntField("status", 0),
@@ -410,10 +478,8 @@ class FAX_GetSecurity_Response(NDRPacket):
 class FAX_SetSecurity_Request(NDRPacket):
     fields_desc = [
         NDRIntField("SecurityInformation", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
-            )
+        NDRConfStrLenField(
+            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
         ),
         NDRIntField("dwBufferSize", None, size_of="pSecurityDescriptor"),
     ]
@@ -496,7 +562,7 @@ class LPCFAX_JOB_PARAM_EXW(NDRPacket):
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
-            "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
+            "dwReserved", [0] * 4, NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
@@ -511,8 +577,12 @@ class FAX_SendDocumentEx_Request(NDRPacket):
         ),
         NDRByteField("lpcSenderProfile", 0),
         NDRIntField("dwNumRecipients", None, size_of="lpcRecipientList"),
-        NDRConfStrLenField(
-            "lpcRecipientList", "", size_is=lambda pkt: pkt.dwNumRecipients
+        NDRConfFieldListField(
+            "lpcRecipientList",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.dwNumRecipients,
+            ptr_pack=True,
         ),
         NDRPacketField("lpJobParams", LPCFAX_JOB_PARAM_EXW(), LPCFAX_JOB_PARAM_EXW),
         NDRFullPointerField(NDRIntField("lpdwJobId", 0)),
@@ -526,7 +596,7 @@ class FAX_SendDocumentEx_Response(NDRPacket):
         NDRConfFieldListField(
             "lpdwlRecipientMessageIds",
             [],
-            NDRLongField,
+            NDRLongField("", 0),
             size_is=lambda pkt: pkt.dwNumRecipients,
         ),
         NDRIntField("status", 0),
@@ -539,7 +609,13 @@ class FAX_EnumJobsEx_Request(NDRPacket):
 
 class FAX_EnumJobsEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwJobs", 0),
         NDRIntField("status", 0),
@@ -552,7 +628,13 @@ class FAX_GetJobEx_Request(NDRPacket):
 
 class FAX_GetJobEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -564,7 +646,13 @@ class FAX_GetCountryList_Request(NDRPacket):
 
 class FAX_GetCountryList_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -591,7 +679,13 @@ class FAX_GetPersonalProfileInfo_Request(NDRPacket):
 
 class FAX_GetPersonalProfileInfo_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -619,7 +713,13 @@ class FAX_GetReceiptsConfiguration_Request(NDRPacket):
 
 class FAX_GetReceiptsConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -695,7 +795,13 @@ class FAX_GetOutboxConfiguration_Request(NDRPacket):
 
 class FAX_GetOutboxConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -743,7 +849,13 @@ class FAX_GetArchiveConfiguration_Request(NDRPacket):
 
 class FAX_GetArchiveConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -766,7 +878,13 @@ class FAX_GetActivityLoggingConfiguration_Request(NDRPacket):
 
 class FAX_GetActivityLoggingConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -802,7 +920,13 @@ class FAX_EnumerateProviders_Request(NDRPacket):
 
 class FAX_EnumerateProviders_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwNumProviders", 0),
         NDRIntField("status", 0),
@@ -815,7 +939,13 @@ class FAX_GetPortEx_Request(NDRPacket):
 
 class FAX_GetPortEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -862,7 +992,13 @@ class FAX_EnumPortsEx_Request(NDRPacket):
 
 class FAX_EnumPortsEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwNumPorts", 0),
         NDRIntField("status", 0),
@@ -878,7 +1014,13 @@ class FAX_GetExtensionData_Request(NDRPacket):
 
 class FAX_GetExtensionData_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppData", "", size_is=lambda pkt: pkt.lpdwDataSize),
+        NDRConfFieldListField(
+            "ppData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwDataSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwDataSize", None, size_of="ppData"),
         NDRIntField("status", 0),
     ]
@@ -921,7 +1063,10 @@ class PRPC_FAX_OUTBOUND_ROUTING_GROUPW(NDRPacket):
         NDRIntField("dwNumDevices", None, size_of="lpdwDevices"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "lpdwDevices", [], NDRIntField, size_is=lambda pkt: pkt.dwNumDevices
+                "lpdwDevices",
+                [],
+                NDRIntField("", 0),
+                size_is=lambda pkt: pkt.dwNumDevices,
             )
         ),
         NDRInt3264EnumField("Status", 0, FAX_ENUM_GROUP_STATUS),
@@ -956,7 +1101,13 @@ class FAX_EnumOutboundGroups_Request(NDRPacket):
 
 class FAX_EnumOutboundGroups_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppData", "", size_is=lambda pkt: pkt.lpdwDataSize),
+        NDRConfFieldListField(
+            "ppData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwDataSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwDataSize", None, size_of="ppData"),
         NDRIntField("lpdwNumGroups", 0),
         NDRIntField("status", 0),
@@ -1040,7 +1191,13 @@ class FAX_EnumOutboundRules_Request(NDRPacket):
 
 class FAX_EnumOutboundRules_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppData", "", size_is=lambda pkt: pkt.lpdwDataSize),
+        NDRConfFieldListField(
+            "ppData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwDataSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwDataSize", None, size_of="ppData"),
         NDRIntField("lpdwNumRules", 0),
         NDRIntField("status", 0),
@@ -1109,7 +1266,13 @@ class FAX_EnumMessages_Request(NDRPacket):
 
 class FAX_EnumMessages_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("lppBuffer", "", size_is=lambda pkt: pkt.lpdwBufferSize),
+        NDRConfFieldListField(
+            "lppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwBufferSize", None, size_of="lppBuffer"),
         NDRIntField("lpdwNumMessagesRetrieved", 0),
         NDRIntField("status", 0),
@@ -1125,7 +1288,13 @@ class FAX_GetMessage_Request(NDRPacket):
 
 class FAX_GetMessage_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("lppBuffer", "", size_is=lambda pkt: pkt.lpdwBufferSize),
+        NDRConfFieldListField(
+            "lppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwBufferSize", None, size_of="lppBuffer"),
         NDRIntField("status", 0),
     ]
@@ -1299,7 +1468,13 @@ class FAX_EnumRoutingExtensions_Request(NDRPacket):
 
 class FAX_EnumRoutingExtensions_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwNumExts", 0),
         NDRIntField("status", 0),
@@ -1324,8 +1499,12 @@ class FAX_GetSecurityEx_Request(NDRPacket):
 
 class FAX_GetSecurityEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.lpdwBufferSize
+        NDRConfFieldListField(
+            "pSecurityDescriptor",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("lpdwBufferSize", None, size_of="pSecurityDescriptor"),
         NDRIntField("status", 0),
@@ -1393,7 +1572,13 @@ class FAX_GetJobEx2_Request(NDRPacket):
 
 class FAX_GetJobEx2_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -1410,7 +1595,13 @@ class FAX_EnumJobsEx2_Request(NDRPacket):
 
 class FAX_EnumJobsEx2_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwJobs", 0),
         NDRIntField("status", 0),
@@ -1427,7 +1618,13 @@ class FAX_GetMessageEx_Request(NDRPacket):
 
 class FAX_GetMessageEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("lppBuffer", "", size_is=lambda pkt: pkt.lpdwBufferSize),
+        NDRConfFieldListField(
+            "lppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwBufferSize", None, size_of="lppBuffer"),
         NDRIntField("status", 0),
     ]
@@ -1458,7 +1655,13 @@ class FAX_EnumMessagesEx_Request(NDRPacket):
 
 class FAX_EnumMessagesEx_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("lppBuffer", "", size_is=lambda pkt: pkt.lpdwBufferSize),
+        NDRConfFieldListField(
+            "lppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("lpdwBufferSize", None, size_of="lppBuffer"),
         NDRIntField("lpdwNumMessagesRetrieved", 0),
         NDRIntField("lpdwLevel", 0),
@@ -1513,7 +1716,13 @@ class FAX_EnumAccounts_Request(NDRPacket):
 
 class FAX_EnumAccounts_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("lpdwAccounts", 0),
         NDRIntField("status", 0),
@@ -1529,7 +1738,13 @@ class FAX_GetAccountInfo_Request(NDRPacket):
 
 class FAX_GetAccountInfo_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -1541,7 +1756,13 @@ class FAX_GetGeneralConfiguration_Request(NDRPacket):
 
 class FAX_GetGeneralConfiguration_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRConfFieldListField(
+            "Buffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.BufferSize,
+            ptr_pack=True,
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("status", 0),
     ]
@@ -1565,8 +1786,12 @@ class FAX_GetSecurityEx2_Request(NDRPacket):
 
 class FAX_GetSecurityEx2_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.lpdwBufferSize
+        NDRConfFieldListField(
+            "pSecurityDescriptor",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.lpdwBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("lpdwBufferSize", None, size_of="pSecurityDescriptor"),
         NDRIntField("status", 0),
@@ -1576,10 +1801,8 @@ class FAX_GetSecurityEx2_Response(NDRPacket):
 class FAX_SetSecurityEx2_Request(NDRPacket):
     fields_desc = [
         NDRIntField("SecurityInformation", 0),
-        NDRFullPointerField(
-            NDRConfStrLenField(
-                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
-            )
+        NDRConfStrLenField(
+            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
         ),
         NDRIntField("dwBufferSize", None, size_of="pSecurityDescriptor"),
     ]

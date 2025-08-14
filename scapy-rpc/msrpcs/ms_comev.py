@@ -39,14 +39,20 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
+    NDRIEEEDoubleField,
+    NDRIEEEFloatField,
     NDRInt3264Field,
     NDRIntField,
+    NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
+    NDRSignedShortField,
+    NDRUnionField,
     register_com_interface,
     register_dcerpc_interface,
 )
@@ -198,7 +204,11 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
+                "aBstr",
+                [],
+                FLAGGED_WORD_BLOB,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -210,7 +220,11 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -222,14 +236,238 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRIntField("Size", None, size_of="apDispatch"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apDispatch",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
 
 
-class wireVARIANTStr(NDRPacket):
+class SAFEARR_VARIANT(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aVariant"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aVariant",
+                [],
+                NDRRecursiveClass("wireVARIANTStr"),
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class wireBRECORDStr(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("fFlags", 0),
+        NDRIntField("clSize", None, size_of="pRecord"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class SAFEARR_BRECORD(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aRecord"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aRecord",
+                [],
+                wireBRECORDStr,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class SAFEARR_HAVEIID(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="apUnknown"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+        NDRPacketField("iid", GUID(), GUID),
+    ]
+
+
+class BYTE_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class WORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class DWORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRIntField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class HYPER_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRSignedLongField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class SAFEARRAYBOUND(NDRPacket):
     ALIGNMENT = (4, 4)
+    fields_desc = [NDRIntField("cElements", 0), NDRSignedIntField("lLbound", 0)]
+
+
+class SAFEARRAY(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["rgsabound"]
+    fields_desc = [
+        NDRShortField("cDims", None, size_of="rgsabound"),
+        NDRShortField("fFeatures", 0),
+        NDRIntField("cbElements", 0),
+        NDRIntField("cLocks", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BSTR(), SAFEARR_BSTR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_BSTR),
+                        (lambda _, val: val.tag == SF_TYPE.SF_BSTR),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_UNKNOWN(), SAFEARR_UNKNOWN),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_UNKNOWN),
+                        (lambda _, val: val.tag == SF_TYPE.SF_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "uArrayStructs", SAFEARR_DISPATCH(), SAFEARR_DISPATCH
+                    ),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_DISPATCH),
+                        (lambda _, val: val.tag == SF_TYPE.SF_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_VARIANT(), SAFEARR_VARIANT),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_VARIANT),
+                        (lambda _, val: val.tag == SF_TYPE.SF_VARIANT),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BRECORD(), SAFEARR_BRECORD),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_RECORD),
+                        (lambda _, val: val.tag == SF_TYPE.SF_RECORD),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_HAVEIID(), SAFEARR_HAVEIID),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_HAVEIID),
+                        (lambda _, val: val.tag == SF_TYPE.SF_HAVEIID),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", BYTE_SIZEDARR(), BYTE_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I1),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I1),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", WORD_SIZEDARR(), WORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I2),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I2),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", DWORD_SIZEDARR(), DWORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I4),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I4),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", HYPER_SIZEDARR(), HYPER_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I8),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I8),
+                    ),
+                ),
+            ],
+            StrFixedLenField("uArrayStructs", "", length=0),
+            align=(4, 8),
+            switch_fmt=("I", "I"),
+        ),
+        NDRConfPacketListField(
+            "rgsabound",
+            [],
+            SAFEARRAYBOUND,
+            size_is=lambda pkt: pkt.cDims,
+            conformant_in_struct=True,
+        ),
+    ]
+
+
+class DECIMAL(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRShortField("wReserved", 0),
+        NDRSignedByteField("scale", 0),
+        NDRSignedByteField("sign", 0),
+        NDRIntField("Hi32", 0),
+        NDRLongField("Lo64", 0),
+    ]
+
+
+class wireVARIANTStr(NDRPacket):
+    ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("clSize", 0),
         NDRIntField("rpcReserved", 0),
@@ -237,7 +475,495 @@ class wireVARIANTStr(NDRPacket):
         NDRShortField("wReserved1", 0),
         NDRShortField("wReserved2", 0),
         NDRShortField("wReserved3", 0),
-        NDRRecursiveField("_varUnion"),
+        NDRUnionField(
+            [
+                (
+                    NDRSignedLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I8),
+                        (lambda _, val: val.tag == VARENUM.VT_I8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I4),
+                        (lambda _, val: val.tag == VARENUM.VT_I4),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI1),
+                        (lambda _, val: val.tag == VARENUM.VT_UI1),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I2),
+                        (lambda _, val: val.tag == VARENUM.VT_I2),
+                    ),
+                ),
+                (
+                    NDRIEEEFloatField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R4),
+                        (lambda _, val: val.tag == VARENUM.VT_R4),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R8),
+                        (lambda _, val: val.tag == VARENUM.VT_R8),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BOOL),
+                        (lambda _, val: val.tag == VARENUM.VT_BOOL),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ERROR),
+                        (lambda _, val: val.tag == VARENUM.VT_ERROR),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", CURRENCY(), CURRENCY),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CY),
+                        (lambda _, val: val.tag == VARENUM.VT_CY),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DATE),
+                        (lambda _, val: val.tag == VARENUM.VT_DATE),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BSTR),
+                        (lambda _, val: val.tag == VARENUM.VT_BSTR),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UNKNOWN),
+                        (lambda _, val: val.tag == VARENUM.VT_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DISPATCH),
+                        (lambda _, val: val.tag == VARENUM.VT_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ARRAY),
+                        (lambda _, val: val.tag == VARENUM.VT_ARRAY),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", wireBRECORDStr(), wireBRECORDStr)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEFloatField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", CURRENCY(), CURRENCY)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_CY | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_CY | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRFullEmbPointerField(
+                                NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", None, NDRRecursiveClass("wireVARIANTStr")
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I1),
+                        (lambda _, val: val.tag == VARENUM.VT_I1),
+                    ),
+                ),
+                (
+                    NDRShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI2),
+                        (lambda _, val: val.tag == VARENUM.VT_UI2),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI4),
+                        (lambda _, val: val.tag == VARENUM.VT_UI4),
+                    ),
+                ),
+                (
+                    NDRLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI8),
+                        (lambda _, val: val.tag == VARENUM.VT_UI8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_INT),
+                        (lambda _, val: val.tag == VARENUM.VT_INT),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UINT),
+                        (lambda _, val: val.tag == VARENUM.VT_UINT),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", DECIMAL(), DECIMAL),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DECIMAL),
+                        (lambda _, val: val.tag == VARENUM.VT_DECIMAL),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_INT | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_INT | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", DECIMAL(), DECIMAL)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_EMPTY),
+                        (lambda _, val: val.tag == VARENUM.VT_EMPTY),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_NULL),
+                        (lambda _, val: val.tag == VARENUM.VT_NULL),
+                    ),
+                ),
+            ],
+            StrFixedLenField("_varUnion", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "H"),
+        ),
     ]
 
 
@@ -257,7 +983,7 @@ class DISPPARAMS(NDRPacket):
             NDRConfFieldListField(
                 "rgdispidNamedArgs",
                 [],
-                NDRSignedIntField("rgdispidNamedArgs", 0),
+                NDRSignedIntField("", 0),
                 size_is=lambda pkt: pkt.cNamedArgs,
             )
         ),
@@ -341,11 +1067,11 @@ register_com_interface(
 )
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IEventObjectCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IEventObjectCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppUnkEnum", MInterfacePointer(), MInterfacePointer)
@@ -354,22 +1080,22 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Item_Request(NDRPacket):
+class get_IEventObjectCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IEventObjectCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("pItem", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class get_NewEnum_Request(NDRPacket):
+class get_IEventObjectCollection_NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get_NewEnum_Response(NDRPacket):
+class get_IEventObjectCollection_NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppEnum", MInterfacePointer(), MInterfacePointer)
@@ -378,11 +1104,11 @@ class get_NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IEventObjectCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IEventObjectCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pCount", 0), NDRIntField("status", 0)]
 
 
@@ -412,10 +1138,22 @@ IEVENTOBJECTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get_NewEnum_Request, get_NewEnum_Response),
-    10: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IEventObjectCollection__NewEnum_Request,
+        get_IEventObjectCollection__NewEnum_Response,
+    ),
+    8: DceRpcOp(
+        get_IEventObjectCollection_Item_Request,
+        get_IEventObjectCollection_Item_Response,
+    ),
+    9: DceRpcOp(
+        get_IEventObjectCollection_NewEnum_Request,
+        get_IEventObjectCollection_NewEnum_Response,
+    ),
+    10: DceRpcOp(
+        get_IEventObjectCollection_Count_Request,
+        get_IEventObjectCollection_Count_Response,
+    ),
     11: DceRpcOp(Add_Request, Add_Response),
     12: DceRpcOp(Remove_Request, Remove_Response),
 }
@@ -465,11 +1203,11 @@ class Remove_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("errorIndex", 0), NDRIntField("status", 0)]
 
 
-class get_EventObjectChangeEventClassID_Request(NDRPacket):
+class get_IEventSystem_EventObjectChangeEventClassID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventObjectChangeEventClassID_Response(NDRPacket):
+class get_IEventSystem_EventObjectChangeEventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -516,8 +1254,8 @@ IEVENTSYSTEM_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     8: DceRpcOp(Store_Request, Store_Response),
     9: DceRpcOp(Remove_Request, Remove_Response),
     10: DceRpcOp(
-        get_EventObjectChangeEventClassID_Request,
-        get_EventObjectChangeEventClassID_Response,
+        get_IEventSystem_EventObjectChangeEventClassID_Request,
+        get_IEventSystem_EventObjectChangeEventClassID_Response,
     ),
     11: DceRpcOp(QueryS_Request, QueryS_Response),
     12: DceRpcOp(RemoveS_Request, RemoveS_Response),
@@ -529,11 +1267,11 @@ register_com_interface(
 )
 
 
-class get_EventClassID_Request(NDRPacket):
+class get_IEventClass_EventClassID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassID_Response(NDRPacket):
+class get_IEventClass_EventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -542,21 +1280,21 @@ class get_EventClassID_Response(NDRPacket):
     ]
 
 
-class put_EventClassID_Request(NDRPacket):
+class put_IEventClass_EventClassID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_EventClassID_Response(NDRPacket):
+class put_IEventClass_EventClassID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventClassName_Request(NDRPacket):
+class get_IEventClass_EventClassName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassName_Response(NDRPacket):
+class get_IEventClass_EventClassName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -567,21 +1305,21 @@ class get_EventClassName_Response(NDRPacket):
     ]
 
 
-class put_EventClassName_Request(NDRPacket):
+class put_IEventClass_EventClassName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrEventClassName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_EventClassName_Response(NDRPacket):
+class put_IEventClass_EventClassName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_OwnerSID_Request(NDRPacket):
+class get_IEventClass_OwnerSID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OwnerSID_Response(NDRPacket):
+class get_IEventClass_OwnerSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -590,21 +1328,21 @@ class get_OwnerSID_Response(NDRPacket):
     ]
 
 
-class put_OwnerSID_Request(NDRPacket):
+class put_IEventClass_OwnerSID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_OwnerSID_Response(NDRPacket):
+class put_IEventClass_OwnerSID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FiringInterfaceID_Request(NDRPacket):
+class get_IEventClass_FiringInterfaceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FiringInterfaceID_Response(NDRPacket):
+class get_IEventClass_FiringInterfaceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -615,21 +1353,21 @@ class get_FiringInterfaceID_Response(NDRPacket):
     ]
 
 
-class put_FiringInterfaceID_Request(NDRPacket):
+class put_IEventClass_FiringInterfaceID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrFiringInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_FiringInterfaceID_Response(NDRPacket):
+class put_IEventClass_FiringInterfaceID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Description_Request(NDRPacket):
+class get_IEventClass_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IEventClass_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -638,21 +1376,21 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class put_Description_Request(NDRPacket):
+class put_IEventClass_Description_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_Description_Response(NDRPacket):
+class put_IEventClass_Description_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TypeLib_Request(NDRPacket):
+class get_IEventClass_TypeLib_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TypeLib_Response(NDRPacket):
+class get_IEventClass_TypeLib_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -661,13 +1399,13 @@ class get_TypeLib_Response(NDRPacket):
     ]
 
 
-class put_TypeLib_Request(NDRPacket):
+class put_IEventClass_TypeLib_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_TypeLib_Response(NDRPacket):
+class put_IEventClass_TypeLib_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -678,20 +1416,38 @@ IEVENTCLASS_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    8: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    9: DceRpcOp(get_EventClassName_Request, get_EventClassName_Response),
-    10: DceRpcOp(put_EventClassName_Request, put_EventClassName_Response),
-    11: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    12: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    13: DceRpcOp(get_FiringInterfaceID_Request, get_FiringInterfaceID_Response),
-    14: DceRpcOp(put_FiringInterfaceID_Request, put_FiringInterfaceID_Response),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(put_Description_Request, put_Description_Response),
+    7: DceRpcOp(
+        get_IEventClass_EventClassID_Request, get_IEventClass_EventClassID_Response
+    ),
+    8: DceRpcOp(
+        put_IEventClass_EventClassID_Request, put_IEventClass_EventClassID_Response
+    ),
+    9: DceRpcOp(
+        get_IEventClass_EventClassName_Request, get_IEventClass_EventClassName_Response
+    ),
+    10: DceRpcOp(
+        put_IEventClass_EventClassName_Request, put_IEventClass_EventClassName_Response
+    ),
+    11: DceRpcOp(get_IEventClass_OwnerSID_Request, get_IEventClass_OwnerSID_Response),
+    12: DceRpcOp(put_IEventClass_OwnerSID_Request, put_IEventClass_OwnerSID_Response),
+    13: DceRpcOp(
+        get_IEventClass_FiringInterfaceID_Request,
+        get_IEventClass_FiringInterfaceID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventClass_FiringInterfaceID_Request,
+        put_IEventClass_FiringInterfaceID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventClass_Description_Request, get_IEventClass_Description_Response
+    ),
+    16: DceRpcOp(
+        put_IEventClass_Description_Request, put_IEventClass_Description_Response
+    ),
     # 17: Opnum17NotUsedOnWire,
     # 18: Opnum18NotUsedOnWire,
-    19: DceRpcOp(get_TypeLib_Request, get_TypeLib_Response),
-    20: DceRpcOp(put_TypeLib_Request, put_TypeLib_Response),
+    19: DceRpcOp(get_IEventClass_TypeLib_Request, get_IEventClass_TypeLib_Response),
+    20: DceRpcOp(put_IEventClass_TypeLib_Request, put_IEventClass_TypeLib_Response),
 }
 register_com_interface(
     name="IEventClass",
@@ -700,11 +1456,11 @@ register_com_interface(
 )
 
 
-class get_PublisherID_Request(NDRPacket):
+class get_IEventClass2_PublisherID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PublisherID_Response(NDRPacket):
+class get_IEventClass2_PublisherID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -713,21 +1469,21 @@ class get_PublisherID_Response(NDRPacket):
     ]
 
 
-class put_PublisherID_Request(NDRPacket):
+class put_IEventClass2_PublisherID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_PublisherID_Response(NDRPacket):
+class put_IEventClass2_PublisherID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
+class get_IEventClass2_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
+class get_IEventClass2_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -736,48 +1492,48 @@ class get_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
     ]
 
 
-class put_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
+class put_IEventClass2_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
+class put_IEventClass2_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_AllowInprocActivation_Request(NDRPacket):
+class get_IEventClass2_AllowInprocActivation_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AllowInprocActivation_Response(NDRPacket):
+class get_IEventClass2_AllowInprocActivation_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("pfAllowInprocActivation", 0),
         NDRIntField("status", 0),
     ]
 
 
-class put_AllowInprocActivation_Request(NDRPacket):
+class put_IEventClass2_AllowInprocActivation_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("fAllowInprocActivation", 0)]
 
 
-class put_AllowInprocActivation_Response(NDRPacket):
+class put_IEventClass2_AllowInprocActivation_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FireInParallel_Request(NDRPacket):
+class get_IEventClass2_FireInParallel_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FireInParallel_Response(NDRPacket):
+class get_IEventClass2_FireInParallel_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pfFireInParallel", 0), NDRIntField("status", 0)]
 
 
-class put_FireInParallel_Request(NDRPacket):
+class put_IEventClass2_FireInParallel_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("fFireInParallel", 0)]
 
 
-class put_FireInParallel_Response(NDRPacket):
+class put_IEventClass2_FireInParallel_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -788,34 +1544,68 @@ IEVENTCLASS2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    8: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    9: DceRpcOp(get_EventClassName_Request, get_EventClassName_Response),
-    10: DceRpcOp(put_EventClassName_Request, put_EventClassName_Response),
-    11: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    12: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    13: DceRpcOp(get_FiringInterfaceID_Request, get_FiringInterfaceID_Response),
-    14: DceRpcOp(put_FiringInterfaceID_Request, put_FiringInterfaceID_Response),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(put_Description_Request, put_Description_Response),
+    7: DceRpcOp(
+        get_IEventClass_EventClassID_Request, get_IEventClass_EventClassID_Response
+    ),
+    8: DceRpcOp(
+        put_IEventClass_EventClassID_Request, put_IEventClass_EventClassID_Response
+    ),
+    9: DceRpcOp(
+        get_IEventClass_EventClassName_Request, get_IEventClass_EventClassName_Response
+    ),
+    10: DceRpcOp(
+        put_IEventClass_EventClassName_Request, put_IEventClass_EventClassName_Response
+    ),
+    11: DceRpcOp(get_IEventClass_OwnerSID_Request, get_IEventClass_OwnerSID_Response),
+    12: DceRpcOp(put_IEventClass_OwnerSID_Request, put_IEventClass_OwnerSID_Response),
+    13: DceRpcOp(
+        get_IEventClass_FiringInterfaceID_Request,
+        get_IEventClass_FiringInterfaceID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventClass_FiringInterfaceID_Request,
+        put_IEventClass_FiringInterfaceID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventClass_Description_Request, get_IEventClass_Description_Response
+    ),
+    16: DceRpcOp(
+        put_IEventClass_Description_Request, put_IEventClass_Description_Response
+    ),
     # 17: Opnum17NotUsedOnWire,
     # 18: Opnum18NotUsedOnWire,
-    19: DceRpcOp(get_TypeLib_Request, get_TypeLib_Response),
-    20: DceRpcOp(put_TypeLib_Request, put_TypeLib_Response),
-    21: DceRpcOp(get_PublisherID_Request, get_PublisherID_Response),
-    22: DceRpcOp(put_PublisherID_Request, put_PublisherID_Response),
+    19: DceRpcOp(get_IEventClass_TypeLib_Request, get_IEventClass_TypeLib_Response),
+    20: DceRpcOp(put_IEventClass_TypeLib_Request, put_IEventClass_TypeLib_Response),
+    21: DceRpcOp(
+        get_IEventClass2_PublisherID_Request, get_IEventClass2_PublisherID_Response
+    ),
+    22: DceRpcOp(
+        put_IEventClass2_PublisherID_Request, put_IEventClass2_PublisherID_Response
+    ),
     23: DceRpcOp(
-        get_MultiInterfacePublisherFilterCLSID_Request,
-        get_MultiInterfacePublisherFilterCLSID_Response,
+        get_IEventClass2_MultiInterfacePublisherFilterCLSID_Request,
+        get_IEventClass2_MultiInterfacePublisherFilterCLSID_Response,
     ),
     24: DceRpcOp(
-        put_MultiInterfacePublisherFilterCLSID_Request,
-        put_MultiInterfacePublisherFilterCLSID_Response,
+        put_IEventClass2_MultiInterfacePublisherFilterCLSID_Request,
+        put_IEventClass2_MultiInterfacePublisherFilterCLSID_Response,
     ),
-    25: DceRpcOp(get_AllowInprocActivation_Request, get_AllowInprocActivation_Response),
-    26: DceRpcOp(put_AllowInprocActivation_Request, put_AllowInprocActivation_Response),
-    27: DceRpcOp(get_FireInParallel_Request, get_FireInParallel_Response),
-    28: DceRpcOp(put_FireInParallel_Request, put_FireInParallel_Response),
+    25: DceRpcOp(
+        get_IEventClass2_AllowInprocActivation_Request,
+        get_IEventClass2_AllowInprocActivation_Response,
+    ),
+    26: DceRpcOp(
+        put_IEventClass2_AllowInprocActivation_Request,
+        put_IEventClass2_AllowInprocActivation_Response,
+    ),
+    27: DceRpcOp(
+        get_IEventClass2_FireInParallel_Request,
+        get_IEventClass2_FireInParallel_Response,
+    ),
+    28: DceRpcOp(
+        put_IEventClass2_FireInParallel_Request,
+        put_IEventClass2_FireInParallel_Response,
+    ),
 }
 register_com_interface(
     name="IEventClass2",
@@ -887,11 +1677,11 @@ register_com_interface(
 )
 
 
-class get_SubscriptionID_Request(NDRPacket):
+class get_IEventSubscription_SubscriptionID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriptionID_Response(NDRPacket):
+class get_IEventSubscription_SubscriptionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -902,21 +1692,21 @@ class get_SubscriptionID_Response(NDRPacket):
     ]
 
 
-class put_SubscriptionID_Request(NDRPacket):
+class put_IEventSubscription_SubscriptionID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrSubscriptionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_SubscriptionID_Response(NDRPacket):
+class put_IEventSubscription_SubscriptionID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriptionName_Request(NDRPacket):
+class get_IEventSubscription_SubscriptionName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriptionName_Response(NDRPacket):
+class get_IEventSubscription_SubscriptionName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -927,21 +1717,21 @@ class get_SubscriptionName_Response(NDRPacket):
     ]
 
 
-class put_SubscriptionName_Request(NDRPacket):
+class put_IEventSubscription_SubscriptionName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrSubscriptionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_SubscriptionName_Response(NDRPacket):
+class put_IEventSubscription_SubscriptionName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_PublisherID_Request(NDRPacket):
+class get_IEventSubscription_PublisherID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PublisherID_Response(NDRPacket):
+class get_IEventSubscription_PublisherID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -950,21 +1740,21 @@ class get_PublisherID_Response(NDRPacket):
     ]
 
 
-class put_PublisherID_Request(NDRPacket):
+class put_IEventSubscription_PublisherID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_PublisherID_Response(NDRPacket):
+class put_IEventSubscription_PublisherID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventClassID_Request(NDRPacket):
+class get_IEventSubscription_EventClassID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassID_Response(NDRPacket):
+class get_IEventSubscription_EventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -973,21 +1763,21 @@ class get_EventClassID_Response(NDRPacket):
     ]
 
 
-class put_EventClassID_Request(NDRPacket):
+class put_IEventSubscription_EventClassID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_EventClassID_Response(NDRPacket):
+class put_IEventSubscription_EventClassID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MethodName_Request(NDRPacket):
+class get_IEventSubscription_MethodName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MethodName_Response(NDRPacket):
+class get_IEventSubscription_MethodName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -996,21 +1786,21 @@ class get_MethodName_Response(NDRPacket):
     ]
 
 
-class put_MethodName_Request(NDRPacket):
+class put_IEventSubscription_MethodName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_MethodName_Response(NDRPacket):
+class put_IEventSubscription_MethodName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriberCLSID_Request(NDRPacket):
+class get_IEventSubscription_SubscriberCLSID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriberCLSID_Response(NDRPacket):
+class get_IEventSubscription_SubscriberCLSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1021,21 +1811,21 @@ class get_SubscriberCLSID_Response(NDRPacket):
     ]
 
 
-class put_SubscriberCLSID_Request(NDRPacket):
+class put_IEventSubscription_SubscriberCLSID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrSubscriberCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_SubscriberCLSID_Response(NDRPacket):
+class put_IEventSubscription_SubscriberCLSID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriberInterface_Request(NDRPacket):
+class get_IEventSubscription_SubscriberInterface_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriberInterface_Response(NDRPacket):
+class get_IEventSubscription_SubscriberInterface_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1046,37 +1836,37 @@ class get_SubscriberInterface_Response(NDRPacket):
     ]
 
 
-class put_SubscriberInterface_Request(NDRPacket):
+class put_IEventSubscription_SubscriberInterface_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("pSubscriberInterface", MInterfacePointer(), MInterfacePointer)
     ]
 
 
-class put_SubscriberInterface_Response(NDRPacket):
+class put_IEventSubscription_SubscriberInterface_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_PerUser_Request(NDRPacket):
+class get_IEventSubscription_PerUser_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PerUser_Response(NDRPacket):
+class get_IEventSubscription_PerUser_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pfPerUser", 0), NDRIntField("status", 0)]
 
 
-class put_PerUser_Request(NDRPacket):
+class put_IEventSubscription_PerUser_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("fPerUser", 0)]
 
 
-class put_PerUser_Response(NDRPacket):
+class put_IEventSubscription_PerUser_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_OwnerSID_Request(NDRPacket):
+class get_IEventSubscription_OwnerSID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OwnerSID_Response(NDRPacket):
+class get_IEventSubscription_OwnerSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1085,37 +1875,37 @@ class get_OwnerSID_Response(NDRPacket):
     ]
 
 
-class put_OwnerSID_Request(NDRPacket):
+class put_IEventSubscription_OwnerSID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_OwnerSID_Response(NDRPacket):
+class put_IEventSubscription_OwnerSID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Enabled_Request(NDRPacket):
+class get_IEventSubscription_Enabled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Enabled_Response(NDRPacket):
+class get_IEventSubscription_Enabled_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pfEnabled", 0), NDRIntField("status", 0)]
 
 
-class put_Enabled_Request(NDRPacket):
+class put_IEventSubscription_Enabled_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("fEnabled", 0)]
 
 
-class put_Enabled_Response(NDRPacket):
+class put_IEventSubscription_Enabled_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Description_Request(NDRPacket):
+class get_IEventSubscription_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IEventSubscription_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1124,21 +1914,21 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class put_Description_Request(NDRPacket):
+class put_IEventSubscription_Description_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_Description_Response(NDRPacket):
+class put_IEventSubscription_Description_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MachineName_Request(NDRPacket):
+class get_IEventSubscription_MachineName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MachineName_Response(NDRPacket):
+class get_IEventSubscription_MachineName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1147,13 +1937,13 @@ class get_MachineName_Response(NDRPacket):
     ]
 
 
-class put_MachineName_Request(NDRPacket):
+class put_IEventSubscription_MachineName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_MachineName_Response(NDRPacket):
+class put_IEventSubscription_MachineName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1259,11 +2049,11 @@ class GetSubscriberPropertyCollection_Response(NDRPacket):
     ]
 
 
-class get_InterfaceID_Request(NDRPacket):
+class get_IEventSubscription_InterfaceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_InterfaceID_Response(NDRPacket):
+class get_IEventSubscription_InterfaceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1272,13 +2062,13 @@ class get_InterfaceID_Response(NDRPacket):
     ]
 
 
-class put_InterfaceID_Request(NDRPacket):
+class put_IEventSubscription_InterfaceID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_InterfaceID_Response(NDRPacket):
+class put_IEventSubscription_InterfaceID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1289,30 +2079,98 @@ IEVENTSUBSCRIPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_SubscriptionID_Request, get_SubscriptionID_Response),
-    8: DceRpcOp(put_SubscriptionID_Request, put_SubscriptionID_Response),
-    9: DceRpcOp(get_SubscriptionName_Request, get_SubscriptionName_Response),
-    10: DceRpcOp(put_SubscriptionName_Request, put_SubscriptionName_Response),
-    11: DceRpcOp(get_PublisherID_Request, get_PublisherID_Response),
-    12: DceRpcOp(put_PublisherID_Request, put_PublisherID_Response),
-    13: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    14: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    15: DceRpcOp(get_MethodName_Request, get_MethodName_Response),
-    16: DceRpcOp(put_MethodName_Request, put_MethodName_Response),
-    17: DceRpcOp(get_SubscriberCLSID_Request, get_SubscriberCLSID_Response),
-    18: DceRpcOp(put_SubscriberCLSID_Request, put_SubscriberCLSID_Response),
-    19: DceRpcOp(get_SubscriberInterface_Request, get_SubscriberInterface_Response),
-    20: DceRpcOp(put_SubscriberInterface_Request, put_SubscriberInterface_Response),
-    21: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
-    22: DceRpcOp(put_PerUser_Request, put_PerUser_Response),
-    23: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    24: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    25: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    26: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    27: DceRpcOp(get_Description_Request, get_Description_Response),
-    28: DceRpcOp(put_Description_Request, put_Description_Response),
-    29: DceRpcOp(get_MachineName_Request, get_MachineName_Response),
-    30: DceRpcOp(put_MachineName_Request, put_MachineName_Response),
+    7: DceRpcOp(
+        get_IEventSubscription_SubscriptionID_Request,
+        get_IEventSubscription_SubscriptionID_Response,
+    ),
+    8: DceRpcOp(
+        put_IEventSubscription_SubscriptionID_Request,
+        put_IEventSubscription_SubscriptionID_Response,
+    ),
+    9: DceRpcOp(
+        get_IEventSubscription_SubscriptionName_Request,
+        get_IEventSubscription_SubscriptionName_Response,
+    ),
+    10: DceRpcOp(
+        put_IEventSubscription_SubscriptionName_Request,
+        put_IEventSubscription_SubscriptionName_Response,
+    ),
+    11: DceRpcOp(
+        get_IEventSubscription_PublisherID_Request,
+        get_IEventSubscription_PublisherID_Response,
+    ),
+    12: DceRpcOp(
+        put_IEventSubscription_PublisherID_Request,
+        put_IEventSubscription_PublisherID_Response,
+    ),
+    13: DceRpcOp(
+        get_IEventSubscription_EventClassID_Request,
+        get_IEventSubscription_EventClassID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventSubscription_EventClassID_Request,
+        put_IEventSubscription_EventClassID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventSubscription_MethodName_Request,
+        get_IEventSubscription_MethodName_Response,
+    ),
+    16: DceRpcOp(
+        put_IEventSubscription_MethodName_Request,
+        put_IEventSubscription_MethodName_Response,
+    ),
+    17: DceRpcOp(
+        get_IEventSubscription_SubscriberCLSID_Request,
+        get_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    18: DceRpcOp(
+        put_IEventSubscription_SubscriberCLSID_Request,
+        put_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    19: DceRpcOp(
+        get_IEventSubscription_SubscriberInterface_Request,
+        get_IEventSubscription_SubscriberInterface_Response,
+    ),
+    20: DceRpcOp(
+        put_IEventSubscription_SubscriberInterface_Request,
+        put_IEventSubscription_SubscriberInterface_Response,
+    ),
+    21: DceRpcOp(
+        get_IEventSubscription_PerUser_Request, get_IEventSubscription_PerUser_Response
+    ),
+    22: DceRpcOp(
+        put_IEventSubscription_PerUser_Request, put_IEventSubscription_PerUser_Response
+    ),
+    23: DceRpcOp(
+        get_IEventSubscription_OwnerSID_Request,
+        get_IEventSubscription_OwnerSID_Response,
+    ),
+    24: DceRpcOp(
+        put_IEventSubscription_OwnerSID_Request,
+        put_IEventSubscription_OwnerSID_Response,
+    ),
+    25: DceRpcOp(
+        get_IEventSubscription_Enabled_Request, get_IEventSubscription_Enabled_Response
+    ),
+    26: DceRpcOp(
+        put_IEventSubscription_Enabled_Request, put_IEventSubscription_Enabled_Response
+    ),
+    27: DceRpcOp(
+        get_IEventSubscription_Description_Request,
+        get_IEventSubscription_Description_Response,
+    ),
+    28: DceRpcOp(
+        put_IEventSubscription_Description_Request,
+        put_IEventSubscription_Description_Response,
+    ),
+    29: DceRpcOp(
+        get_IEventSubscription_MachineName_Request,
+        get_IEventSubscription_MachineName_Response,
+    ),
+    30: DceRpcOp(
+        put_IEventSubscription_MachineName_Request,
+        put_IEventSubscription_MachineName_Response,
+    ),
     31: DceRpcOp(GetPublisherProperty_Request, GetPublisherProperty_Response),
     32: DceRpcOp(PutPublisherProperty_Request, PutPublisherProperty_Response),
     33: DceRpcOp(RemovePublisherProperty_Request, RemovePublisherProperty_Response),
@@ -1326,8 +2184,14 @@ IEVENTSUBSCRIPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
         GetSubscriberPropertyCollection_Request,
         GetSubscriberPropertyCollection_Response,
     ),
-    39: DceRpcOp(get_InterfaceID_Request, get_InterfaceID_Response),
-    40: DceRpcOp(put_InterfaceID_Request, put_InterfaceID_Response),
+    39: DceRpcOp(
+        get_IEventSubscription_InterfaceID_Request,
+        get_IEventSubscription_InterfaceID_Response,
+    ),
+    40: DceRpcOp(
+        put_IEventSubscription_InterfaceID_Request,
+        put_IEventSubscription_InterfaceID_Response,
+    ),
 }
 register_com_interface(
     name="IEventSubscription",
@@ -1336,11 +2200,11 @@ register_com_interface(
 )
 
 
-class get_FilterCriteria_Request(NDRPacket):
+class get_IEventSubscription2_FilterCriteria_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FilterCriteria_Response(NDRPacket):
+class get_IEventSubscription2_FilterCriteria_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1351,21 +2215,21 @@ class get_FilterCriteria_Response(NDRPacket):
     ]
 
 
-class put_FilterCriteria_Request(NDRPacket):
+class put_IEventSubscription2_FilterCriteria_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrFilterCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_FilterCriteria_Response(NDRPacket):
+class put_IEventSubscription2_FilterCriteria_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriberMoniker_Request(NDRPacket):
+class get_IEventSubscription2_SubscriberMoniker_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriberMoniker_Response(NDRPacket):
+class get_IEventSubscription2_SubscriberMoniker_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1374,13 +2238,13 @@ class get_SubscriberMoniker_Response(NDRPacket):
     ]
 
 
-class put_SubscriberMoniker_Request(NDRPacket):
+class put_IEventSubscription2_SubscriberMoniker_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_SubscriberMoniker_Response(NDRPacket):
+class put_IEventSubscription2_SubscriberMoniker_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1391,30 +2255,98 @@ IEVENTSUBSCRIPTION2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_SubscriptionID_Request, get_SubscriptionID_Response),
-    8: DceRpcOp(put_SubscriptionID_Request, put_SubscriptionID_Response),
-    9: DceRpcOp(get_SubscriptionName_Request, get_SubscriptionName_Response),
-    10: DceRpcOp(put_SubscriptionName_Request, put_SubscriptionName_Response),
-    11: DceRpcOp(get_PublisherID_Request, get_PublisherID_Response),
-    12: DceRpcOp(put_PublisherID_Request, put_PublisherID_Response),
-    13: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    14: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    15: DceRpcOp(get_MethodName_Request, get_MethodName_Response),
-    16: DceRpcOp(put_MethodName_Request, put_MethodName_Response),
-    17: DceRpcOp(get_SubscriberCLSID_Request, get_SubscriberCLSID_Response),
-    18: DceRpcOp(put_SubscriberCLSID_Request, put_SubscriberCLSID_Response),
-    19: DceRpcOp(get_SubscriberInterface_Request, get_SubscriberInterface_Response),
-    20: DceRpcOp(put_SubscriberInterface_Request, put_SubscriberInterface_Response),
-    21: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
-    22: DceRpcOp(put_PerUser_Request, put_PerUser_Response),
-    23: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    24: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    25: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    26: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    27: DceRpcOp(get_Description_Request, get_Description_Response),
-    28: DceRpcOp(put_Description_Request, put_Description_Response),
-    29: DceRpcOp(get_MachineName_Request, get_MachineName_Response),
-    30: DceRpcOp(put_MachineName_Request, put_MachineName_Response),
+    7: DceRpcOp(
+        get_IEventSubscription_SubscriptionID_Request,
+        get_IEventSubscription_SubscriptionID_Response,
+    ),
+    8: DceRpcOp(
+        put_IEventSubscription_SubscriptionID_Request,
+        put_IEventSubscription_SubscriptionID_Response,
+    ),
+    9: DceRpcOp(
+        get_IEventSubscription_SubscriptionName_Request,
+        get_IEventSubscription_SubscriptionName_Response,
+    ),
+    10: DceRpcOp(
+        put_IEventSubscription_SubscriptionName_Request,
+        put_IEventSubscription_SubscriptionName_Response,
+    ),
+    11: DceRpcOp(
+        get_IEventSubscription_PublisherID_Request,
+        get_IEventSubscription_PublisherID_Response,
+    ),
+    12: DceRpcOp(
+        put_IEventSubscription_PublisherID_Request,
+        put_IEventSubscription_PublisherID_Response,
+    ),
+    13: DceRpcOp(
+        get_IEventSubscription_EventClassID_Request,
+        get_IEventSubscription_EventClassID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventSubscription_EventClassID_Request,
+        put_IEventSubscription_EventClassID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventSubscription_MethodName_Request,
+        get_IEventSubscription_MethodName_Response,
+    ),
+    16: DceRpcOp(
+        put_IEventSubscription_MethodName_Request,
+        put_IEventSubscription_MethodName_Response,
+    ),
+    17: DceRpcOp(
+        get_IEventSubscription_SubscriberCLSID_Request,
+        get_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    18: DceRpcOp(
+        put_IEventSubscription_SubscriberCLSID_Request,
+        put_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    19: DceRpcOp(
+        get_IEventSubscription_SubscriberInterface_Request,
+        get_IEventSubscription_SubscriberInterface_Response,
+    ),
+    20: DceRpcOp(
+        put_IEventSubscription_SubscriberInterface_Request,
+        put_IEventSubscription_SubscriberInterface_Response,
+    ),
+    21: DceRpcOp(
+        get_IEventSubscription_PerUser_Request, get_IEventSubscription_PerUser_Response
+    ),
+    22: DceRpcOp(
+        put_IEventSubscription_PerUser_Request, put_IEventSubscription_PerUser_Response
+    ),
+    23: DceRpcOp(
+        get_IEventSubscription_OwnerSID_Request,
+        get_IEventSubscription_OwnerSID_Response,
+    ),
+    24: DceRpcOp(
+        put_IEventSubscription_OwnerSID_Request,
+        put_IEventSubscription_OwnerSID_Response,
+    ),
+    25: DceRpcOp(
+        get_IEventSubscription_Enabled_Request, get_IEventSubscription_Enabled_Response
+    ),
+    26: DceRpcOp(
+        put_IEventSubscription_Enabled_Request, put_IEventSubscription_Enabled_Response
+    ),
+    27: DceRpcOp(
+        get_IEventSubscription_Description_Request,
+        get_IEventSubscription_Description_Response,
+    ),
+    28: DceRpcOp(
+        put_IEventSubscription_Description_Request,
+        put_IEventSubscription_Description_Response,
+    ),
+    29: DceRpcOp(
+        get_IEventSubscription_MachineName_Request,
+        get_IEventSubscription_MachineName_Response,
+    ),
+    30: DceRpcOp(
+        put_IEventSubscription_MachineName_Request,
+        put_IEventSubscription_MachineName_Response,
+    ),
     31: DceRpcOp(GetPublisherProperty_Request, GetPublisherProperty_Response),
     32: DceRpcOp(PutPublisherProperty_Request, PutPublisherProperty_Response),
     33: DceRpcOp(RemovePublisherProperty_Request, RemovePublisherProperty_Response),
@@ -1428,12 +2360,30 @@ IEVENTSUBSCRIPTION2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
         GetSubscriberPropertyCollection_Request,
         GetSubscriberPropertyCollection_Response,
     ),
-    39: DceRpcOp(get_InterfaceID_Request, get_InterfaceID_Response),
-    40: DceRpcOp(put_InterfaceID_Request, put_InterfaceID_Response),
-    41: DceRpcOp(get_FilterCriteria_Request, get_FilterCriteria_Response),
-    42: DceRpcOp(put_FilterCriteria_Request, put_FilterCriteria_Response),
-    43: DceRpcOp(get_SubscriberMoniker_Request, get_SubscriberMoniker_Response),
-    44: DceRpcOp(put_SubscriberMoniker_Request, put_SubscriberMoniker_Response),
+    39: DceRpcOp(
+        get_IEventSubscription_InterfaceID_Request,
+        get_IEventSubscription_InterfaceID_Response,
+    ),
+    40: DceRpcOp(
+        put_IEventSubscription_InterfaceID_Request,
+        put_IEventSubscription_InterfaceID_Response,
+    ),
+    41: DceRpcOp(
+        get_IEventSubscription2_FilterCriteria_Request,
+        get_IEventSubscription2_FilterCriteria_Response,
+    ),
+    42: DceRpcOp(
+        put_IEventSubscription2_FilterCriteria_Request,
+        put_IEventSubscription2_FilterCriteria_Response,
+    ),
+    43: DceRpcOp(
+        get_IEventSubscription2_SubscriberMoniker_Request,
+        get_IEventSubscription2_SubscriberMoniker_Response,
+    ),
+    44: DceRpcOp(
+        put_IEventSubscription2_SubscriberMoniker_Request,
+        put_IEventSubscription2_SubscriberMoniker_Response,
+    ),
 }
 register_com_interface(
     name="IEventSubscription2",
@@ -1442,11 +2392,11 @@ register_com_interface(
 )
 
 
-class get_EventClassPartitionID_Request(NDRPacket):
+class get_IEventClass3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassPartitionID_Response(NDRPacket):
+class get_IEventClass3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1457,7 +2407,7 @@ class get_EventClassPartitionID_Response(NDRPacket):
     ]
 
 
-class put_EventClassPartitionID_Request(NDRPacket):
+class put_IEventClass3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1465,15 +2415,15 @@ class put_EventClassPartitionID_Request(NDRPacket):
     ]
 
 
-class put_EventClassPartitionID_Response(NDRPacket):
+class put_IEventClass3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventClassApplicationID_Request(NDRPacket):
+class get_IEventClass3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassApplicationID_Response(NDRPacket):
+class get_IEventClass3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1484,7 +2434,7 @@ class get_EventClassApplicationID_Response(NDRPacket):
     ]
 
 
-class put_EventClassApplicationID_Request(NDRPacket):
+class put_IEventClass3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1492,7 +2442,7 @@ class put_EventClassApplicationID_Request(NDRPacket):
     ]
 
 
-class put_EventClassApplicationID_Response(NDRPacket):
+class put_IEventClass3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1503,41 +2453,83 @@ IEVENTCLASS3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    8: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    9: DceRpcOp(get_EventClassName_Request, get_EventClassName_Response),
-    10: DceRpcOp(put_EventClassName_Request, put_EventClassName_Response),
-    11: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    12: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    13: DceRpcOp(get_FiringInterfaceID_Request, get_FiringInterfaceID_Response),
-    14: DceRpcOp(put_FiringInterfaceID_Request, put_FiringInterfaceID_Response),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(put_Description_Request, put_Description_Response),
+    7: DceRpcOp(
+        get_IEventClass_EventClassID_Request, get_IEventClass_EventClassID_Response
+    ),
+    8: DceRpcOp(
+        put_IEventClass_EventClassID_Request, put_IEventClass_EventClassID_Response
+    ),
+    9: DceRpcOp(
+        get_IEventClass_EventClassName_Request, get_IEventClass_EventClassName_Response
+    ),
+    10: DceRpcOp(
+        put_IEventClass_EventClassName_Request, put_IEventClass_EventClassName_Response
+    ),
+    11: DceRpcOp(get_IEventClass_OwnerSID_Request, get_IEventClass_OwnerSID_Response),
+    12: DceRpcOp(put_IEventClass_OwnerSID_Request, put_IEventClass_OwnerSID_Response),
+    13: DceRpcOp(
+        get_IEventClass_FiringInterfaceID_Request,
+        get_IEventClass_FiringInterfaceID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventClass_FiringInterfaceID_Request,
+        put_IEventClass_FiringInterfaceID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventClass_Description_Request, get_IEventClass_Description_Response
+    ),
+    16: DceRpcOp(
+        put_IEventClass_Description_Request, put_IEventClass_Description_Response
+    ),
     # 17: Opnum17NotUsedOnWire,
     # 18: Opnum18NotUsedOnWire,
-    19: DceRpcOp(get_TypeLib_Request, get_TypeLib_Response),
-    20: DceRpcOp(put_TypeLib_Request, put_TypeLib_Response),
-    21: DceRpcOp(get_PublisherID_Request, get_PublisherID_Response),
-    22: DceRpcOp(put_PublisherID_Request, put_PublisherID_Response),
+    19: DceRpcOp(get_IEventClass_TypeLib_Request, get_IEventClass_TypeLib_Response),
+    20: DceRpcOp(put_IEventClass_TypeLib_Request, put_IEventClass_TypeLib_Response),
+    21: DceRpcOp(
+        get_IEventClass2_PublisherID_Request, get_IEventClass2_PublisherID_Response
+    ),
+    22: DceRpcOp(
+        put_IEventClass2_PublisherID_Request, put_IEventClass2_PublisherID_Response
+    ),
     23: DceRpcOp(
-        get_MultiInterfacePublisherFilterCLSID_Request,
-        get_MultiInterfacePublisherFilterCLSID_Response,
+        get_IEventClass2_MultiInterfacePublisherFilterCLSID_Request,
+        get_IEventClass2_MultiInterfacePublisherFilterCLSID_Response,
     ),
     24: DceRpcOp(
-        put_MultiInterfacePublisherFilterCLSID_Request,
-        put_MultiInterfacePublisherFilterCLSID_Response,
+        put_IEventClass2_MultiInterfacePublisherFilterCLSID_Request,
+        put_IEventClass2_MultiInterfacePublisherFilterCLSID_Response,
     ),
-    25: DceRpcOp(get_AllowInprocActivation_Request, get_AllowInprocActivation_Response),
-    26: DceRpcOp(put_AllowInprocActivation_Request, put_AllowInprocActivation_Response),
-    27: DceRpcOp(get_FireInParallel_Request, get_FireInParallel_Response),
-    28: DceRpcOp(put_FireInParallel_Request, put_FireInParallel_Response),
-    29: DceRpcOp(get_EventClassPartitionID_Request, get_EventClassPartitionID_Response),
-    30: DceRpcOp(put_EventClassPartitionID_Request, put_EventClassPartitionID_Response),
+    25: DceRpcOp(
+        get_IEventClass2_AllowInprocActivation_Request,
+        get_IEventClass2_AllowInprocActivation_Response,
+    ),
+    26: DceRpcOp(
+        put_IEventClass2_AllowInprocActivation_Request,
+        put_IEventClass2_AllowInprocActivation_Response,
+    ),
+    27: DceRpcOp(
+        get_IEventClass2_FireInParallel_Request,
+        get_IEventClass2_FireInParallel_Response,
+    ),
+    28: DceRpcOp(
+        put_IEventClass2_FireInParallel_Request,
+        put_IEventClass2_FireInParallel_Response,
+    ),
+    29: DceRpcOp(
+        get_IEventClass3_EventClassPartitionID_Request,
+        get_IEventClass3_EventClassPartitionID_Response,
+    ),
+    30: DceRpcOp(
+        put_IEventClass3_EventClassPartitionID_Request,
+        put_IEventClass3_EventClassPartitionID_Response,
+    ),
     31: DceRpcOp(
-        get_EventClassApplicationID_Request, get_EventClassApplicationID_Response
+        get_IEventClass3_EventClassApplicationID_Request,
+        get_IEventClass3_EventClassApplicationID_Response,
     ),
     32: DceRpcOp(
-        put_EventClassApplicationID_Request, put_EventClassApplicationID_Response
+        put_IEventClass3_EventClassApplicationID_Request,
+        put_IEventClass3_EventClassApplicationID_Response,
     ),
 }
 register_com_interface(
@@ -1547,11 +2539,11 @@ register_com_interface(
 )
 
 
-class get_EventClassPartitionID_Request(NDRPacket):
+class get_IEventSubscription3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassPartitionID_Response(NDRPacket):
+class get_IEventSubscription3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1562,7 +2554,7 @@ class get_EventClassPartitionID_Response(NDRPacket):
     ]
 
 
-class put_EventClassPartitionID_Request(NDRPacket):
+class put_IEventSubscription3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1570,15 +2562,15 @@ class put_EventClassPartitionID_Request(NDRPacket):
     ]
 
 
-class put_EventClassPartitionID_Response(NDRPacket):
+class put_IEventSubscription3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventClassApplicationID_Request(NDRPacket):
+class get_IEventSubscription3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventClassApplicationID_Response(NDRPacket):
+class get_IEventSubscription3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1589,7 +2581,7 @@ class get_EventClassApplicationID_Response(NDRPacket):
     ]
 
 
-class put_EventClassApplicationID_Request(NDRPacket):
+class put_IEventSubscription3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1597,15 +2589,15 @@ class put_EventClassApplicationID_Request(NDRPacket):
     ]
 
 
-class put_EventClassApplicationID_Response(NDRPacket):
+class put_IEventSubscription3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriberPartitionID_Request(NDRPacket):
+class get_IEventSubscription3_SubscriberPartitionID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriberPartitionID_Response(NDRPacket):
+class get_IEventSubscription3_SubscriberPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1616,7 +2608,7 @@ class get_SubscriberPartitionID_Response(NDRPacket):
     ]
 
 
-class put_SubscriberPartitionID_Request(NDRPacket):
+class put_IEventSubscription3_SubscriberPartitionID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrSubscriberPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1624,15 +2616,15 @@ class put_SubscriberPartitionID_Request(NDRPacket):
     ]
 
 
-class put_SubscriberPartitionID_Response(NDRPacket):
+class put_IEventSubscription3_SubscriberPartitionID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubscriberApplicationID_Request(NDRPacket):
+class get_IEventSubscription3_SubscriberApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubscriberApplicationID_Response(NDRPacket):
+class get_IEventSubscription3_SubscriberApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1643,7 +2635,7 @@ class get_SubscriberApplicationID_Response(NDRPacket):
     ]
 
 
-class put_SubscriberApplicationID_Request(NDRPacket):
+class put_IEventSubscription3_SubscriberApplicationID_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrSubscriberApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -1651,7 +2643,7 @@ class put_SubscriberApplicationID_Request(NDRPacket):
     ]
 
 
-class put_SubscriberApplicationID_Response(NDRPacket):
+class put_IEventSubscription3_SubscriberApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1662,30 +2654,98 @@ IEVENTSUBSCRIPTION3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_SubscriptionID_Request, get_SubscriptionID_Response),
-    8: DceRpcOp(put_SubscriptionID_Request, put_SubscriptionID_Response),
-    9: DceRpcOp(get_SubscriptionName_Request, get_SubscriptionName_Response),
-    10: DceRpcOp(put_SubscriptionName_Request, put_SubscriptionName_Response),
-    11: DceRpcOp(get_PublisherID_Request, get_PublisherID_Response),
-    12: DceRpcOp(put_PublisherID_Request, put_PublisherID_Response),
-    13: DceRpcOp(get_EventClassID_Request, get_EventClassID_Response),
-    14: DceRpcOp(put_EventClassID_Request, put_EventClassID_Response),
-    15: DceRpcOp(get_MethodName_Request, get_MethodName_Response),
-    16: DceRpcOp(put_MethodName_Request, put_MethodName_Response),
-    17: DceRpcOp(get_SubscriberCLSID_Request, get_SubscriberCLSID_Response),
-    18: DceRpcOp(put_SubscriberCLSID_Request, put_SubscriberCLSID_Response),
-    19: DceRpcOp(get_SubscriberInterface_Request, get_SubscriberInterface_Response),
-    20: DceRpcOp(put_SubscriberInterface_Request, put_SubscriberInterface_Response),
-    21: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
-    22: DceRpcOp(put_PerUser_Request, put_PerUser_Response),
-    23: DceRpcOp(get_OwnerSID_Request, get_OwnerSID_Response),
-    24: DceRpcOp(put_OwnerSID_Request, put_OwnerSID_Response),
-    25: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    26: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    27: DceRpcOp(get_Description_Request, get_Description_Response),
-    28: DceRpcOp(put_Description_Request, put_Description_Response),
-    29: DceRpcOp(get_MachineName_Request, get_MachineName_Response),
-    30: DceRpcOp(put_MachineName_Request, put_MachineName_Response),
+    7: DceRpcOp(
+        get_IEventSubscription_SubscriptionID_Request,
+        get_IEventSubscription_SubscriptionID_Response,
+    ),
+    8: DceRpcOp(
+        put_IEventSubscription_SubscriptionID_Request,
+        put_IEventSubscription_SubscriptionID_Response,
+    ),
+    9: DceRpcOp(
+        get_IEventSubscription_SubscriptionName_Request,
+        get_IEventSubscription_SubscriptionName_Response,
+    ),
+    10: DceRpcOp(
+        put_IEventSubscription_SubscriptionName_Request,
+        put_IEventSubscription_SubscriptionName_Response,
+    ),
+    11: DceRpcOp(
+        get_IEventSubscription_PublisherID_Request,
+        get_IEventSubscription_PublisherID_Response,
+    ),
+    12: DceRpcOp(
+        put_IEventSubscription_PublisherID_Request,
+        put_IEventSubscription_PublisherID_Response,
+    ),
+    13: DceRpcOp(
+        get_IEventSubscription_EventClassID_Request,
+        get_IEventSubscription_EventClassID_Response,
+    ),
+    14: DceRpcOp(
+        put_IEventSubscription_EventClassID_Request,
+        put_IEventSubscription_EventClassID_Response,
+    ),
+    15: DceRpcOp(
+        get_IEventSubscription_MethodName_Request,
+        get_IEventSubscription_MethodName_Response,
+    ),
+    16: DceRpcOp(
+        put_IEventSubscription_MethodName_Request,
+        put_IEventSubscription_MethodName_Response,
+    ),
+    17: DceRpcOp(
+        get_IEventSubscription_SubscriberCLSID_Request,
+        get_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    18: DceRpcOp(
+        put_IEventSubscription_SubscriberCLSID_Request,
+        put_IEventSubscription_SubscriberCLSID_Response,
+    ),
+    19: DceRpcOp(
+        get_IEventSubscription_SubscriberInterface_Request,
+        get_IEventSubscription_SubscriberInterface_Response,
+    ),
+    20: DceRpcOp(
+        put_IEventSubscription_SubscriberInterface_Request,
+        put_IEventSubscription_SubscriberInterface_Response,
+    ),
+    21: DceRpcOp(
+        get_IEventSubscription_PerUser_Request, get_IEventSubscription_PerUser_Response
+    ),
+    22: DceRpcOp(
+        put_IEventSubscription_PerUser_Request, put_IEventSubscription_PerUser_Response
+    ),
+    23: DceRpcOp(
+        get_IEventSubscription_OwnerSID_Request,
+        get_IEventSubscription_OwnerSID_Response,
+    ),
+    24: DceRpcOp(
+        put_IEventSubscription_OwnerSID_Request,
+        put_IEventSubscription_OwnerSID_Response,
+    ),
+    25: DceRpcOp(
+        get_IEventSubscription_Enabled_Request, get_IEventSubscription_Enabled_Response
+    ),
+    26: DceRpcOp(
+        put_IEventSubscription_Enabled_Request, put_IEventSubscription_Enabled_Response
+    ),
+    27: DceRpcOp(
+        get_IEventSubscription_Description_Request,
+        get_IEventSubscription_Description_Response,
+    ),
+    28: DceRpcOp(
+        put_IEventSubscription_Description_Request,
+        put_IEventSubscription_Description_Response,
+    ),
+    29: DceRpcOp(
+        get_IEventSubscription_MachineName_Request,
+        get_IEventSubscription_MachineName_Response,
+    ),
+    30: DceRpcOp(
+        put_IEventSubscription_MachineName_Request,
+        put_IEventSubscription_MachineName_Response,
+    ),
     31: DceRpcOp(GetPublisherProperty_Request, GetPublisherProperty_Response),
     32: DceRpcOp(PutPublisherProperty_Request, PutPublisherProperty_Response),
     33: DceRpcOp(RemovePublisherProperty_Request, RemovePublisherProperty_Response),
@@ -1699,27 +2759,61 @@ IEVENTSUBSCRIPTION3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
         GetSubscriberPropertyCollection_Request,
         GetSubscriberPropertyCollection_Response,
     ),
-    39: DceRpcOp(get_InterfaceID_Request, get_InterfaceID_Response),
-    40: DceRpcOp(put_InterfaceID_Request, put_InterfaceID_Response),
-    41: DceRpcOp(get_FilterCriteria_Request, get_FilterCriteria_Response),
-    42: DceRpcOp(put_FilterCriteria_Request, put_FilterCriteria_Response),
-    43: DceRpcOp(get_SubscriberMoniker_Request, get_SubscriberMoniker_Response),
-    44: DceRpcOp(put_SubscriberMoniker_Request, put_SubscriberMoniker_Response),
-    45: DceRpcOp(get_EventClassPartitionID_Request, get_EventClassPartitionID_Response),
-    46: DceRpcOp(put_EventClassPartitionID_Request, put_EventClassPartitionID_Response),
+    39: DceRpcOp(
+        get_IEventSubscription_InterfaceID_Request,
+        get_IEventSubscription_InterfaceID_Response,
+    ),
+    40: DceRpcOp(
+        put_IEventSubscription_InterfaceID_Request,
+        put_IEventSubscription_InterfaceID_Response,
+    ),
+    41: DceRpcOp(
+        get_IEventSubscription2_FilterCriteria_Request,
+        get_IEventSubscription2_FilterCriteria_Response,
+    ),
+    42: DceRpcOp(
+        put_IEventSubscription2_FilterCriteria_Request,
+        put_IEventSubscription2_FilterCriteria_Response,
+    ),
+    43: DceRpcOp(
+        get_IEventSubscription2_SubscriberMoniker_Request,
+        get_IEventSubscription2_SubscriberMoniker_Response,
+    ),
+    44: DceRpcOp(
+        put_IEventSubscription2_SubscriberMoniker_Request,
+        put_IEventSubscription2_SubscriberMoniker_Response,
+    ),
+    45: DceRpcOp(
+        get_IEventSubscription3_EventClassPartitionID_Request,
+        get_IEventSubscription3_EventClassPartitionID_Response,
+    ),
+    46: DceRpcOp(
+        put_IEventSubscription3_EventClassPartitionID_Request,
+        put_IEventSubscription3_EventClassPartitionID_Response,
+    ),
     47: DceRpcOp(
-        get_EventClassApplicationID_Request, get_EventClassApplicationID_Response
+        get_IEventSubscription3_EventClassApplicationID_Request,
+        get_IEventSubscription3_EventClassApplicationID_Response,
     ),
     48: DceRpcOp(
-        put_EventClassApplicationID_Request, put_EventClassApplicationID_Response
+        put_IEventSubscription3_EventClassApplicationID_Request,
+        put_IEventSubscription3_EventClassApplicationID_Response,
     ),
-    49: DceRpcOp(get_SubscriberPartitionID_Request, get_SubscriberPartitionID_Response),
-    50: DceRpcOp(put_SubscriberPartitionID_Request, put_SubscriberPartitionID_Response),
+    49: DceRpcOp(
+        get_IEventSubscription3_SubscriberPartitionID_Request,
+        get_IEventSubscription3_SubscriberPartitionID_Response,
+    ),
+    50: DceRpcOp(
+        put_IEventSubscription3_SubscriberPartitionID_Request,
+        put_IEventSubscription3_SubscriberPartitionID_Response,
+    ),
     51: DceRpcOp(
-        get_SubscriberApplicationID_Request, get_SubscriberApplicationID_Response
+        get_IEventSubscription3_SubscriberApplicationID_Request,
+        get_IEventSubscription3_SubscriberApplicationID_Response,
     ),
     52: DceRpcOp(
-        put_SubscriberApplicationID_Request, put_SubscriberApplicationID_Response
+        put_IEventSubscription3_SubscriberApplicationID_Request,
+        put_IEventSubscription3_SubscriberApplicationID_Response,
     ),
 }
 register_com_interface(
@@ -1756,8 +2850,8 @@ IEVENTSYSTEM2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     8: DceRpcOp(Store_Request, Store_Response),
     9: DceRpcOp(Remove_Request, Remove_Response),
     10: DceRpcOp(
-        get_EventObjectChangeEventClassID_Request,
-        get_EventObjectChangeEventClassID_Response,
+        get_IEventSystem_EventObjectChangeEventClassID_Request,
+        get_IEventSystem_EventObjectChangeEventClassID_Response,
     ),
     11: DceRpcOp(QueryS_Request, QueryS_Response),
     12: DceRpcOp(RemoveS_Request, RemoveS_Response),

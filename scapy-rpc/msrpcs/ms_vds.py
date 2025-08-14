@@ -63,7 +63,6 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
@@ -2863,7 +2862,7 @@ class VDS_FILE_SYSTEM_FORMAT_SUPPORT_PROP(NDRPacket):
         NDRIntField("ulDefaultUnitAllocationSize", 0),
         NDRFieldListField(
             "rgulAllowedUnitAllocationSizes",
-            [],
+            [0] * 32,
             NDRIntField("", 0),
             length_is=lambda _: 32,
         ),
@@ -3286,7 +3285,7 @@ class PVDS_REPARSE_POINT_PROP(NDRPacket):
     fields_desc = [
         NDRPacketField("SourceVolumeId", GUID(), GUID),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
+            NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
         ),
     ]
 

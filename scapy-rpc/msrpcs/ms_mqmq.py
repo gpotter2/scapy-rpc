@@ -21,14 +21,15 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
     NDRIntField,
     NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRShortField,
     NDRSignedByteField,
     NDRSignedIntField,
@@ -67,7 +68,9 @@ class CAUI(NDRPacket):
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
+            NDRConfFieldListField(
+                "pElems", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cElems
+            )
         ),
     ]
 
@@ -78,10 +81,7 @@ class CAL(NDRPacket):
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "pElems",
-                [],
-                NDRSignedIntField("pElems", 0),
-                size_is=lambda pkt: pkt.cElems,
+                "pElems", [], NDRSignedIntField("", 0), size_is=lambda pkt: pkt.cElems
             )
         ),
     ]
@@ -93,7 +93,7 @@ class CAUL(NDRPacket):
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "pElems", [], NDRIntField("pElems", 0), size_is=lambda pkt: pkt.cElems
+                "pElems", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cElems
             )
         ),
     ]
@@ -141,12 +141,7 @@ class CALPWSTR(NDRPacket):
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "pElems",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pElems", "")),
-                size_is=lambda pkt: pkt.cElems,
-            )
+            NDRConfVarStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
         ),
     ]
 
@@ -173,14 +168,6 @@ class VARENUM(IntEnum):
 class LARGE_INTEGER(NDRPacket):
     ALIGNMENT = (8, 8)
     fields_desc = [NDRSignedLongField("QuadPart", 0)]
-
-
-class CAPROPVARIANT(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [
-        NDRIntField("cElems", None, size_of="pElems"),
-        NDRRecursiveField("pElems"),
-    ]
 
 
 class tag_inner_PROPVARIANT(NDRPacket):
@@ -377,7 +364,9 @@ class tag_inner_PROPVARIANT(NDRPacket):
                     ),
                 ),
                 (
-                    NDRPacketField("_varUnion", CAPROPVARIANT(), CAPROPVARIANT),
+                    NDRPacketField(
+                        "_varUnion", None, NDRRecursiveClass("CAPROPVARIANT")
+                    ),
                     (
                         (
                             lambda pkt: getattr(pkt, "vt", None)
@@ -393,6 +382,18 @@ class tag_inner_PROPVARIANT(NDRPacket):
             StrFixedLenField("_varUnion", "", length=0),
             align=(2, 8),
             switch_fmt=("H", "H"),
+        ),
+    ]
+
+
+class CAPROPVARIANT(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("cElems", None, size_of="pElems"),
+        NDRFullEmbPointerField(
+            NDRConfPacketListField(
+                "pElems", [], tag_inner_PROPVARIANT, size_is=lambda pkt: pkt.cElems
+            )
         ),
     ]
 

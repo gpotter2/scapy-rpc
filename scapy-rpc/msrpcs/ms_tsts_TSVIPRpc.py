@@ -17,11 +17,11 @@ from scapy.fields import StrFixedLenField, StrFixedLenFieldUtf16
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRByteField,
     NDRIntField,
     NDRPacketField,
     NDRShortField,
     NDRUnionField,
-    NDRVarStrLenField,
     register_dcerpc_interface,
 )
 
@@ -73,8 +73,11 @@ class TSVIPAddress(NDRPacket):
         NDRPacketField("IPAddress", TSVIP_SOCKADDR(), TSVIP_SOCKADDR),
         NDRIntField("PrefixOrSubnetMask", 0),
         NDRIntField("PhysicalAddressLength", None, size_of="PhysicalAddress"),
-        NDRVarStrLenField(
-            "PhysicalAddress", "", length_is=lambda pkt: pkt.PhysicalAddressLength
+        NDRVarFieldListField(
+            "PhysicalAddress",
+            [],
+            NDRByteField("", 0),
+            length_is=lambda pkt: pkt.PhysicalAddressLength,
         ),
         NDRIntField("LeaseExpires", 0),
         NDRIntField("T1", 0),

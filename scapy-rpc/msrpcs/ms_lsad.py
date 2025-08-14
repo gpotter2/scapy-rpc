@@ -22,8 +22,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarFieldListField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -60,9 +60,10 @@ class RPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -90,7 +91,7 @@ class PLSAPR_PRIVILEGE_ENUM_BUFFER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Privileges",
-                [PLSAPR_POLICY_PRIVILEGE_DEF()],
+                [],
                 PLSAPR_POLICY_PRIVILEGE_DEF,
                 size_is=lambda pkt: pkt.Entries,
             )
@@ -336,7 +337,7 @@ class LSAPR_POLICY_AUDIT_EVENTS_INFO(NDRPacket):
             NDRConfFieldListField(
                 "EventAuditingOptions",
                 [],
-                NDRIntField("EventAuditingOptions", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.MaximumAuditEventCount,
             )
         ),
@@ -971,7 +972,7 @@ class PLSAPR_ACCOUNT_ENUM_BUFFER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Information",
-                [PLSAPR_ACCOUNT_INFORMATION()],
+                [],
                 PLSAPR_ACCOUNT_INFORMATION,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -1033,7 +1034,7 @@ class PLSAPR_TRUSTED_ENUM_BUFFER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Information",
-                [PLSAPR_TRUST_INFORMATION()],
+                [],
                 PLSAPR_TRUST_INFORMATION,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -1069,9 +1070,10 @@ class PRPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -1235,10 +1237,7 @@ class LSAPR_TRUSTED_CONTROLLERS_INFO(NDRPacket):
         NDRIntField("Entries", None, size_of="Names"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Names",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
-                size_is=lambda pkt: pkt.Entries,
+                "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -2217,10 +2216,7 @@ class PLSAPR_USER_RIGHT_SET(NDRPacket):
         NDRIntField("Entries", None, size_of="UserRights"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "UserRights",
-                [PRPC_UNICODE_STRING()],
-                PRPC_UNICODE_STRING,
-                size_is=lambda pkt: pkt.Entries,
+                "UserRights", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -3971,7 +3967,7 @@ class PLSAPR_TRUSTED_ENUM_BUFFER_EX(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "EnumerationBuffer",
-                [PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX()],
+                [],
                 PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
                 size_is=lambda pkt: pkt.EntriesRead,
             )

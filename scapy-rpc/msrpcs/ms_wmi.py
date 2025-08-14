@@ -1288,7 +1288,13 @@ class Next_Response(NDRPacket):
     fields_desc = [
         NDRIntField("puReturned", 0),
         NDRIntField("pdwBuffSize", None, size_of="pBuffer"),
-        NDRConfStrLenField("pBuffer", "", size_is=lambda pkt: pkt.pdwBuffSize),
+        NDRConfFieldListField(
+            "pBuffer",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pdwBuffSize,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 

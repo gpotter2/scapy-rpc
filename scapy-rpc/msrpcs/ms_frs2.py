@@ -18,8 +18,8 @@ from scapy.fields import PacketListField, StrFixedLenField
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfPacketListField,
-    NDRConfStrLenField,
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
     NDRContextHandle,
@@ -126,7 +126,7 @@ class FRS_UPDATE(NDRPacket):
         NDRLongField("gvsnVersion", 0),
         NDRPacketField("parentDbGuid", GUID(), GUID),
         NDRLongField("parentVersion", 0),
-        NDRVarStrLenFieldUtf16("name", ""),
+        NDRVarStrLenFieldUtf16("name", "", length_is=lambda _: (260 + 1)),
         NDRSignedIntField("flags", 0),
     ]
 
@@ -289,7 +289,13 @@ class RequestRecords_Response(NDRPacket):
         NDRIntField("maxRecords", 0),
         NDRIntField("numRecords", 0),
         NDRIntField("numBytes", None, size_of="compressedRecords"),
-        NDRConfStrLenField("compressedRecords", "", size_is=lambda pkt: pkt.numBytes),
+        NDRConfFieldListField(
+            "compressedRecords",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.numBytes,
+            ptr_pack=True,
+        ),
         NDRInt3264EnumField("recordsStatus", 0, RECORDS_STATUS),
         NDRIntField("status", 0),
     ]

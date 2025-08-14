@@ -31,15 +31,21 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
+    NDRIEEEDoubleField,
+    NDRIEEEFloatField,
     NDRInt3264EnumField,
     NDRInt3264Field,
     NDRIntField,
+    NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
+    NDRSignedShortField,
+    NDRUnionField,
     register_com_interface,
 )
 
@@ -190,7 +196,11 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
+                "aBstr",
+                [],
+                FLAGGED_WORD_BLOB,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -202,7 +212,11 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -214,14 +228,238 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRIntField("Size", None, size_of="apDispatch"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apDispatch",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
 
 
-class wireVARIANTStr(NDRPacket):
+class SAFEARR_VARIANT(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aVariant"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aVariant",
+                [],
+                NDRRecursiveClass("wireVARIANTStr"),
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class wireBRECORDStr(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("fFlags", 0),
+        NDRIntField("clSize", None, size_of="pRecord"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class SAFEARR_BRECORD(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aRecord"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aRecord",
+                [],
+                wireBRECORDStr,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class SAFEARR_HAVEIID(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="apUnknown"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+        NDRPacketField("iid", GUID(), GUID),
+    ]
+
+
+class BYTE_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class WORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class DWORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRIntField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class HYPER_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRSignedLongField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class SAFEARRAYBOUND(NDRPacket):
     ALIGNMENT = (4, 4)
+    fields_desc = [NDRIntField("cElements", 0), NDRSignedIntField("lLbound", 0)]
+
+
+class SAFEARRAY(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["rgsabound"]
+    fields_desc = [
+        NDRShortField("cDims", None, size_of="rgsabound"),
+        NDRShortField("fFeatures", 0),
+        NDRIntField("cbElements", 0),
+        NDRIntField("cLocks", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BSTR(), SAFEARR_BSTR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_BSTR),
+                        (lambda _, val: val.tag == SF_TYPE.SF_BSTR),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_UNKNOWN(), SAFEARR_UNKNOWN),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_UNKNOWN),
+                        (lambda _, val: val.tag == SF_TYPE.SF_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "uArrayStructs", SAFEARR_DISPATCH(), SAFEARR_DISPATCH
+                    ),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_DISPATCH),
+                        (lambda _, val: val.tag == SF_TYPE.SF_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_VARIANT(), SAFEARR_VARIANT),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_VARIANT),
+                        (lambda _, val: val.tag == SF_TYPE.SF_VARIANT),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BRECORD(), SAFEARR_BRECORD),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_RECORD),
+                        (lambda _, val: val.tag == SF_TYPE.SF_RECORD),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_HAVEIID(), SAFEARR_HAVEIID),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_HAVEIID),
+                        (lambda _, val: val.tag == SF_TYPE.SF_HAVEIID),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", BYTE_SIZEDARR(), BYTE_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I1),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I1),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", WORD_SIZEDARR(), WORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I2),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I2),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", DWORD_SIZEDARR(), DWORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I4),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I4),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", HYPER_SIZEDARR(), HYPER_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I8),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I8),
+                    ),
+                ),
+            ],
+            StrFixedLenField("uArrayStructs", "", length=0),
+            align=(4, 8),
+            switch_fmt=("I", "I"),
+        ),
+        NDRConfPacketListField(
+            "rgsabound",
+            [],
+            SAFEARRAYBOUND,
+            size_is=lambda pkt: pkt.cDims,
+            conformant_in_struct=True,
+        ),
+    ]
+
+
+class DECIMAL(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRShortField("wReserved", 0),
+        NDRSignedByteField("scale", 0),
+        NDRSignedByteField("sign", 0),
+        NDRIntField("Hi32", 0),
+        NDRLongField("Lo64", 0),
+    ]
+
+
+class wireVARIANTStr(NDRPacket):
+    ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("clSize", 0),
         NDRIntField("rpcReserved", 0),
@@ -229,7 +467,495 @@ class wireVARIANTStr(NDRPacket):
         NDRShortField("wReserved1", 0),
         NDRShortField("wReserved2", 0),
         NDRShortField("wReserved3", 0),
-        NDRRecursiveField("_varUnion"),
+        NDRUnionField(
+            [
+                (
+                    NDRSignedLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I8),
+                        (lambda _, val: val.tag == VARENUM.VT_I8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I4),
+                        (lambda _, val: val.tag == VARENUM.VT_I4),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI1),
+                        (lambda _, val: val.tag == VARENUM.VT_UI1),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I2),
+                        (lambda _, val: val.tag == VARENUM.VT_I2),
+                    ),
+                ),
+                (
+                    NDRIEEEFloatField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R4),
+                        (lambda _, val: val.tag == VARENUM.VT_R4),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R8),
+                        (lambda _, val: val.tag == VARENUM.VT_R8),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BOOL),
+                        (lambda _, val: val.tag == VARENUM.VT_BOOL),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ERROR),
+                        (lambda _, val: val.tag == VARENUM.VT_ERROR),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", CURRENCY(), CURRENCY),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CY),
+                        (lambda _, val: val.tag == VARENUM.VT_CY),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DATE),
+                        (lambda _, val: val.tag == VARENUM.VT_DATE),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BSTR),
+                        (lambda _, val: val.tag == VARENUM.VT_BSTR),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UNKNOWN),
+                        (lambda _, val: val.tag == VARENUM.VT_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DISPATCH),
+                        (lambda _, val: val.tag == VARENUM.VT_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ARRAY),
+                        (lambda _, val: val.tag == VARENUM.VT_ARRAY),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", wireBRECORDStr(), wireBRECORDStr)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEFloatField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", CURRENCY(), CURRENCY)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_CY | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_CY | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRFullEmbPointerField(
+                                NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", None, NDRRecursiveClass("wireVARIANTStr")
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I1),
+                        (lambda _, val: val.tag == VARENUM.VT_I1),
+                    ),
+                ),
+                (
+                    NDRShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI2),
+                        (lambda _, val: val.tag == VARENUM.VT_UI2),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI4),
+                        (lambda _, val: val.tag == VARENUM.VT_UI4),
+                    ),
+                ),
+                (
+                    NDRLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI8),
+                        (lambda _, val: val.tag == VARENUM.VT_UI8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_INT),
+                        (lambda _, val: val.tag == VARENUM.VT_INT),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UINT),
+                        (lambda _, val: val.tag == VARENUM.VT_UINT),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", DECIMAL(), DECIMAL),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DECIMAL),
+                        (lambda _, val: val.tag == VARENUM.VT_DECIMAL),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_INT | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_INT | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", DECIMAL(), DECIMAL)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_EMPTY),
+                        (lambda _, val: val.tag == VARENUM.VT_EMPTY),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_NULL),
+                        (lambda _, val: val.tag == VARENUM.VT_NULL),
+                    ),
+                ),
+            ],
+            StrFixedLenField("_varUnion", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "H"),
+        ),
     ]
 
 
@@ -249,7 +975,7 @@ class DISPPARAMS(NDRPacket):
             NDRConfFieldListField(
                 "rgdispidNamedArgs",
                 [],
-                NDRSignedIntField("rgdispidNamedArgs", 0),
+                NDRSignedIntField("", 0),
                 size_is=lambda pkt: pkt.cNamedArgs,
             )
         ),
@@ -333,11 +1059,11 @@ register_com_interface(
 )
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IPCHCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IPCHCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pVal", MInterfacePointer(), MInterfacePointer)
@@ -346,11 +1072,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Item_Request(NDRPacket):
+class get_IPCHCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("vIndex", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IPCHCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppEntry", wireVARIANTStr(), wireVARIANTStr)
@@ -359,11 +1085,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IPCHCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IPCHCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("pVal", 0), NDRIntField("status", 0)]
 
 
@@ -374,9 +1100,11 @@ IPCHCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IPCHCollection__NewEnum_Request, get_IPCHCollection__NewEnum_Response
+    ),
+    8: DceRpcOp(get_IPCHCollection_Item_Request, get_IPCHCollection_Item_Response),
+    9: DceRpcOp(get_IPCHCollection_Count_Request, get_IPCHCollection_Count_Response),
 }
 register_com_interface(
     name="IPCHCollection",
@@ -385,19 +1113,19 @@ register_com_interface(
 )
 
 
-class get_SessionID_Request(NDRPacket):
+class get_ISAFSession_SessionID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SessionID_Response(NDRPacket):
+class get_ISAFSession_SessionID_Response(NDRPacket):
     fields_desc = [NDRIntField("pVal", 0), NDRIntField("status", 0)]
 
 
-class put_SessionID_Request(NDRPacket):
+class put_ISAFSession_SessionID_Request(NDRPacket):
     fields_desc = [NDRIntField("pVal", 0)]
 
 
-class put_SessionID_Response(NDRPacket):
+class put_ISAFSession_SessionID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -415,30 +1143,30 @@ class SessionStateEnum(IntEnum):
     pchStateInvalid = 10
 
 
-class get_SessionState_Request(NDRPacket):
+class get_ISAFSession_SessionState_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SessionState_Response(NDRPacket):
+class get_ISAFSession_SessionState_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("pVal", 0, SessionStateEnum),
         NDRIntField("status", 0),
     ]
 
 
-class put_SessionState_Request(NDRPacket):
+class put_ISAFSession_SessionState_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("pVal", 0, SessionStateEnum)]
 
 
-class put_SessionState_Response(NDRPacket):
+class put_ISAFSession_SessionState_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_DomainName_Request(NDRPacket):
+class get_ISAFSession_DomainName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DomainName_Response(NDRPacket):
+class get_ISAFSession_DomainName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -447,19 +1175,19 @@ class get_DomainName_Response(NDRPacket):
     ]
 
 
-class put_DomainName_Request(NDRPacket):
+class put_ISAFSession_DomainName_Request(NDRPacket):
     fields_desc = [NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_DomainName_Response(NDRPacket):
+class put_ISAFSession_DomainName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_UserName_Request(NDRPacket):
+class get_ISAFSession_UserName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UserName_Response(NDRPacket):
+class get_ISAFSession_UserName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -468,11 +1196,11 @@ class get_UserName_Response(NDRPacket):
     ]
 
 
-class put_UserName_Request(NDRPacket):
+class put_ISAFSession_UserName_Request(NDRPacket):
     fields_desc = [NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_UserName_Response(NDRPacket):
+class put_ISAFSession_UserName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -483,14 +1211,22 @@ ISAFSESSION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_SessionID_Request, get_SessionID_Response),
-    8: DceRpcOp(put_SessionID_Request, put_SessionID_Response),
-    9: DceRpcOp(get_SessionState_Request, get_SessionState_Response),
-    10: DceRpcOp(put_SessionState_Request, put_SessionState_Response),
-    11: DceRpcOp(get_DomainName_Request, get_DomainName_Response),
-    12: DceRpcOp(put_DomainName_Request, put_DomainName_Response),
-    13: DceRpcOp(get_UserName_Request, get_UserName_Response),
-    14: DceRpcOp(put_UserName_Request, put_UserName_Response),
+    7: DceRpcOp(get_ISAFSession_SessionID_Request, get_ISAFSession_SessionID_Response),
+    8: DceRpcOp(put_ISAFSession_SessionID_Request, put_ISAFSession_SessionID_Response),
+    9: DceRpcOp(
+        get_ISAFSession_SessionState_Request, get_ISAFSession_SessionState_Response
+    ),
+    10: DceRpcOp(
+        put_ISAFSession_SessionState_Request, put_ISAFSession_SessionState_Response
+    ),
+    11: DceRpcOp(
+        get_ISAFSession_DomainName_Request, get_ISAFSession_DomainName_Response
+    ),
+    12: DceRpcOp(
+        put_ISAFSession_DomainName_Request, put_ISAFSession_DomainName_Response
+    ),
+    13: DceRpcOp(get_ISAFSession_UserName_Request, get_ISAFSession_UserName_Response),
+    14: DceRpcOp(put_ISAFSession_UserName_Request, put_ISAFSession_UserName_Response),
 }
 register_com_interface(
     name="ISAFSession",

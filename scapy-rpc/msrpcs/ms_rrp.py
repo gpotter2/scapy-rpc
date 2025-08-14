@@ -19,9 +19,9 @@ from scapy.layers.dcerpc import (
     DceRpcOp,
     NDRByteField,
     NDRConfStrLenField,
+    NDRConfVarFieldListField,
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
     NDRFullEmbPointerField,
     NDRFullPointerField,
@@ -121,9 +121,10 @@ class RPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -219,9 +220,10 @@ class PRPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -262,13 +264,11 @@ class BaseRegEnumValue_Request(NDRPacket):
         NDRIntField("dwIndex", 0),
         NDRPacketField("lpValueNameIn", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRFullPointerField(
-            NDRConfVarStrLenField(
-                "lpData",
-                "",
-                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
-            )
+        NDRConfVarStrLenField(
+            "lpData",
+            "",
+            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -279,13 +279,11 @@ class BaseRegEnumValue_Response(NDRPacket):
     fields_desc = [
         NDRPacketField("lpValueNameOut", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRFullPointerField(
-            NDRConfVarStrLenField(
-                "lpData",
-                "",
-                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
-            )
+        NDRConfVarStrLenField(
+            "lpData",
+            "",
+            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -395,13 +393,11 @@ class BaseRegQueryValue_Request(NDRPacket):
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("lpValueName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRFullPointerField(
-            NDRConfVarStrLenField(
-                "lpData",
-                "",
-                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
-            )
+        NDRConfVarStrLenField(
+            "lpData",
+            "",
+            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -411,13 +407,11 @@ class BaseRegQueryValue_Request(NDRPacket):
 class BaseRegQueryValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRFullPointerField(
-            NDRConfVarStrLenField(
-                "lpData",
-                "",
-                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
-            )
+        NDRConfVarStrLenField(
+            "lpData",
+            "",
+            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -548,7 +542,7 @@ class BaseRegQueryMultipleValues_Request(NDRPacket):
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRConfVarPacketListField(
             "val_listIn",
-            [PRVALENT()],
+            [],
             PRVALENT,
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,
@@ -568,7 +562,7 @@ class BaseRegQueryMultipleValues_Response(NDRPacket):
     fields_desc = [
         NDRConfVarPacketListField(
             "val_listOut",
-            [PRVALENT()],
+            [],
             PRVALENT,
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,
@@ -636,7 +630,7 @@ class BaseRegQueryMultipleValues2_Request(NDRPacket):
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRConfVarPacketListField(
             "val_listIn",
-            [PRVALENT()],
+            [],
             PRVALENT,
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,
@@ -656,7 +650,7 @@ class BaseRegQueryMultipleValues2_Response(NDRPacket):
     fields_desc = [
         NDRConfVarPacketListField(
             "val_listOut",
-            [PRVALENT()],
+            [],
             PRVALENT,
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,

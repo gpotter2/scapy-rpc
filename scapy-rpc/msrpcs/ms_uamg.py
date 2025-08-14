@@ -72,18 +72,20 @@ from scapy.layers.dcerpc import (
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIEEEDoubleField,
+    NDRIEEEFloatField,
     NDRInt3264Field,
     NDRIntEnumField,
     NDRIntField,
     NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
     NDRSignedShortField,
+    NDRUnionField,
     register_com_interface,
 )
 
@@ -234,7 +236,11 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
+                "aBstr",
+                [],
+                FLAGGED_WORD_BLOB,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -246,7 +252,11 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -258,14 +268,238 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRIntField("Size", None, size_of="apDispatch"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apDispatch",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
 
 
-class wireVARIANTStr(NDRPacket):
+class SAFEARR_VARIANT(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aVariant"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aVariant",
+                [],
+                NDRRecursiveClass("wireVARIANTStr"),
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class wireBRECORDStr(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("fFlags", 0),
+        NDRIntField("clSize", None, size_of="pRecord"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class SAFEARR_BRECORD(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aRecord"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aRecord",
+                [],
+                wireBRECORDStr,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class SAFEARR_HAVEIID(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="apUnknown"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+        NDRPacketField("iid", GUID(), GUID),
+    ]
+
+
+class BYTE_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class WORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class DWORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRIntField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class HYPER_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRSignedLongField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class SAFEARRAYBOUND(NDRPacket):
     ALIGNMENT = (4, 4)
+    fields_desc = [NDRIntField("cElements", 0), NDRSignedIntField("lLbound", 0)]
+
+
+class SAFEARRAY(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["rgsabound"]
+    fields_desc = [
+        NDRShortField("cDims", None, size_of="rgsabound"),
+        NDRShortField("fFeatures", 0),
+        NDRIntField("cbElements", 0),
+        NDRIntField("cLocks", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BSTR(), SAFEARR_BSTR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_BSTR),
+                        (lambda _, val: val.tag == SF_TYPE.SF_BSTR),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_UNKNOWN(), SAFEARR_UNKNOWN),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_UNKNOWN),
+                        (lambda _, val: val.tag == SF_TYPE.SF_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "uArrayStructs", SAFEARR_DISPATCH(), SAFEARR_DISPATCH
+                    ),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_DISPATCH),
+                        (lambda _, val: val.tag == SF_TYPE.SF_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_VARIANT(), SAFEARR_VARIANT),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_VARIANT),
+                        (lambda _, val: val.tag == SF_TYPE.SF_VARIANT),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BRECORD(), SAFEARR_BRECORD),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_RECORD),
+                        (lambda _, val: val.tag == SF_TYPE.SF_RECORD),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_HAVEIID(), SAFEARR_HAVEIID),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_HAVEIID),
+                        (lambda _, val: val.tag == SF_TYPE.SF_HAVEIID),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", BYTE_SIZEDARR(), BYTE_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I1),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I1),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", WORD_SIZEDARR(), WORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I2),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I2),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", DWORD_SIZEDARR(), DWORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I4),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I4),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", HYPER_SIZEDARR(), HYPER_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I8),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I8),
+                    ),
+                ),
+            ],
+            StrFixedLenField("uArrayStructs", "", length=0),
+            align=(4, 8),
+            switch_fmt=("I", "I"),
+        ),
+        NDRConfPacketListField(
+            "rgsabound",
+            [],
+            SAFEARRAYBOUND,
+            size_is=lambda pkt: pkt.cDims,
+            conformant_in_struct=True,
+        ),
+    ]
+
+
+class DECIMAL(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRShortField("wReserved", 0),
+        NDRSignedByteField("scale", 0),
+        NDRSignedByteField("sign", 0),
+        NDRIntField("Hi32", 0),
+        NDRLongField("Lo64", 0),
+    ]
+
+
+class wireVARIANTStr(NDRPacket):
+    ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("clSize", 0),
         NDRIntField("rpcReserved", 0),
@@ -273,7 +507,495 @@ class wireVARIANTStr(NDRPacket):
         NDRShortField("wReserved1", 0),
         NDRShortField("wReserved2", 0),
         NDRShortField("wReserved3", 0),
-        NDRRecursiveField("_varUnion"),
+        NDRUnionField(
+            [
+                (
+                    NDRSignedLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I8),
+                        (lambda _, val: val.tag == VARENUM.VT_I8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I4),
+                        (lambda _, val: val.tag == VARENUM.VT_I4),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI1),
+                        (lambda _, val: val.tag == VARENUM.VT_UI1),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I2),
+                        (lambda _, val: val.tag == VARENUM.VT_I2),
+                    ),
+                ),
+                (
+                    NDRIEEEFloatField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R4),
+                        (lambda _, val: val.tag == VARENUM.VT_R4),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R8),
+                        (lambda _, val: val.tag == VARENUM.VT_R8),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BOOL),
+                        (lambda _, val: val.tag == VARENUM.VT_BOOL),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ERROR),
+                        (lambda _, val: val.tag == VARENUM.VT_ERROR),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", CURRENCY(), CURRENCY),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CY),
+                        (lambda _, val: val.tag == VARENUM.VT_CY),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DATE),
+                        (lambda _, val: val.tag == VARENUM.VT_DATE),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BSTR),
+                        (lambda _, val: val.tag == VARENUM.VT_BSTR),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UNKNOWN),
+                        (lambda _, val: val.tag == VARENUM.VT_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DISPATCH),
+                        (lambda _, val: val.tag == VARENUM.VT_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ARRAY),
+                        (lambda _, val: val.tag == VARENUM.VT_ARRAY),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", wireBRECORDStr(), wireBRECORDStr)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEFloatField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", CURRENCY(), CURRENCY)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_CY | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_CY | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRFullEmbPointerField(
+                                NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", None, NDRRecursiveClass("wireVARIANTStr")
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I1),
+                        (lambda _, val: val.tag == VARENUM.VT_I1),
+                    ),
+                ),
+                (
+                    NDRShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI2),
+                        (lambda _, val: val.tag == VARENUM.VT_UI2),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI4),
+                        (lambda _, val: val.tag == VARENUM.VT_UI4),
+                    ),
+                ),
+                (
+                    NDRLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI8),
+                        (lambda _, val: val.tag == VARENUM.VT_UI8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_INT),
+                        (lambda _, val: val.tag == VARENUM.VT_INT),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UINT),
+                        (lambda _, val: val.tag == VARENUM.VT_UINT),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", DECIMAL(), DECIMAL),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DECIMAL),
+                        (lambda _, val: val.tag == VARENUM.VT_DECIMAL),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_INT | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_INT | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", DECIMAL(), DECIMAL)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_EMPTY),
+                        (lambda _, val: val.tag == VARENUM.VT_EMPTY),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_NULL),
+                        (lambda _, val: val.tag == VARENUM.VT_NULL),
+                    ),
+                ),
+            ],
+            StrFixedLenField("_varUnion", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "H"),
+        ),
     ]
 
 
@@ -293,7 +1015,7 @@ class DISPPARAMS(NDRPacket):
             NDRConfFieldListField(
                 "rgdispidNamedArgs",
                 [],
-                NDRSignedIntField("rgdispidNamedArgs", 0),
+                NDRSignedIntField("", 0),
                 size_is=lambda pkt: pkt.cNamedArgs,
             )
         ),
@@ -377,11 +1099,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_ICategoryCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_ICategoryCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -390,11 +1112,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_ICategoryCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_ICategoryCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -403,11 +1125,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_ICategoryCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_ICategoryCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -418,9 +1140,16 @@ ICATEGORYCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_ICategoryCollection_Item_Request, get_ICategoryCollection_Item_Response
+    ),
+    8: DceRpcOp(
+        get_ICategoryCollection__NewEnum_Request,
+        get_ICategoryCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_ICategoryCollection_Count_Request, get_ICategoryCollection_Count_Response
+    ),
 }
 register_com_interface(
     name="ICategoryCollection",
@@ -429,11 +1158,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IUpdateCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IUpdateCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -442,22 +1171,22 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class put_Item_Request(NDRPacket):
+class put_IUpdateCollection_Item_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("index", 0),
         NDRPacketField("value", MInterfacePointer(), MInterfacePointer),
     ]
 
 
-class put_Item_Response(NDRPacket):
+class put_IUpdateCollection_Item_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IUpdateCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IUpdateCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -466,19 +1195,19 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IUpdateCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IUpdateCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ReadOnly_Request(NDRPacket):
+class get_IUpdateCollection_ReadOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReadOnly_Response(NDRPacket):
+class get_IUpdateCollection_ReadOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -524,11 +1253,21 @@ IUPDATECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(put_Item_Request, put_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    10: DceRpcOp(get_Count_Request, get_Count_Response),
-    11: DceRpcOp(get_ReadOnly_Request, get_ReadOnly_Response),
+    7: DceRpcOp(
+        get_IUpdateCollection_Item_Request, get_IUpdateCollection_Item_Response
+    ),
+    8: DceRpcOp(
+        put_IUpdateCollection_Item_Request, put_IUpdateCollection_Item_Response
+    ),
+    9: DceRpcOp(
+        get_IUpdateCollection__NewEnum_Request, get_IUpdateCollection__NewEnum_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdateCollection_Count_Request, get_IUpdateCollection_Count_Response
+    ),
+    11: DceRpcOp(
+        get_IUpdateCollection_ReadOnly_Request, get_IUpdateCollection_ReadOnly_Response
+    ),
     12: DceRpcOp(Add_Request, Add_Response),
     13: DceRpcOp(Clear_Request, Clear_Response),
     # 14: Opnum15NotUsedOnWire,
@@ -542,11 +1281,11 @@ register_com_interface(
 )
 
 
-class get_Title_Request(NDRPacket):
+class get_IUpdate_Title_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Title_Response(NDRPacket):
+class get_IUpdate_Title_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -555,19 +1294,19 @@ class get_Title_Response(NDRPacket):
     ]
 
 
-class get_AutoSelectOnWebSites_Request(NDRPacket):
+class get_IUpdate_AutoSelectOnWebSites_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AutoSelectOnWebSites_Response(NDRPacket):
+class get_IUpdate_AutoSelectOnWebSites_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_BundledUpdates_Request(NDRPacket):
+class get_IUpdate_BundledUpdates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BundledUpdates_Response(NDRPacket):
+class get_IUpdate_BundledUpdates_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -576,19 +1315,19 @@ class get_BundledUpdates_Response(NDRPacket):
     ]
 
 
-class get_CanRequireSource_Request(NDRPacket):
+class get_IUpdate_CanRequireSource_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CanRequireSource_Response(NDRPacket):
+class get_IUpdate_CanRequireSource_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Categories_Request(NDRPacket):
+class get_IUpdate_Categories_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Categories_Response(NDRPacket):
+class get_IUpdate_Categories_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -597,38 +1336,38 @@ class get_Categories_Response(NDRPacket):
     ]
 
 
-class get_Deadline_Request(NDRPacket):
+class get_IUpdate_Deadline_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Deadline_Response(NDRPacket):
+class get_IUpdate_Deadline_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class get_DeltaCompressedContentAvailable_Request(NDRPacket):
+class get_IUpdate_DeltaCompressedContentAvailable_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeltaCompressedContentAvailable_Response(NDRPacket):
+class get_IUpdate_DeltaCompressedContentAvailable_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_DeltaCompressedContentPreferred_Request(NDRPacket):
+class get_IUpdate_DeltaCompressedContentPreferred_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeltaCompressedContentPreferred_Response(NDRPacket):
+class get_IUpdate_DeltaCompressedContentPreferred_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Description_Request(NDRPacket):
+class get_IUpdate_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IUpdate_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -637,19 +1376,19 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class get_EulaAccepted_Request(NDRPacket):
+class get_IUpdate_EulaAccepted_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EulaAccepted_Response(NDRPacket):
+class get_IUpdate_EulaAccepted_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_EulaText_Request(NDRPacket):
+class get_IUpdate_EulaText_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EulaText_Response(NDRPacket):
+class get_IUpdate_EulaText_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -658,11 +1397,11 @@ class get_EulaText_Response(NDRPacket):
     ]
 
 
-class get_HandlerID_Request(NDRPacket):
+class get_IUpdate_HandlerID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_HandlerID_Response(NDRPacket):
+class get_IUpdate_HandlerID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -671,11 +1410,11 @@ class get_HandlerID_Response(NDRPacket):
     ]
 
 
-class get_Identity_Request(NDRPacket):
+class get_IUpdate_Identity_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Identity_Response(NDRPacket):
+class get_IUpdate_Identity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -684,11 +1423,11 @@ class get_Identity_Response(NDRPacket):
     ]
 
 
-class get_Image_Request(NDRPacket):
+class get_IUpdate_Image_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Image_Response(NDRPacket):
+class get_IUpdate_Image_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -697,11 +1436,11 @@ class get_Image_Response(NDRPacket):
     ]
 
 
-class get_InstallationBehavior_Request(NDRPacket):
+class get_IUpdate_InstallationBehavior_Request(NDRPacket):
     fields_desc = []
 
 
-class get_InstallationBehavior_Response(NDRPacket):
+class get_IUpdate_InstallationBehavior_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -710,59 +1449,59 @@ class get_InstallationBehavior_Response(NDRPacket):
     ]
 
 
-class get_IsBeta_Request(NDRPacket):
+class get_IUpdate_IsBeta_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsBeta_Response(NDRPacket):
+class get_IUpdate_IsBeta_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsDownloaded_Request(NDRPacket):
+class get_IUpdate_IsDownloaded_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsDownloaded_Response(NDRPacket):
+class get_IUpdate_IsDownloaded_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsHidden_Request(NDRPacket):
+class get_IUpdate_IsHidden_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsHidden_Response(NDRPacket):
+class get_IUpdate_IsHidden_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsInstalled_Request(NDRPacket):
+class get_IUpdate_IsInstalled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsInstalled_Response(NDRPacket):
+class get_IUpdate_IsInstalled_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsMandatory_Request(NDRPacket):
+class get_IUpdate_IsMandatory_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsMandatory_Response(NDRPacket):
+class get_IUpdate_IsMandatory_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsUninstallable_Request(NDRPacket):
+class get_IUpdate_IsUninstallable_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsUninstallable_Response(NDRPacket):
+class get_IUpdate_IsUninstallable_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Languages_Request(NDRPacket):
+class get_IUpdate_Languages_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Languages_Response(NDRPacket):
+class get_IUpdate_Languages_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -771,52 +1510,41 @@ class get_Languages_Response(NDRPacket):
     ]
 
 
-class get_LastDeploymentChangeTime_Request(NDRPacket):
+class get_IUpdate_LastDeploymentChangeTime_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LastDeploymentChangeTime_Response(NDRPacket):
+class get_IUpdate_LastDeploymentChangeTime_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class DECIMAL(NDRPacket):
-    ALIGNMENT = (8, 8)
-    fields_desc = [
-        NDRShortField("wReserved", 0),
-        NDRSignedByteField("scale", 0),
-        NDRSignedByteField("sign", 0),
-        NDRIntField("Hi32", 0),
-        NDRLongField("Lo64", 0),
-    ]
-
-
-class get_MaxDownloadSize_Request(NDRPacket):
+class get_IUpdate_MaxDownloadSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MaxDownloadSize_Response(NDRPacket):
+class get_IUpdate_MaxDownloadSize_Response(NDRPacket):
     fields_desc = [
         NDRPacketField("retval", DECIMAL(), DECIMAL),
         NDRIntField("status", 0),
     ]
 
 
-class get_MinDownloadSize_Request(NDRPacket):
+class get_IUpdate_MinDownloadSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MinDownloadSize_Response(NDRPacket):
+class get_IUpdate_MinDownloadSize_Response(NDRPacket):
     fields_desc = [
         NDRPacketField("retval", DECIMAL(), DECIMAL),
         NDRIntField("status", 0),
     ]
 
 
-class get_MoreInfoUrls_Request(NDRPacket):
+class get_IUpdate_MoreInfoUrls_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MoreInfoUrls_Response(NDRPacket):
+class get_IUpdate_MoreInfoUrls_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -825,11 +1553,11 @@ class get_MoreInfoUrls_Response(NDRPacket):
     ]
 
 
-class get_MsrcSeverity_Request(NDRPacket):
+class get_IUpdate_MsrcSeverity_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MsrcSeverity_Response(NDRPacket):
+class get_IUpdate_MsrcSeverity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -838,35 +1566,35 @@ class get_MsrcSeverity_Response(NDRPacket):
     ]
 
 
-class get_RecommendedCpuSpeed_Request(NDRPacket):
+class get_IUpdate_RecommendedCpuSpeed_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RecommendedCpuSpeed_Response(NDRPacket):
+class get_IUpdate_RecommendedCpuSpeed_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_RecommendedHardDiskSpace_Request(NDRPacket):
+class get_IUpdate_RecommendedHardDiskSpace_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RecommendedHardDiskSpace_Response(NDRPacket):
+class get_IUpdate_RecommendedHardDiskSpace_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_RecommendedMemory_Request(NDRPacket):
+class get_IUpdate_RecommendedMemory_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RecommendedMemory_Response(NDRPacket):
+class get_IUpdate_RecommendedMemory_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ReleaseNotes_Request(NDRPacket):
+class get_IUpdate_ReleaseNotes_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReleaseNotes_Response(NDRPacket):
+class get_IUpdate_ReleaseNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -875,11 +1603,11 @@ class get_ReleaseNotes_Response(NDRPacket):
     ]
 
 
-class get_SecurityBulletinIDs_Request(NDRPacket):
+class get_IUpdate_SecurityBulletinIDs_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SecurityBulletinIDs_Response(NDRPacket):
+class get_IUpdate_SecurityBulletinIDs_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -888,11 +1616,11 @@ class get_SecurityBulletinIDs_Response(NDRPacket):
     ]
 
 
-class get_SupersededUpdateIDs_Request(NDRPacket):
+class get_IUpdate_SupersededUpdateIDs_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SupersededUpdateIDs_Response(NDRPacket):
+class get_IUpdate_SupersededUpdateIDs_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -901,11 +1629,11 @@ class get_SupersededUpdateIDs_Response(NDRPacket):
     ]
 
 
-class get_SupportUrl_Request(NDRPacket):
+class get_IUpdate_SupportUrl_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SupportUrl_Response(NDRPacket):
+class get_IUpdate_SupportUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -919,19 +1647,19 @@ class UpdateType(IntEnum):
     utDriver = 2
 
 
-class get_Type_Request(NDRPacket):
+class get_IUpdate_Type_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Type_Response(NDRPacket):
+class get_IUpdate_Type_Response(NDRPacket):
     fields_desc = [NDRIntEnumField("retval", 0, UpdateType), NDRIntField("status", 0)]
 
 
-class get_UninstallationNotes_Request(NDRPacket):
+class get_IUpdate_UninstallationNotes_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UninstallationNotes_Response(NDRPacket):
+class get_IUpdate_UninstallationNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -940,11 +1668,11 @@ class get_UninstallationNotes_Response(NDRPacket):
     ]
 
 
-class get_UninstallationBehavior_Request(NDRPacket):
+class get_IUpdate_UninstallationBehavior_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UninstallationBehavior_Response(NDRPacket):
+class get_IUpdate_UninstallationBehavior_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -953,11 +1681,11 @@ class get_UninstallationBehavior_Response(NDRPacket):
     ]
 
 
-class get_UninstallationSteps_Request(NDRPacket):
+class get_IUpdate_UninstallationSteps_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UninstallationSteps_Response(NDRPacket):
+class get_IUpdate_UninstallationSteps_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -966,11 +1694,11 @@ class get_UninstallationSteps_Response(NDRPacket):
     ]
 
 
-class get_KBArticleIDs_Request(NDRPacket):
+class get_IUpdate_KBArticleIDs_Request(NDRPacket):
     fields_desc = []
 
 
-class get_KBArticleIDs_Response(NDRPacket):
+class get_IUpdate_KBArticleIDs_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -986,11 +1714,11 @@ class DeploymentAction(IntEnum):
     daDetection = 3
 
 
-class get_DeploymentAction_Request(NDRPacket):
+class get_IUpdate_DeploymentAction_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeploymentAction_Response(NDRPacket):
+class get_IUpdate_DeploymentAction_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, DeploymentAction),
         NDRIntField("status", 0),
@@ -1004,22 +1732,22 @@ class DownloadPriority(IntEnum):
     dpExtraHigh = 4
 
 
-class get_DownloadPriority_Request(NDRPacket):
+class get_IUpdate_DownloadPriority_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DownloadPriority_Response(NDRPacket):
+class get_IUpdate_DownloadPriority_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, DownloadPriority),
         NDRIntField("status", 0),
     ]
 
 
-class get_DownloadContents_Request(NDRPacket):
+class get_IUpdate_DownloadContents_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DownloadContents_Response(NDRPacket):
+class get_IUpdate_DownloadContents_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1035,63 +1763,105 @@ IUPDATE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
 }
 register_com_interface(
     name="IUpdate",
@@ -1100,11 +1870,11 @@ register_com_interface(
 )
 
 
-class get_Services_Request(NDRPacket):
+class get_IUpdateServiceManager_Services_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Services_Response(NDRPacket):
+class get_IUpdateServiceManager_Services_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1164,7 +1934,10 @@ IUPDATESERVICEMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Services_Request, get_Services_Response),
+    7: DceRpcOp(
+        get_IUpdateServiceManager_Services_Request,
+        get_IUpdateServiceManager_Services_Response,
+    ),
     # 8: Opnum9NotUsedOnWire,
     9: DceRpcOp(RegisterServiceWithAU_Request, RegisterServiceWithAU_Response),
     10: DceRpcOp(RemoveService_Request, RemoveService_Response),
@@ -1179,11 +1952,11 @@ register_com_interface(
 )
 
 
-class get_ClientApplicationID_Request(NDRPacket):
+class get_IUpdateServiceManager2_ClientApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClientApplicationID_Response(NDRPacket):
+class get_IUpdateServiceManager2_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1192,11 +1965,11 @@ class get_ClientApplicationID_Response(NDRPacket):
     ]
 
 
-class put_ClientApplicationID_Request(NDRPacket):
+class put_IUpdateServiceManager2_ClientApplicationID_Request(NDRPacket):
     fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_ClientApplicationID_Response(NDRPacket):
+class put_IUpdateServiceManager2_ClientApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1237,15 +2010,24 @@ IUPDATESERVICEMANAGER2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Services_Request, get_Services_Response),
+    7: DceRpcOp(
+        get_IUpdateServiceManager_Services_Request,
+        get_IUpdateServiceManager_Services_Response,
+    ),
     # 8: Opnum9NotUsedOnWire,
     9: DceRpcOp(RegisterServiceWithAU_Request, RegisterServiceWithAU_Response),
     10: DceRpcOp(RemoveService_Request, RemoveService_Response),
     # 11: Opnum12NotUsedOnWire,
     12: DceRpcOp(AddScanPackageService_Request, AddScanPackageService_Response),
     13: DceRpcOp(SetOption_Request, SetOption_Response),
-    14: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    15: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
+    14: DceRpcOp(
+        get_IUpdateServiceManager2_ClientApplicationID_Request,
+        get_IUpdateServiceManager2_ClientApplicationID_Response,
+    ),
+    15: DceRpcOp(
+        put_IUpdateServiceManager2_ClientApplicationID_Request,
+        put_IUpdateServiceManager2_ClientApplicationID_Response,
+    ),
     16: DceRpcOp(QueryServiceRegistration_Request, QueryServiceRegistration_Response),
     17: DceRpcOp(AddService2_Request, AddService2_Response),
 }
@@ -1256,11 +2038,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IStringCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IStringCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1269,22 +2051,22 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class put_Item_Request(NDRPacket):
+class put_IStringCollection_Item_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("index", 0),
         NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
     ]
 
 
-class put_Item_Response(NDRPacket):
+class put_IStringCollection_Item_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IStringCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IStringCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1293,19 +2075,19 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IStringCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IStringCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ReadOnly_Request(NDRPacket):
+class get_IStringCollection_ReadOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReadOnly_Response(NDRPacket):
+class get_IStringCollection_ReadOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1364,11 +2146,21 @@ ISTRINGCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(put_Item_Request, put_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    10: DceRpcOp(get_Count_Request, get_Count_Response),
-    11: DceRpcOp(get_ReadOnly_Request, get_ReadOnly_Response),
+    7: DceRpcOp(
+        get_IStringCollection_Item_Request, get_IStringCollection_Item_Response
+    ),
+    8: DceRpcOp(
+        put_IStringCollection_Item_Request, put_IStringCollection_Item_Response
+    ),
+    9: DceRpcOp(
+        get_IStringCollection__NewEnum_Request, get_IStringCollection__NewEnum_Response
+    ),
+    10: DceRpcOp(
+        get_IStringCollection_Count_Request, get_IStringCollection_Count_Response
+    ),
+    11: DceRpcOp(
+        get_IStringCollection_ReadOnly_Request, get_IStringCollection_ReadOnly_Response
+    ),
     12: DceRpcOp(Add_Request, Add_Response),
     13: DceRpcOp(Clear_Request, Clear_Response),
     14: DceRpcOp(Copy_Request, Copy_Response),
@@ -1411,22 +2203,22 @@ register_com_interface(
 )
 
 
-class get_LastSearchSuccessDate_Request(NDRPacket):
+class get_IAutomaticUpdatesResults_LastSearchSuccessDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LastSearchSuccessDate_Response(NDRPacket):
+class get_IAutomaticUpdatesResults_LastSearchSuccessDate_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class get_LastInstallationSuccessDate_Request(NDRPacket):
+class get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LastInstallationSuccessDate_Response(NDRPacket):
+class get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
@@ -1440,10 +2232,13 @@ IAUTOMATICUPDATESRESULTS_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_LastSearchSuccessDate_Request, get_LastSearchSuccessDate_Response),
+    7: DceRpcOp(
+        get_IAutomaticUpdatesResults_LastSearchSuccessDate_Request,
+        get_IAutomaticUpdatesResults_LastSearchSuccessDate_Response,
+    ),
     8: DceRpcOp(
-        get_LastInstallationSuccessDate_Request,
-        get_LastInstallationSuccessDate_Response,
+        get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Request,
+        get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Response,
     ),
 }
 register_com_interface(
@@ -1483,11 +2278,11 @@ register_com_interface(
 )
 
 
-class get_Results_Request(NDRPacket):
+class get_IAutomaticUpdates2_Results_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Results_Response(NDRPacket):
+class get_IAutomaticUpdates2_Results_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1510,7 +2305,9 @@ IAUTOMATICUPDATES2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 11: Opnum12NotUsedOnWire,
     # 12: Opnum13NotUsedOnWire,
     # 13: Opnum14NotUsedOnWire,
-    14: DceRpcOp(get_Results_Request, get_Results_Response),
+    14: DceRpcOp(
+        get_IAutomaticUpdates2_Results_Request, get_IAutomaticUpdates2_Results_Response
+    ),
 }
 register_com_interface(
     name="IAutomaticUpdates2",
@@ -1519,19 +2316,19 @@ register_com_interface(
 )
 
 
-class get_RevisionNumber_Request(NDRPacket):
+class get_IUpdateIdentity_RevisionNumber_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RevisionNumber_Response(NDRPacket):
+class get_IUpdateIdentity_RevisionNumber_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_UpdateID_Request(NDRPacket):
+class get_IUpdateIdentity_UpdateID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UpdateID_Response(NDRPacket):
+class get_IUpdateIdentity_UpdateID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1547,8 +2344,13 @@ IUPDATEIDENTITY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_RevisionNumber_Request, get_RevisionNumber_Response),
-    8: DceRpcOp(get_UpdateID_Request, get_UpdateID_Response),
+    7: DceRpcOp(
+        get_IUpdateIdentity_RevisionNumber_Request,
+        get_IUpdateIdentity_RevisionNumber_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateIdentity_UpdateID_Request, get_IUpdateIdentity_UpdateID_Response
+    ),
 }
 register_com_interface(
     name="IUpdateIdentity",
@@ -1557,11 +2359,11 @@ register_com_interface(
 )
 
 
-class get_AltText_Request(NDRPacket):
+class get_IImageInformation_AltText_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AltText_Response(NDRPacket):
+class get_IImageInformation_AltText_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1570,19 +2372,19 @@ class get_AltText_Response(NDRPacket):
     ]
 
 
-class get_Height_Request(NDRPacket):
+class get_IImageInformation_Height_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Height_Response(NDRPacket):
+class get_IImageInformation_Height_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Source_Request(NDRPacket):
+class get_IImageInformation_Source_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Source_Response(NDRPacket):
+class get_IImageInformation_Source_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1591,11 +2393,11 @@ class get_Source_Response(NDRPacket):
     ]
 
 
-class get_Width_Request(NDRPacket):
+class get_IImageInformation_Width_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Width_Response(NDRPacket):
+class get_IImageInformation_Width_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1606,10 +2408,18 @@ IIMAGEINFORMATION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_AltText_Request, get_AltText_Response),
-    8: DceRpcOp(get_Height_Request, get_Height_Response),
-    9: DceRpcOp(get_Source_Request, get_Source_Response),
-    10: DceRpcOp(get_Width_Request, get_Width_Response),
+    7: DceRpcOp(
+        get_IImageInformation_AltText_Request, get_IImageInformation_AltText_Response
+    ),
+    8: DceRpcOp(
+        get_IImageInformation_Height_Request, get_IImageInformation_Height_Response
+    ),
+    9: DceRpcOp(
+        get_IImageInformation_Source_Request, get_IImageInformation_Source_Response
+    ),
+    10: DceRpcOp(
+        get_IImageInformation_Width_Request, get_IImageInformation_Width_Response
+    ),
 }
 register_com_interface(
     name="IImageInformation",
@@ -1618,11 +2428,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_ICategory_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_ICategory_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1631,11 +2441,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_CategoryID_Request(NDRPacket):
+class get_ICategory_CategoryID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CategoryID_Response(NDRPacket):
+class get_ICategory_CategoryID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1644,11 +2454,11 @@ class get_CategoryID_Response(NDRPacket):
     ]
 
 
-class get_Children_Request(NDRPacket):
+class get_ICategory_Children_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Children_Response(NDRPacket):
+class get_ICategory_Children_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1657,11 +2467,11 @@ class get_Children_Response(NDRPacket):
     ]
 
 
-class get_Description_Request(NDRPacket):
+class get_ICategory_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_ICategory_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1670,11 +2480,11 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class get_Image_Request(NDRPacket):
+class get_ICategory_Image_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Image_Response(NDRPacket):
+class get_ICategory_Image_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1683,19 +2493,19 @@ class get_Image_Response(NDRPacket):
     ]
 
 
-class get_Order_Request(NDRPacket):
+class get_ICategory_Order_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Order_Response(NDRPacket):
+class get_ICategory_Order_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Parent_Request(NDRPacket):
+class get_ICategory_Parent_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Parent_Response(NDRPacket):
+class get_ICategory_Parent_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1704,11 +2514,11 @@ class get_Parent_Response(NDRPacket):
     ]
 
 
-class get_Type_Request(NDRPacket):
+class get_ICategory_Type_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Type_Response(NDRPacket):
+class get_ICategory_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1717,11 +2527,11 @@ class get_Type_Response(NDRPacket):
     ]
 
 
-class get_Updates_Request(NDRPacket):
+class get_ICategory_Updates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Updates_Response(NDRPacket):
+class get_ICategory_Updates_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1737,15 +2547,15 @@ ICATEGORY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Name_Request, get_Name_Response),
-    8: DceRpcOp(get_CategoryID_Request, get_CategoryID_Response),
-    9: DceRpcOp(get_Children_Request, get_Children_Response),
-    10: DceRpcOp(get_Description_Request, get_Description_Response),
-    11: DceRpcOp(get_Image_Request, get_Image_Response),
-    12: DceRpcOp(get_Order_Request, get_Order_Response),
-    13: DceRpcOp(get_Parent_Request, get_Parent_Response),
-    14: DceRpcOp(get_Type_Request, get_Type_Response),
-    15: DceRpcOp(get_Updates_Request, get_Updates_Response),
+    7: DceRpcOp(get_ICategory_Name_Request, get_ICategory_Name_Response),
+    8: DceRpcOp(get_ICategory_CategoryID_Request, get_ICategory_CategoryID_Response),
+    9: DceRpcOp(get_ICategory_Children_Request, get_ICategory_Children_Response),
+    10: DceRpcOp(get_ICategory_Description_Request, get_ICategory_Description_Response),
+    11: DceRpcOp(get_ICategory_Image_Request, get_ICategory_Image_Response),
+    12: DceRpcOp(get_ICategory_Order_Request, get_ICategory_Order_Response),
+    13: DceRpcOp(get_ICategory_Parent_Request, get_ICategory_Parent_Response),
+    14: DceRpcOp(get_ICategory_Type_Request, get_ICategory_Type_Response),
+    15: DceRpcOp(get_ICategory_Updates_Request, get_ICategory_Updates_Response),
 }
 register_com_interface(
     name="ICategory",
@@ -1754,11 +2564,11 @@ register_com_interface(
 )
 
 
-class get_CanRequestUserInput_Request(NDRPacket):
+class get_IInstallationBehavior_CanRequestUserInput_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CanRequestUserInput_Response(NDRPacket):
+class get_IInstallationBehavior_CanRequestUserInput_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1768,11 +2578,11 @@ class InstallationImpact(IntEnum):
     iiRequiresExclusiveHandling = 2
 
 
-class get_Impact_Request(NDRPacket):
+class get_IInstallationBehavior_Impact_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Impact_Response(NDRPacket):
+class get_IInstallationBehavior_Impact_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, InstallationImpact),
         NDRIntField("status", 0),
@@ -1785,22 +2595,22 @@ class InstallationRebootBehavior(IntEnum):
     irbCanRequestReboot = 2
 
 
-class get_RebootBehavior_Request(NDRPacket):
+class get_IInstallationBehavior_RebootBehavior_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RebootBehavior_Response(NDRPacket):
+class get_IInstallationBehavior_RebootBehavior_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, InstallationRebootBehavior),
         NDRIntField("status", 0),
     ]
 
 
-class get_RequiresNetworkConnectivity_Request(NDRPacket):
+class get_IInstallationBehavior_RequiresNetworkConnectivity_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RequiresNetworkConnectivity_Response(NDRPacket):
+class get_IInstallationBehavior_RequiresNetworkConnectivity_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1811,12 +2621,21 @@ IINSTALLATIONBEHAVIOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_CanRequestUserInput_Request, get_CanRequestUserInput_Response),
-    8: DceRpcOp(get_Impact_Request, get_Impact_Response),
-    9: DceRpcOp(get_RebootBehavior_Request, get_RebootBehavior_Response),
+    7: DceRpcOp(
+        get_IInstallationBehavior_CanRequestUserInput_Request,
+        get_IInstallationBehavior_CanRequestUserInput_Response,
+    ),
+    8: DceRpcOp(
+        get_IInstallationBehavior_Impact_Request,
+        get_IInstallationBehavior_Impact_Response,
+    ),
+    9: DceRpcOp(
+        get_IInstallationBehavior_RebootBehavior_Request,
+        get_IInstallationBehavior_RebootBehavior_Response,
+    ),
     10: DceRpcOp(
-        get_RequiresNetworkConnectivity_Request,
-        get_RequiresNetworkConnectivity_Response,
+        get_IInstallationBehavior_RequiresNetworkConnectivity_Request,
+        get_IInstallationBehavior_RequiresNetworkConnectivity_Response,
     ),
 }
 register_com_interface(
@@ -1826,11 +2645,11 @@ register_com_interface(
 )
 
 
-class get_DownloadUrl_Request(NDRPacket):
+class get_IUpdateDownloadContent_DownloadUrl_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DownloadUrl_Response(NDRPacket):
+class get_IUpdateDownloadContent_DownloadUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1846,7 +2665,10 @@ IUPDATEDOWNLOADCONTENT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DownloadUrl_Request, get_DownloadUrl_Response),
+    7: DceRpcOp(
+        get_IUpdateDownloadContent_DownloadUrl_Request,
+        get_IUpdateDownloadContent_DownloadUrl_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateDownloadContent",
@@ -1855,11 +2677,11 @@ register_com_interface(
 )
 
 
-class get_IsDeltaCompressedContent_Request(NDRPacket):
+class get_IUpdateDownloadContent2_IsDeltaCompressedContent_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsDeltaCompressedContent_Response(NDRPacket):
+class get_IUpdateDownloadContent2_IsDeltaCompressedContent_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1870,9 +2692,13 @@ IUPDATEDOWNLOADCONTENT2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DownloadUrl_Request, get_DownloadUrl_Response),
+    7: DceRpcOp(
+        get_IUpdateDownloadContent_DownloadUrl_Request,
+        get_IUpdateDownloadContent_DownloadUrl_Response,
+    ),
     8: DceRpcOp(
-        get_IsDeltaCompressedContent_Request, get_IsDeltaCompressedContent_Response
+        get_IUpdateDownloadContent2_IsDeltaCompressedContent_Request,
+        get_IUpdateDownloadContent2_IsDeltaCompressedContent_Response,
     ),
 }
 register_com_interface(
@@ -1882,11 +2708,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IUpdateDownloadContentCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IUpdateDownloadContentCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1895,11 +2721,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IUpdateDownloadContentCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IUpdateDownloadContentCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -1908,11 +2734,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IUpdateDownloadContentCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IUpdateDownloadContentCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -1923,9 +2749,18 @@ IUPDATEDOWNLOADCONTENTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IUpdateDownloadContentCollection_Item_Request,
+        get_IUpdateDownloadContentCollection_Item_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateDownloadContentCollection__NewEnum_Request,
+        get_IUpdateDownloadContentCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateDownloadContentCollection_Count_Request,
+        get_IUpdateDownloadContentCollection_Count_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateDownloadContentCollection",
@@ -1934,11 +2769,11 @@ register_com_interface(
 )
 
 
-class get_DriverClass_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverClass_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverClass_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverClass_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1947,11 +2782,11 @@ class get_DriverClass_Response(NDRPacket):
     ]
 
 
-class get_DriverHardwareID_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverHardwareID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverHardwareID_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverHardwareID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1960,11 +2795,11 @@ class get_DriverHardwareID_Response(NDRPacket):
     ]
 
 
-class get_DriverManufacturer_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverManufacturer_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverManufacturer_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverManufacturer_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1973,11 +2808,11 @@ class get_DriverManufacturer_Response(NDRPacket):
     ]
 
 
-class get_DriverModel_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverModel_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverModel_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverModel_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1986,11 +2821,11 @@ class get_DriverModel_Response(NDRPacket):
     ]
 
 
-class get_DriverProvider_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverProvider_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverProvider_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverProvider_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1999,27 +2834,27 @@ class get_DriverProvider_Response(NDRPacket):
     ]
 
 
-class get_DriverVerDate_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DriverVerDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverVerDate_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DriverVerDate_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_DeviceProblemNumber_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DeviceProblemNumber_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeviceProblemNumber_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DeviceProblemNumber_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_DeviceStatus_Request(NDRPacket):
+class get_IWindowsDriverUpdate_DeviceStatus_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeviceStatus_Response(NDRPacket):
+class get_IWindowsDriverUpdate_DeviceStatus_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2030,71 +2865,137 @@ IWINDOWSDRIVERUPDATE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    53: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    54: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    55: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    56: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    57: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    58: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    59: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverClass_Request,
+        get_IWindowsDriverUpdate_DriverClass_Response,
+    ),
+    53: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverHardwareID_Request,
+        get_IWindowsDriverUpdate_DriverHardwareID_Response,
+    ),
+    54: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverManufacturer_Request,
+        get_IWindowsDriverUpdate_DriverManufacturer_Response,
+    ),
+    55: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverModel_Request,
+        get_IWindowsDriverUpdate_DriverModel_Response,
+    ),
+    56: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverProvider_Request,
+        get_IWindowsDriverUpdate_DriverProvider_Response,
+    ),
+    57: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverVerDate_Request,
+        get_IWindowsDriverUpdate_DriverVerDate_Response,
+    ),
+    58: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Response,
+    ),
+    59: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceStatus_Request,
+        get_IWindowsDriverUpdate_DeviceStatus_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdate",
@@ -2103,27 +3004,27 @@ register_com_interface(
 )
 
 
-class get_RebootRequired_Request(NDRPacket):
+class get_IUpdate2_RebootRequired_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RebootRequired_Response(NDRPacket):
+class get_IUpdate2_RebootRequired_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsPresent_Request(NDRPacket):
+class get_IUpdate2_IsPresent_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsPresent_Response(NDRPacket):
+class get_IUpdate2_IsPresent_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_CveIDs_Request(NDRPacket):
+class get_IUpdate2_CveIDs_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CveIDs_Response(NDRPacket):
+class get_IUpdate2_CveIDs_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -2139,66 +3040,110 @@ IUPDATE2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    53: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    54: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IUpdate2_RebootRequired_Request, get_IUpdate2_RebootRequired_Response
+    ),
+    53: DceRpcOp(get_IUpdate2_IsPresent_Request, get_IUpdate2_IsPresent_Response),
+    54: DceRpcOp(get_IUpdate2_CveIDs_Request, get_IUpdate2_CveIDs_Response),
     # 55: Opnum56NotUsedOnWire
 }
 register_com_interface(
@@ -2208,11 +3153,11 @@ register_com_interface(
 )
 
 
-class get_BrowseOnly_Request(NDRPacket):
+class get_IUpdate3_BrowseOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BrowseOnly_Response(NDRPacket):
+class get_IUpdate3_BrowseOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2223,68 +3168,112 @@ IUPDATE3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    53: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    54: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IUpdate2_RebootRequired_Request, get_IUpdate2_RebootRequired_Response
+    ),
+    53: DceRpcOp(get_IUpdate2_IsPresent_Request, get_IUpdate2_IsPresent_Response),
+    54: DceRpcOp(get_IUpdate2_CveIDs_Request, get_IUpdate2_CveIDs_Response),
     # 55: Opnum56NotUsedOnWire,
-    56: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
+    56: DceRpcOp(get_IUpdate3_BrowseOnly_Request, get_IUpdate3_BrowseOnly_Response),
 }
 register_com_interface(
     name="IUpdate3",
@@ -2293,11 +3282,11 @@ register_com_interface(
 )
 
 
-class get_PerUser_Request(NDRPacket):
+class get_IUpdate4_PerUser_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PerUser_Response(NDRPacket):
+class get_IUpdate4_PerUser_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2308,69 +3297,113 @@ IUPDATE4_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    53: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    54: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IUpdate2_RebootRequired_Request, get_IUpdate2_RebootRequired_Response
+    ),
+    53: DceRpcOp(get_IUpdate2_IsPresent_Request, get_IUpdate2_IsPresent_Response),
+    54: DceRpcOp(get_IUpdate2_CveIDs_Request, get_IUpdate2_CveIDs_Response),
     # 55: Opnum56NotUsedOnWire,
-    56: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
-    57: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
+    56: DceRpcOp(get_IUpdate3_BrowseOnly_Request, get_IUpdate3_BrowseOnly_Response),
+    57: DceRpcOp(get_IUpdate4_PerUser_Request, get_IUpdate4_PerUser_Response),
 }
 register_com_interface(
     name="IUpdate4",
@@ -2386,11 +3419,11 @@ class AutoSelectionMode(IntEnum):
     asAlwaysAutoSelect = 3
 
 
-class get_AutoSelection_Request(NDRPacket):
+class get_IUpdate5_AutoSelection_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AutoSelection_Response(NDRPacket):
+class get_IUpdate5_AutoSelection_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, AutoSelectionMode),
         NDRIntField("status", 0),
@@ -2403,11 +3436,11 @@ class AutoDownloadMode(IntEnum):
     adAlwaysAutoDownload = 2
 
 
-class get_AutoDownload_Request(NDRPacket):
+class get_IUpdate5_AutoDownload_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AutoDownload_Response(NDRPacket):
+class get_IUpdate5_AutoDownload_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, AutoDownloadMode),
         NDRIntField("status", 0),
@@ -2421,71 +3454,117 @@ IUPDATE5_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    53: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    54: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IUpdate2_RebootRequired_Request, get_IUpdate2_RebootRequired_Response
+    ),
+    53: DceRpcOp(get_IUpdate2_IsPresent_Request, get_IUpdate2_IsPresent_Response),
+    54: DceRpcOp(get_IUpdate2_CveIDs_Request, get_IUpdate2_CveIDs_Response),
     # 55: Opnum56NotUsedOnWire,
-    56: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
-    57: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
-    58: DceRpcOp(get_AutoSelection_Request, get_AutoSelection_Response),
-    59: DceRpcOp(get_AutoDownload_Request, get_AutoDownload_Response),
+    56: DceRpcOp(get_IUpdate3_BrowseOnly_Request, get_IUpdate3_BrowseOnly_Response),
+    57: DceRpcOp(get_IUpdate4_PerUser_Request, get_IUpdate4_PerUser_Response),
+    58: DceRpcOp(
+        get_IUpdate5_AutoSelection_Request, get_IUpdate5_AutoSelection_Response
+    ),
+    59: DceRpcOp(get_IUpdate5_AutoDownload_Request, get_IUpdate5_AutoDownload_Response),
 }
 register_com_interface(
     name="IUpdate5",
@@ -2494,11 +3573,11 @@ register_com_interface(
 )
 
 
-class get_DriverClass_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverClass_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverClass_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverClass_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2507,11 +3586,11 @@ class get_DriverClass_Response(NDRPacket):
     ]
 
 
-class get_DriverHardwareID_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverHardwareID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverHardwareID_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverHardwareID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2520,11 +3599,11 @@ class get_DriverHardwareID_Response(NDRPacket):
     ]
 
 
-class get_DriverManufacturer_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverManufacturer_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverManufacturer_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverManufacturer_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2533,11 +3612,11 @@ class get_DriverManufacturer_Response(NDRPacket):
     ]
 
 
-class get_DriverModel_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverModel_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverModel_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverModel_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2546,11 +3625,11 @@ class get_DriverModel_Response(NDRPacket):
     ]
 
 
-class get_DriverProvider_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverProvider_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverProvider_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverProvider_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2559,27 +3638,27 @@ class get_DriverProvider_Response(NDRPacket):
     ]
 
 
-class get_DriverVerDate_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverVerDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DriverVerDate_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DriverVerDate_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_DeviceProblemNumber_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DeviceProblemNumber_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeviceProblemNumber_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DeviceProblemNumber_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_DeviceStatus_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DeviceStatus_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DeviceStatus_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntry_DeviceStatus_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2590,14 +3669,38 @@ IWINDOWSDRIVERUPDATEENTRY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    8: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    9: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    10: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    11: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    12: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    13: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    14: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
+    7: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverClass_Request,
+        get_IWindowsDriverUpdateEntry_DriverClass_Response,
+    ),
+    8: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverHardwareID_Request,
+        get_IWindowsDriverUpdateEntry_DriverHardwareID_Response,
+    ),
+    9: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverManufacturer_Request,
+        get_IWindowsDriverUpdateEntry_DriverManufacturer_Response,
+    ),
+    10: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverModel_Request,
+        get_IWindowsDriverUpdateEntry_DriverModel_Response,
+    ),
+    11: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverProvider_Request,
+        get_IWindowsDriverUpdateEntry_DriverProvider_Response,
+    ),
+    12: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DriverVerDate_Request,
+        get_IWindowsDriverUpdateEntry_DriverVerDate_Response,
+    ),
+    13: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdateEntry_DeviceProblemNumber_Response,
+    ),
+    14: DceRpcOp(
+        get_IWindowsDriverUpdateEntry_DeviceStatus_Request,
+        get_IWindowsDriverUpdateEntry_DeviceStatus_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdateEntry",
@@ -2606,11 +3709,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -2619,11 +3722,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -2632,11 +3735,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IWindowsDriverUpdateEntryCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2647,9 +3750,18 @@ IWINDOWSDRIVERUPDATEENTRYCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IWindowsDriverUpdateEntryCollection_Item_Request,
+        get_IWindowsDriverUpdateEntryCollection_Item_Response,
+    ),
+    8: DceRpcOp(
+        get_IWindowsDriverUpdateEntryCollection__NewEnum_Request,
+        get_IWindowsDriverUpdateEntryCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_IWindowsDriverUpdateEntryCollection_Count_Request,
+        get_IWindowsDriverUpdateEntryCollection_Count_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdateEntryCollection",
@@ -2658,27 +3770,27 @@ register_com_interface(
 )
 
 
-class get_RebootRequired_Request(NDRPacket):
+class get_IWindowsDriverUpdate2_RebootRequired_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RebootRequired_Response(NDRPacket):
+class get_IWindowsDriverUpdate2_RebootRequired_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsPresent_Request(NDRPacket):
+class get_IWindowsDriverUpdate2_IsPresent_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsPresent_Response(NDRPacket):
+class get_IWindowsDriverUpdate2_IsPresent_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_CveIDs_Request(NDRPacket):
+class get_IWindowsDriverUpdate2_CveIDs_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CveIDs_Response(NDRPacket):
+class get_IWindowsDriverUpdate2_CveIDs_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -2694,74 +3806,149 @@ IWINDOWSDRIVERUPDATE2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    53: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    54: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    55: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    56: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    57: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    58: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    59: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
-    60: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    61: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    62: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverClass_Request,
+        get_IWindowsDriverUpdate_DriverClass_Response,
+    ),
+    53: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverHardwareID_Request,
+        get_IWindowsDriverUpdate_DriverHardwareID_Response,
+    ),
+    54: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverManufacturer_Request,
+        get_IWindowsDriverUpdate_DriverManufacturer_Response,
+    ),
+    55: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverModel_Request,
+        get_IWindowsDriverUpdate_DriverModel_Response,
+    ),
+    56: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverProvider_Request,
+        get_IWindowsDriverUpdate_DriverProvider_Response,
+    ),
+    57: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverVerDate_Request,
+        get_IWindowsDriverUpdate_DriverVerDate_Response,
+    ),
+    58: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Response,
+    ),
+    59: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceStatus_Request,
+        get_IWindowsDriverUpdate_DeviceStatus_Response,
+    ),
+    60: DceRpcOp(
+        get_IWindowsDriverUpdate2_RebootRequired_Request,
+        get_IWindowsDriverUpdate2_RebootRequired_Response,
+    ),
+    61: DceRpcOp(
+        get_IWindowsDriverUpdate2_IsPresent_Request,
+        get_IWindowsDriverUpdate2_IsPresent_Response,
+    ),
+    62: DceRpcOp(
+        get_IWindowsDriverUpdate2_CveIDs_Request,
+        get_IWindowsDriverUpdate2_CveIDs_Response,
+    ),
     # 63: Opnum64NotUsedOnWire
 }
 register_com_interface(
@@ -2771,11 +3958,11 @@ register_com_interface(
 )
 
 
-class get_BrowseOnly_Request(NDRPacket):
+class get_IWindowsDriverUpdate3_BrowseOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BrowseOnly_Response(NDRPacket):
+class get_IWindowsDriverUpdate3_BrowseOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2786,76 +3973,154 @@ IWINDOWSDRIVERUPDATE3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
+    ),
     # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    53: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    54: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    55: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    56: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    57: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    58: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    59: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
-    60: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    61: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    62: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverClass_Request,
+        get_IWindowsDriverUpdate_DriverClass_Response,
+    ),
+    53: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverHardwareID_Request,
+        get_IWindowsDriverUpdate_DriverHardwareID_Response,
+    ),
+    54: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverManufacturer_Request,
+        get_IWindowsDriverUpdate_DriverManufacturer_Response,
+    ),
+    55: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverModel_Request,
+        get_IWindowsDriverUpdate_DriverModel_Response,
+    ),
+    56: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverProvider_Request,
+        get_IWindowsDriverUpdate_DriverProvider_Response,
+    ),
+    57: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverVerDate_Request,
+        get_IWindowsDriverUpdate_DriverVerDate_Response,
+    ),
+    58: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Response,
+    ),
+    59: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceStatus_Request,
+        get_IWindowsDriverUpdate_DeviceStatus_Response,
+    ),
+    60: DceRpcOp(
+        get_IWindowsDriverUpdate2_RebootRequired_Request,
+        get_IWindowsDriverUpdate2_RebootRequired_Response,
+    ),
+    61: DceRpcOp(
+        get_IWindowsDriverUpdate2_IsPresent_Request,
+        get_IWindowsDriverUpdate2_IsPresent_Response,
+    ),
+    62: DceRpcOp(
+        get_IWindowsDriverUpdate2_CveIDs_Request,
+        get_IWindowsDriverUpdate2_CveIDs_Response,
+    ),
     # 63: Opnum64NotUsedOnWire,
-    64: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
+    64: DceRpcOp(
+        get_IWindowsDriverUpdate3_BrowseOnly_Request,
+        get_IWindowsDriverUpdate3_BrowseOnly_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdate3",
@@ -2864,11 +4129,11 @@ register_com_interface(
 )
 
 
-class get_WindowsDriverUpdateEntries_Request(NDRPacket):
+class get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Request(NDRPacket):
     fields_desc = []
 
 
-class get_WindowsDriverUpdateEntries_Response(NDRPacket):
+class get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -2877,11 +4142,11 @@ class get_WindowsDriverUpdateEntries_Response(NDRPacket):
     ]
 
 
-class get_PerUser_Request(NDRPacket):
+class get_IWindowsDriverUpdate4_PerUser_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PerUser_Response(NDRPacket):
+class get_IWindowsDriverUpdate4_PerUser_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -2892,80 +4157,162 @@ IWINDOWSDRIVERUPDATE4_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
-    # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    53: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    54: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    55: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    56: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    57: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    58: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    59: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
-    60: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    61: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    62: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
-    # 63: Opnum64NotUsedOnWire,
-    64: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
-    65: DceRpcOp(
-        get_WindowsDriverUpdateEntries_Request, get_WindowsDriverUpdateEntries_Response
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
     ),
-    66: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
+    # 49: Opnum50NotUsedOnWire,
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverClass_Request,
+        get_IWindowsDriverUpdate_DriverClass_Response,
+    ),
+    53: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverHardwareID_Request,
+        get_IWindowsDriverUpdate_DriverHardwareID_Response,
+    ),
+    54: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverManufacturer_Request,
+        get_IWindowsDriverUpdate_DriverManufacturer_Response,
+    ),
+    55: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverModel_Request,
+        get_IWindowsDriverUpdate_DriverModel_Response,
+    ),
+    56: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverProvider_Request,
+        get_IWindowsDriverUpdate_DriverProvider_Response,
+    ),
+    57: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverVerDate_Request,
+        get_IWindowsDriverUpdate_DriverVerDate_Response,
+    ),
+    58: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Response,
+    ),
+    59: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceStatus_Request,
+        get_IWindowsDriverUpdate_DeviceStatus_Response,
+    ),
+    60: DceRpcOp(
+        get_IWindowsDriverUpdate2_RebootRequired_Request,
+        get_IWindowsDriverUpdate2_RebootRequired_Response,
+    ),
+    61: DceRpcOp(
+        get_IWindowsDriverUpdate2_IsPresent_Request,
+        get_IWindowsDriverUpdate2_IsPresent_Response,
+    ),
+    62: DceRpcOp(
+        get_IWindowsDriverUpdate2_CveIDs_Request,
+        get_IWindowsDriverUpdate2_CveIDs_Response,
+    ),
+    # 63: Opnum64NotUsedOnWire,
+    64: DceRpcOp(
+        get_IWindowsDriverUpdate3_BrowseOnly_Request,
+        get_IWindowsDriverUpdate3_BrowseOnly_Response,
+    ),
+    65: DceRpcOp(
+        get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Request,
+        get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Response,
+    ),
+    66: DceRpcOp(
+        get_IWindowsDriverUpdate4_PerUser_Request,
+        get_IWindowsDriverUpdate4_PerUser_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdate4",
@@ -2974,22 +4321,22 @@ register_com_interface(
 )
 
 
-class get_AutoSelection_Request(NDRPacket):
+class get_IWindowsDriverUpdate5_AutoSelection_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AutoSelection_Response(NDRPacket):
+class get_IWindowsDriverUpdate5_AutoSelection_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, AutoSelectionMode),
         NDRIntField("status", 0),
     ]
 
 
-class get_AutoDownload_Request(NDRPacket):
+class get_IWindowsDriverUpdate5_AutoDownload_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AutoDownload_Response(NDRPacket):
+class get_IWindowsDriverUpdate5_AutoDownload_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, AutoDownloadMode),
         NDRIntField("status", 0),
@@ -3003,82 +4350,170 @@ IWINDOWSDRIVERUPDATE5_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Title_Request, get_Title_Response),
-    8: DceRpcOp(get_AutoSelectOnWebSites_Request, get_AutoSelectOnWebSites_Response),
-    9: DceRpcOp(get_BundledUpdates_Request, get_BundledUpdates_Response),
-    10: DceRpcOp(get_CanRequireSource_Request, get_CanRequireSource_Response),
-    11: DceRpcOp(get_Categories_Request, get_Categories_Response),
-    12: DceRpcOp(get_Deadline_Request, get_Deadline_Response),
+    7: DceRpcOp(get_IUpdate_Title_Request, get_IUpdate_Title_Response),
+    8: DceRpcOp(
+        get_IUpdate_AutoSelectOnWebSites_Request,
+        get_IUpdate_AutoSelectOnWebSites_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdate_BundledUpdates_Request, get_IUpdate_BundledUpdates_Response
+    ),
+    10: DceRpcOp(
+        get_IUpdate_CanRequireSource_Request, get_IUpdate_CanRequireSource_Response
+    ),
+    11: DceRpcOp(get_IUpdate_Categories_Request, get_IUpdate_Categories_Response),
+    12: DceRpcOp(get_IUpdate_Deadline_Request, get_IUpdate_Deadline_Response),
     13: DceRpcOp(
-        get_DeltaCompressedContentAvailable_Request,
-        get_DeltaCompressedContentAvailable_Response,
+        get_IUpdate_DeltaCompressedContentAvailable_Request,
+        get_IUpdate_DeltaCompressedContentAvailable_Response,
     ),
     14: DceRpcOp(
-        get_DeltaCompressedContentPreferred_Request,
-        get_DeltaCompressedContentPreferred_Response,
+        get_IUpdate_DeltaCompressedContentPreferred_Request,
+        get_IUpdate_DeltaCompressedContentPreferred_Response,
     ),
-    15: DceRpcOp(get_Description_Request, get_Description_Response),
-    16: DceRpcOp(get_EulaAccepted_Request, get_EulaAccepted_Response),
-    17: DceRpcOp(get_EulaText_Request, get_EulaText_Response),
-    18: DceRpcOp(get_HandlerID_Request, get_HandlerID_Response),
-    19: DceRpcOp(get_Identity_Request, get_Identity_Response),
-    20: DceRpcOp(get_Image_Request, get_Image_Response),
-    21: DceRpcOp(get_InstallationBehavior_Request, get_InstallationBehavior_Response),
-    22: DceRpcOp(get_IsBeta_Request, get_IsBeta_Response),
-    23: DceRpcOp(get_IsDownloaded_Request, get_IsDownloaded_Response),
-    24: DceRpcOp(get_IsHidden_Request, get_IsHidden_Response),
+    15: DceRpcOp(get_IUpdate_Description_Request, get_IUpdate_Description_Response),
+    16: DceRpcOp(get_IUpdate_EulaAccepted_Request, get_IUpdate_EulaAccepted_Response),
+    17: DceRpcOp(get_IUpdate_EulaText_Request, get_IUpdate_EulaText_Response),
+    18: DceRpcOp(get_IUpdate_HandlerID_Request, get_IUpdate_HandlerID_Response),
+    19: DceRpcOp(get_IUpdate_Identity_Request, get_IUpdate_Identity_Response),
+    20: DceRpcOp(get_IUpdate_Image_Request, get_IUpdate_Image_Response),
+    21: DceRpcOp(
+        get_IUpdate_InstallationBehavior_Request,
+        get_IUpdate_InstallationBehavior_Response,
+    ),
+    22: DceRpcOp(get_IUpdate_IsBeta_Request, get_IUpdate_IsBeta_Response),
+    23: DceRpcOp(get_IUpdate_IsDownloaded_Request, get_IUpdate_IsDownloaded_Response),
+    24: DceRpcOp(get_IUpdate_IsHidden_Request, get_IUpdate_IsHidden_Response),
     # 25: Opnum26NotUsedOnWire,
-    26: DceRpcOp(get_IsInstalled_Request, get_IsInstalled_Response),
-    27: DceRpcOp(get_IsMandatory_Request, get_IsMandatory_Response),
-    28: DceRpcOp(get_IsUninstallable_Request, get_IsUninstallable_Response),
-    29: DceRpcOp(get_Languages_Request, get_Languages_Response),
+    26: DceRpcOp(get_IUpdate_IsInstalled_Request, get_IUpdate_IsInstalled_Response),
+    27: DceRpcOp(get_IUpdate_IsMandatory_Request, get_IUpdate_IsMandatory_Response),
+    28: DceRpcOp(
+        get_IUpdate_IsUninstallable_Request, get_IUpdate_IsUninstallable_Response
+    ),
+    29: DceRpcOp(get_IUpdate_Languages_Request, get_IUpdate_Languages_Response),
     30: DceRpcOp(
-        get_LastDeploymentChangeTime_Request, get_LastDeploymentChangeTime_Response
+        get_IUpdate_LastDeploymentChangeTime_Request,
+        get_IUpdate_LastDeploymentChangeTime_Response,
     ),
-    31: DceRpcOp(get_MaxDownloadSize_Request, get_MaxDownloadSize_Response),
-    32: DceRpcOp(get_MinDownloadSize_Request, get_MinDownloadSize_Response),
-    33: DceRpcOp(get_MoreInfoUrls_Request, get_MoreInfoUrls_Response),
-    34: DceRpcOp(get_MsrcSeverity_Request, get_MsrcSeverity_Response),
-    35: DceRpcOp(get_RecommendedCpuSpeed_Request, get_RecommendedCpuSpeed_Response),
+    31: DceRpcOp(
+        get_IUpdate_MaxDownloadSize_Request, get_IUpdate_MaxDownloadSize_Response
+    ),
+    32: DceRpcOp(
+        get_IUpdate_MinDownloadSize_Request, get_IUpdate_MinDownloadSize_Response
+    ),
+    33: DceRpcOp(get_IUpdate_MoreInfoUrls_Request, get_IUpdate_MoreInfoUrls_Response),
+    34: DceRpcOp(get_IUpdate_MsrcSeverity_Request, get_IUpdate_MsrcSeverity_Response),
+    35: DceRpcOp(
+        get_IUpdate_RecommendedCpuSpeed_Request,
+        get_IUpdate_RecommendedCpuSpeed_Response,
+    ),
     36: DceRpcOp(
-        get_RecommendedHardDiskSpace_Request, get_RecommendedHardDiskSpace_Response
+        get_IUpdate_RecommendedHardDiskSpace_Request,
+        get_IUpdate_RecommendedHardDiskSpace_Response,
     ),
-    37: DceRpcOp(get_RecommendedMemory_Request, get_RecommendedMemory_Response),
-    38: DceRpcOp(get_ReleaseNotes_Request, get_ReleaseNotes_Response),
-    39: DceRpcOp(get_SecurityBulletinIDs_Request, get_SecurityBulletinIDs_Response),
-    40: DceRpcOp(get_SupersededUpdateIDs_Request, get_SupersededUpdateIDs_Response),
-    41: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    42: DceRpcOp(get_Type_Request, get_Type_Response),
-    43: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
+    37: DceRpcOp(
+        get_IUpdate_RecommendedMemory_Request, get_IUpdate_RecommendedMemory_Response
+    ),
+    38: DceRpcOp(get_IUpdate_ReleaseNotes_Request, get_IUpdate_ReleaseNotes_Response),
+    39: DceRpcOp(
+        get_IUpdate_SecurityBulletinIDs_Request,
+        get_IUpdate_SecurityBulletinIDs_Response,
+    ),
+    40: DceRpcOp(
+        get_IUpdate_SupersededUpdateIDs_Request,
+        get_IUpdate_SupersededUpdateIDs_Response,
+    ),
+    41: DceRpcOp(get_IUpdate_SupportUrl_Request, get_IUpdate_SupportUrl_Response),
+    42: DceRpcOp(get_IUpdate_Type_Request, get_IUpdate_Type_Response),
+    43: DceRpcOp(
+        get_IUpdate_UninstallationNotes_Request,
+        get_IUpdate_UninstallationNotes_Response,
+    ),
     44: DceRpcOp(
-        get_UninstallationBehavior_Request, get_UninstallationBehavior_Response
+        get_IUpdate_UninstallationBehavior_Request,
+        get_IUpdate_UninstallationBehavior_Response,
     ),
-    45: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    46: DceRpcOp(get_KBArticleIDs_Request, get_KBArticleIDs_Response),
+    45: DceRpcOp(
+        get_IUpdate_UninstallationSteps_Request,
+        get_IUpdate_UninstallationSteps_Response,
+    ),
+    46: DceRpcOp(get_IUpdate_KBArticleIDs_Request, get_IUpdate_KBArticleIDs_Response),
     # 47: Opnum48NotUsedOnWire,
-    48: DceRpcOp(get_DeploymentAction_Request, get_DeploymentAction_Response),
-    # 49: Opnum50NotUsedOnWire,
-    50: DceRpcOp(get_DownloadPriority_Request, get_DownloadPriority_Response),
-    51: DceRpcOp(get_DownloadContents_Request, get_DownloadContents_Response),
-    52: DceRpcOp(get_DriverClass_Request, get_DriverClass_Response),
-    53: DceRpcOp(get_DriverHardwareID_Request, get_DriverHardwareID_Response),
-    54: DceRpcOp(get_DriverManufacturer_Request, get_DriverManufacturer_Response),
-    55: DceRpcOp(get_DriverModel_Request, get_DriverModel_Response),
-    56: DceRpcOp(get_DriverProvider_Request, get_DriverProvider_Response),
-    57: DceRpcOp(get_DriverVerDate_Request, get_DriverVerDate_Response),
-    58: DceRpcOp(get_DeviceProblemNumber_Request, get_DeviceProblemNumber_Response),
-    59: DceRpcOp(get_DeviceStatus_Request, get_DeviceStatus_Response),
-    60: DceRpcOp(get_RebootRequired_Request, get_RebootRequired_Response),
-    61: DceRpcOp(get_IsPresent_Request, get_IsPresent_Response),
-    62: DceRpcOp(get_CveIDs_Request, get_CveIDs_Response),
-    # 63: Opnum64NotUsedOnWire,
-    64: DceRpcOp(get_BrowseOnly_Request, get_BrowseOnly_Response),
-    65: DceRpcOp(
-        get_WindowsDriverUpdateEntries_Request, get_WindowsDriverUpdateEntries_Response
+    48: DceRpcOp(
+        get_IUpdate_DeploymentAction_Request, get_IUpdate_DeploymentAction_Response
     ),
-    66: DceRpcOp(get_PerUser_Request, get_PerUser_Response),
-    67: DceRpcOp(get_AutoSelection_Request, get_AutoSelection_Response),
-    68: DceRpcOp(get_AutoDownload_Request, get_AutoDownload_Response),
+    # 49: Opnum50NotUsedOnWire,
+    50: DceRpcOp(
+        get_IUpdate_DownloadPriority_Request, get_IUpdate_DownloadPriority_Response
+    ),
+    51: DceRpcOp(
+        get_IUpdate_DownloadContents_Request, get_IUpdate_DownloadContents_Response
+    ),
+    52: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverClass_Request,
+        get_IWindowsDriverUpdate_DriverClass_Response,
+    ),
+    53: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverHardwareID_Request,
+        get_IWindowsDriverUpdate_DriverHardwareID_Response,
+    ),
+    54: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverManufacturer_Request,
+        get_IWindowsDriverUpdate_DriverManufacturer_Response,
+    ),
+    55: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverModel_Request,
+        get_IWindowsDriverUpdate_DriverModel_Response,
+    ),
+    56: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverProvider_Request,
+        get_IWindowsDriverUpdate_DriverProvider_Response,
+    ),
+    57: DceRpcOp(
+        get_IWindowsDriverUpdate_DriverVerDate_Request,
+        get_IWindowsDriverUpdate_DriverVerDate_Response,
+    ),
+    58: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Request,
+        get_IWindowsDriverUpdate_DeviceProblemNumber_Response,
+    ),
+    59: DceRpcOp(
+        get_IWindowsDriverUpdate_DeviceStatus_Request,
+        get_IWindowsDriverUpdate_DeviceStatus_Response,
+    ),
+    60: DceRpcOp(
+        get_IWindowsDriverUpdate2_RebootRequired_Request,
+        get_IWindowsDriverUpdate2_RebootRequired_Response,
+    ),
+    61: DceRpcOp(
+        get_IWindowsDriverUpdate2_IsPresent_Request,
+        get_IWindowsDriverUpdate2_IsPresent_Response,
+    ),
+    62: DceRpcOp(
+        get_IWindowsDriverUpdate2_CveIDs_Request,
+        get_IWindowsDriverUpdate2_CveIDs_Response,
+    ),
+    # 63: Opnum64NotUsedOnWire,
+    64: DceRpcOp(
+        get_IWindowsDriverUpdate3_BrowseOnly_Request,
+        get_IWindowsDriverUpdate3_BrowseOnly_Response,
+    ),
+    65: DceRpcOp(
+        get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Request,
+        get_IWindowsDriverUpdate4_WindowsDriverUpdateEntries_Response,
+    ),
+    66: DceRpcOp(
+        get_IWindowsDriverUpdate4_PerUser_Request,
+        get_IWindowsDriverUpdate4_PerUser_Response,
+    ),
+    67: DceRpcOp(
+        get_IWindowsDriverUpdate5_AutoSelection_Request,
+        get_IWindowsDriverUpdate5_AutoSelection_Response,
+    ),
+    68: DceRpcOp(
+        get_IWindowsDriverUpdate5_AutoDownload_Request,
+        get_IWindowsDriverUpdate5_AutoDownload_Response,
+    ),
 }
 register_com_interface(
     name="IWindowsDriverUpdate5",
@@ -3087,11 +4522,11 @@ register_com_interface(
 )
 
 
-class get_Message_Request(NDRPacket):
+class get_IUpdateException_Message_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Message_Response(NDRPacket):
+class get_IUpdateException_Message_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3100,11 +4535,11 @@ class get_Message_Response(NDRPacket):
     ]
 
 
-class get_HResult_Request(NDRPacket):
+class get_IUpdateException_HResult_Request(NDRPacket):
     fields_desc = []
 
 
-class get_HResult_Response(NDRPacket):
+class get_IUpdateException_HResult_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -3114,11 +4549,11 @@ class UpdateExceptionContext(IntEnum):
     uecWindowsInstaller = 3
 
 
-class get_Context_Request(NDRPacket):
+class get_IUpdateException_Context_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Context_Response(NDRPacket):
+class get_IUpdateException_Context_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, UpdateExceptionContext),
         NDRIntField("status", 0),
@@ -3132,9 +4567,15 @@ IUPDATEEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Message_Request, get_Message_Response),
-    8: DceRpcOp(get_HResult_Request, get_HResult_Response),
-    9: DceRpcOp(get_Context_Request, get_Context_Response),
+    7: DceRpcOp(
+        get_IUpdateException_Message_Request, get_IUpdateException_Message_Response
+    ),
+    8: DceRpcOp(
+        get_IUpdateException_HResult_Request, get_IUpdateException_HResult_Response
+    ),
+    9: DceRpcOp(
+        get_IUpdateException_Context_Request, get_IUpdateException_Context_Response
+    ),
 }
 register_com_interface(
     name="IUpdateException",
@@ -3143,11 +4584,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IUpdateExceptionCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IUpdateExceptionCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3156,11 +4597,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IUpdateExceptionCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IUpdateExceptionCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3169,11 +4610,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IUpdateExceptionCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IUpdateExceptionCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -3184,9 +4625,18 @@ IUPDATEEXCEPTIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IUpdateExceptionCollection_Item_Request,
+        get_IUpdateExceptionCollection_Item_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateExceptionCollection__NewEnum_Request,
+        get_IUpdateExceptionCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateExceptionCollection_Count_Request,
+        get_IUpdateExceptionCollection_Count_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateExceptionCollection",
@@ -3204,22 +4654,22 @@ class OperationResultCode(IntEnum):
     orcAborted = 5
 
 
-class get_ResultCode_Request(NDRPacket):
+class get_ISearchResult_ResultCode_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ResultCode_Response(NDRPacket):
+class get_ISearchResult_ResultCode_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, OperationResultCode),
         NDRIntField("status", 0),
     ]
 
 
-class get_RootCategories_Request(NDRPacket):
+class get_ISearchResult_RootCategories_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RootCategories_Response(NDRPacket):
+class get_ISearchResult_RootCategories_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3228,11 +4678,11 @@ class get_RootCategories_Response(NDRPacket):
     ]
 
 
-class get_Updates_Request(NDRPacket):
+class get_ISearchResult_Updates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Updates_Response(NDRPacket):
+class get_ISearchResult_Updates_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3241,11 +4691,11 @@ class get_Updates_Response(NDRPacket):
     ]
 
 
-class get_Warnings_Request(NDRPacket):
+class get_ISearchResult_Warnings_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Warnings_Response(NDRPacket):
+class get_ISearchResult_Warnings_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3261,10 +4711,17 @@ ISEARCHRESULT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_ResultCode_Request, get_ResultCode_Response),
-    8: DceRpcOp(get_RootCategories_Request, get_RootCategories_Response),
-    9: DceRpcOp(get_Updates_Request, get_Updates_Response),
-    10: DceRpcOp(get_Warnings_Request, get_Warnings_Response),
+    7: DceRpcOp(
+        get_ISearchResult_ResultCode_Request, get_ISearchResult_ResultCode_Response
+    ),
+    8: DceRpcOp(
+        get_ISearchResult_RootCategories_Request,
+        get_ISearchResult_RootCategories_Response,
+    ),
+    9: DceRpcOp(get_ISearchResult_Updates_Request, get_ISearchResult_Updates_Response),
+    10: DceRpcOp(
+        get_ISearchResult_Warnings_Request, get_ISearchResult_Warnings_Response
+    ),
 }
 register_com_interface(
     name="ISearchResult",
@@ -3278,49 +4735,49 @@ class UpdateOperation(IntEnum):
     uoUninstallation = 2
 
 
-class get_Operation_Request(NDRPacket):
+class get_IUpdateHistoryEntry_Operation_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Operation_Response(NDRPacket):
+class get_IUpdateHistoryEntry_Operation_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, UpdateOperation),
         NDRIntField("status", 0),
     ]
 
 
-class get_ResultCode_Request(NDRPacket):
+class get_IUpdateHistoryEntry_ResultCode_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ResultCode_Response(NDRPacket):
+class get_IUpdateHistoryEntry_ResultCode_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, OperationResultCode),
         NDRIntField("status", 0),
     ]
 
 
-class get_HResult_Request(NDRPacket):
+class get_IUpdateHistoryEntry_HResult_Request(NDRPacket):
     fields_desc = []
 
 
-class get_HResult_Response(NDRPacket):
+class get_IUpdateHistoryEntry_HResult_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Date_Request(NDRPacket):
+class get_IUpdateHistoryEntry_Date_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Date_Response(NDRPacket):
+class get_IUpdateHistoryEntry_Date_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_UpdateIdentity_Request(NDRPacket):
+class get_IUpdateHistoryEntry_UpdateIdentity_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UpdateIdentity_Response(NDRPacket):
+class get_IUpdateHistoryEntry_UpdateIdentity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3329,11 +4786,11 @@ class get_UpdateIdentity_Response(NDRPacket):
     ]
 
 
-class get_Title_Request(NDRPacket):
+class get_IUpdateHistoryEntry_Title_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Title_Response(NDRPacket):
+class get_IUpdateHistoryEntry_Title_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3342,11 +4799,11 @@ class get_Title_Response(NDRPacket):
     ]
 
 
-class get_Description_Request(NDRPacket):
+class get_IUpdateHistoryEntry_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IUpdateHistoryEntry_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3355,19 +4812,19 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class get_UnmappedResultCode_Request(NDRPacket):
+class get_IUpdateHistoryEntry_UnmappedResultCode_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UnmappedResultCode_Response(NDRPacket):
+class get_IUpdateHistoryEntry_UnmappedResultCode_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ClientApplicationID_Request(NDRPacket):
+class get_IUpdateHistoryEntry_ClientApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClientApplicationID_Response(NDRPacket):
+class get_IUpdateHistoryEntry_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3383,22 +4840,22 @@ class ServerSelection(IntEnum):
     ssOthers = 3
 
 
-class get_ServerSelection_Request(NDRPacket):
+class get_IUpdateHistoryEntry_ServerSelection_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServerSelection_Response(NDRPacket):
+class get_IUpdateHistoryEntry_ServerSelection_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, ServerSelection),
         NDRIntField("status", 0),
     ]
 
 
-class get_ServiceID_Request(NDRPacket):
+class get_IUpdateHistoryEntry_ServiceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServiceID_Response(NDRPacket):
+class get_IUpdateHistoryEntry_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3407,11 +4864,11 @@ class get_ServiceID_Response(NDRPacket):
     ]
 
 
-class get_UninstallationSteps_Request(NDRPacket):
+class get_IUpdateHistoryEntry_UninstallationSteps_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UninstallationSteps_Response(NDRPacket):
+class get_IUpdateHistoryEntry_UninstallationSteps_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3420,11 +4877,11 @@ class get_UninstallationSteps_Response(NDRPacket):
     ]
 
 
-class get_UninstallationNotes_Request(NDRPacket):
+class get_IUpdateHistoryEntry_UninstallationNotes_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UninstallationNotes_Response(NDRPacket):
+class get_IUpdateHistoryEntry_UninstallationNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3433,11 +4890,11 @@ class get_UninstallationNotes_Response(NDRPacket):
     ]
 
 
-class get_SupportUrl_Request(NDRPacket):
+class get_IUpdateHistoryEntry_SupportUrl_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SupportUrl_Response(NDRPacket):
+class get_IUpdateHistoryEntry_SupportUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3453,20 +4910,60 @@ IUPDATEHISTORYENTRY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Operation_Request, get_Operation_Response),
-    8: DceRpcOp(get_ResultCode_Request, get_ResultCode_Response),
-    9: DceRpcOp(get_HResult_Request, get_HResult_Response),
-    10: DceRpcOp(get_Date_Request, get_Date_Response),
-    11: DceRpcOp(get_UpdateIdentity_Request, get_UpdateIdentity_Response),
-    12: DceRpcOp(get_Title_Request, get_Title_Response),
-    13: DceRpcOp(get_Description_Request, get_Description_Response),
-    14: DceRpcOp(get_UnmappedResultCode_Request, get_UnmappedResultCode_Response),
-    15: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    16: DceRpcOp(get_ServerSelection_Request, get_ServerSelection_Response),
-    17: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    18: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    19: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
-    20: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
+    7: DceRpcOp(
+        get_IUpdateHistoryEntry_Operation_Request,
+        get_IUpdateHistoryEntry_Operation_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateHistoryEntry_ResultCode_Request,
+        get_IUpdateHistoryEntry_ResultCode_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateHistoryEntry_HResult_Request,
+        get_IUpdateHistoryEntry_HResult_Response,
+    ),
+    10: DceRpcOp(
+        get_IUpdateHistoryEntry_Date_Request, get_IUpdateHistoryEntry_Date_Response
+    ),
+    11: DceRpcOp(
+        get_IUpdateHistoryEntry_UpdateIdentity_Request,
+        get_IUpdateHistoryEntry_UpdateIdentity_Response,
+    ),
+    12: DceRpcOp(
+        get_IUpdateHistoryEntry_Title_Request, get_IUpdateHistoryEntry_Title_Response
+    ),
+    13: DceRpcOp(
+        get_IUpdateHistoryEntry_Description_Request,
+        get_IUpdateHistoryEntry_Description_Response,
+    ),
+    14: DceRpcOp(
+        get_IUpdateHistoryEntry_UnmappedResultCode_Request,
+        get_IUpdateHistoryEntry_UnmappedResultCode_Response,
+    ),
+    15: DceRpcOp(
+        get_IUpdateHistoryEntry_ClientApplicationID_Request,
+        get_IUpdateHistoryEntry_ClientApplicationID_Response,
+    ),
+    16: DceRpcOp(
+        get_IUpdateHistoryEntry_ServerSelection_Request,
+        get_IUpdateHistoryEntry_ServerSelection_Response,
+    ),
+    17: DceRpcOp(
+        get_IUpdateHistoryEntry_ServiceID_Request,
+        get_IUpdateHistoryEntry_ServiceID_Response,
+    ),
+    18: DceRpcOp(
+        get_IUpdateHistoryEntry_UninstallationSteps_Request,
+        get_IUpdateHistoryEntry_UninstallationSteps_Response,
+    ),
+    19: DceRpcOp(
+        get_IUpdateHistoryEntry_UninstallationNotes_Request,
+        get_IUpdateHistoryEntry_UninstallationNotes_Response,
+    ),
+    20: DceRpcOp(
+        get_IUpdateHistoryEntry_SupportUrl_Request,
+        get_IUpdateHistoryEntry_SupportUrl_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateHistoryEntry",
@@ -3475,11 +4972,11 @@ register_com_interface(
 )
 
 
-class get_Categories_Request(NDRPacket):
+class get_IUpdateHistoryEntry2_Categories_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Categories_Response(NDRPacket):
+class get_IUpdateHistoryEntry2_Categories_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3495,21 +4992,64 @@ IUPDATEHISTORYENTRY2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Operation_Request, get_Operation_Response),
-    8: DceRpcOp(get_ResultCode_Request, get_ResultCode_Response),
-    9: DceRpcOp(get_HResult_Request, get_HResult_Response),
-    10: DceRpcOp(get_Date_Request, get_Date_Response),
-    11: DceRpcOp(get_UpdateIdentity_Request, get_UpdateIdentity_Response),
-    12: DceRpcOp(get_Title_Request, get_Title_Response),
-    13: DceRpcOp(get_Description_Request, get_Description_Response),
-    14: DceRpcOp(get_UnmappedResultCode_Request, get_UnmappedResultCode_Response),
-    15: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    16: DceRpcOp(get_ServerSelection_Request, get_ServerSelection_Response),
-    17: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    18: DceRpcOp(get_UninstallationSteps_Request, get_UninstallationSteps_Response),
-    19: DceRpcOp(get_UninstallationNotes_Request, get_UninstallationNotes_Response),
-    20: DceRpcOp(get_SupportUrl_Request, get_SupportUrl_Response),
-    21: DceRpcOp(get_Categories_Request, get_Categories_Response),
+    7: DceRpcOp(
+        get_IUpdateHistoryEntry_Operation_Request,
+        get_IUpdateHistoryEntry_Operation_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateHistoryEntry_ResultCode_Request,
+        get_IUpdateHistoryEntry_ResultCode_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateHistoryEntry_HResult_Request,
+        get_IUpdateHistoryEntry_HResult_Response,
+    ),
+    10: DceRpcOp(
+        get_IUpdateHistoryEntry_Date_Request, get_IUpdateHistoryEntry_Date_Response
+    ),
+    11: DceRpcOp(
+        get_IUpdateHistoryEntry_UpdateIdentity_Request,
+        get_IUpdateHistoryEntry_UpdateIdentity_Response,
+    ),
+    12: DceRpcOp(
+        get_IUpdateHistoryEntry_Title_Request, get_IUpdateHistoryEntry_Title_Response
+    ),
+    13: DceRpcOp(
+        get_IUpdateHistoryEntry_Description_Request,
+        get_IUpdateHistoryEntry_Description_Response,
+    ),
+    14: DceRpcOp(
+        get_IUpdateHistoryEntry_UnmappedResultCode_Request,
+        get_IUpdateHistoryEntry_UnmappedResultCode_Response,
+    ),
+    15: DceRpcOp(
+        get_IUpdateHistoryEntry_ClientApplicationID_Request,
+        get_IUpdateHistoryEntry_ClientApplicationID_Response,
+    ),
+    16: DceRpcOp(
+        get_IUpdateHistoryEntry_ServerSelection_Request,
+        get_IUpdateHistoryEntry_ServerSelection_Response,
+    ),
+    17: DceRpcOp(
+        get_IUpdateHistoryEntry_ServiceID_Request,
+        get_IUpdateHistoryEntry_ServiceID_Response,
+    ),
+    18: DceRpcOp(
+        get_IUpdateHistoryEntry_UninstallationSteps_Request,
+        get_IUpdateHistoryEntry_UninstallationSteps_Response,
+    ),
+    19: DceRpcOp(
+        get_IUpdateHistoryEntry_UninstallationNotes_Request,
+        get_IUpdateHistoryEntry_UninstallationNotes_Response,
+    ),
+    20: DceRpcOp(
+        get_IUpdateHistoryEntry_SupportUrl_Request,
+        get_IUpdateHistoryEntry_SupportUrl_Response,
+    ),
+    21: DceRpcOp(
+        get_IUpdateHistoryEntry2_Categories_Request,
+        get_IUpdateHistoryEntry2_Categories_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateHistoryEntry2",
@@ -3518,11 +5058,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IUpdateHistoryEntryCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IUpdateHistoryEntryCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3531,11 +5071,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IUpdateHistoryEntryCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IUpdateHistoryEntryCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -3544,11 +5084,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IUpdateHistoryEntryCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IUpdateHistoryEntryCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -3559,9 +5099,18 @@ IUPDATEHISTORYENTRYCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IUpdateHistoryEntryCollection_Item_Request,
+        get_IUpdateHistoryEntryCollection_Item_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateHistoryEntryCollection__NewEnum_Request,
+        get_IUpdateHistoryEntryCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateHistoryEntryCollection_Count_Request,
+        get_IUpdateHistoryEntryCollection_Count_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateHistoryEntryCollection",
@@ -3570,27 +5119,27 @@ register_com_interface(
 )
 
 
-class get_CanAutomaticallyUpgradeService_Request(NDRPacket):
+class get_IUpdateSearcher_CanAutomaticallyUpgradeService_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CanAutomaticallyUpgradeService_Response(NDRPacket):
+class get_IUpdateSearcher_CanAutomaticallyUpgradeService_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class put_CanAutomaticallyUpgradeService_Request(NDRPacket):
+class put_IUpdateSearcher_CanAutomaticallyUpgradeService_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("value", 0)]
 
 
-class put_CanAutomaticallyUpgradeService_Response(NDRPacket):
+class put_IUpdateSearcher_CanAutomaticallyUpgradeService_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ClientApplicationID_Request(NDRPacket):
+class get_IUpdateSearcher_ClientApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClientApplicationID_Response(NDRPacket):
+class get_IUpdateSearcher_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3599,46 +5148,46 @@ class get_ClientApplicationID_Response(NDRPacket):
     ]
 
 
-class put_ClientApplicationID_Request(NDRPacket):
+class put_IUpdateSearcher_ClientApplicationID_Request(NDRPacket):
     fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_ClientApplicationID_Response(NDRPacket):
+class put_IUpdateSearcher_ClientApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_IncludePotentiallySupersededUpdates_Request(NDRPacket):
+class get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IncludePotentiallySupersededUpdates_Response(NDRPacket):
+class get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class put_IncludePotentiallySupersededUpdates_Request(NDRPacket):
+class put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("value", 0)]
 
 
-class put_IncludePotentiallySupersededUpdates_Response(NDRPacket):
+class put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ServerSelection_Request(NDRPacket):
+class get_IUpdateSearcher_ServerSelection_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServerSelection_Response(NDRPacket):
+class get_IUpdateSearcher_ServerSelection_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, ServerSelection),
         NDRIntField("status", 0),
     ]
 
 
-class put_ServerSelection_Request(NDRPacket):
+class put_IUpdateSearcher_ServerSelection_Request(NDRPacket):
     fields_desc = [NDRIntEnumField("value", 0, ServerSelection)]
 
 
-class put_ServerSelection_Response(NDRPacket):
+class put_IUpdateSearcher_ServerSelection_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3681,19 +5230,19 @@ class Search_Response(NDRPacket):
     ]
 
 
-class get_Online_Request(NDRPacket):
+class get_IUpdateSearcher_Online_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Online_Response(NDRPacket):
+class get_IUpdateSearcher_Online_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class put_Online_Request(NDRPacket):
+class put_IUpdateSearcher_Online_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("value", 0)]
 
 
-class put_Online_Response(NDRPacket):
+class put_IUpdateSearcher_Online_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3705,11 +5254,11 @@ class GetTotalHistoryCount_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ServiceID_Request(NDRPacket):
+class get_IUpdateSearcher_ServiceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServiceID_Response(NDRPacket):
+class get_IUpdateSearcher_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3718,11 +5267,11 @@ class get_ServiceID_Response(NDRPacket):
     ]
 
 
-class put_ServiceID_Request(NDRPacket):
+class put_IUpdateSearcher_ServiceID_Request(NDRPacket):
     fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_ServiceID_Response(NDRPacket):
+class put_IUpdateSearcher_ServiceID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3734,35 +5283,55 @@ IUPDATESEARCHER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
     7: DceRpcOp(
-        get_CanAutomaticallyUpgradeService_Request,
-        get_CanAutomaticallyUpgradeService_Response,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
     8: DceRpcOp(
-        put_CanAutomaticallyUpgradeService_Request,
-        put_CanAutomaticallyUpgradeService_Response,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
-    9: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    10: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
+    9: DceRpcOp(
+        get_IUpdateSearcher_ClientApplicationID_Request,
+        get_IUpdateSearcher_ClientApplicationID_Response,
+    ),
+    10: DceRpcOp(
+        put_IUpdateSearcher_ClientApplicationID_Request,
+        put_IUpdateSearcher_ClientApplicationID_Response,
+    ),
     11: DceRpcOp(
-        get_IncludePotentiallySupersededUpdates_Request,
-        get_IncludePotentiallySupersededUpdates_Response,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
     12: DceRpcOp(
-        put_IncludePotentiallySupersededUpdates_Request,
-        put_IncludePotentiallySupersededUpdates_Response,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
-    13: DceRpcOp(get_ServerSelection_Request, get_ServerSelection_Response),
-    14: DceRpcOp(put_ServerSelection_Request, put_ServerSelection_Response),
+    13: DceRpcOp(
+        get_IUpdateSearcher_ServerSelection_Request,
+        get_IUpdateSearcher_ServerSelection_Response,
+    ),
+    14: DceRpcOp(
+        put_IUpdateSearcher_ServerSelection_Request,
+        put_IUpdateSearcher_ServerSelection_Response,
+    ),
     # 15: Opnum16NotUsedOnWire,
     # 16: Opnum17NotUsedOnWire,
     17: DceRpcOp(EscapeString_Request, EscapeString_Response),
     18: DceRpcOp(QueryHistory_Request, QueryHistory_Response),
     19: DceRpcOp(Search_Request, Search_Response),
-    20: DceRpcOp(get_Online_Request, get_Online_Response),
-    21: DceRpcOp(put_Online_Request, put_Online_Response),
+    20: DceRpcOp(
+        get_IUpdateSearcher_Online_Request, get_IUpdateSearcher_Online_Response
+    ),
+    21: DceRpcOp(
+        put_IUpdateSearcher_Online_Request, put_IUpdateSearcher_Online_Response
+    ),
     22: DceRpcOp(GetTotalHistoryCount_Request, GetTotalHistoryCount_Response),
-    23: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    24: DceRpcOp(put_ServiceID_Request, put_ServiceID_Response),
+    23: DceRpcOp(
+        get_IUpdateSearcher_ServiceID_Request, get_IUpdateSearcher_ServiceID_Response
+    ),
+    24: DceRpcOp(
+        put_IUpdateSearcher_ServiceID_Request, put_IUpdateSearcher_ServiceID_Response
+    ),
 }
 register_com_interface(
     name="IUpdateSearcher",
@@ -3771,19 +5340,19 @@ register_com_interface(
 )
 
 
-class get_IgnoreDownloadPriority_Request(NDRPacket):
+class get_IUpdateSearcher2_IgnoreDownloadPriority_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IgnoreDownloadPriority_Response(NDRPacket):
+class get_IUpdateSearcher2_IgnoreDownloadPriority_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class put_IgnoreDownloadPriority_Request(NDRPacket):
+class put_IUpdateSearcher2_IgnoreDownloadPriority_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("value", 0)]
 
 
-class put_IgnoreDownloadPriority_Response(NDRPacket):
+class put_IUpdateSearcher2_IgnoreDownloadPriority_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3795,40 +5364,62 @@ IUPDATESEARCHER2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
     7: DceRpcOp(
-        get_CanAutomaticallyUpgradeService_Request,
-        get_CanAutomaticallyUpgradeService_Response,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
     8: DceRpcOp(
-        put_CanAutomaticallyUpgradeService_Request,
-        put_CanAutomaticallyUpgradeService_Response,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
-    9: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    10: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
+    9: DceRpcOp(
+        get_IUpdateSearcher_ClientApplicationID_Request,
+        get_IUpdateSearcher_ClientApplicationID_Response,
+    ),
+    10: DceRpcOp(
+        put_IUpdateSearcher_ClientApplicationID_Request,
+        put_IUpdateSearcher_ClientApplicationID_Response,
+    ),
     11: DceRpcOp(
-        get_IncludePotentiallySupersededUpdates_Request,
-        get_IncludePotentiallySupersededUpdates_Response,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
     12: DceRpcOp(
-        put_IncludePotentiallySupersededUpdates_Request,
-        put_IncludePotentiallySupersededUpdates_Response,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
-    13: DceRpcOp(get_ServerSelection_Request, get_ServerSelection_Response),
-    14: DceRpcOp(put_ServerSelection_Request, put_ServerSelection_Response),
+    13: DceRpcOp(
+        get_IUpdateSearcher_ServerSelection_Request,
+        get_IUpdateSearcher_ServerSelection_Response,
+    ),
+    14: DceRpcOp(
+        put_IUpdateSearcher_ServerSelection_Request,
+        put_IUpdateSearcher_ServerSelection_Response,
+    ),
     # 15: Opnum16NotUsedOnWire,
     # 16: Opnum17NotUsedOnWire,
     17: DceRpcOp(EscapeString_Request, EscapeString_Response),
     18: DceRpcOp(QueryHistory_Request, QueryHistory_Response),
     19: DceRpcOp(Search_Request, Search_Response),
-    20: DceRpcOp(get_Online_Request, get_Online_Response),
-    21: DceRpcOp(put_Online_Request, put_Online_Response),
+    20: DceRpcOp(
+        get_IUpdateSearcher_Online_Request, get_IUpdateSearcher_Online_Response
+    ),
+    21: DceRpcOp(
+        put_IUpdateSearcher_Online_Request, put_IUpdateSearcher_Online_Response
+    ),
     22: DceRpcOp(GetTotalHistoryCount_Request, GetTotalHistoryCount_Response),
-    23: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    24: DceRpcOp(put_ServiceID_Request, put_ServiceID_Response),
+    23: DceRpcOp(
+        get_IUpdateSearcher_ServiceID_Request, get_IUpdateSearcher_ServiceID_Response
+    ),
+    24: DceRpcOp(
+        put_IUpdateSearcher_ServiceID_Request, put_IUpdateSearcher_ServiceID_Response
+    ),
     25: DceRpcOp(
-        get_IgnoreDownloadPriority_Request, get_IgnoreDownloadPriority_Response
+        get_IUpdateSearcher2_IgnoreDownloadPriority_Request,
+        get_IUpdateSearcher2_IgnoreDownloadPriority_Response,
     ),
     26: DceRpcOp(
-        put_IgnoreDownloadPriority_Request, put_IgnoreDownloadPriority_Response
+        put_IUpdateSearcher2_IgnoreDownloadPriority_Request,
+        put_IUpdateSearcher2_IgnoreDownloadPriority_Response,
     ),
 }
 register_com_interface(
@@ -3847,19 +5438,19 @@ class SearchScope(IntEnum):
     searchScopeAllUsers = 5
 
 
-class get_SearchScope_Request(NDRPacket):
+class get_IUpdateSearcher3_SearchScope_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SearchScope_Response(NDRPacket):
+class get_IUpdateSearcher3_SearchScope_Response(NDRPacket):
     fields_desc = [NDRIntEnumField("retval", 0, SearchScope), NDRIntField("status", 0)]
 
 
-class put_SearchScope_Request(NDRPacket):
+class put_IUpdateSearcher3_SearchScope_Request(NDRPacket):
     fields_desc = [NDRIntEnumField("value", 0, SearchScope)]
 
 
-class put_SearchScope_Response(NDRPacket):
+class put_IUpdateSearcher3_SearchScope_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3871,43 +5462,71 @@ IUPDATESEARCHER3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
     7: DceRpcOp(
-        get_CanAutomaticallyUpgradeService_Request,
-        get_CanAutomaticallyUpgradeService_Response,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        get_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
     8: DceRpcOp(
-        put_CanAutomaticallyUpgradeService_Request,
-        put_CanAutomaticallyUpgradeService_Response,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Request,
+        put_IUpdateSearcher_CanAutomaticallyUpgradeService_Response,
     ),
-    9: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    10: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
+    9: DceRpcOp(
+        get_IUpdateSearcher_ClientApplicationID_Request,
+        get_IUpdateSearcher_ClientApplicationID_Response,
+    ),
+    10: DceRpcOp(
+        put_IUpdateSearcher_ClientApplicationID_Request,
+        put_IUpdateSearcher_ClientApplicationID_Response,
+    ),
     11: DceRpcOp(
-        get_IncludePotentiallySupersededUpdates_Request,
-        get_IncludePotentiallySupersededUpdates_Response,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        get_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
     12: DceRpcOp(
-        put_IncludePotentiallySupersededUpdates_Request,
-        put_IncludePotentiallySupersededUpdates_Response,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Request,
+        put_IUpdateSearcher_IncludePotentiallySupersededUpdates_Response,
     ),
-    13: DceRpcOp(get_ServerSelection_Request, get_ServerSelection_Response),
-    14: DceRpcOp(put_ServerSelection_Request, put_ServerSelection_Response),
+    13: DceRpcOp(
+        get_IUpdateSearcher_ServerSelection_Request,
+        get_IUpdateSearcher_ServerSelection_Response,
+    ),
+    14: DceRpcOp(
+        put_IUpdateSearcher_ServerSelection_Request,
+        put_IUpdateSearcher_ServerSelection_Response,
+    ),
     # 15: Opnum16NotUsedOnWire,
     # 16: Opnum17NotUsedOnWire,
     17: DceRpcOp(EscapeString_Request, EscapeString_Response),
     18: DceRpcOp(QueryHistory_Request, QueryHistory_Response),
     19: DceRpcOp(Search_Request, Search_Response),
-    20: DceRpcOp(get_Online_Request, get_Online_Response),
-    21: DceRpcOp(put_Online_Request, put_Online_Response),
+    20: DceRpcOp(
+        get_IUpdateSearcher_Online_Request, get_IUpdateSearcher_Online_Response
+    ),
+    21: DceRpcOp(
+        put_IUpdateSearcher_Online_Request, put_IUpdateSearcher_Online_Response
+    ),
     22: DceRpcOp(GetTotalHistoryCount_Request, GetTotalHistoryCount_Response),
-    23: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    24: DceRpcOp(put_ServiceID_Request, put_ServiceID_Response),
+    23: DceRpcOp(
+        get_IUpdateSearcher_ServiceID_Request, get_IUpdateSearcher_ServiceID_Response
+    ),
+    24: DceRpcOp(
+        put_IUpdateSearcher_ServiceID_Request, put_IUpdateSearcher_ServiceID_Response
+    ),
     25: DceRpcOp(
-        get_IgnoreDownloadPriority_Request, get_IgnoreDownloadPriority_Response
+        get_IUpdateSearcher2_IgnoreDownloadPriority_Request,
+        get_IUpdateSearcher2_IgnoreDownloadPriority_Response,
     ),
     26: DceRpcOp(
-        put_IgnoreDownloadPriority_Request, put_IgnoreDownloadPriority_Response
+        put_IUpdateSearcher2_IgnoreDownloadPriority_Request,
+        put_IUpdateSearcher2_IgnoreDownloadPriority_Response,
     ),
-    27: DceRpcOp(get_SearchScope_Request, get_SearchScope_Response),
-    28: DceRpcOp(put_SearchScope_Request, put_SearchScope_Response),
+    27: DceRpcOp(
+        get_IUpdateSearcher3_SearchScope_Request,
+        get_IUpdateSearcher3_SearchScope_Response,
+    ),
+    28: DceRpcOp(
+        put_IUpdateSearcher3_SearchScope_Request,
+        put_IUpdateSearcher3_SearchScope_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateSearcher3",
@@ -3916,11 +5535,11 @@ register_com_interface(
 )
 
 
-class get_ClientApplicationID_Request(NDRPacket):
+class get_IUpdateSession_ClientApplicationID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClientApplicationID_Response(NDRPacket):
+class get_IUpdateSession_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3929,19 +5548,19 @@ class get_ClientApplicationID_Response(NDRPacket):
     ]
 
 
-class put_ClientApplicationID_Request(NDRPacket):
+class put_IUpdateSession_ClientApplicationID_Request(NDRPacket):
     fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_ClientApplicationID_Response(NDRPacket):
+class put_IUpdateSession_ClientApplicationID_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ReadOnly_Request(NDRPacket):
+class get_IUpdateSession_ReadOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReadOnly_Response(NDRPacket):
+class get_IUpdateSession_ReadOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -3965,9 +5584,17 @@ IUPDATESESSION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    8: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
-    9: DceRpcOp(get_ReadOnly_Request, get_ReadOnly_Response),
+    7: DceRpcOp(
+        get_IUpdateSession_ClientApplicationID_Request,
+        get_IUpdateSession_ClientApplicationID_Response,
+    ),
+    8: DceRpcOp(
+        put_IUpdateSession_ClientApplicationID_Request,
+        put_IUpdateSession_ClientApplicationID_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateSession_ReadOnly_Request, get_IUpdateSession_ReadOnly_Response
+    ),
     # 10: Opnum11NotUsedOnWire,
     # 11: Opnum12NotUsedOnWire,
     12: DceRpcOp(CreateUpdateSearcher_Request, CreateUpdateSearcher_Response),
@@ -3981,19 +5608,19 @@ register_com_interface(
 )
 
 
-class get_UserLocale_Request(NDRPacket):
+class get_IUpdateSession2_UserLocale_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UserLocale_Response(NDRPacket):
+class get_IUpdateSession2_UserLocale_Response(NDRPacket):
     fields_desc = [NDRIntField("retval", 0), NDRIntField("status", 0)]
 
 
-class put_UserLocale_Request(NDRPacket):
+class put_IUpdateSession2_UserLocale_Request(NDRPacket):
     fields_desc = [NDRIntField("lcid", 0)]
 
 
-class put_UserLocale_Response(NDRPacket):
+class put_IUpdateSession2_UserLocale_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -4004,16 +5631,28 @@ IUPDATESESSION2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    8: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
-    9: DceRpcOp(get_ReadOnly_Request, get_ReadOnly_Response),
+    7: DceRpcOp(
+        get_IUpdateSession_ClientApplicationID_Request,
+        get_IUpdateSession_ClientApplicationID_Response,
+    ),
+    8: DceRpcOp(
+        put_IUpdateSession_ClientApplicationID_Request,
+        put_IUpdateSession_ClientApplicationID_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateSession_ReadOnly_Request, get_IUpdateSession_ReadOnly_Response
+    ),
     # 10: Opnum11NotUsedOnWire,
     # 11: Opnum12NotUsedOnWire,
     12: DceRpcOp(CreateUpdateSearcher_Request, CreateUpdateSearcher_Response),
     # 13: Opnum14NotUsedOnWire,
     # 14: Opnum15NotUsedOnWire,
-    15: DceRpcOp(get_UserLocale_Request, get_UserLocale_Response),
-    16: DceRpcOp(put_UserLocale_Request, put_UserLocale_Response),
+    15: DceRpcOp(
+        get_IUpdateSession2_UserLocale_Request, get_IUpdateSession2_UserLocale_Response
+    ),
+    16: DceRpcOp(
+        put_IUpdateSession2_UserLocale_Request, put_IUpdateSession2_UserLocale_Response
+    ),
 }
 register_com_interface(
     name="IUpdateSession2",
@@ -4059,16 +5698,28 @@ IUPDATESESSION3_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_ClientApplicationID_Request, get_ClientApplicationID_Response),
-    8: DceRpcOp(put_ClientApplicationID_Request, put_ClientApplicationID_Response),
-    9: DceRpcOp(get_ReadOnly_Request, get_ReadOnly_Response),
+    7: DceRpcOp(
+        get_IUpdateSession_ClientApplicationID_Request,
+        get_IUpdateSession_ClientApplicationID_Response,
+    ),
+    8: DceRpcOp(
+        put_IUpdateSession_ClientApplicationID_Request,
+        put_IUpdateSession_ClientApplicationID_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateSession_ReadOnly_Request, get_IUpdateSession_ReadOnly_Response
+    ),
     # 10: Opnum11NotUsedOnWire,
     # 11: Opnum12NotUsedOnWire,
     12: DceRpcOp(CreateUpdateSearcher_Request, CreateUpdateSearcher_Response),
     # 13: Opnum14NotUsedOnWire,
     # 14: Opnum15NotUsedOnWire,
-    15: DceRpcOp(get_UserLocale_Request, get_UserLocale_Response),
-    16: DceRpcOp(put_UserLocale_Request, put_UserLocale_Response),
+    15: DceRpcOp(
+        get_IUpdateSession2_UserLocale_Request, get_IUpdateSession2_UserLocale_Response
+    ),
+    16: DceRpcOp(
+        put_IUpdateSession2_UserLocale_Request, put_IUpdateSession2_UserLocale_Response
+    ),
     17: DceRpcOp(
         CreateUpdateServiceManager_Request, CreateUpdateServiceManager_Response
     ),
@@ -4081,11 +5732,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IUpdateService_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IUpdateService_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4094,62 +5745,62 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_ContentValidationCert_Request(NDRPacket):
+class get_IUpdateService_ContentValidationCert_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ContentValidationCert_Response(NDRPacket):
+class get_IUpdateService_ContentValidationCert_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class get_ExpirationDate_Request(NDRPacket):
+class get_IUpdateService_ExpirationDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ExpirationDate_Response(NDRPacket):
+class get_IUpdateService_ExpirationDate_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsManaged_Request(NDRPacket):
+class get_IUpdateService_IsManaged_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsManaged_Response(NDRPacket):
+class get_IUpdateService_IsManaged_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IsRegisteredWithAU_Request(NDRPacket):
+class get_IUpdateService_IsRegisteredWithAU_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsRegisteredWithAU_Response(NDRPacket):
+class get_IUpdateService_IsRegisteredWithAU_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_IssueDate_Request(NDRPacket):
+class get_IUpdateService_IssueDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IssueDate_Response(NDRPacket):
+class get_IUpdateService_IssueDate_Response(NDRPacket):
     fields_desc = [NDRIEEEDoubleField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_OffersWindowsUpdates_Request(NDRPacket):
+class get_IUpdateService_OffersWindowsUpdates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OffersWindowsUpdates_Response(NDRPacket):
+class get_IUpdateService_OffersWindowsUpdates_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_RedirectUrls_Request(NDRPacket):
+class get_IUpdateService_RedirectUrls_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RedirectUrls_Response(NDRPacket):
+class get_IUpdateService_RedirectUrls_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -4158,11 +5809,11 @@ class get_RedirectUrls_Response(NDRPacket):
     ]
 
 
-class get_ServiceID_Request(NDRPacket):
+class get_IUpdateService_ServiceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServiceID_Response(NDRPacket):
+class get_IUpdateService_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4171,27 +5822,27 @@ class get_ServiceID_Response(NDRPacket):
     ]
 
 
-class get_IsScanPackageService_Request(NDRPacket):
+class get_IUpdateService_IsScanPackageService_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsScanPackageService_Response(NDRPacket):
+class get_IUpdateService_IsScanPackageService_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_CanRegisterWithAU_Request(NDRPacket):
+class get_IUpdateService_CanRegisterWithAU_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CanRegisterWithAU_Response(NDRPacket):
+class get_IUpdateService_CanRegisterWithAU_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_ServiceUrl_Request(NDRPacket):
+class get_IUpdateService_ServiceUrl_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServiceUrl_Response(NDRPacket):
+class get_IUpdateService_ServiceUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4200,11 +5851,11 @@ class get_ServiceUrl_Response(NDRPacket):
     ]
 
 
-class get_SetupPrefix_Request(NDRPacket):
+class get_IUpdateService_SetupPrefix_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SetupPrefix_Response(NDRPacket):
+class get_IUpdateService_SetupPrefix_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4220,19 +5871,50 @@ IUPDATESERVICE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Name_Request, get_Name_Response),
-    8: DceRpcOp(get_ContentValidationCert_Request, get_ContentValidationCert_Response),
-    9: DceRpcOp(get_ExpirationDate_Request, get_ExpirationDate_Response),
-    10: DceRpcOp(get_IsManaged_Request, get_IsManaged_Response),
-    11: DceRpcOp(get_IsRegisteredWithAU_Request, get_IsRegisteredWithAU_Response),
-    12: DceRpcOp(get_IssueDate_Request, get_IssueDate_Response),
-    13: DceRpcOp(get_OffersWindowsUpdates_Request, get_OffersWindowsUpdates_Response),
-    14: DceRpcOp(get_RedirectUrls_Request, get_RedirectUrls_Response),
-    15: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    16: DceRpcOp(get_IsScanPackageService_Request, get_IsScanPackageService_Response),
-    17: DceRpcOp(get_CanRegisterWithAU_Request, get_CanRegisterWithAU_Response),
-    18: DceRpcOp(get_ServiceUrl_Request, get_ServiceUrl_Response),
-    19: DceRpcOp(get_SetupPrefix_Request, get_SetupPrefix_Response),
+    7: DceRpcOp(get_IUpdateService_Name_Request, get_IUpdateService_Name_Response),
+    8: DceRpcOp(
+        get_IUpdateService_ContentValidationCert_Request,
+        get_IUpdateService_ContentValidationCert_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateService_ExpirationDate_Request,
+        get_IUpdateService_ExpirationDate_Response,
+    ),
+    10: DceRpcOp(
+        get_IUpdateService_IsManaged_Request, get_IUpdateService_IsManaged_Response
+    ),
+    11: DceRpcOp(
+        get_IUpdateService_IsRegisteredWithAU_Request,
+        get_IUpdateService_IsRegisteredWithAU_Response,
+    ),
+    12: DceRpcOp(
+        get_IUpdateService_IssueDate_Request, get_IUpdateService_IssueDate_Response
+    ),
+    13: DceRpcOp(
+        get_IUpdateService_OffersWindowsUpdates_Request,
+        get_IUpdateService_OffersWindowsUpdates_Response,
+    ),
+    14: DceRpcOp(
+        get_IUpdateService_RedirectUrls_Request,
+        get_IUpdateService_RedirectUrls_Response,
+    ),
+    15: DceRpcOp(
+        get_IUpdateService_ServiceID_Request, get_IUpdateService_ServiceID_Response
+    ),
+    16: DceRpcOp(
+        get_IUpdateService_IsScanPackageService_Request,
+        get_IUpdateService_IsScanPackageService_Response,
+    ),
+    17: DceRpcOp(
+        get_IUpdateService_CanRegisterWithAU_Request,
+        get_IUpdateService_CanRegisterWithAU_Response,
+    ),
+    18: DceRpcOp(
+        get_IUpdateService_ServiceUrl_Request, get_IUpdateService_ServiceUrl_Response
+    ),
+    19: DceRpcOp(
+        get_IUpdateService_SetupPrefix_Request, get_IUpdateService_SetupPrefix_Response
+    ),
 }
 register_com_interface(
     name="IUpdateService",
@@ -4241,11 +5923,11 @@ register_com_interface(
 )
 
 
-class get_IsDefaultAUService_Request(NDRPacket):
+class get_IUpdateService2_IsDefaultAUService_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsDefaultAUService_Response(NDRPacket):
+class get_IUpdateService2_IsDefaultAUService_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -4256,20 +5938,54 @@ IUPDATESERVICE2_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Name_Request, get_Name_Response),
-    8: DceRpcOp(get_ContentValidationCert_Request, get_ContentValidationCert_Response),
-    9: DceRpcOp(get_ExpirationDate_Request, get_ExpirationDate_Response),
-    10: DceRpcOp(get_IsManaged_Request, get_IsManaged_Response),
-    11: DceRpcOp(get_IsRegisteredWithAU_Request, get_IsRegisteredWithAU_Response),
-    12: DceRpcOp(get_IssueDate_Request, get_IssueDate_Response),
-    13: DceRpcOp(get_OffersWindowsUpdates_Request, get_OffersWindowsUpdates_Response),
-    14: DceRpcOp(get_RedirectUrls_Request, get_RedirectUrls_Response),
-    15: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    16: DceRpcOp(get_IsScanPackageService_Request, get_IsScanPackageService_Response),
-    17: DceRpcOp(get_CanRegisterWithAU_Request, get_CanRegisterWithAU_Response),
-    18: DceRpcOp(get_ServiceUrl_Request, get_ServiceUrl_Response),
-    19: DceRpcOp(get_SetupPrefix_Request, get_SetupPrefix_Response),
-    20: DceRpcOp(get_IsDefaultAUService_Request, get_IsDefaultAUService_Response),
+    7: DceRpcOp(get_IUpdateService_Name_Request, get_IUpdateService_Name_Response),
+    8: DceRpcOp(
+        get_IUpdateService_ContentValidationCert_Request,
+        get_IUpdateService_ContentValidationCert_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateService_ExpirationDate_Request,
+        get_IUpdateService_ExpirationDate_Response,
+    ),
+    10: DceRpcOp(
+        get_IUpdateService_IsManaged_Request, get_IUpdateService_IsManaged_Response
+    ),
+    11: DceRpcOp(
+        get_IUpdateService_IsRegisteredWithAU_Request,
+        get_IUpdateService_IsRegisteredWithAU_Response,
+    ),
+    12: DceRpcOp(
+        get_IUpdateService_IssueDate_Request, get_IUpdateService_IssueDate_Response
+    ),
+    13: DceRpcOp(
+        get_IUpdateService_OffersWindowsUpdates_Request,
+        get_IUpdateService_OffersWindowsUpdates_Response,
+    ),
+    14: DceRpcOp(
+        get_IUpdateService_RedirectUrls_Request,
+        get_IUpdateService_RedirectUrls_Response,
+    ),
+    15: DceRpcOp(
+        get_IUpdateService_ServiceID_Request, get_IUpdateService_ServiceID_Response
+    ),
+    16: DceRpcOp(
+        get_IUpdateService_IsScanPackageService_Request,
+        get_IUpdateService_IsScanPackageService_Response,
+    ),
+    17: DceRpcOp(
+        get_IUpdateService_CanRegisterWithAU_Request,
+        get_IUpdateService_CanRegisterWithAU_Response,
+    ),
+    18: DceRpcOp(
+        get_IUpdateService_ServiceUrl_Request, get_IUpdateService_ServiceUrl_Response
+    ),
+    19: DceRpcOp(
+        get_IUpdateService_SetupPrefix_Request, get_IUpdateService_SetupPrefix_Response
+    ),
+    20: DceRpcOp(
+        get_IUpdateService2_IsDefaultAUService_Request,
+        get_IUpdateService2_IsDefaultAUService_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateService2",
@@ -4278,11 +5994,11 @@ register_com_interface(
 )
 
 
-class get_Item_Request(NDRPacket):
+class get_IUpdateServiceCollection_Item_Request(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IUpdateServiceCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -4291,11 +6007,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IUpdateServiceCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IUpdateServiceCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -4304,11 +6020,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IUpdateServiceCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IUpdateServiceCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retval", 0), NDRIntField("status", 0)]
 
 
@@ -4319,9 +6035,18 @@ IUPDATESERVICECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Item_Request, get_Item_Response),
-    8: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    9: DceRpcOp(get_Count_Request, get_Count_Response),
+    7: DceRpcOp(
+        get_IUpdateServiceCollection_Item_Request,
+        get_IUpdateServiceCollection_Item_Response,
+    ),
+    8: DceRpcOp(
+        get_IUpdateServiceCollection__NewEnum_Request,
+        get_IUpdateServiceCollection__NewEnum_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateServiceCollection_Count_Request,
+        get_IUpdateServiceCollection_Count_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateServiceCollection",
@@ -4336,22 +6061,22 @@ class UpdateServiceRegistrationState(IntEnum):
     usrsRegistered = 3
 
 
-class get_RegistrationState_Request(NDRPacket):
+class get_IUpdateServiceRegistration_RegistrationState_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RegistrationState_Response(NDRPacket):
+class get_IUpdateServiceRegistration_RegistrationState_Response(NDRPacket):
     fields_desc = [
         NDRIntEnumField("retval", 0, UpdateServiceRegistrationState),
         NDRIntField("status", 0),
     ]
 
 
-class get_ServiceID_Request(NDRPacket):
+class get_IUpdateServiceRegistration_ServiceID_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ServiceID_Response(NDRPacket):
+class get_IUpdateServiceRegistration_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4360,19 +6085,19 @@ class get_ServiceID_Response(NDRPacket):
     ]
 
 
-class get_IsPendingRegistrationWithAU_Request(NDRPacket):
+class get_IUpdateServiceRegistration_IsPendingRegistrationWithAU_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsPendingRegistrationWithAU_Response(NDRPacket):
+class get_IUpdateServiceRegistration_IsPendingRegistrationWithAU_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("retval", 0), NDRIntField("status", 0)]
 
 
-class get_Service_Request(NDRPacket):
+class get_IUpdateServiceRegistration_Service_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Service_Response(NDRPacket):
+class get_IUpdateServiceRegistration_Service_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retval", MInterfacePointer(), MInterfacePointer)
@@ -4388,13 +6113,22 @@ IUPDATESERVICEREGISTRATION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_RegistrationState_Request, get_RegistrationState_Response),
-    8: DceRpcOp(get_ServiceID_Request, get_ServiceID_Response),
-    9: DceRpcOp(
-        get_IsPendingRegistrationWithAU_Request,
-        get_IsPendingRegistrationWithAU_Response,
+    7: DceRpcOp(
+        get_IUpdateServiceRegistration_RegistrationState_Request,
+        get_IUpdateServiceRegistration_RegistrationState_Response,
     ),
-    10: DceRpcOp(get_Service_Request, get_Service_Response),
+    8: DceRpcOp(
+        get_IUpdateServiceRegistration_ServiceID_Request,
+        get_IUpdateServiceRegistration_ServiceID_Response,
+    ),
+    9: DceRpcOp(
+        get_IUpdateServiceRegistration_IsPendingRegistrationWithAU_Request,
+        get_IUpdateServiceRegistration_IsPendingRegistrationWithAU_Response,
+    ),
+    10: DceRpcOp(
+        get_IUpdateServiceRegistration_Service_Request,
+        get_IUpdateServiceRegistration_Service_Response,
+    ),
 }
 register_com_interface(
     name="IUpdateServiceRegistration",

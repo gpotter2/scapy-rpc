@@ -19,6 +19,7 @@ from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
     NDRByteField,
+    NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
@@ -614,8 +615,11 @@ class RPC_DRIVER_INFO_3(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
+            NDRConfFieldListField(
+                "pDependentFiles",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDependentFiles,
             )
         ),
     ]
@@ -635,14 +639,20 @@ class RPC_DRIVER_INFO_4(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
+            NDRConfFieldListField(
+                "pDependentFiles",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDependentFiles,
             )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
+            NDRConfFieldListField(
+                "pszzPreviousNames",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchPreviousNames,
             )
         ),
     ]
@@ -667,14 +677,20 @@ class RPC_DRIVER_INFO_6(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
+            NDRConfFieldListField(
+                "pDependentFiles",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDependentFiles,
             )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
+            NDRConfFieldListField(
+                "pszzPreviousNames",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchPreviousNames,
             )
         ),
         NDRPacketField("ftDriverDate", FILETIME(), FILETIME),
@@ -700,14 +716,20 @@ class RPC_DRIVER_INFO_8(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pDefaultDataType", "")),
         NDRIntField("cchDependentFiles", None, size_of="pDependentFiles"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pDependentFiles", "", size_is=lambda pkt: pkt.cchDependentFiles
+            NDRConfFieldListField(
+                "pDependentFiles",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDependentFiles,
             )
         ),
         NDRIntField("cchPreviousNames", None, size_of="pszzPreviousNames"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pszzPreviousNames", "", size_is=lambda pkt: pkt.cchPreviousNames
+            NDRConfFieldListField(
+                "pszzPreviousNames",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchPreviousNames,
             )
         ),
         NDRPacketField("ftDriverDate", FILETIME(), FILETIME),
@@ -720,17 +742,21 @@ class RPC_DRIVER_INFO_8(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pVendorSetup", "")),
         NDRIntField("cchColorProfiles", None, size_of="pszzColorProfiles"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "pszzColorProfiles", "", size_is=lambda pkt: pkt.cchColorProfiles
+            NDRConfFieldListField(
+                "pszzColorProfiles",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchColorProfiles,
             )
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pInfPath", "")),
         NDRIntField("dwPrinterDriverAttributes", 0),
         NDRIntField("cchCoreDependencies", None, size_of="pszzCoreDriverDependencies"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
+            NDRConfFieldListField(
                 "pszzCoreDriverDependencies",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: pkt.cchCoreDependencies,
             )
         ),
@@ -1686,7 +1712,9 @@ class RPC_V2_NOTIFY_OPTIONS_TYPE(NDRPacket):
         NDRIntField("Reserved2", 0),
         NDRIntField("Count", None, size_of="pFields"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("pFields", "", size_is=lambda pkt: pkt.Count)
+            NDRConfFieldListField(
+                "pFields", [], NDRShortField("", 0), size_is=lambda pkt: pkt.Count
+            )
         ),
     ]
 
@@ -1763,7 +1791,7 @@ class RPC_V2_NOTIFY_INFO_DATA(NDRPacket):
                 ),
                 (
                     NDRFieldListField(
-                        "Data", [], NDRIntField("", 0), length_is=lambda _: 2
+                        "Data", [0] * 2, NDRIntField("", 0), length_is=lambda _: 2
                     ),
                     (
                         (
@@ -2017,8 +2045,11 @@ class RpcEnumPrinterData_Request(NDRPacket):
 
 class RpcEnumPrinterData_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16(
-            "pValueName", "", size_is=lambda pkt: (pkt.cbValueName // 2)
+        NDRConfFieldListField(
+            "pValueName",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: (pkt.cbValueName // 2),
         ),
         NDRIntField("pcbValueName", 0),
         NDRIntField("pType", 0),
@@ -2099,7 +2130,9 @@ class RpcEnumPrinterKey_Request(NDRPacket):
 
 class RpcEnumPrinterKey_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16("pSubkey", "", size_is=lambda pkt: (pkt.cbSubkey // 2)),
+        NDRConfFieldListField(
+            "pSubkey", [], NDRShortField("", 0), size_is=lambda pkt: (pkt.cbSubkey // 2)
+        ),
         NDRIntField("pcbSubkey", 0),
         NDRIntField("status", 0),
     ]
@@ -2426,8 +2459,11 @@ class RpcGetCorePrinterDrivers_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszServer", "")),
         NDRConfVarStrNullFieldUtf16("pszEnvironment", ""),
         NDRIntField("cchCoreDrivers", None, size_of="pszzCoreDriverDependencies"),
-        NDRConfStrLenFieldUtf16(
-            "pszzCoreDriverDependencies", "", size_is=lambda pkt: pkt.cchCoreDrivers
+        NDRConfFieldListField(
+            "pszzCoreDriverDependencies",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchCoreDrivers,
         ),
         NDRIntField("cCorePrinterDrivers", 0),
     ]
@@ -2451,8 +2487,11 @@ class RpcGetPrinterDriverPackagePath_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("pszEnvironment", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszLanguage", "")),
         NDRConfVarStrNullFieldUtf16("pszPackageID", ""),
-        NDRConfStrLenFieldUtf16(
-            "pszDriverPackageCab", "", size_is=lambda pkt: pkt.cchDriverPackageCab
+        NDRConfFieldListField(
+            "pszDriverPackageCab",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchDriverPackageCab,
         ),
         NDRIntField("cchDriverPackageCab", None, size_of="pszDriverPackageCab"),
     ]
@@ -2460,8 +2499,11 @@ class RpcGetPrinterDriverPackagePath_Request(NDRPacket):
 
 class RpcGetPrinterDriverPackagePath_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16(
-            "pszDriverPackageCab", "", size_is=lambda pkt: pkt.cchDriverPackageCab
+        NDRConfFieldListField(
+            "pszDriverPackageCab",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchDriverPackageCab,
         ),
         NDRIntField("pcchRequiredSize", 0),
         NDRIntField("status", 0),
@@ -2862,8 +2904,12 @@ class RpcIppCreateJobOnPrinter_Request(NDRPacket):
 class RpcIppCreateJobOnPrinter_Response(NDRPacket):
     fields_desc = [
         NDRIntField("ippResponseBufferSize", None, size_of="ippResponseBuffer"),
-        NDRConfStrLenField(
-            "ippResponseBuffer", "", size_is=lambda pkt: pkt.ippResponseBufferSize
+        NDRConfFieldListField(
+            "ippResponseBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.ippResponseBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -2883,8 +2929,12 @@ class RpcIppGetJobAttributes_Request(NDRPacket):
 class RpcIppGetJobAttributes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("ippResponseBufferSize", None, size_of="ippResponseBuffer"),
-        NDRConfStrLenField(
-            "ippResponseBuffer", "", size_is=lambda pkt: pkt.ippResponseBufferSize
+        NDRConfFieldListField(
+            "ippResponseBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.ippResponseBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -2908,8 +2958,12 @@ class RpcIppSetJobAttributes_Request(NDRPacket):
 class RpcIppSetJobAttributes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("ippResponseBufferSize", None, size_of="ippResponseBuffer"),
-        NDRConfStrLenField(
-            "ippResponseBuffer", "", size_is=lambda pkt: pkt.ippResponseBufferSize
+        NDRConfFieldListField(
+            "ippResponseBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.ippResponseBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -2928,8 +2982,12 @@ class RpcIppGetPrinterAttributes_Request(NDRPacket):
 class RpcIppGetPrinterAttributes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("ippResponseBufferSize", None, size_of="ippResponseBuffer"),
-        NDRConfStrLenField(
-            "ippResponseBuffer", "", size_is=lambda pkt: pkt.ippResponseBufferSize
+        NDRConfFieldListField(
+            "ippResponseBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.ippResponseBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -2952,8 +3010,12 @@ class RpcIppSetPrinterAttributes_Request(NDRPacket):
 class RpcIppSetPrinterAttributes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("ippResponseBufferSize", None, size_of="ippResponseBuffer"),
-        NDRConfStrLenField(
-            "ippResponseBuffer", "", size_is=lambda pkt: pkt.ippResponseBufferSize
+        NDRConfFieldListField(
+            "ippResponseBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.ippResponseBufferSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

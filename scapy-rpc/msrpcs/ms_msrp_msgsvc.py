@@ -53,10 +53,7 @@ class LPMSG_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPMSG_INFO_0()],
-                LPMSG_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPMSG_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -77,10 +74,7 @@ class LPMSG_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPMSG_INFO_1()],
-                LPMSG_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPMSG_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]

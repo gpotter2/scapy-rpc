@@ -30,6 +30,7 @@ from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
     NDRByteField,
+    NDRConfFieldListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrLenField,
@@ -137,9 +138,21 @@ class CprepDiskGetUniqueIds3_Request(NDRPacket):
 
 class CprepDiskGetUniqueIds3_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppbDeviceIdHeader", "", size_is=lambda pkt: pkt.pcbDihSize),
+        NDRConfFieldListField(
+            "ppbDeviceIdHeader",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbDihSize,
+            ptr_pack=True,
+        ),
         NDRIntField("pcbDihSize", None, size_of="ppbDeviceIdHeader"),
-        NDRConfStrLenField("ppDeviceDescriptor", "", size_is=lambda pkt: pkt.pcbDdSize),
+        NDRConfFieldListField(
+            "ppDeviceDescriptor",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbDdSize,
+            ptr_pack=True,
+        ),
         NDRIntField("pcbDdSize", None, size_of="ppDeviceDescriptor"),
         NDRIntField("status", 0),
     ]

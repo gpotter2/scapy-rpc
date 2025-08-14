@@ -32,6 +32,8 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -41,7 +43,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRShortField,
     NDRSignedIntField,
     NDRUnionField,
@@ -992,7 +994,9 @@ class CERT_EKU_1(NDRPacket):
         NDRIntField("dwSize", None, size_of="pwszEKU"),
         NDRSignedIntField("IsEKUOID", 0),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("pwszEKU", "", size_is=lambda pkt: pkt.dwSize)
+            NDRConfFieldListField(
+                "pwszEKU", [], NDRShortField("", 0), size_is=lambda pkt: pkt.dwSize
+            )
         ),
     ]
 
@@ -1882,7 +1886,13 @@ class LPRASRPC_CALLBACKLIST(NDRPacket):
         StrFixedLenFieldUtf16("pszDeviceName", "", length=(128 + 1) * 2),
         StrFixedLenFieldUtf16("pszNumber", "", length=(128 + 1) * 2),
         NDRIntField("dwDeviceType", 0),
-        NDRRecursiveField("pNext"),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(
+                NDRPacketField(
+                    "pNext", None, NDRRecursiveClass("LPRASRPC_CALLBACKLIST")
+                )
+            )
+        ),
     ]
 
 
@@ -1890,7 +1900,11 @@ class LPRASRPC_STRINGLIST(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         StrFixedLenFieldUtf16("psz", "", length=256 * 2),
-        NDRRecursiveField("pNext"),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(
+                NDRPacketField("pNext", None, NDRRecursiveClass("LPRASRPC_STRINGLIST"))
+            )
+        ),
     ]
 
 
@@ -1900,7 +1914,13 @@ class LPRASRPC_LOCATIONLIST(NDRPacket):
         NDRIntField("dwLocationId", 0),
         NDRIntField("iPrefix", 0),
         NDRIntField("iSuffix", 0),
-        NDRRecursiveField("pNext"),
+        NDRFullEmbPointerField(
+            NDRFullEmbPointerField(
+                NDRPacketField(
+                    "pNext", None, NDRRecursiveClass("LPRASRPC_LOCATIONLIST")
+                )
+            )
+        ),
     ]
 
 
@@ -1982,32 +2002,28 @@ class RasRpcSetUserPreferences_Response(NDRPacket):
 
 class RasRpcGetSystemDirectory_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullFieldUtf16("lpBuffer", ""),
+        NDRConfVarStrLenFieldUtf16("lpBuffer", "", size_is=lambda pkt: pkt.uSize),
         NDRIntField("uSize", None, size_of="lpBuffer"),
     ]
 
 
 class RasRpcGetSystemDirectory_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullFieldUtf16("lpBuffer", ""),
+        NDRConfVarStrLenFieldUtf16("lpBuffer", "", size_is=lambda pkt: pkt.uSize),
         NDRIntField("status", 0),
     ]
 
 
 class RasRpcSubmitRequest_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize)
-        ),
+        NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize),
         NDRIntField("dwcbBufSize", None, size_of="pReqBuffer"),
     ]
 
 
 class RasRpcSubmitRequest_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize)
-        ),
+        NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize),
         NDRIntField("status", 0),
     ]
 

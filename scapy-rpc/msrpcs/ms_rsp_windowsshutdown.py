@@ -17,8 +17,7 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
+    NDRConfVarFieldListField,
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
@@ -36,9 +35,10 @@ class PREG_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )

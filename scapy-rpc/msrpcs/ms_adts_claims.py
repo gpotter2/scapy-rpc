@@ -20,6 +20,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -67,7 +69,7 @@ class u_sub0(NDRPacket):
             NDRConfFieldListField(
                 "Int64Values",
                 [],
-                NDRSignedLongField("Int64Values", 0),
+                NDRSignedLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -82,7 +84,7 @@ class u_sub1(NDRPacket):
             NDRConfFieldListField(
                 "Uint64Values",
                 [],
-                NDRLongField("Uint64Values", 0),
+                NDRLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -94,11 +96,8 @@ class u_sub2(NDRPacket):
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "StringValues",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("StringValues", "")),
-                size_is=lambda pkt: pkt.ValueCount,
+            NDRConfVarStrLenFieldUtf16(
+                "StringValues", "", size_is=lambda pkt: pkt.ValueCount
             )
         ),
     ]
@@ -112,7 +111,7 @@ class u_sub3(NDRPacket):
             NDRConfFieldListField(
                 "BooleanValues",
                 [],
-                NDRLongField("BooleanValues", 0),
+                NDRLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -182,7 +181,7 @@ class u_sub0(NDRPacket):
             NDRConfFieldListField(
                 "Int64Values",
                 [],
-                NDRSignedLongField("Int64Values", 0),
+                NDRSignedLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -197,7 +196,7 @@ class u_sub1(NDRPacket):
             NDRConfFieldListField(
                 "Uint64Values",
                 [],
-                NDRLongField("Uint64Values", 0),
+                NDRLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -209,11 +208,8 @@ class u_sub2(NDRPacket):
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "StringValues",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("StringValues", "")),
-                size_is=lambda pkt: pkt.ValueCount,
+            NDRConfVarStrLenFieldUtf16(
+                "StringValues", "", size_is=lambda pkt: pkt.ValueCount
             )
         ),
     ]
@@ -227,7 +223,7 @@ class u_sub3(NDRPacket):
             NDRConfFieldListField(
                 "BooleanValues",
                 [],
-                NDRLongField("BooleanValues", 0),
+                NDRLongField("", 0),
                 size_is=lambda pkt: pkt.ValueCount,
             )
         ),
@@ -296,10 +292,7 @@ class CLAIMS_ARRAY(NDRPacket):
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ClaimEntries",
-                [PCLAIM_ENTRY()],
-                PCLAIM_ENTRY,
-                size_is=lambda pkt: pkt.ulClaimsCount,
+                "ClaimEntries", [], PCLAIM_ENTRY, size_is=lambda pkt: pkt.ulClaimsCount
             )
         ),
     ]
@@ -312,10 +305,7 @@ class PCLAIMS_ARRAY(NDRPacket):
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ClaimEntries",
-                [PCLAIM_ENTRY()],
-                PCLAIM_ENTRY,
-                size_is=lambda pkt: pkt.ulClaimsCount,
+                "ClaimEntries", [], PCLAIM_ENTRY, size_is=lambda pkt: pkt.ulClaimsCount
             )
         ),
     ]
@@ -328,7 +318,7 @@ class CLAIMS_SET(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
-                [PCLAIMS_ARRAY()],
+                [],
                 PCLAIMS_ARRAY,
                 size_is=lambda pkt: pkt.ulClaimsArrayCount,
             )
@@ -350,7 +340,7 @@ class PCLAIMS_SET(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
-                [PCLAIMS_ARRAY()],
+                [],
                 PCLAIMS_ARRAY,
                 size_is=lambda pkt: pkt.ulClaimsArrayCount,
             )

@@ -20,9 +20,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
-    NDRConfVarStrNullField,
-    NDRConfVarStrNullFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
     NDRFullEmbPointerField,
     NDRFullPointerField,
@@ -30,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRLongField,
     NDRPacketField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRUnionField,
     register_dcerpc_interface,
@@ -81,7 +81,7 @@ class PTSG_PACKET_VERSIONCAPS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "TSGCaps",
-                [PTSG_PACKET_CAPABILITIES()],
+                [],
                 PTSG_PACKET_CAPABILITIES,
                 size_is=lambda pkt: pkt.numCapabilities,
             )
@@ -103,7 +103,7 @@ class PTSG_PACKET_QUARREQUEST(NDRPacket):
     fields_desc = [
         NDRIntField("flags", 0),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
+            NDRConfVarStrLenFieldUtf16(
                 "machineName", "", size_is=lambda pkt: pkt.nameLength
             )
         ),
@@ -162,7 +162,7 @@ class PTSG_PACKET_QUARENC_RESPONSE(NDRPacket):
         NDRIntField("flags", 0),
         NDRIntField("certChainLen", None, size_of="certChainData"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
+            NDRConfVarStrLenFieldUtf16(
                 "certChainData", "", size_is=lambda pkt: pkt.certChainLen
             )
         ),
@@ -181,7 +181,7 @@ class TSG_PACKET_QUARENC_RESPONSE(NDRPacket):
         NDRIntField("flags", 0),
         NDRIntField("certChainLen", None, size_of="certChainData"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
+            NDRConfVarStrLenFieldUtf16(
                 "certChainData", "", size_is=lambda pkt: pkt.certChainLen
             )
         ),
@@ -201,7 +201,9 @@ class PTSG_PACKET_STRING_MESSAGE(NDRPacket):
         NDRSignedIntField("isConsentMandatory", 0),
         NDRIntField("msgBytes", None, size_of="msgBuffer"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("msgBuffer", "", size_is=lambda pkt: pkt.msgBytes)
+            NDRConfFieldListField(
+                "msgBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.msgBytes
+            )
         ),
     ]
 
@@ -347,7 +349,7 @@ class TSG_PACKET_VERSIONCAPS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "TSGCaps",
-                [PTSG_PACKET_CAPABILITIES()],
+                [],
                 PTSG_PACKET_CAPABILITIES,
                 size_is=lambda pkt: pkt.numCapabilities,
             )
@@ -612,21 +614,15 @@ class PTSENDPOINTINFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "resourceName",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("resourceName", "")),
-                size_is=lambda pkt: pkt.numResourceNames,
+            NDRConfVarStrLenFieldUtf16(
+                "resourceName", "", size_is=lambda pkt: pkt.numResourceNames
             )
         ),
         NDRIntField("numResourceNames", None, size_of="resourceName"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
+            NDRConfVarStrLenFieldUtf16(
                 "alternateResourceNames",
-                [],
-                NDRFullEmbPointerField(
-                    NDRConfVarStrNullFieldUtf16("alternateResourceNames", "")
-                ),
+                "",
                 size_is=lambda pkt: pkt.numAlternateResourceNames,
             )
         ),
@@ -675,7 +671,11 @@ class TsProxyCloseTunnel_Response(NDRPacket):
 
 
 class TsProxySetupReceivePipe_Request(NDRPacket):
-    fields_desc = [NDRConfStrLenField("pRpcMessage", "", size_is=lambda pkt: 32767)]
+    fields_desc = [
+        NDRConfFieldListField(
+            "pRpcMessage", [], NDRSignedByteField("", 0), size_is=lambda pkt: 32767
+        )
+    ]
 
 
 class TsProxySetupReceivePipe_Response(NDRPacket):
@@ -683,7 +683,11 @@ class TsProxySetupReceivePipe_Response(NDRPacket):
 
 
 class TsProxySendToServer_Request(NDRPacket):
-    fields_desc = [NDRConfStrLenField("pRpcMessage", "", size_is=lambda pkt: 32767)]
+    fields_desc = [
+        NDRConfFieldListField(
+            "pRpcMessage", [], NDRSignedByteField("", 0), size_is=lambda pkt: 32767
+        )
+    ]
 
 
 class TsProxySendToServer_Response(NDRPacket):
