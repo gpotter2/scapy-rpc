@@ -1,0 +1,13 @@
+diff --git a/midl-to-scapy/idl/win/ms-oaut.idl b/midl-to-scapy/idl/win/ms-oaut.idl
+index 874e2e0..093227c 100644
+--- a/midl-to-scapy/idl/win/ms-oaut.idl
++++ b/midl-to-scapy/idl/win/ms-oaut.idl
+@@ -479,7 +479,7 @@
+  typedef DWORD HREFTYPE;
+   
+  typedef struct tagTYPEDESC {
+-     [switch_type(USHORT), switch_is(vt)] union {
++     [switch_type(VARENUM), switch_is(vt)] union {
+          [case(VT_PTR, VT_SAFEARRAY)] struct tagTYPEDESC * lptdesc;
+          [case(VT_CARRAY)] struct tagARRAYDESC * lpadesc;
+          [case(VT_USERDEFINED)] HREFTYPE hreftype;
