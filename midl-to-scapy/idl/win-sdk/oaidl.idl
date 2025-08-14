@@ -1,0 +1,644 @@
+//+---------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+//
+//  File: oaidl.idl
+//
+//----------------------------------------------------------------------------
+
+// We removed all the types already defined in ms-oaut / ms-dtyp.
+// to basically only keep the interfaces.
+import "../win/ms-oaut.idl";
+import "../win/ms-dtyp.idl";
+
+interface ICreateTypeInfo;
+interface ICreateTypeInfo2;
+interface ICreateTypeLib;
+interface ICreateTypeLib2;
+interface ITypeChangeEvents;
+interface IErrorInfo;
+interface ICreateErrorInfo;
+interface ISupportErrorInfo;
+interface ITypeFactory;
+interface ITypeMarshal;
+interface IRecordInfo;
+
+typedef VARIANT VARIANTARG;
+
+typedef [wire_marshal(DWORD)] struct tagCLEANLOCALSTORAGE {
+    IUnknown * pInterface;      /* interface that is responsible for storage */
+    PVOID pStorage;             /* the storage being managed by interface */
+    DWORD flags;                /* which interface, what storage */
+} CLEANLOCALSTORAGE;
+
+typedef struct tagIDLDESC {
+    ULONG_PTR dwReserved;
+    USHORT wIDLFlags;           /* IN, OUT, etc */
+} IDLDESC, * LPIDLDESC;
+
+[
+    object,
+    uuid(00020405-0000-0000-C000-000000000046),
+    pointer_default(unique),
+    local
+]
+
+interface ICreateTypeInfo: IUnknown
+{
+    typedef [unique] ICreateTypeInfo * LPCREATETYPEINFO;
+
+    HRESULT SetGuid(
+                [in] REFGUID guid
+            );
+
+    HRESULT SetTypeFlags(
+                [in] UINT uTypeFlags
+            );
+
+    HRESULT SetDocString(
+                [in, annotation("__RPC__in")] LPOLESTR pStrDoc
+            );
+
+    HRESULT SetHelpContext(
+                [in] DWORD dwHelpContext
+            );
+
+    HRESULT SetVersion(
+                [in] WORD wMajorVerNum,
+                [in] WORD wMinorVerNum
+            );
+
+    HRESULT AddRefTypeInfo(
+
+                [in] ITypeInfo * pTInfo,
+                [in] HREFTYPE * phRefType
+            );
+
+    HRESULT AddFuncDesc(
+                [in] UINT index,
+                [in] FUNCDESC * pFuncDesc
+            );
+
+    HRESULT AddImplType(
+                [in] UINT index,
+                [in] HREFTYPE hRefType
+            );
+
+    HRESULT SetImplTypeFlags(
+                [in] UINT index,
+                [in] INT implTypeFlags
+            );
+
+    HRESULT SetAlignment(
+                [in] WORD cbAlignment
+            );
+
+    HRESULT SetSchema(
+                [in, annotation("__RPC__in")] LPOLESTR pStrSchema
+            );
+
+    HRESULT AddVarDesc(
+                [in] UINT index,
+                [in] VARDESC * pVarDesc
+            );
+
+    HRESULT SetFuncAndParamNames(
+                [in] UINT index,
+                [in, size_is((UINT) cNames)]
+                [in, annotation("__RPC__in_ecount(cNames)")] LPOLESTR * rgszNames,
+                [in] UINT cNames
+            );
+
+    HRESULT SetVarName(
+                [in] UINT index,
+                [in, annotation("__RPC__in")] LPOLESTR szName
+            );
+
+    HRESULT SetTypeDescAlias(
+                [in] TYPEDESC * pTDescAlias
+            );
+
+    HRESULT DefineFuncAsDllEntry(
+                [in] UINT index,
+                [in, annotation("__RPC__in")] LPOLESTR szDllName,
+                [in, annotation("__RPC__in")] LPOLESTR szProcName
+            );
+
+    HRESULT SetFuncDocString(
+                [in] UINT index,
+                [in, annotation("__RPC__in")] LPOLESTR szDocString
+            );
+
+    HRESULT SetVarDocString(
+                [in] UINT index,
+                [in, annotation("__RPC__in")] LPOLESTR szDocString
+            );
+
+    HRESULT SetFuncHelpContext(
+                [in] UINT index,
+                [in] DWORD dwHelpContext
+            );
+
+    HRESULT SetVarHelpContext(
+                [in] UINT index,
+                [in] DWORD dwHelpContext
+            );
+
+    HRESULT SetMops(
+                [in] UINT index,
+                [in] BSTR bstrMops
+            );
+
+    HRESULT SetTypeIdldesc(
+                [in] IDLDESC * pIdlDesc
+            );
+
+    HRESULT LayOut(
+                void
+            );
+
+}
+
+
+[
+    object,
+    uuid(0002040E-0000-0000-C000-000000000046),
+    pointer_default(unique),
+    local
+]
+
+interface ICreateTypeInfo2: ICreateTypeInfo
+{
+    typedef [unique] ICreateTypeInfo2 * LPCREATETYPEINFO2;
+
+    HRESULT DeleteFuncDesc(
+                [in] UINT index
+            );
+
+    HRESULT DeleteFuncDescByMemId(
+                [in] MEMBERID memid,
+                [in] INVOKEKIND invKind
+            );
+
+    HRESULT DeleteVarDesc(
+                [in] UINT index
+            );
+
+    HRESULT DeleteVarDescByMemId(
+                [in] MEMBERID memid
+            );
+
+    HRESULT DeleteImplType(
+                [in] UINT index
+            );
+
+    HRESULT SetCustData(
+                [in] REFGUID guid,
+                [in] VARIANT * pVarVal
+            );
+
+    HRESULT SetFuncCustData( 
+                [in] UINT index, 
+                [in] REFGUID guid, 
+                [in] VARIANT * pVarVal
+            );
+    
+    HRESULT SetParamCustData( 
+                [in] UINT indexFunc, 
+                [in] UINT indexParam, 
+                [in] REFGUID guid, 
+                [in] VARIANT * pVarVal
+            );
+
+    HRESULT SetVarCustData( 
+                [in] UINT index, 
+                [in] REFGUID guid, 
+                [in] VARIANT * pVarVal
+            );
+
+    HRESULT SetImplTypeCustData( 
+                [in] UINT index, 
+                [in] REFGUID guid, 
+                [in] VARIANT * pVarVal
+            );
+
+    HRESULT SetHelpStringContext(
+                [in] ULONG dwHelpStringContext
+            );
+
+    HRESULT SetFuncHelpStringContext(
+                [in] UINT index,
+                [in] ULONG dwHelpStringContext
+            );
+
+    HRESULT SetVarHelpStringContext(
+                [in] UINT index,
+                [in] ULONG dwHelpStringContext
+            );
+
+    HRESULT Invalidate(
+                void
+            );
+
+    HRESULT SetName(
+                [in, annotation("__RPC__in")]  LPOLESTR szName
+            );
+
+}
+
+
+[
+    object,
+    uuid(00020406-0000-0000-C000-000000000046),
+    pointer_default(unique),
+    local
+]
+
+interface ICreateTypeLib : IUnknown
+{
+    typedef [unique] ICreateTypeLib * LPCREATETYPELIB;
+
+    HRESULT CreateTypeInfo(
+                [in, annotation("__RPC__in")]  LPOLESTR szName,
+                [in]  TYPEKIND tkind,
+                [out] ICreateTypeInfo ** ppCTInfo
+            );
+
+    HRESULT SetName(
+                [in, annotation("__RPC__in")]  LPOLESTR szName
+            );
+
+    HRESULT SetVersion(
+                [in] WORD wMajorVerNum,
+                [in] WORD wMinorVerNum
+            );
+
+    HRESULT SetGuid(
+                [in] REFGUID guid
+            );
+
+    HRESULT SetDocString(
+                [in, annotation("__RPC__in")] LPOLESTR szDoc
+            );
+
+    HRESULT SetHelpFileName(
+                [in, annotation("__RPC__in")] LPOLESTR szHelpFileName
+            );
+
+    HRESULT SetHelpContext(
+                [in] DWORD dwHelpContext
+            );
+
+    HRESULT SetLcid(
+                [in] LCID lcid
+            );
+
+    HRESULT SetLibFlags(
+                [in] UINT uLibFlags
+            );
+
+    HRESULT SaveAllChanges(
+                void
+            );
+}
+
+
+[
+    object,
+    uuid(0002040F-0000-0000-C000-000000000046),
+    pointer_default(unique),
+    local
+]
+
+interface ICreateTypeLib2 : ICreateTypeLib
+{
+    typedef [unique] ICreateTypeLib2 * LPCREATETYPELIB2;
+
+    HRESULT DeleteTypeInfo(
+                [in, annotation("__RPC__in")] LPOLESTR szName
+            );
+
+    HRESULT SetCustData(
+                [in] REFGUID guid,
+                [in] VARIANT * pVarVal
+            );
+
+    HRESULT SetHelpStringContext(
+                [in] ULONG dwHelpStringContext
+            );
+
+    HRESULT SetHelpStringDll(
+                [in, annotation("__RPC__in")] LPOLESTR szFileName
+            );
+}
+
+[
+    object,
+    uuid(00020410-0000-0000-C000-000000000046),
+    pointer_default(unique),
+    local
+]
+
+interface ITypeChangeEvents: IUnknown
+{
+    typedef [unique] ITypeChangeEvents * LPTYPECHANGEEVENTS;
+
+    // notification messages used by the dynamic typeinfo protocol.
+    typedef enum tagCHANGEKIND {
+        CHANGEKIND_ADDMEMBER,
+        CHANGEKIND_DELETEMEMBER,
+        CHANGEKIND_SETNAMES,
+        CHANGEKIND_SETDOCUMENTATION,
+        CHANGEKIND_GENERAL,
+        CHANGEKIND_INVALIDATE,
+        CHANGEKIND_CHANGEFAILED,
+        CHANGEKIND_MAX
+    } CHANGEKIND;
+
+    HRESULT RequestTypeChange(
+                [in] CHANGEKIND changeKind,
+                [in] ITypeInfo * pTInfoBefore,
+                [in, annotation("__RPC__in")] LPOLESTR pStrName,
+                [out] INT * pfCancel
+            );
+    
+    HRESULT AfterTypeChange(
+                [in] CHANGEKIND changeKind,
+                [in] ITypeInfo * pTInfoAfter,
+                [in, annotation("__RPC__in")] LPOLESTR pStrName
+            );
+}
+
+
+[
+    object,
+    uuid(1CF2B120-547D-101B-8E65-08002B2BD119),
+    pointer_default(unique)
+]
+
+interface IErrorInfo: IUnknown
+{
+    typedef [unique] IErrorInfo * LPERRORINFO;
+
+    HRESULT GetGUID(
+                [out] GUID * pGUID
+            );
+
+    HRESULT GetSource(
+                [out] BSTR * pBstrSource
+            );
+
+    HRESULT GetDescription(
+                [out] BSTR * pBstrDescription
+            );
+
+    HRESULT GetHelpFile(
+                [out] BSTR * pBstrHelpFile
+            );
+
+    HRESULT GetHelpContext(
+                [out] DWORD * pdwHelpContext
+            );
+}
+
+
+[
+    object,
+    uuid(22F03340-547D-101B-8E65-08002B2BD119),
+    pointer_default(unique)
+]
+
+interface ICreateErrorInfo: IUnknown
+{
+    typedef [unique] ICreateErrorInfo * LPCREATEERRORINFO;
+
+    HRESULT SetGUID(
+                [in] REFGUID rguid
+            );
+
+    HRESULT SetSource(
+                [in] LPOLESTR szSource
+            );
+
+    HRESULT SetDescription(
+                [in] LPOLESTR szDescription
+            );
+
+    HRESULT SetHelpFile(
+                [in] LPOLESTR szHelpFile
+            );
+
+    HRESULT SetHelpContext(
+                [in] DWORD dwHelpContext
+            );
+}
+
+
+[
+    object,
+    uuid(DF0B3D60-548F-101B-8E65-08002B2BD119),
+    pointer_default(unique)
+]
+
+interface ISupportErrorInfo: IUnknown
+{
+    typedef [unique] ISupportErrorInfo * LPSUPPORTERRORINFO;
+
+    HRESULT InterfaceSupportsErrorInfo(
+                [in]  REFIID riid
+            );
+}
+
+
+[
+    object,
+    uuid(0000002E-0000-0000-C000-000000000046)
+]
+
+interface ITypeFactory : IUnknown
+{
+    HRESULT CreateFromTypeInfo(
+                [in] ITypeInfo *pTypeInfo,
+                [in] REFIID riid,
+                [out, iid_is(riid)] IUnknown **ppv
+            );
+}
+
+
+[
+    local,
+    object,
+    uuid(0000002D-0000-0000-C000-000000000046)
+]
+
+interface ITypeMarshal : IUnknown
+{
+    HRESULT Size(
+                [in]  PVOID pvType,
+                [in]  DWORD dwDestContext,
+                [in]  PVOID pvDestContext,
+                [out] ULONG * pSize
+            );
+
+    HRESULT Marshal(
+                [in]  PVOID pvType,
+                [in]  DWORD dwDestContext,
+                [in]  PVOID pvDestContext,
+                [in]  ULONG cbBufferLength,
+                [out, annotation("_Out_writes_bytes_to_(cbBufferLength, *pcbWritten)")] BYTE  * pBuffer,
+                [out, annotation("_Out_")] ULONG * pcbWritten
+            );
+
+    HRESULT Unmarshal(
+                [out] PVOID pvType,
+                [in]  DWORD dwFlags,
+                [in]  ULONG cbBufferLength,
+                [in, annotation("_In_reads_(cbBufferLength)")]  BYTE  * pBuffer,
+                [out, annotation("_Out_")] ULONG * pcbRead
+            );
+
+    HRESULT Free(
+                [in] PVOID pvType
+            );
+}
+
+
+[
+    local,
+    object,
+    uuid(0000002F-0000-0000-C000-000000000046)
+]
+
+interface IRecordInfo: IUnknown
+{
+    typedef [unique] IRecordInfo * LPRECORDINFO;
+
+    HRESULT RecordInit(
+                [out] PVOID pvNew
+            );
+
+    HRESULT RecordClear(
+                [in]  PVOID pvExisting
+            );
+
+    HRESULT RecordCopy(
+                [in]  PVOID pvExisting,
+                [out] PVOID pvNew
+            );
+
+    HRESULT GetGuid(
+                [out] GUID * pguid
+            );
+
+    HRESULT GetName(
+                [out] BSTR * pbstrName
+            );
+
+    HRESULT GetSize(
+                [out] ULONG * pcbSize
+            );
+
+    HRESULT GetTypeInfo(
+                [out] ITypeInfo ** ppTypeInfo
+            );
+
+    HRESULT GetField(
+                [in]  PVOID pvData,
+                [in]  LPCOLESTR szFieldName,
+                [out] VARIANT * pvarField
+            );
+
+    HRESULT GetFieldNoCopy(
+                [in]  PVOID pvData,
+                [in]  LPCOLESTR szFieldName,
+                [out] VARIANT * pvarField,
+                [out] PVOID * ppvDataCArray
+            );
+
+    HRESULT PutField(
+                [in] ULONG wFlags,
+                [in,out] PVOID pvData,
+                [in]  LPCOLESTR szFieldName,
+                [in]  VARIANT * pvarField
+            );
+
+    HRESULT PutFieldNoCopy(
+                [in] ULONG wFlags,
+                [in,out] PVOID pvData,
+                [in]  LPCOLESTR szFieldName,
+                [in]  VARIANT * pvarField
+            );
+
+    HRESULT GetFieldNames(
+                [in,out] ULONG * pcNames,
+                [out,size_is(*pcNames),length_is(*pcNames)] BSTR * rgBstrNames
+            );
+
+    BOOL IsMatchingType(
+                [in] IRecordInfo * pRecordInfo
+            );
+
+    PVOID RecordCreate(
+            );
+
+    HRESULT RecordCreateCopy(
+                [in] PVOID pvSource,
+                [out] PVOID * ppvDest
+            );
+
+    HRESULT RecordDestroy(
+                [in] PVOID pvRecord
+            );
+}
+
+
+[
+    object,
+    uuid(3127CA40-446E-11CE-8135-00AA004BB851),
+    pointer_default(unique)
+]
+
+interface IErrorLog : IUnknown
+{
+    typedef IErrorLog * LPERRORLOG;
+
+    HRESULT AddError(
+                [in] LPCOLESTR pszPropName,
+                [in] EXCEPINFO * pExcepInfo
+            );
+}
+
+
+[
+    object,
+    uuid(55272A00-42CB-11CE-8135-00AA004BB851),
+    pointer_default(unique)
+]
+
+interface IPropertyBag : IUnknown
+{
+    typedef IPropertyBag * LPPROPERTYBAG;
+
+    [local]
+    HRESULT Read(
+                [in] LPCOLESTR pszPropName,
+                [in, out] VARIANT * pVar,
+                [in, unique] IErrorLog * pErrorLog
+            );
+
+    [call_as(Read)]
+    HRESULT RemoteRead(
+                [in] LPCOLESTR pszPropName,
+                [out] VARIANT * pVar,
+                [in, unique] IErrorLog * pErrorLog,
+                [in] DWORD varType,
+                [in] IUnknown * pUnkObj
+            );
+
+    HRESULT Write(
+                [in] LPCOLESTR pszPropName,
+                [in] VARIANT * pVar
+            );
+}
+

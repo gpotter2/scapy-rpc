@@ -1,0 +1,67 @@
+// unknwnbase.idl 10.0.10240.0 (29 Jul 2015)
+
+//+-------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+//
+//  File: unknwnbase.idl
+//
+//  Contents: IUnknown interface definition
+//
+//
+//--------------------------------------------------------------------------
+
+import "../win/ms-oaut.idl";
+
+
+[
+  local,
+  object,
+  uuid(000e0000-0000-0000-C000-000000000046),
+  pointer_default(unique)
+]
+
+interface AsyncIUnknown : IUnknown
+{
+
+    HRESULT Begin_QueryInterface([in] REFIID riid);
+    HRESULT Finish_QueryInterface([out] void **ppvObject);
+
+    HRESULT Begin_AddRef();
+    ULONG   Finish_AddRef();
+
+    HRESULT Begin_Release();
+    ULONG   Finish_Release();
+}
+
+
+[
+    object,
+    uuid(00000001-0000-0000-C000-000000000046),
+    pointer_default(unique)
+]
+
+interface IClassFactory : IUnknown
+{
+    typedef [unique] IClassFactory * LPCLASSFACTORY;
+
+    [local]
+    HRESULT CreateInstance(
+        [in, unique] IUnknown * pUnkOuter,
+        [in] REFIID riid,
+        [out, iid_is(riid)] void **ppvObject);
+
+    [call_as(CreateInstance)]
+    HRESULT RemoteCreateInstance(
+        [in] REFIID riid,
+        [out, iid_is(riid)] IUnknown ** ppvObject);
+
+    [local]
+    HRESULT LockServer(
+        [in] BOOL fLock);
+
+    [call_as(LockServer)]
+    HRESULT __stdcall RemoteLockServer(
+        [in] BOOL fLock);
+}

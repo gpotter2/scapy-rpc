@@ -479,7 +479,7 @@
  typedef DWORD HREFTYPE;
   
  typedef struct tagTYPEDESC {
-     [switch_type(USHORT), switch_is(vt)] union {
+     [switch_type(VARENUM), switch_is(vt)] union {
          [case(VT_PTR, VT_SAFEARRAY)] struct tagTYPEDESC * lptdesc;
          [case(VT_CARRAY)] struct tagARRAYDESC * lpadesc;
          [case(VT_USERDEFINED)] HREFTYPE hreftype;
