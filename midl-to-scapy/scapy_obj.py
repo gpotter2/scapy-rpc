@@ -229,10 +229,7 @@ def _rslv_case_expr(switch_attr, switch_type, expr):
     if isinstance(expr, list) and all(
         isinstance(x, tuple) and x[0] == "arithm_expr" for x in expr
     ):
-        vals = [
-            _rec_rslv_arithm(x[1])
-            for x in expr
-        ]
+        vals = [_rec_rslv_arithm(x[1]) for x in expr]
         if len(vals) > 1:
             test = "in [%s]" % ",".join(vals)
         elif len(vals) == 1:
@@ -256,13 +253,14 @@ def _rslv_case_expr(switch_attr, switch_type, expr):
         else:
             identifier = switch_type[1].name
         vals = [
-            _rec_rslv_arithm(e[1])
-            if isinstance(e, tuple) and e[0] == "arithm_expr"
-            else
-            "%s.%s"
-            % (
-                identifier,
-                e,
+            (
+                _rec_rslv_arithm(e[1])
+                if isinstance(e, tuple) and e[0] == "arithm_expr"
+                else "%s.%s"
+                % (
+                    identifier,
+                    e,
+                )
             )
             for e in expr
         ]
@@ -548,7 +546,11 @@ class ScapyArrayField(ScapyField):
                 ptr_suffix += ", ptr_pack=True"
             if length_is or size_is or max_is:
                 if self.scapy_field == "PacketListField":
-                    sub_name = self.subtype.subtype and self.subtype.subtype.name or self.subtype.struct_name
+                    sub_name = (
+                        self.subtype.subtype
+                        and self.subtype.subtype.name
+                        or self.subtype.struct_name
+                    )
                     fld = f'{prefix}{self.scapy_field}("{self.name}", [], {sub_name}{ptr_suffix})'
                 elif self.scapy_field == "FieldListField":
                     # Note: we freely abstract 1 level of pointer when the subtype is str or bytes,
@@ -560,7 +562,8 @@ class ScapyArrayField(ScapyField):
                             self.subtype.scapy_field in IMPLICIT_STRINGS
                             or (
                                 any(x in self.name.lower() for x in ["str", "data"])
-                                and self.subtype.scapy_field in (IMPLICIT_STRINGS + WCHAR_TYPES)
+                                and self.subtype.scapy_field
+                                in (IMPLICIT_STRINGS + WCHAR_TYPES)
                             )
                         )
                         and size_is
@@ -662,7 +665,9 @@ class ScapyStructField(ScapyField):
 
 
 class ScapyStruct:
-    def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False):
+    def __init__(
+        self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False
+    ):
         self.name = name
         self.ptr_lvl = ptr_lvl
         self.fields = self.match_struct_attributes(fields)
@@ -752,7 +757,9 @@ class ScapyStruct:
         if not toplevel:
             context.set_current(self)
         context.read_only_fields = read_only_fields or self.fields.copy()
-        fields = ",\n".join(x.to_string(context, toplevel=toplevel) for x in self.fields)
+        fields = ",\n".join(
+            x.to_string(context, toplevel=toplevel) for x in self.fields
+        )
         alignment = get_alignment(self) if not toplevel else (1, 1)
         return "class %s(NDRPacket):\n%s%s    fields_desc = [%s]\n" % (
             self.name,

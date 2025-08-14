@@ -336,9 +336,11 @@ class Resolver:
                 env[type], env, toplevel=toplevel, strct_types=strct_types
             )
             self.globalnamespace[type] = field
-            if isinstance(field, (ScapyStruct, ScapyEnum)) and not isinstance(
-                field, ScapyUnion
-            ) and not getattr(field, "recursive", False):
+            if (
+                isinstance(field, (ScapyStruct, ScapyEnum))
+                and not isinstance(field, ScapyUnion)
+                and not getattr(field, "recursive", False)
+            ):
                 self.globalnamespace[field.struct_name] = field
                 self.environment.append(field)
         if isinstance(self.globalnamespace[type], Interface):

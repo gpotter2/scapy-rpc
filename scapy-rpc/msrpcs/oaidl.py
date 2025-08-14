@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-#+---------------------------------------------------------------------------
+# oaidl.idl 10.0.10240.0 (29 Jul 2015)
 
 """
 RPC definitions for the following interfaces:
