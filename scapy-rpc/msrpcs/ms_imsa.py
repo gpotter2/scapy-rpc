@@ -304,11 +304,8 @@ class GetDataPaths_Request(NDRPacket):
 
 class GetDataPaths_Response(NDRPacket):
     fields_desc = [
-        NDRConfFieldListField(
-            "pszBuffer",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.dwMDBufferSize,
+        NDRConfStrLenFieldUtf16(
+            "pszBuffer", "", size_is=lambda pkt: pkt.dwMDBufferSize
         ),
         NDRIntField("pdwMDRequiredBufferSize", 0),
         NDRIntField("status", 0),
@@ -775,11 +772,8 @@ class GetChildPaths_Request(NDRPacket):
         NDRIntField("hMDHandle", 0),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszMDPath", "")),
         NDRIntField("cchMDBufferSize", None, size_of="pszBuffer"),
-        NDRConfFieldListField(
-            "pszBuffer",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.cchMDBufferSize,
+        NDRConfStrLenFieldUtf16(
+            "pszBuffer", "", size_is=lambda pkt: pkt.cchMDBufferSize
         ),
         NDRFullPointerField(NDRIntField("pcchMDRequiredBufferSize", 0)),
     ]
@@ -787,11 +781,8 @@ class GetChildPaths_Request(NDRPacket):
 
 class GetChildPaths_Response(NDRPacket):
     fields_desc = [
-        NDRConfFieldListField(
-            "pszBuffer",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.cchMDBufferSize,
+        NDRConfStrLenFieldUtf16(
+            "pszBuffer", "", size_is=lambda pkt: pkt.cchMDBufferSize
         ),
         NDRFullPointerField(NDRIntField("pcchMDRequiredBufferSize", 0)),
         NDRIntField("status", 0),

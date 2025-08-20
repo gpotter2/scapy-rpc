@@ -561,7 +561,10 @@ class ScapyArrayField(ScapyField):
                         and (
                             self.subtype.scapy_field in IMPLICIT_STRINGS
                             or (
-                                any(x in self.name.lower() for x in ["str", "data"])
+                                any(
+                                    x in self.name.lower()
+                                    for x in ["str", "data", "buffer"]
+                                )
                                 and self.subtype.scapy_field
                                 in (IMPLICIT_STRINGS + WCHAR_TYPES)
                             )

@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfStrLenFieldUtf16,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
@@ -201,9 +202,7 @@ class PTSG_PACKET_STRING_MESSAGE(NDRPacket):
         NDRSignedIntField("isConsentMandatory", 0),
         NDRIntField("msgBytes", None, size_of="msgBuffer"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "msgBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.msgBytes
-            )
+            NDRConfStrLenFieldUtf16("msgBuffer", "", size_is=lambda pkt: pkt.msgBytes)
         ),
     ]
 
