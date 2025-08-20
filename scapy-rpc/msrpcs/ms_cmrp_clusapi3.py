@@ -19,9 +19,9 @@ from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
     NDRByteField,
+    NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
@@ -753,8 +753,11 @@ class ApiCreateGroupResourceEnum_Response(NDRPacket):
 class ApiSetGroupNodeList_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hGroup", NDRContextHandle(), NDRContextHandle),
-        NDRConfStrLenFieldUtf16(
-            "multiSzNodeList", "", size_is=lambda pkt: pkt.cchListSize
+        NDRConfFieldListField(
+            "multiSzNodeList",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchListSize,
         ),
         NDRIntField("cchListSize", None, size_of="multiSzNodeList"),
     ]
@@ -1671,7 +1674,13 @@ class ApiGetBatchNotification_Request(NDRPacket):
 class ApiGetBatchNotification_Response(NDRPacket):
     fields_desc = [
         NDRIntField("cbData", None, size_of="lpData"),
-        NDRConfStrLenField("lpData", "", size_is=lambda pkt: pkt.cbData),
+        NDRConfFieldListField(
+            "lpData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.cbData,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2156,7 +2165,13 @@ class ApiExecuteReadBatch_Request(NDRPacket):
 class ApiExecuteReadBatch_Response(NDRPacket):
     fields_desc = [
         NDRIntField("cbOutData", None, size_of="lpOutData"),
-        NDRConfStrLenField("lpOutData", "", size_is=lambda pkt: pkt.cbOutData),
+        NDRConfFieldListField(
+            "lpOutData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.cbOutData,
+            ptr_pack=True,
+        ),
         NDRIntField("rpc_status", 0),
     ]
 
@@ -2233,7 +2248,13 @@ class ApiExecuteReadBatchEx_Request(NDRPacket):
 class ApiExecuteReadBatchEx_Response(NDRPacket):
     fields_desc = [
         NDRIntField("cbOutData", None, size_of="lpOutData"),
-        NDRConfStrLenField("lpOutData", "", size_is=lambda pkt: pkt.cbOutData),
+        NDRConfFieldListField(
+            "lpOutData",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.cbOutData,
+            ptr_pack=True,
+        ),
         NDRIntField("rpc_status", 0),
     ]
 

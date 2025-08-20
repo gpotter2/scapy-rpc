@@ -27,6 +27,7 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
+    NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRLongField,
@@ -133,25 +134,37 @@ class diskinfoex(NDRPacket):
         NDRSignedIntField("cchDgName", None, size_of="dgName"),
         NDRSignedIntField("cchDevInstId", None, size_of="devInstId"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("name", "", size_is=lambda pkt: pkt.cchName)
+            NDRConfFieldListField(
+                "name", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cchName
+            )
         ),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("vendor", "", size_is=lambda pkt: pkt.cchVendor)
+            NDRConfFieldListField(
+                "vendor", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cchVendor
+            )
         ),
         NDRFullEmbPointerField(
             NDRConfStrLenField("dgid", "", size_is=lambda pkt: pkt.cchDgid)
         ),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "adapterName", "", size_is=lambda pkt: pkt.cchAdapterName
+            NDRConfFieldListField(
+                "adapterName",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchAdapterName,
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("dgName", "", size_is=lambda pkt: pkt.cchDgName)
+            NDRConfFieldListField(
+                "dgName", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cchDgName
+            )
         ),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16(
-                "devInstId", "", size_is=lambda pkt: pkt.cchDevInstId
+            NDRConfFieldListField(
+                "devInstId",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDevInstId,
             )
         ),
     ]
@@ -251,7 +264,9 @@ class regioninfoex(NDRPacket):
         NDRIntField("currentPartitionNumber", 0),
         NDRSignedIntField("cchName", None, size_of="name"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("name", "", size_is=lambda pkt: pkt.cchName)
+            NDRConfFieldListField(
+                "name", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cchName
+            )
         ),
     ]
 
@@ -341,7 +356,9 @@ class filesysteminfo(NDRPacket):
         NDRSignedIntField("fsType", 0),
         NDRSignedIntField("cchLabel", None, size_of="label"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("label", "", size_is=lambda pkt: pkt.cchLabel)
+            NDRConfFieldListField(
+                "label", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cchLabel
+            )
         ),
     ]
 
@@ -369,8 +386,11 @@ class CreatePartitionAssignAndFormatEx_Request(NDRPacket):
         NDRShortField("letter", 0),
         NDRSignedLongField("letterLastKnownState", 0),
         NDRSignedIntField("cchAccessPath", None, size_of="AccessPath"),
-        NDRConfStrLenFieldUtf16(
-            "AccessPath", "", size_is=lambda pkt: pkt.cchAccessPath
+        NDRConfFieldListField(
+            "AccessPath",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchAccessPath,
         ),
         NDRPacketField("fsSpec", filesysteminfo(), filesysteminfo),
         NDRIntField("quickFormat", 0),
@@ -528,7 +548,7 @@ class FTEnumLogicalDiskMembers_Response(NDRPacket):
         NDRConfFieldListField(
             "memberList",
             [],
-            NDRSignedLongField("", 0),
+            NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.memberCount,
             ptr_pack=True,
         ),
@@ -724,7 +744,12 @@ class ifilesysteminfo(NDRPacket):
         NDRSignedIntField("cchLabelLimit", 0),
         NDRSignedIntField("cchLabel", None, size_of="iLabelChSet"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("iLabelChSet", "", size_is=lambda pkt: pkt.cchLabel)
+            NDRConfFieldListField(
+                "iLabelChSet",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchLabel,
+            )
         ),
     ]
 
@@ -792,7 +817,7 @@ class EnumVolumeMembers_Response(NDRPacket):
         NDRConfFieldListField(
             "memberList",
             [],
-            NDRSignedLongField("", 0),
+            NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.memberCount,
             ptr_pack=True,
         ),
@@ -869,8 +894,11 @@ class CreateVolumeAssignAndFormatEx_Request(NDRPacket):
         NDRShortField("letter", 0),
         NDRSignedLongField("letterLastKnownState", 0),
         NDRSignedIntField("cchAccessPath", None, size_of="AccessPath"),
-        NDRConfStrLenFieldUtf16(
-            "AccessPath", "", size_is=lambda pkt: pkt.cchAccessPath
+        NDRConfFieldListField(
+            "AccessPath",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.cchAccessPath,
         ),
         NDRPacketField("fsSpec", filesysteminfo(), filesysteminfo),
         NDRIntField("quickFormat", 0),
@@ -892,7 +920,13 @@ class GetVolumeMountName_Request(NDRPacket):
 class GetVolumeMountName_Response(NDRPacket):
     fields_desc = [
         NDRIntField("cchMountName", None, size_of="mountName"),
-        NDRConfStrLenFieldUtf16("mountName", "", size_is=lambda pkt: pkt.cchMountName),
+        NDRConfFieldListField(
+            "mountName",
+            [],
+            NDRFullPointerField(NDRShortField("", 0)),
+            size_is=lambda pkt: pkt.cchMountName,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -1107,7 +1141,7 @@ class DiskMergeQuery_Response(NDRPacket):
         NDRConfFieldListField(
             "merge_dm_rids",
             [],
-            NDRSignedLongField("", 0),
+            NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.numRids,
             ptr_pack=True,
         ),
@@ -1218,7 +1252,7 @@ class GetEncapsulateDiskInfoEx_Response(NDRPacket):
         NDRConfFieldListField(
             "affectedDiskFlags",
             [],
-            NDRIntField("", 0),
+            NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.affectedDiskCount,
             ptr_pack=True,
         ),
@@ -1544,7 +1578,9 @@ class EnumAccessPathForVolume_Response(NDRPacket):
 class AddAccessPath_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("cch_path", None, size_of="path"),
-        NDRConfStrLenFieldUtf16("path", "", size_is=lambda pkt: pkt.cch_path),
+        NDRConfFieldListField(
+            "path", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cch_path
+        ),
         NDRSignedLongField("targetId", 0),
     ]
 
@@ -1557,7 +1593,9 @@ class DeleteAccessPath_Request(NDRPacket):
     fields_desc = [
         NDRSignedLongField("volumeId", 0),
         NDRSignedIntField("cch_path", None, size_of="path"),
-        NDRConfStrLenFieldUtf16("path", "", size_is=lambda pkt: pkt.cch_path),
+        NDRConfFieldListField(
+            "path", [], NDRShortField("", 0), size_is=lambda pkt: pkt.cch_path
+        ),
     ]
 
 
@@ -1683,8 +1721,12 @@ class GetVolumeDeviceName_Request(NDRPacket):
 class GetVolumeDeviceName_Response(NDRPacket):
     fields_desc = [
         NDRIntField("cchVolumeDevice", None, size_of="pwszVolumeDevice"),
-        NDRConfStrLenFieldUtf16(
-            "pwszVolumeDevice", "", size_is=lambda pkt: pkt.cchVolumeDevice
+        NDRConfFieldListField(
+            "pwszVolumeDevice",
+            [],
+            NDRFullPointerField(NDRShortField("", 0)),
+            size_is=lambda pkt: pkt.cchVolumeDevice,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

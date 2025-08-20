@@ -6,6 +6,7 @@
 Scapy pseudo-field definitions and converters.
 """
 
+import copy
 import re
 import struct
 import sys
@@ -30,8 +31,13 @@ SCAPY_FIELDS = {
     "__uint3264": "NDRInt3264Field",
 }
 _R_SCAPY_FIELDS = {v: k for k, v in SCAPY_FIELDS.items()}
+
+# Types of strings when "string" attribute is present
 CHAR_TYPES = ["NDRByteField", "NDRSignedByteField"]
 WCHAR_TYPES = ["NDRShortField", "NDRSignedShortField"]
+
+# Types of fields we convert into a string implicitely
+IMPLICIT_STRINGS = ["NDRByteField", "NDRSignedByteField", "NDRSignedShortField"]
 
 SCAPY_SIZES = {
     "NDRSignedByteField": 1,
@@ -247,10 +253,14 @@ def _rslv_case_expr(switch_attr, switch_type, expr):
         else:
             identifier = switch_type[1].name
         vals = [
-            "%s.%s"
-            % (
-                identifier,
-                e,
+            (
+                _rec_rslv_arithm(e[1])
+                if isinstance(e, tuple) and e[0] == "arithm_expr"
+                else "%s.%s"
+                % (
+                    identifier,
+                    e,
+                )
             )
             for e in expr
         ]
@@ -345,6 +355,8 @@ def get_alignment(field):
         if isinstance(field, ScapyStructField) and field.is_array:
             # Struct is secretely a conformant array
             alignments.append((4, 8))
+        if not alignments:
+            return (0, 0)
         return (max(x[0] for x in alignments), max(x[1] for x in alignments))
     elif isinstance(field, ScapyArrayField):
         alignment = get_alignment(field.subtype)
@@ -353,9 +365,6 @@ def get_alignment(field):
             return alignment
         else:
             return max(alignment[0], 4), max(alignment[1], 8)
-    elif isinstance(field, ScapyRecursiveField):
-        # TODO
-        return (1, 1)
     return (field.sz, field.sz)
 
 
@@ -403,14 +412,7 @@ class ScapyField:
             assert False, "ptr_lvl > 1 but no pointer marker !"
 
     def to_string(self, context, toplevel=False):
-        length_is = _lkp(self.idl_attributes, "length_is")
-        size_is = _lkp(self.idl_attributes, "size_is")
-        max_is = _lkp(self.idl_attributes, "max_is")
-        suffix = ""
-        if size_is or max_is:
-            suffix += ", size_is=lambda pkt: " + res_size_is(size_is or max_is)
-        if length_is:
-            suffix += ", length_is=lambda pkt: " + res_size_is(length_is)
+        lvl = self.ptr_lvl
         if "context_handle" in self.idl_attributes:
             # Special case: context_handle
             return (
@@ -419,10 +421,10 @@ class ScapyField:
         elif self.scapy_field == "void":
             # Special case: void
             return f'StrFixedLenField("{self.name}", "", length=0)'
+        elif any(x[0] in ["size_is", "max_is"] for x in self.idl_attributes):
+            assert False, "This should have been detected as an array: " + self.name
         elif "string" in self.idl_attributes:
-            assert (
-                self.ptr_lvl >= 1
-            ), "String attribute with wrong pointer value? %s: %s" % (
+            assert lvl >= 1, "String attribute with wrong pointer value? %s: %s" % (
                 self.name,
                 repr(self.ptr_lvl),
             )
@@ -435,33 +437,20 @@ class ScapyField:
             else:
                 assert False, "Unknown string on %s" % self.scapy_field
         else:
-            prefix = "NDR"
-            if size_is or max_is:
-                prefix += "Conf"
-            if length_is:
-                prefix += "Var"
-            if size_is or length_is or max_is:  # Conf or Conf / Var
-                if self.scapy_field in CHAR_TYPES:
-                    # Array of bytes. Like we assume this is a string even though a [string] would have been expected
-                    fld = f'{prefix}StrLenField("{self.name}", ""{suffix})'
-                elif self.scapy_field in WCHAR_TYPES:
-                    # Same
-                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", ""{suffix})'
+            # Normal integer
+            default = "0"
+            suffix = ""
+            if self.inv_length_or_size_is:
+                if self.inv_length_or_size_is[1] is not None:
+                    suffix += (
+                        ', size_of="%s", adjust=lambda _, x: %s'
+                        % self.inv_length_or_size_is
+                    )
                 else:
-                    fld = f'{prefix}FieldListField("{self.name}", [], {self.scapy_field}{suffix})'
-            else:
-                default = "0"
-                if self.inv_length_or_size_is:
-                    if self.inv_length_or_size_is[1] is not None:
-                        suffix += (
-                            ', size_of="%s", adjust=lambda _, x: %s'
-                            % self.inv_length_or_size_is
-                        )
-                    else:
-                        suffix += ', size_of="%s"' % self.inv_length_or_size_is[0]
-                    default = "None"
-                fld = f'{self.scapy_field}("{self.name}", {default}{suffix})'
-        return self.ptr_wrap(fld, toplevel=toplevel)
+                    suffix += ', size_of="%s"' % self.inv_length_or_size_is[0]
+                default = "None"
+            fld = f'{self.scapy_field}("{self.name}", {default}{suffix})'
+        return self.ptr_wrap(fld, toplevel=toplevel, lvl=lvl)
 
 
 class ScapyArrayField(ScapyField):
@@ -489,106 +478,104 @@ class ScapyArrayField(ScapyField):
         self.subtype = subtype
         self.length = length
 
-    def to_string(self, context, toplevel=False):
+    def to_string(self, context, toplevel=False, _in_array=False):
         length_is = _lkp(self.idl_attributes, "length_is")
         size_is = _lkp(self.idl_attributes, "size_is")
         max_is = _lkp(self.idl_attributes, "max_is")
         suffix = ""
+        prefix = "NDR"
+
         if size_is or max_is:
             suffix += ", size_is=lambda pkt: " + res_size_is(size_is or max_is)
+
+        if self.length is None or self.length == "*":
+            # Conformant Array
+            # [C706] 4.2.18.1 - An array is called conformant if it has an <array_bounds_declarator> that is empty or
+            # contains an * (asterisk).
+            # https://docs.microsoft.com/en-us/windows/win32/rpc/conformant-arrays
+            # [MS-RPCE 2.2.5.3.2.1]
+            prefix += "Conf"
+            if not toplevel and not self.ptr_lvl:
+                # [C706] 14.3.7.1 - Structure Containing a Conformant Array
+                context.add_conformant(self.name)
+                suffix += ", conformant_in_struct=True"
+
         if length_is:
+            # Varying arrays
+            # [C706] 4.2.18.2 - An array is called varying if none of its <array_bounds_declarator> components is empty
+            # or contains an * (asterisk), and it has either a last_is, first_is or length_is attribute.
+            # https://docs.microsoft.com/en-us/windows/win32/rpc/varying-arrays
+            # [MS-RPCE 2.2.5.3.2.2]
+            prefix += "Var"
             suffix += ", length_is=lambda pkt: " + res_size_is(length_is)
-        if "string" in self.idl_attributes:
+        elif "string" in self.subtype.idl_attributes or "string" in self.idl_attributes:
+            # Strings are always considered Varying
+            prefix += "Var"
+
+        # Find type.
+        if "string" in self.subtype.idl_attributes or "string" in self.idl_attributes:
             # [C706] 14.3.5
             # NDR defines a special representation for an array whose elements are strings.
             # Modified by [MS-RPCE] 2.2.4.4
             if self.length and self.length != "*":
-                # Fixed array
-                if self.ptr_lvl >= 1:
-                    # Array of actual strings
-                    if self.subtype.scapy_field in CHAR_TYPES:
-                        fld = f'NDRFieldListField("{self.name}", [], NDRConfStrLenField("", ""), length_is=lambda _: {self.length})'
-                    elif self.subtype.scapy_field in WCHAR_TYPES:
-                        fld = f'NDRFieldListField("{self.name}", [], NDRConfStrLenFieldUtf16("", ""), length_is=lambda _: {self.length})'
-                    else:
-                        assert False, "Unknown string on %s" % self.subtype.scapy_field
-                    return fld
+                if self.subtype.scapy_field in CHAR_TYPES:
+                    fld = f'{prefix}StrLenField("{self.name}", "", length_is=lambda _: {self.length})'
+                elif self.subtype.scapy_field in WCHAR_TYPES:
+                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", "", length_is=lambda _: {self.length})'
                 else:
-                    # NDR strings
-                    if self.subtype.scapy_field in CHAR_TYPES:
-                        fld = f'NDRVarStrLenField("{self.name}", "")'
-                    elif self.subtype.scapy_field in WCHAR_TYPES:
-                        fld = f'NDRVarStrLenFieldUtf16("{self.name}", "")'
-                    else:
-                        assert False, "Unknown string on %s" % self.subtype.scapy_field
-                    return fld
+                    assert False, "Unknown string on %s" % self.subtype.scapy_field
             elif not size_is and not max_is:
                 assert False, "String array with no length ! %s" % self.name
-        if (length_is or size_is or max_is) or (
+            else:
+                # NDR string
+                if self.subtype.scapy_field in CHAR_TYPES:
+                    fld = f'{prefix}StrLenField("{self.name}", ""{suffix})'
+                elif self.subtype.scapy_field in WCHAR_TYPES:
+                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", ""{suffix})'
+                else:
+                    assert False, "Unknown string on %s" % self.subtype.scapy_field
+        elif (length_is or size_is or max_is) or (
             self.length is None or self.length == "*"
         ):
             # Varying array or Conformant array (or both)
-            prefix = "NDR"
-            if self.length is None or self.length == "*":
-                # Conformant Array
-                # [C706] 4.2.18.1 - An array is called conformant if it has an <array_bounds_declarator> that is empty or
-                # contains an * (asterisk).
-                # https://docs.microsoft.com/en-us/windows/win32/rpc/conformant-arrays
-                # [MS-RPCE 2.2.5.3.2.1]
-                prefix += "Conf"
-                if not toplevel and not self.ptr_lvl:
-                    # [C706] 14.3.7.1 - Structure Containing a Conformant Array
-                    context.add_conformant(self.name)
-                    suffix += ", conformant_in_struct=True"
-            if length_is:
-                # Varying arrays
-                # [C706] 4.2.18.2 - An array is called varying if none of its <array_bounds_declarator> components is empty
-                # or contains an * (asterisk), and it has either a last_is, first_is or length_is attribute.
-                # https://docs.microsoft.com/en-us/windows/win32/rpc/varying-arrays
-                # [MS-RPCE 2.2.5.3.2.2]
-                prefix += "Var"
-            elif "string" in self.idl_attributes and not self.ptr_lvl:
-                # a proper "string" is always varying
-                prefix += "Var"
             ptr_suffix = suffix
             if (
-                any(x in ["ptr", "unique"] for x in self.idl_attributes)
+                any(x in ["ptr", "unique"] for x in self.subtype.idl_attributes)
                 and self.subtype.ptr_lvl >= 1
             ):
                 ptr_suffix += ", ptr_pack=True"
             if length_is or size_is or max_is:
                 if self.scapy_field == "PacketListField":
-                    fld = f'{prefix}{self.scapy_field}("{self.name}", [], {self.subtype.subtype.name}{ptr_suffix})'
+                    sub_name = (
+                        self.subtype.subtype
+                        and self.subtype.subtype.name
+                        or self.subtype.struct_name
+                    )
+                    fld = f'{prefix}{self.scapy_field}("{self.name}", [], {sub_name}{ptr_suffix})'
                 elif self.scapy_field == "FieldListField":
                     # Note: we freely abstract 1 level of pointer when the subtype is str or bytes,
                     # because it's more managable in python (even though it should technically be a real array of bytes).
                     # The following check test if we do not need this abstraction.
                     if (
-                        (
-                            self.ptr_lvl >= 1
-                            and self.subtype.scapy_field
-                            not in (CHAR_TYPES + WCHAR_TYPES)
-                        )  # ptr and not string
-                        or self.ptr_lvl >= 2  # ptr >= 2.
-                        or self.ptr_lvl == 1
-                        and self.subtype.ptr_lvl >= 1
+                        self.subtype.ptr_lvl == 0
+                        and (
+                            self.subtype.scapy_field in IMPLICIT_STRINGS
+                            or (
+                                any(x in self.name.lower() for x in ["str", "data"])
+                                and self.subtype.scapy_field
+                                in (IMPLICIT_STRINGS + WCHAR_TYPES)
+                            )
+                        )
+                        and size_is
                     ):
-                        fld = f'{prefix}FieldListField("{self.name}", [], {self.subtype.to_string(context, toplevel=toplevel)}{suffix})'
-                    else:
-                        if isinstance(self.subtype, ScapyUnion) or (
-                            isinstance(self.subtype, ScapyStructField)
-                            and isinstance(self.subtype.subtype, ScapyEnum)
-                        ):
-                            # Array of union/enum fields
-                            fld = f'{prefix}{self.scapy_field}("{self.name}", [], {self.subtype.to_string(context, toplevel=toplevel)}{ptr_suffix})'
-                        elif self.subtype.scapy_field in CHAR_TYPES:
-                            # Array of bytes
+                        if self.subtype.scapy_field in CHAR_TYPES:
                             fld = f'{prefix}StrLenField("{self.name}", ""{suffix})'
-                        elif self.subtype.scapy_field in WCHAR_TYPES:
-                            # Array of UTF16 (most likely..?)
-                            fld = f'{prefix}StrLenFieldUtf16("{self.name}", ""{suffix})'
                         else:
-                            fld = f'{prefix}{self.scapy_field}("{self.name}", [], {self.subtype.scapy_field}("", 0){ptr_suffix})'
+                            fld = f'{prefix}StrLenFieldUtf16("{self.name}", ""{suffix})'
+                    else:
+                        subtype = copy.deepcopy(self.subtype)
+                        subtype.name = ""
+                        fld = f'{prefix}{self.scapy_field}("{self.name}", [], {subtype.to_string(context, toplevel=toplevel)}{ptr_suffix})'
                 else:
                     assert False
             else:
@@ -600,7 +587,7 @@ class ScapyArrayField(ScapyField):
             # Fixed Arrays
             # https://docs.microsoft.com/en-us/windows/win32/rpc/fixed-arrays
             if self.scapy_field == "PacketListField":
-                fld = f'{self.scapy_field}("{self.name}", [], {self.subtype.subtype.name}, count_from=lambda _: {self.length})'
+                fld = f'{self.scapy_field}("{self.name}", [{self.subtype.subtype.name}()] * {self.length}, {self.subtype.subtype.name}, count_from=lambda _: {self.length})'
             elif self.scapy_field == "FieldListField":
                 if self.subtype.scapy_field in CHAR_TYPES:
                     # Array of bytes
@@ -609,7 +596,7 @@ class ScapyArrayField(ScapyField):
                     # Array of UTF16 (most likely)
                     fld = f'StrFixedLenFieldUtf16("{self.name}", "", length={self.length} * 2)'
                 else:
-                    fld = f'NDR{self.scapy_field}("{self.name}", [], {self.subtype.scapy_field}("", 0), length_is=lambda _: {self.length})'
+                    fld = f'NDR{self.scapy_field}("{self.name}", [0] * {self.length}, {self.subtype.scapy_field}("", 0), length_is=lambda _: {self.length})'
             else:
                 assert False, "How did you get here?"
         return self.ptr_wrap(fld, toplevel=toplevel)
@@ -664,33 +651,33 @@ class ScapyStructField(ScapyField):
                 suffix += ", size_is=lambda pkt: " + res_size_is(size_is or max_is)
             if length_is:
                 suffix += ", length_is=lambda pkt: " + res_size_is(length_is)
-            fld = f'{prefix}PacketListField("{self.name}", [{self.struct_name}()], {self.struct_name}{suffix})'
+            fld = f'{prefix}PacketListField("{self.name}", [], {self.struct_name}{suffix})'
         else:
-            fld = f'{self.scapy_field}("{self.name}", {self.struct_name}(), {self.struct_name})'
+            if self.subtype.recursive:
+                default = "None"
+            else:
+                default = f"{self.struct_name}()"
+            fld = f'{self.scapy_field}("{self.name}", {default}, {self.struct_name})'
         return self.ptr_wrap(fld, toplevel=toplevel)
-
-
-class ScapyRecursiveField:
-    def __init__(self, name, ptr_lvl, struct_name, idl_attributes):
-        self.name = name
-        self.ptr_lvl = ptr_lvl
-        self.struct_name = struct_name
-        self.idl_attributes = idl_attributes
-
-    def to_string(self, context, toplevel=False):
-        return f'NDRRecursiveField("{self.name}")'
 
 
 # --- Packet definitions
 
 
 class ScapyStruct:
-    def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name):
+    def __init__(
+        self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False
+    ):
         self.name = name
         self.ptr_lvl = ptr_lvl
         self.fields = self.match_struct_attributes(fields)
         self.idl_attributes = idl_attributes
         self.struct_name = struct_name
+        self.recursive = recursive
+        if recursive:
+            # Super hack. A recursive field is only refered to by other fields,
+            # not actually built into a Scapy structure. So we hack its name
+            self.name = "NDRRecursiveClass('%s')" % self.name
 
     def match_struct_attributes(self, fields):
         """
@@ -770,7 +757,9 @@ class ScapyStruct:
         if not toplevel:
             context.set_current(self)
         context.read_only_fields = read_only_fields or self.fields.copy()
-        fields = ",".join(x.to_string(context, toplevel=toplevel) for x in self.fields)
+        fields = ",\n".join(
+            x.to_string(context, toplevel=toplevel) for x in self.fields
+        )
         alignment = get_alignment(self) if not toplevel else (1, 1)
         return "class %s(NDRPacket):\n%s%s    fields_desc = [%s]\n" % (
             self.name,
@@ -820,7 +809,7 @@ class ScapyUnion(ScapyStruct, ScapyField):
             )
         except StopIteration:
             default_field = 'StrFixedLenField("%s", "", length=0)' % self.fields[0].name
-        fields = ",".join(
+        fields = ",\n".join(
             "(%s,%s)"
             % (
                 x[1],

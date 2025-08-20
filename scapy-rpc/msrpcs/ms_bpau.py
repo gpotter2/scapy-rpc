@@ -17,8 +17,11 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfStrLenField,
+    NDRFullPointerField,
     NDRIntField,
+    NDRSignedByteField,
     register_dcerpc_interface,
 )
 
@@ -33,7 +36,13 @@ class ExchangePublicKeys_Request(NDRPacket):
 class ExchangePublicKeys_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pServerKeyLength", None, size_of="pServerKey"),
-        NDRConfStrLenField("pServerKey", "", size_is=lambda pkt: pkt.pServerKeyLength),
+        NDRConfFieldListField(
+            "pServerKey",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pServerKeyLength,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 

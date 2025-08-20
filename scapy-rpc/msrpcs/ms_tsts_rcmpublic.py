@@ -19,16 +19,20 @@ from scapy.fields import StrFixedLenField, StrFixedLenFieldUtf16
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRByteField,
+    NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarStrLenField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
+    NDRFullPointerField,
     NDRInt3264EnumField,
     NDRIntField,
     NDRPacketField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
     NDRUnionField,
@@ -42,7 +46,13 @@ class RpcGetClientData_Request(NDRPacket):
 
 class RpcGetClientData_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppBuff", "", size_is=lambda pkt: pkt.pOutBuffByteLen),
+        NDRConfFieldListField(
+            "ppBuff",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pOutBuffByteLen,
+            ptr_pack=True,
+        ),
         NDRIntField("pOutBuffByteLen", None, size_of="ppBuff"),
         NDRIntField("status", 0),
     ]
@@ -54,7 +64,13 @@ class RpcGetConfigData_Request(NDRPacket):
 
 class RpcGetConfigData_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppBuff", "", size_is=lambda pkt: pkt.pOutBuffByteLen),
+        NDRConfFieldListField(
+            "ppBuff",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pOutBuffByteLen,
+            ptr_pack=True,
+        ),
         NDRIntField("pOutBuffByteLen", None, size_of="ppBuff"),
         NDRIntField("status", 0),
     ]
@@ -74,7 +90,13 @@ class RpcGetProtocolStatus_Request(NDRPacket):
 
 class RpcGetProtocolStatus_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppProtoStatus", "", size_is=lambda pkt: pkt.pcbProtoStatus),
+        NDRConfFieldListField(
+            "ppProtoStatus",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbProtoStatus,
+            ptr_pack=True,
+        ),
         NDRIntField("pcbProtoStatus", None, size_of="ppProtoStatus"),
         NDRIntField("status", 0),
     ]
@@ -197,7 +219,13 @@ class RpcGetSessionProtocolLastInputTime_Request(NDRPacket):
 
 class RpcGetSessionProtocolLastInputTime_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ppProtoStatus", "", size_is=lambda pkt: pkt.pcbProtoStatus),
+        NDRConfFieldListField(
+            "ppProtoStatus",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbProtoStatus,
+            ptr_pack=True,
+        ),
         NDRIntField("pcbProtoStatus", None, size_of="ppProtoStatus"),
         NDRSignedLongField("pLastInputTime", 0),
         NDRIntField("status", 0),
@@ -211,7 +239,13 @@ class RpcGetUserCertificates_Request(NDRPacket):
 class RpcGetUserCertificates_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcCerts", 0),
-        NDRConfStrLenField("ppbCerts", "", size_is=lambda pkt: pkt.pcbCerts),
+        NDRConfFieldListField(
+            "ppbCerts",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbCerts,
+            ptr_pack=True,
+        ),
         NDRIntField("pcbCerts", None, size_of="ppbCerts"),
         NDRIntField("status", 0),
     ]

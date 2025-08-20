@@ -22,7 +22,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
@@ -37,6 +38,8 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRSignedLongField,
     NDRUnionField,
+    NDRVarStrLenField,
+    NDRVarStrLenFieldUtf16,
     register_dcerpc_interface,
 )
 
@@ -105,7 +108,7 @@ class PDNS_RPC_SERVER_INFO_W2K(NDRPacket):
         NDRIntField("dwDefaultRefreshInterval", 0),
         NDRIntField("dwDefaultNoRefreshInterval", 0),
         NDRFieldListField(
-            "dwReserveArray", [], NDRIntField("", 0), length_is=lambda _: 10
+            "dwReserveArray", [0] * 10, NDRIntField("", 0), length_is=lambda _: 10
         ),
         NDRByteField("fAutoReverseZones", 0),
         NDRByteField("fAutoCacheUpdate", 0),
@@ -312,8 +315,8 @@ class PDNS_RPC_SERVER_INFO_DOTNET(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
-        NDRFieldListField(
-            "pExtensions", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
+        NDRFullEmbPointerField(
+            NDRVarStrLenField("pExtensions", "", length_is=lambda _: 6)
         ),
         NDRIntField("dwLogLevel", 0),
         NDRIntField("dwDebugLevel", 0),
@@ -336,7 +339,7 @@ class PDNS_RPC_SERVER_INFO_DOTNET(NDRPacket):
         NDRIntField("dwDsDomainVersion", 0),
         NDRIntField("dwDsDsaVersion", 0),
         NDRFieldListField(
-            "dwReserveArray", [], NDRIntField("", 0), length_is=lambda _: 4
+            "dwReserveArray", [0] * 4, NDRIntField("", 0), length_is=lambda _: 4
         ),
         NDRByteField("fAutoReverseZones", 0),
         NDRByteField("fAutoCacheUpdate", 0),
@@ -482,7 +485,9 @@ class PDNS_RPC_ZONE_CREATE_INFO_DOTNET(NDRPacket):
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwDpFlags", 0),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
-        NDRFieldListField("dwReserved", [], NDRIntField("", 0), length_is=lambda _: 32),
+        NDRFieldListField(
+            "dwReserved", [0] * 32, NDRIntField("", 0), length_is=lambda _: 32
+        ),
     ]
 
 
@@ -546,9 +551,11 @@ class PDNS_RPC_DP_INFO(NDRPacket):
         NDRIntField("dwFlags", 0),
         NDRIntField("dwZoneCount", 0),
         NDRIntField("dwState", 0),
-        NDRFieldListField("dwReserved", [], NDRIntField("", 0), length_is=lambda _: 3),
         NDRFieldListField(
-            "pwszReserved", [], NDRConfStrLenFieldUtf16("", ""), length_is=lambda _: 3
+            "dwReserved", [0] * 3, NDRIntField("", 0), length_is=lambda _: 3
+        ),
+        NDRFullEmbPointerField(
+            NDRVarStrLenFieldUtf16("pwszReserved", "", length_is=lambda _: 3)
         ),
         NDRIntField("dwReplicaCount", None, size_of="ReplicaArray"),
         NDRConfPacketListField(
@@ -618,8 +625,8 @@ class PDNS_RPC_ENUM_ZONES_FILTER(NDRPacket):
         NDRIntField("dwFilter", 0),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszPartitionFqdn", "")),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszQueryString", "")),
-        NDRFieldListField(
-            "pszReserved", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
+        NDRFullEmbPointerField(
+            NDRVarStrLenField("pszReserved", "", length_is=lambda _: 6)
         ),
     ]
 
@@ -629,7 +636,7 @@ class DNS_ADDR(NDRPacket):
     fields_desc = [
         StrFixedLenField("MaxSa", "", length=32),
         NDRFieldListField(
-            "DnsAddrUserDword", [], NDRIntField("", 0), length_is=lambda _: 8
+            "DnsAddrUserDword", [0] * 8, NDRIntField("", 0), length_is=lambda _: 8
         ),
     ]
 
@@ -690,8 +697,8 @@ class PDNS_RPC_SERVER_INFO(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
-        NDRFieldListField(
-            "pExtensions", [], NDRConfStrLenField("", ""), length_is=lambda _: 6
+        NDRFullEmbPointerField(
+            NDRVarStrLenField("pExtensions", "", length_is=lambda _: 6)
         ),
         NDRIntField("dwLogLevel", 0),
         NDRIntField("dwDebugLevel", 0),
@@ -715,7 +722,7 @@ class PDNS_RPC_SERVER_INFO(NDRPacket):
         NDRIntField("dwDsDsaVersion", 0),
         NDRByteField("fReadOnlyDC", 0),
         NDRFieldListField(
-            "dwReserveArray", [], NDRIntField("", 0), length_is=lambda _: 3
+            "dwReserveArray", [0] * 3, NDRIntField("", 0), length_is=lambda _: 3
         ),
         NDRByteField("fAutoReverseZones", 0),
         NDRByteField("fAutoCacheUpdate", 0),
@@ -760,7 +767,9 @@ class PDNS_RPC_ZONE_CREATE_INFO(NDRPacket):
         NDRIntField("fRecurseAfterForwarding", 0),
         NDRIntField("dwDpFlags", 0),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszDpFqdn", "")),
-        NDRFieldListField("dwReserved", [], NDRIntField("", 0), length_is=lambda _: 32),
+        NDRFieldListField(
+            "dwReserved", [0] * 32, NDRIntField("", 0), length_is=lambda _: 32
+        ),
     ]
 
 
@@ -875,12 +884,7 @@ class PDNS_RPC_UTF8_STRING_LIST(NDRPacket):
     fields_desc = [
         NDRIntField("dwCount", None, size_of="pszStrings"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "pszStrings",
-                [],
-                NDRFullEmbPointerField(NDRSignedByteField("pszStrings", 0)),
-                size_is=lambda pkt: pkt.dwCount,
-            )
+            NDRConfVarStrLenField("pszStrings", "", size_is=lambda pkt: pkt.dwCount)
         ),
     ]
 
@@ -890,11 +894,8 @@ class PDNS_RPC_UNICODE_STRING_LIST(NDRPacket):
     fields_desc = [
         NDRIntField("dwCount", None, size_of="pwszStrings"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "pwszStrings",
-                [],
-                NDRFullEmbPointerField(NDRShortField("pwszStrings", 0)),
-                size_is=lambda pkt: pkt.dwCount,
+            NDRConfVarStrLenFieldUtf16(
+                "pwszStrings", "", size_is=lambda pkt: pkt.dwCount
             )
         ),
     ]
@@ -1012,7 +1013,7 @@ class PDNS_RPC_TRUST_POINT(NDRPacket):
 
 
 class PDNS_RPC_TRUST_POINT_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (8, 8)
     DEPORTED_CONFORMANTS = ["TrustPointArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -1060,7 +1061,7 @@ class PDNS_RPC_TRUST_ANCHOR(NDRPacket):
 
 
 class PDNS_RPC_TRUST_ANCHOR_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (8, 8)
     DEPORTED_CONFORMANTS = ["TrustAnchorArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -1150,12 +1151,17 @@ class PDNS_RPC_ZONE_DNSSEC_SETTINGS(NDRPacket):
         NDRIntField("dwBufferLength", 0),
         NDRFullEmbPointerField(NDRByteField("pBuffer", 0)),
         NDRIntField("dwCount", 0),
-        PacketListField("pZoneSkdArray", [], PDNS_RPC_ZONE_SKD, count_from=lambda _: 1),
+        PacketListField(
+            "pZoneSkdArray",
+            [PDNS_RPC_ZONE_SKD()] * 1,
+            PDNS_RPC_ZONE_SKD,
+            count_from=lambda _: 1,
+        ),
     ]
 
 
 class PDNS_RPC_ENUM_ZONE_SCOPE_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwZoneScopeCount", 0),
@@ -1275,10 +1281,16 @@ class PDNS_RPC_ZONE_STATS_V1(NDRPacket):
             "ZoneTimeStats", DNSSRV_ZONE_TIME_STATS(), DNSSRV_ZONE_TIME_STATS
         ),
         PacketListField(
-            "ZoneQueryStats", [], DNSSRV_ZONE_QUERY_STATS, count_from=lambda _: 32
+            "ZoneQueryStats",
+            [DNSSRV_ZONE_QUERY_STATS()] * 32,
+            DNSSRV_ZONE_QUERY_STATS,
+            count_from=lambda _: 32,
         ),
         PacketListField(
-            "ZoneTransferStats", [], DNSSRV_ZONE_TRANSFER_STATS, count_from=lambda _: 2
+            "ZoneTransferStats",
+            [DNSSRV_ZONE_TRANSFER_STATS()] * 2,
+            DNSSRV_ZONE_TRANSFER_STATS,
+            count_from=lambda _: 2,
         ),
         NDRPacketField(
             "ZoneUpdateStats", DNSSRV_ZONE_UPDATE_STATS(), DNSSRV_ZONE_UPDATE_STATS
@@ -1305,7 +1317,7 @@ class PDNS_RPC_ZONE_SCOPE_INFO_V1(NDRPacket):
 
 
 class PDNS_RPC_ENUM_SCOPE_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
         NDRIntField("dwScopeCount", 0),
@@ -1504,7 +1516,7 @@ class PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(NDRPacket):
         NDRIntField("dwVirtualizationInstanceCount", 0),
         PacketListField(
             "VirtualizationInstanceArray",
-            [],
+            [PDNS_RPC_VIRTUALIZATION_INSTANCE_INFO()] * 1,
             PDNS_RPC_VIRTUALIZATION_INSTANCE_INFO,
             count_from=lambda _: 1,
         ),
@@ -5244,7 +5256,13 @@ class R_DnssrvEnumRecords_Request(NDRPacket):
 class R_DnssrvEnumRecords_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwBufferLength", None, size_of="ppBuffer"),
-        NDRConfStrLenField("ppBuffer", "", size_is=lambda pkt: pkt.pdwBufferLength),
+        NDRConfFieldListField(
+            "ppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pdwBufferLength,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -9025,7 +9043,13 @@ class R_DnssrvEnumRecords2_Request(NDRPacket):
 class R_DnssrvEnumRecords2_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwBufferLength", None, size_of="ppBuffer"),
-        NDRConfStrLenField("ppBuffer", "", size_is=lambda pkt: pkt.pdwBufferLength),
+        NDRConfFieldListField(
+            "ppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pdwBufferLength,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -9090,7 +9114,13 @@ class R_DnssrvEnumRecords3_Request(NDRPacket):
 class R_DnssrvEnumRecords3_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwBufferLength", None, size_of="ppBuffer"),
-        NDRConfStrLenField("ppBuffer", "", size_is=lambda pkt: pkt.pdwBufferLength),
+        NDRConfFieldListField(
+            "ppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pdwBufferLength,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -14746,7 +14776,13 @@ class R_DnssrvEnumRecords4_Request(NDRPacket):
 class R_DnssrvEnumRecords4_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwBufferLength", None, size_of="ppBuffer"),
-        NDRConfStrLenField("ppBuffer", "", size_is=lambda pkt: pkt.pdwBufferLength),
+        NDRConfFieldListField(
+            "ppBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pdwBufferLength,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 

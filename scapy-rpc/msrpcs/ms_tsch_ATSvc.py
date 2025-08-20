@@ -83,7 +83,7 @@ class LPAT_ENUM_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer", [LPAT_ENUM()], LPAT_ENUM, size_is=lambda pkt: pkt.EntriesRead
+                "Buffer", [], LPAT_ENUM, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]

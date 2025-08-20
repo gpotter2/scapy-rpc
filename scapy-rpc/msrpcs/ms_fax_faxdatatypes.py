@@ -108,7 +108,7 @@ class FAX_JOB_PARAMW(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DocumentName", "")),
         NDRIntField("CallHandle", 0),
         NDRFieldListField(
-            "Reserved", [], NDRInt3264Field("", 0), length_is=lambda _: 3
+            "Reserved", [0] * 3, NDRInt3264Field("", 0), length_is=lambda _: 3
         ),
     ]
 
@@ -133,7 +133,7 @@ class PFAX_JOB_PARAMW(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("DocumentName", "")),
         NDRIntField("CallHandle", 0),
         NDRFieldListField(
-            "Reserved", [], NDRInt3264Field("", 0), length_is=lambda _: 3
+            "Reserved", [0] * 3, NDRInt3264Field("", 0), length_is=lambda _: 3
         ),
     ]
 
@@ -316,7 +316,7 @@ class FAX_JOB_PARAM_EXW(NDRPacket):
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
-            "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
+            "dwReserved", [0] * 4, NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
@@ -336,7 +336,7 @@ class PFAX_JOB_PARAM_EXW(NDRPacket):
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
-            "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
+            "dwReserved", [0] * 4, NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
@@ -356,7 +356,7 @@ class LPCFAX_JOB_PARAM_EXW(NDRPacket):
         NDRInt3264EnumField("Priority", 0, FAX_ENUM_PRIORITY_TYPE),
         NDRIntField("hCall", 0),
         NDRFieldListField(
-            "dwReserved", [], NDRInt3264Field("", 0), length_is=lambda _: 4
+            "dwReserved", [0] * 4, NDRInt3264Field("", 0), length_is=lambda _: 4
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lpwstrDocumentName", "")),
         NDRIntField("dwPageCount", 0),
@@ -371,7 +371,10 @@ class RPC_FAX_OUTBOUND_ROUTING_GROUPW(NDRPacket):
         NDRIntField("dwNumDevices", None, size_of="lpdwDevices"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "lpdwDevices", [], NDRIntField, size_is=lambda pkt: pkt.dwNumDevices
+                "lpdwDevices",
+                [],
+                NDRIntField("", 0),
+                size_is=lambda pkt: pkt.dwNumDevices,
             )
         ),
         NDRInt3264EnumField("Status", 0, FAX_ENUM_GROUP_STATUS),
@@ -386,7 +389,10 @@ class PRPC_FAX_OUTBOUND_ROUTING_GROUPW(NDRPacket):
         NDRIntField("dwNumDevices", None, size_of="lpdwDevices"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "lpdwDevices", [], NDRIntField, size_is=lambda pkt: pkt.dwNumDevices
+                "lpdwDevices",
+                [],
+                NDRIntField("", 0),
+                size_is=lambda pkt: pkt.dwNumDevices,
             )
         ),
         NDRInt3264EnumField("Status", 0, FAX_ENUM_GROUP_STATUS),

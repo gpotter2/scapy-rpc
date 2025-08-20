@@ -45,14 +45,17 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
+    NDRIEEEDoubleField,
+    NDRIEEEFloatField,
     NDRInt3264EnumField,
     NDRInt3264Field,
     NDRIntField,
     NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
     NDRSignedShortField,
@@ -207,7 +210,11 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
+                "aBstr",
+                [],
+                FLAGGED_WORD_BLOB,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -219,7 +226,11 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -231,223 +242,13 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRIntField("Size", None, size_of="apDispatch"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            )
-        ),
-    ]
-
-
-class wireVARIANTStr(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [
-        NDRIntField("clSize", 0),
-        NDRIntField("rpcReserved", 0),
-        NDRShortField("vt", 0),
-        NDRShortField("wReserved1", 0),
-        NDRShortField("wReserved2", 0),
-        NDRShortField("wReserved3", 0),
-        NDRRecursiveField("_varUnion"),
-    ]
-
-
-class DISPPARAMS(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullEmbPointerField(
-            NDRConfPacketListField(
-                "rgvarg",
+                "apDispatch",
                 [],
-                wireVARIANTStr,
-                size_is=lambda pkt: pkt.cArgs,
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
                 ptr_pack=True,
             )
         ),
-        NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "rgdispidNamedArgs",
-                [],
-                NDRSignedIntField("rgdispidNamedArgs", 0),
-                size_is=lambda pkt: pkt.cNamedArgs,
-            )
-        ),
-        NDRIntField("cArgs", None, size_of="rgvarg"),
-        NDRIntField("cNamedArgs", None, size_of="rgdispidNamedArgs"),
-    ]
-
-
-class EXCEPINFO(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRShortField("wCode", 0),
-        NDRShortField("wReserved", 0),
-        NDRFullEmbPointerField(
-            NDRPacketField("bstrSource", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRFullEmbPointerField(
-            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRFullEmbPointerField(
-            NDRPacketField("bstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("dwHelpContext", 0),
-        NDRInt3264Field("pvReserved", 0),
-        NDRInt3264Field("pfnDeferredFillIn", 0),
-        NDRSignedIntField("scode", 0),
-    ]
-
-
-class Invoke_Request(NDRPacket):
-    fields_desc = [
-        NDRSignedIntField("dispIdMember", 0),
-        NDRPacketField("riid", GUID(), GUID),
-        NDRIntField("lcid", 0),
-        NDRIntField("dwFlags", 0),
-        NDRPacketField("pDispParams", DISPPARAMS(), DISPPARAMS),
-        NDRIntField("cVarRef", None, size_of="rgVarRef"),
-        NDRConfFieldListField(
-            "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
-        ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
-        ),
-    ]
-
-
-class Invoke_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
-        ),
-        NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
-        NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-IDISPATCH_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
-    # 1: Opnum1NotUsedOnWire,
-    # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
-    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
-    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
-    6: DceRpcOp(Invoke_Request, Invoke_Response),
-}
-register_com_interface(
-    name="IDispatch",
-    uuid=uuid.UUID("00020400-0000-0000-C000-000000000046"),
-    opnums=IDISPATCH_OPNUMS,
-)
-
-
-class get_DataCollectors_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_DataCollectors_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("collectors", MInterfacePointer(), MInterfacePointer)
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-class get_Duration_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_Duration_Response(NDRPacket):
-    fields_desc = [NDRIntField("seconds", 0), NDRIntField("status", 0)]
-
-
-class put_Duration_Request(NDRPacket):
-    fields_desc = [NDRIntField("seconds", 0)]
-
-
-class put_Duration_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class get_Description_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_Description_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-class put_Description_Request(NDRPacket):
-    fields_desc = [
-        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-    ]
-
-
-class put_Description_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class get_DescriptionUnresolved_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_DescriptionUnresolved_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Descr", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-class get_DisplayName_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_DisplayName_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("status", 0),
-    ]
-
-
-class put_DisplayName_Request(NDRPacket):
-    fields_desc = [
-        NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-    ]
-
-
-class put_DisplayName_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class get_DisplayNameUnresolved_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_DisplayNameUnresolved_Response(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRIntField("status", 0),
     ]
 
 
@@ -457,7 +258,11 @@ class SAFEARR_VARIANT(NDRPacket):
         NDRIntField("Size", None, size_of="aVariant"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aVariant", [], wireVARIANTStr, size_is=lambda pkt: pkt.Size
+                "aVariant",
+                [],
+                NDRRecursiveClass("wireVARIANTStr"),
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -483,7 +288,11 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRIntField("Size", None, size_of="aRecord"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size
+                "aRecord",
+                [],
+                wireBRECORDStr,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -495,7 +304,11 @@ class SAFEARR_HAVEIID(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
         NDRPacketField("iid", GUID(), GUID),
@@ -528,7 +341,7 @@ class DWORD_SIZEDARR(NDRPacket):
         NDRIntField("clSize", None, size_of="pData"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "pData", [], NDRIntField("pData", 0), size_is=lambda pkt: pkt.clSize
+                "pData", [], NDRIntField("", 0), size_is=lambda pkt: pkt.clSize
             )
         ),
     ]
@@ -540,10 +353,7 @@ class HYPER_SIZEDARR(NDRPacket):
         NDRIntField("clSize", None, size_of="pData"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "pData",
-                [],
-                NDRSignedLongField("pData", 0),
-                size_is=lambda pkt: pkt.clSize,
+                "pData", [], NDRSignedLongField("", 0), size_is=lambda pkt: pkt.clSize
             )
         ),
     ]
@@ -651,51 +461,711 @@ class SAFEARRAY(NDRPacket):
     ]
 
 
-class get_Keywords_Request(NDRPacket):
-    fields_desc = []
-
-
-class get_Keywords_Response(NDRPacket):
+class DECIMAL(NDRPacket):
+    ALIGNMENT = (8, 8)
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)),
-        NDRIntField("status", 0),
+        NDRShortField("wReserved", 0),
+        NDRSignedByteField("scale", 0),
+        NDRSignedByteField("sign", 0),
+        NDRIntField("Hi32", 0),
+        NDRLongField("Lo64", 0),
     ]
 
 
-class put_Keywords_Request(NDRPacket):
-    fields_desc = [NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)]
+class wireVARIANTStr(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRIntField("clSize", 0),
+        NDRIntField("rpcReserved", 0),
+        NDRShortField("vt", 0),
+        NDRShortField("wReserved1", 0),
+        NDRShortField("wReserved2", 0),
+        NDRShortField("wReserved3", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRSignedLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I8),
+                        (lambda _, val: val.tag == VARENUM.VT_I8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I4),
+                        (lambda _, val: val.tag == VARENUM.VT_I4),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI1),
+                        (lambda _, val: val.tag == VARENUM.VT_UI1),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I2),
+                        (lambda _, val: val.tag == VARENUM.VT_I2),
+                    ),
+                ),
+                (
+                    NDRIEEEFloatField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R4),
+                        (lambda _, val: val.tag == VARENUM.VT_R4),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R8),
+                        (lambda _, val: val.tag == VARENUM.VT_R8),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BOOL),
+                        (lambda _, val: val.tag == VARENUM.VT_BOOL),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ERROR),
+                        (lambda _, val: val.tag == VARENUM.VT_ERROR),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", CURRENCY(), CURRENCY),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CY),
+                        (lambda _, val: val.tag == VARENUM.VT_CY),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DATE),
+                        (lambda _, val: val.tag == VARENUM.VT_DATE),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BSTR),
+                        (lambda _, val: val.tag == VARENUM.VT_BSTR),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UNKNOWN),
+                        (lambda _, val: val.tag == VARENUM.VT_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DISPATCH),
+                        (lambda _, val: val.tag == VARENUM.VT_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ARRAY),
+                        (lambda _, val: val.tag == VARENUM.VT_ARRAY),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", wireBRECORDStr(), wireBRECORDStr)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEFloatField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", CURRENCY(), CURRENCY)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_CY | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_CY | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRFullEmbPointerField(
+                                NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", None, NDRRecursiveClass("wireVARIANTStr")
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I1),
+                        (lambda _, val: val.tag == VARENUM.VT_I1),
+                    ),
+                ),
+                (
+                    NDRShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI2),
+                        (lambda _, val: val.tag == VARENUM.VT_UI2),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI4),
+                        (lambda _, val: val.tag == VARENUM.VT_UI4),
+                    ),
+                ),
+                (
+                    NDRLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI8),
+                        (lambda _, val: val.tag == VARENUM.VT_UI8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_INT),
+                        (lambda _, val: val.tag == VARENUM.VT_INT),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UINT),
+                        (lambda _, val: val.tag == VARENUM.VT_UINT),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", DECIMAL(), DECIMAL),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DECIMAL),
+                        (lambda _, val: val.tag == VARENUM.VT_DECIMAL),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_INT | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_INT | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", DECIMAL(), DECIMAL)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_EMPTY),
+                        (lambda _, val: val.tag == VARENUM.VT_EMPTY),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_NULL),
+                        (lambda _, val: val.tag == VARENUM.VT_NULL),
+                    ),
+                ),
+            ],
+            StrFixedLenField("_varUnion", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "H"),
+        ),
+    ]
 
 
-class put_Keywords_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
+class DISPPARAMS(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRFullEmbPointerField(
+            NDRConfPacketListField(
+                "rgvarg",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cArgs,
+                ptr_pack=True,
+            )
+        ),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "rgdispidNamedArgs",
+                [],
+                NDRSignedIntField("", 0),
+                size_is=lambda pkt: pkt.cNamedArgs,
+            )
+        ),
+        NDRIntField("cArgs", None, size_of="rgvarg"),
+        NDRIntField("cNamedArgs", None, size_of="rgdispidNamedArgs"),
+    ]
 
 
-class get_LatestOutputLocation_Request(NDRPacket):
-    fields_desc = []
+class EXCEPINFO(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRShortField("wCode", 0),
+        NDRShortField("wReserved", 0),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrSource", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullEmbPointerField(
+            NDRPacketField("bstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("dwHelpContext", 0),
+        NDRInt3264Field("pvReserved", 0),
+        NDRInt3264Field("pfnDeferredFillIn", 0),
+        NDRSignedIntField("scode", 0),
+    ]
 
 
-class get_LatestOutputLocation_Response(NDRPacket):
+class Invoke_Request(NDRPacket):
+    fields_desc = [
+        NDRSignedIntField("dispIdMember", 0),
+        NDRPacketField("riid", GUID(), GUID),
+        NDRIntField("lcid", 0),
+        NDRIntField("dwFlags", 0),
+        NDRPacketField("pDispParams", DISPPARAMS(), DISPPARAMS),
+        NDRIntField("cVarRef", None, size_of="rgVarRef"),
+        NDRConfFieldListField(
+            "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
+        ),
+        NDRConfPacketListField(
+            "rgVarRef",
+            [],
+            wireVARIANTStr,
+            size_is=lambda pkt: pkt.cVarRef,
+            ptr_pack=True,
+        ),
+    ]
+
+
+class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+        ),
+        NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
+        NDRIntField("pArgErr", 0),
+        NDRConfPacketListField(
+            "rgVarRef",
+            [],
+            wireVARIANTStr,
+            size_is=lambda pkt: pkt.cVarRef,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
 
 
-class put_LatestOutputLocation_Request(NDRPacket):
-    fields_desc = [NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+IDISPATCH_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
+    # 1: Opnum1NotUsedOnWire,
+    # 2: Opnum2NotUsedOnWire,
+    3: DceRpcOp(GetTypeInfoCount_Request, GetTypeInfoCount_Response),
+    4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
+    5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
+    6: DceRpcOp(Invoke_Request, Invoke_Response),
+}
+register_com_interface(
+    name="IDispatch",
+    uuid=uuid.UUID("00020400-0000-0000-C000-000000000046"),
+    opnums=IDISPATCH_OPNUMS,
+)
 
 
-class put_LatestOutputLocation_Response(NDRPacket):
-    fields_desc = [NDRIntField("status", 0)]
-
-
-class get_Name_Request(NDRPacket):
+class get_IDataCollectorSet_DataCollectors_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IDataCollectorSet_DataCollectors_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("collectors", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class get_IDataCollectorSet_Duration_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_Duration_Response(NDRPacket):
+    fields_desc = [NDRIntField("seconds", 0), NDRIntField("status", 0)]
+
+
+class put_IDataCollectorSet_Duration_Request(NDRPacket):
+    fields_desc = [NDRIntField("seconds", 0)]
+
+
+class put_IDataCollectorSet_Duration_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class get_IDataCollectorSet_Description_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_Description_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class put_IDataCollectorSet_Description_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+    ]
+
+
+class put_IDataCollectorSet_Description_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class get_IDataCollectorSet_DescriptionUnresolved_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_DescriptionUnresolved_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("Descr", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class get_IDataCollectorSet_DisplayName_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_DisplayName_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class put_IDataCollectorSet_DisplayName_Request(NDRPacket):
+    fields_desc = [
+        NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+    ]
+
+
+class put_IDataCollectorSet_DisplayName_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class get_IDataCollectorSet_DisplayNameUnresolved_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_DisplayNameUnresolved_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -704,11 +1174,30 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_OutputLocation_Request(NDRPacket):
+class get_IDataCollectorSet_Keywords_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OutputLocation_Response(NDRPacket):
+class get_IDataCollectorSet_Keywords_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)),
+        NDRIntField("status", 0),
+    ]
+
+
+class put_IDataCollectorSet_Keywords_Request(NDRPacket):
+    fields_desc = [NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)]
+
+
+class put_IDataCollectorSet_Keywords_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class get_IDataCollectorSet_LatestOutputLocation_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_LatestOutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -717,11 +1206,45 @@ class get_OutputLocation_Response(NDRPacket):
     ]
 
 
-class get_RootPath_Request(NDRPacket):
+class put_IDataCollectorSet_LatestOutputLocation_Request(NDRPacket):
+    fields_desc = [NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+
+
+class put_IDataCollectorSet_LatestOutputLocation_Response(NDRPacket):
+    fields_desc = [NDRIntField("status", 0)]
+
+
+class get_IDataCollectorSet_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RootPath_Response(NDRPacket):
+class get_IDataCollectorSet_Name_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class get_IDataCollectorSet_OutputLocation_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_OutputLocation_Response(NDRPacket):
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRIntField("status", 0),
+    ]
+
+
+class get_IDataCollectorSet_RootPath_Request(NDRPacket):
+    fields_desc = []
+
+
+class get_IDataCollectorSet_RootPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -730,83 +1253,83 @@ class get_RootPath_Response(NDRPacket):
     ]
 
 
-class put_RootPath_Request(NDRPacket):
+class put_IDataCollectorSet_RootPath_Request(NDRPacket):
     fields_desc = [NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_RootPath_Response(NDRPacket):
+class put_IDataCollectorSet_RootPath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Segment_Request(NDRPacket):
+class get_IDataCollectorSet_Segment_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Segment_Response(NDRPacket):
+class get_IDataCollectorSet_Segment_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("segment", 0), NDRIntField("status", 0)]
 
 
-class put_Segment_Request(NDRPacket):
+class put_IDataCollectorSet_Segment_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("segment", 0)]
 
 
-class put_Segment_Response(NDRPacket):
+class put_IDataCollectorSet_Segment_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SegmentMaxDuration_Request(NDRPacket):
+class get_IDataCollectorSet_SegmentMaxDuration_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SegmentMaxDuration_Response(NDRPacket):
+class get_IDataCollectorSet_SegmentMaxDuration_Response(NDRPacket):
     fields_desc = [NDRIntField("seconds", 0), NDRIntField("status", 0)]
 
 
-class put_SegmentMaxDuration_Request(NDRPacket):
+class put_IDataCollectorSet_SegmentMaxDuration_Request(NDRPacket):
     fields_desc = [NDRIntField("seconds", 0)]
 
 
-class put_SegmentMaxDuration_Response(NDRPacket):
+class put_IDataCollectorSet_SegmentMaxDuration_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SegmentMaxSize_Request(NDRPacket):
+class get_IDataCollectorSet_SegmentMaxSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SegmentMaxSize_Response(NDRPacket):
+class get_IDataCollectorSet_SegmentMaxSize_Response(NDRPacket):
     fields_desc = [NDRIntField("size", 0), NDRIntField("status", 0)]
 
 
-class put_SegmentMaxSize_Request(NDRPacket):
+class put_IDataCollectorSet_SegmentMaxSize_Request(NDRPacket):
     fields_desc = [NDRIntField("size", 0)]
 
 
-class put_SegmentMaxSize_Response(NDRPacket):
+class put_IDataCollectorSet_SegmentMaxSize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SerialNumber_Request(NDRPacket):
+class get_IDataCollectorSet_SerialNumber_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SerialNumber_Response(NDRPacket):
+class get_IDataCollectorSet_SerialNumber_Response(NDRPacket):
     fields_desc = [NDRIntField("index", 0), NDRIntField("status", 0)]
 
 
-class put_SerialNumber_Request(NDRPacket):
+class put_IDataCollectorSet_SerialNumber_Request(NDRPacket):
     fields_desc = [NDRIntField("index", 0)]
 
 
-class put_SerialNumber_Response(NDRPacket):
+class put_IDataCollectorSet_SerialNumber_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Server_Request(NDRPacket):
+class get_IDataCollectorSet_Server_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Server_Response(NDRPacket):
+class get_IDataCollectorSet_Server_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("server", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -823,22 +1346,22 @@ class DataCollectorSetStatus(IntEnum):
     plaUndefined = 4
 
 
-class get_Status_Request(NDRPacket):
+class get_IDataCollectorSet_Status_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Status_Response(NDRPacket):
+class get_IDataCollectorSet_Status_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("status", 0, DataCollectorSetStatus),
         NDRIntField("comm_status", 0),
     ]
 
 
-class get_Subdirectory_Request(NDRPacket):
+class get_IDataCollectorSet_Subdirectory_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Subdirectory_Response(NDRPacket):
+class get_IDataCollectorSet_Subdirectory_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -847,11 +1370,11 @@ class get_Subdirectory_Response(NDRPacket):
     ]
 
 
-class put_Subdirectory_Request(NDRPacket):
+class put_IDataCollectorSet_Subdirectory_Request(NDRPacket):
     fields_desc = [NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Subdirectory_Response(NDRPacket):
+class put_IDataCollectorSet_Subdirectory_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -868,30 +1391,30 @@ class AutoPathFormat(IntEnum):
     plaMonthDayHourMinute = 16384
 
 
-class get_SubdirectoryFormat_Request(NDRPacket):
+class get_IDataCollectorSet_SubdirectoryFormat_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubdirectoryFormat_Response(NDRPacket):
+class get_IDataCollectorSet_SubdirectoryFormat_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("format", 0, AutoPathFormat),
         NDRIntField("status", 0),
     ]
 
 
-class put_SubdirectoryFormat_Request(NDRPacket):
+class put_IDataCollectorSet_SubdirectoryFormat_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("format", 0, AutoPathFormat)]
 
 
-class put_SubdirectoryFormat_Response(NDRPacket):
+class put_IDataCollectorSet_SubdirectoryFormat_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SubdirectoryFormatPattern_Request(NDRPacket):
+class get_IDataCollectorSet_SubdirectoryFormatPattern_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SubdirectoryFormatPattern_Response(NDRPacket):
+class get_IDataCollectorSet_SubdirectoryFormatPattern_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -900,19 +1423,19 @@ class get_SubdirectoryFormatPattern_Response(NDRPacket):
     ]
 
 
-class put_SubdirectoryFormatPattern_Request(NDRPacket):
+class put_IDataCollectorSet_SubdirectoryFormatPattern_Request(NDRPacket):
     fields_desc = [NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_SubdirectoryFormatPattern_Response(NDRPacket):
+class put_IDataCollectorSet_SubdirectoryFormatPattern_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Task_Request(NDRPacket):
+class get_IDataCollectorSet_Task_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Task_Response(NDRPacket):
+class get_IDataCollectorSet_Task_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -921,35 +1444,35 @@ class get_Task_Response(NDRPacket):
     ]
 
 
-class put_Task_Request(NDRPacket):
+class put_IDataCollectorSet_Task_Request(NDRPacket):
     fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Task_Response(NDRPacket):
+class put_IDataCollectorSet_Task_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskRunAsSelf_Request(NDRPacket):
+class get_IDataCollectorSet_TaskRunAsSelf_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskRunAsSelf_Response(NDRPacket):
+class get_IDataCollectorSet_TaskRunAsSelf_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("RunAsSelf", 0), NDRIntField("status", 0)]
 
 
-class put_TaskRunAsSelf_Request(NDRPacket):
+class put_IDataCollectorSet_TaskRunAsSelf_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("RunAsSelf", 0)]
 
 
-class put_TaskRunAsSelf_Response(NDRPacket):
+class put_IDataCollectorSet_TaskRunAsSelf_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskArguments_Request(NDRPacket):
+class get_IDataCollectorSet_TaskArguments_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskArguments_Response(NDRPacket):
+class get_IDataCollectorSet_TaskArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -958,19 +1481,19 @@ class get_TaskArguments_Response(NDRPacket):
     ]
 
 
-class put_TaskArguments_Request(NDRPacket):
+class put_IDataCollectorSet_TaskArguments_Request(NDRPacket):
     fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_TaskArguments_Response(NDRPacket):
+class put_IDataCollectorSet_TaskArguments_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskUserTextArguments_Request(NDRPacket):
+class get_IDataCollectorSet_TaskUserTextArguments_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskUserTextArguments_Response(NDRPacket):
+class get_IDataCollectorSet_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -979,19 +1502,19 @@ class get_TaskUserTextArguments_Response(NDRPacket):
     ]
 
 
-class put_TaskUserTextArguments_Request(NDRPacket):
+class put_IDataCollectorSet_TaskUserTextArguments_Request(NDRPacket):
     fields_desc = [NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_TaskUserTextArguments_Response(NDRPacket):
+class put_IDataCollectorSet_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Schedules_Request(NDRPacket):
+class get_IDataCollectorSet_Schedules_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Schedules_Response(NDRPacket):
+class get_IDataCollectorSet_Schedules_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchedules", MInterfacePointer(), MInterfacePointer)
@@ -1000,27 +1523,27 @@ class get_Schedules_Response(NDRPacket):
     ]
 
 
-class get_SchedulesEnabled_Request(NDRPacket):
+class get_IDataCollectorSet_SchedulesEnabled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SchedulesEnabled_Response(NDRPacket):
+class get_IDataCollectorSet_SchedulesEnabled_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("enabled", 0), NDRIntField("status", 0)]
 
 
-class put_SchedulesEnabled_Request(NDRPacket):
+class put_IDataCollectorSet_SchedulesEnabled_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("enabled", 0)]
 
 
-class put_SchedulesEnabled_Response(NDRPacket):
+class put_IDataCollectorSet_SchedulesEnabled_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_UserAccount_Request(NDRPacket):
+class get_IDataCollectorSet_UserAccount_Request(NDRPacket):
     fields_desc = []
 
 
-class get_UserAccount_Response(NDRPacket):
+class get_IDataCollectorSet_UserAccount_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("user", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1029,11 +1552,11 @@ class get_UserAccount_Response(NDRPacket):
     ]
 
 
-class get_Xml_Request(NDRPacket):
+class get_IDataCollectorSet_Xml_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Xml_Response(NDRPacket):
+class get_IDataCollectorSet_Xml_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1042,11 +1565,11 @@ class get_Xml_Response(NDRPacket):
     ]
 
 
-class get_Security_Request(NDRPacket):
+class get_IDataCollectorSet_Security_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Security_Response(NDRPacket):
+class get_IDataCollectorSet_Security_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1055,37 +1578,37 @@ class get_Security_Response(NDRPacket):
     ]
 
 
-class put_Security_Request(NDRPacket):
+class put_IDataCollectorSet_Security_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_Security_Response(NDRPacket):
+class put_IDataCollectorSet_Security_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_StopOnCompletion_Request(NDRPacket):
+class get_IDataCollectorSet_StopOnCompletion_Request(NDRPacket):
     fields_desc = []
 
 
-class get_StopOnCompletion_Response(NDRPacket):
+class get_IDataCollectorSet_StopOnCompletion_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("Stop", 0), NDRIntField("status", 0)]
 
 
-class put_StopOnCompletion_Request(NDRPacket):
+class put_IDataCollectorSet_StopOnCompletion_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("Stop", 0)]
 
 
-class put_StopOnCompletion_Response(NDRPacket):
+class put_IDataCollectorSet_StopOnCompletion_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_DataManager_Request(NDRPacket):
+class get_IDataCollectorSet_DataManager_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DataManager_Response(NDRPacket):
+class get_IDataCollectorSet_DataManager_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("DataManager", MInterfacePointer(), MInterfacePointer)
@@ -1198,61 +1721,192 @@ IDATACOLLECTORSET_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectors_Request, get_DataCollectors_Response),
-    8: DceRpcOp(get_Duration_Request, get_Duration_Response),
-    9: DceRpcOp(put_Duration_Request, put_Duration_Response),
-    10: DceRpcOp(get_Description_Request, get_Description_Response),
-    11: DceRpcOp(put_Description_Request, put_Description_Response),
-    12: DceRpcOp(get_DescriptionUnresolved_Request, get_DescriptionUnresolved_Response),
-    13: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
-    14: DceRpcOp(put_DisplayName_Request, put_DisplayName_Response),
-    15: DceRpcOp(get_DisplayNameUnresolved_Request, get_DisplayNameUnresolved_Response),
-    16: DceRpcOp(get_Keywords_Request, get_Keywords_Response),
-    17: DceRpcOp(put_Keywords_Request, put_Keywords_Response),
-    18: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    19: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    20: DceRpcOp(get_Name_Request, get_Name_Response),
-    21: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    22: DceRpcOp(get_RootPath_Request, get_RootPath_Response),
-    23: DceRpcOp(put_RootPath_Request, put_RootPath_Response),
-    24: DceRpcOp(get_Segment_Request, get_Segment_Response),
-    25: DceRpcOp(put_Segment_Request, put_Segment_Response),
-    26: DceRpcOp(get_SegmentMaxDuration_Request, get_SegmentMaxDuration_Response),
-    27: DceRpcOp(put_SegmentMaxDuration_Request, put_SegmentMaxDuration_Response),
-    28: DceRpcOp(get_SegmentMaxSize_Request, get_SegmentMaxSize_Response),
-    29: DceRpcOp(put_SegmentMaxSize_Request, put_SegmentMaxSize_Response),
-    30: DceRpcOp(get_SerialNumber_Request, get_SerialNumber_Response),
-    31: DceRpcOp(put_SerialNumber_Request, put_SerialNumber_Response),
-    32: DceRpcOp(get_Server_Request, get_Server_Response),
-    33: DceRpcOp(get_Status_Request, get_Status_Response),
-    34: DceRpcOp(get_Subdirectory_Request, get_Subdirectory_Response),
-    35: DceRpcOp(put_Subdirectory_Request, put_Subdirectory_Response),
-    36: DceRpcOp(get_SubdirectoryFormat_Request, get_SubdirectoryFormat_Response),
-    37: DceRpcOp(put_SubdirectoryFormat_Request, put_SubdirectoryFormat_Response),
+    7: DceRpcOp(
+        get_IDataCollectorSet_DataCollectors_Request,
+        get_IDataCollectorSet_DataCollectors_Response,
+    ),
+    8: DceRpcOp(
+        get_IDataCollectorSet_Duration_Request, get_IDataCollectorSet_Duration_Response
+    ),
+    9: DceRpcOp(
+        put_IDataCollectorSet_Duration_Request, put_IDataCollectorSet_Duration_Response
+    ),
+    10: DceRpcOp(
+        get_IDataCollectorSet_Description_Request,
+        get_IDataCollectorSet_Description_Response,
+    ),
+    11: DceRpcOp(
+        put_IDataCollectorSet_Description_Request,
+        put_IDataCollectorSet_Description_Response,
+    ),
+    12: DceRpcOp(
+        get_IDataCollectorSet_DescriptionUnresolved_Request,
+        get_IDataCollectorSet_DescriptionUnresolved_Response,
+    ),
+    13: DceRpcOp(
+        get_IDataCollectorSet_DisplayName_Request,
+        get_IDataCollectorSet_DisplayName_Response,
+    ),
+    14: DceRpcOp(
+        put_IDataCollectorSet_DisplayName_Request,
+        put_IDataCollectorSet_DisplayName_Response,
+    ),
+    15: DceRpcOp(
+        get_IDataCollectorSet_DisplayNameUnresolved_Request,
+        get_IDataCollectorSet_DisplayNameUnresolved_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollectorSet_Keywords_Request, get_IDataCollectorSet_Keywords_Response
+    ),
+    17: DceRpcOp(
+        put_IDataCollectorSet_Keywords_Request, put_IDataCollectorSet_Keywords_Response
+    ),
+    18: DceRpcOp(
+        get_IDataCollectorSet_LatestOutputLocation_Request,
+        get_IDataCollectorSet_LatestOutputLocation_Response,
+    ),
+    19: DceRpcOp(
+        put_IDataCollectorSet_LatestOutputLocation_Request,
+        put_IDataCollectorSet_LatestOutputLocation_Response,
+    ),
+    20: DceRpcOp(
+        get_IDataCollectorSet_Name_Request, get_IDataCollectorSet_Name_Response
+    ),
+    21: DceRpcOp(
+        get_IDataCollectorSet_OutputLocation_Request,
+        get_IDataCollectorSet_OutputLocation_Response,
+    ),
+    22: DceRpcOp(
+        get_IDataCollectorSet_RootPath_Request, get_IDataCollectorSet_RootPath_Response
+    ),
+    23: DceRpcOp(
+        put_IDataCollectorSet_RootPath_Request, put_IDataCollectorSet_RootPath_Response
+    ),
+    24: DceRpcOp(
+        get_IDataCollectorSet_Segment_Request, get_IDataCollectorSet_Segment_Response
+    ),
+    25: DceRpcOp(
+        put_IDataCollectorSet_Segment_Request, put_IDataCollectorSet_Segment_Response
+    ),
+    26: DceRpcOp(
+        get_IDataCollectorSet_SegmentMaxDuration_Request,
+        get_IDataCollectorSet_SegmentMaxDuration_Response,
+    ),
+    27: DceRpcOp(
+        put_IDataCollectorSet_SegmentMaxDuration_Request,
+        put_IDataCollectorSet_SegmentMaxDuration_Response,
+    ),
+    28: DceRpcOp(
+        get_IDataCollectorSet_SegmentMaxSize_Request,
+        get_IDataCollectorSet_SegmentMaxSize_Response,
+    ),
+    29: DceRpcOp(
+        put_IDataCollectorSet_SegmentMaxSize_Request,
+        put_IDataCollectorSet_SegmentMaxSize_Response,
+    ),
+    30: DceRpcOp(
+        get_IDataCollectorSet_SerialNumber_Request,
+        get_IDataCollectorSet_SerialNumber_Response,
+    ),
+    31: DceRpcOp(
+        put_IDataCollectorSet_SerialNumber_Request,
+        put_IDataCollectorSet_SerialNumber_Response,
+    ),
+    32: DceRpcOp(
+        get_IDataCollectorSet_Server_Request, get_IDataCollectorSet_Server_Response
+    ),
+    33: DceRpcOp(
+        get_IDataCollectorSet_Status_Request, get_IDataCollectorSet_Status_Response
+    ),
+    34: DceRpcOp(
+        get_IDataCollectorSet_Subdirectory_Request,
+        get_IDataCollectorSet_Subdirectory_Response,
+    ),
+    35: DceRpcOp(
+        put_IDataCollectorSet_Subdirectory_Request,
+        put_IDataCollectorSet_Subdirectory_Response,
+    ),
+    36: DceRpcOp(
+        get_IDataCollectorSet_SubdirectoryFormat_Request,
+        get_IDataCollectorSet_SubdirectoryFormat_Response,
+    ),
+    37: DceRpcOp(
+        put_IDataCollectorSet_SubdirectoryFormat_Request,
+        put_IDataCollectorSet_SubdirectoryFormat_Response,
+    ),
     38: DceRpcOp(
-        get_SubdirectoryFormatPattern_Request, get_SubdirectoryFormatPattern_Response
+        get_IDataCollectorSet_SubdirectoryFormatPattern_Request,
+        get_IDataCollectorSet_SubdirectoryFormatPattern_Response,
     ),
     39: DceRpcOp(
-        put_SubdirectoryFormatPattern_Request, put_SubdirectoryFormatPattern_Response
+        put_IDataCollectorSet_SubdirectoryFormatPattern_Request,
+        put_IDataCollectorSet_SubdirectoryFormatPattern_Response,
     ),
-    40: DceRpcOp(get_Task_Request, get_Task_Response),
-    41: DceRpcOp(put_Task_Request, put_Task_Response),
-    42: DceRpcOp(get_TaskRunAsSelf_Request, get_TaskRunAsSelf_Response),
-    43: DceRpcOp(put_TaskRunAsSelf_Request, put_TaskRunAsSelf_Response),
-    44: DceRpcOp(get_TaskArguments_Request, get_TaskArguments_Response),
-    45: DceRpcOp(put_TaskArguments_Request, put_TaskArguments_Response),
-    46: DceRpcOp(get_TaskUserTextArguments_Request, get_TaskUserTextArguments_Response),
-    47: DceRpcOp(put_TaskUserTextArguments_Request, put_TaskUserTextArguments_Response),
-    48: DceRpcOp(get_Schedules_Request, get_Schedules_Response),
-    49: DceRpcOp(get_SchedulesEnabled_Request, get_SchedulesEnabled_Response),
-    50: DceRpcOp(put_SchedulesEnabled_Request, put_SchedulesEnabled_Response),
-    51: DceRpcOp(get_UserAccount_Request, get_UserAccount_Response),
-    52: DceRpcOp(get_Xml_Request, get_Xml_Response),
-    53: DceRpcOp(get_Security_Request, get_Security_Response),
-    54: DceRpcOp(put_Security_Request, put_Security_Response),
-    55: DceRpcOp(get_StopOnCompletion_Request, get_StopOnCompletion_Response),
-    56: DceRpcOp(put_StopOnCompletion_Request, put_StopOnCompletion_Response),
-    57: DceRpcOp(get_DataManager_Request, get_DataManager_Response),
+    40: DceRpcOp(
+        get_IDataCollectorSet_Task_Request, get_IDataCollectorSet_Task_Response
+    ),
+    41: DceRpcOp(
+        put_IDataCollectorSet_Task_Request, put_IDataCollectorSet_Task_Response
+    ),
+    42: DceRpcOp(
+        get_IDataCollectorSet_TaskRunAsSelf_Request,
+        get_IDataCollectorSet_TaskRunAsSelf_Response,
+    ),
+    43: DceRpcOp(
+        put_IDataCollectorSet_TaskRunAsSelf_Request,
+        put_IDataCollectorSet_TaskRunAsSelf_Response,
+    ),
+    44: DceRpcOp(
+        get_IDataCollectorSet_TaskArguments_Request,
+        get_IDataCollectorSet_TaskArguments_Response,
+    ),
+    45: DceRpcOp(
+        put_IDataCollectorSet_TaskArguments_Request,
+        put_IDataCollectorSet_TaskArguments_Response,
+    ),
+    46: DceRpcOp(
+        get_IDataCollectorSet_TaskUserTextArguments_Request,
+        get_IDataCollectorSet_TaskUserTextArguments_Response,
+    ),
+    47: DceRpcOp(
+        put_IDataCollectorSet_TaskUserTextArguments_Request,
+        put_IDataCollectorSet_TaskUserTextArguments_Response,
+    ),
+    48: DceRpcOp(
+        get_IDataCollectorSet_Schedules_Request,
+        get_IDataCollectorSet_Schedules_Response,
+    ),
+    49: DceRpcOp(
+        get_IDataCollectorSet_SchedulesEnabled_Request,
+        get_IDataCollectorSet_SchedulesEnabled_Response,
+    ),
+    50: DceRpcOp(
+        put_IDataCollectorSet_SchedulesEnabled_Request,
+        put_IDataCollectorSet_SchedulesEnabled_Response,
+    ),
+    51: DceRpcOp(
+        get_IDataCollectorSet_UserAccount_Request,
+        get_IDataCollectorSet_UserAccount_Response,
+    ),
+    52: DceRpcOp(get_IDataCollectorSet_Xml_Request, get_IDataCollectorSet_Xml_Response),
+    53: DceRpcOp(
+        get_IDataCollectorSet_Security_Request, get_IDataCollectorSet_Security_Response
+    ),
+    54: DceRpcOp(
+        put_IDataCollectorSet_Security_Request, put_IDataCollectorSet_Security_Response
+    ),
+    55: DceRpcOp(
+        get_IDataCollectorSet_StopOnCompletion_Request,
+        get_IDataCollectorSet_StopOnCompletion_Response,
+    ),
+    56: DceRpcOp(
+        put_IDataCollectorSet_StopOnCompletion_Request,
+        put_IDataCollectorSet_StopOnCompletion_Response,
+    ),
+    57: DceRpcOp(
+        get_IDataCollectorSet_DataManager_Request,
+        get_IDataCollectorSet_DataManager_Response,
+    ),
     58: DceRpcOp(SetCredentials_Request, SetCredentials_Response),
     59: DceRpcOp(Query_Request, Query_Response),
     60: DceRpcOp(Commit_Request, Commit_Response),
@@ -1270,83 +1924,83 @@ register_com_interface(
 )
 
 
-class get_Enabled_Request(NDRPacket):
+class get_IDataManager_Enabled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Enabled_Response(NDRPacket):
+class get_IDataManager_Enabled_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfEnabled", 0), NDRIntField("status", 0)]
 
 
-class put_Enabled_Request(NDRPacket):
+class put_IDataManager_Enabled_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("fEnabled", 0)]
 
 
-class put_Enabled_Response(NDRPacket):
+class put_IDataManager_Enabled_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_CheckBeforeRunning_Request(NDRPacket):
+class get_IDataManager_CheckBeforeRunning_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CheckBeforeRunning_Response(NDRPacket):
+class get_IDataManager_CheckBeforeRunning_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfCheck", 0), NDRIntField("status", 0)]
 
 
-class put_CheckBeforeRunning_Request(NDRPacket):
+class put_IDataManager_CheckBeforeRunning_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("fCheck", 0)]
 
 
-class put_CheckBeforeRunning_Response(NDRPacket):
+class put_IDataManager_CheckBeforeRunning_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MinFreeDisk_Request(NDRPacket):
+class get_IDataManager_MinFreeDisk_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MinFreeDisk_Response(NDRPacket):
+class get_IDataManager_MinFreeDisk_Response(NDRPacket):
     fields_desc = [NDRIntField("MinFreeDisk", 0), NDRIntField("status", 0)]
 
 
-class put_MinFreeDisk_Request(NDRPacket):
+class put_IDataManager_MinFreeDisk_Request(NDRPacket):
     fields_desc = [NDRIntField("MinFreeDisk", 0)]
 
 
-class put_MinFreeDisk_Response(NDRPacket):
+class put_IDataManager_MinFreeDisk_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MaxSize_Request(NDRPacket):
+class get_IDataManager_MaxSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MaxSize_Response(NDRPacket):
+class get_IDataManager_MaxSize_Response(NDRPacket):
     fields_desc = [NDRIntField("pulMaxSize", 0), NDRIntField("status", 0)]
 
 
-class put_MaxSize_Request(NDRPacket):
+class put_IDataManager_MaxSize_Request(NDRPacket):
     fields_desc = [NDRIntField("ulMaxSize", 0)]
 
 
-class put_MaxSize_Response(NDRPacket):
+class put_IDataManager_MaxSize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MaxFolderCount_Request(NDRPacket):
+class get_IDataManager_MaxFolderCount_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MaxFolderCount_Response(NDRPacket):
+class get_IDataManager_MaxFolderCount_Response(NDRPacket):
     fields_desc = [NDRIntField("pulMaxFolderCount", 0), NDRIntField("status", 0)]
 
 
-class put_MaxFolderCount_Request(NDRPacket):
+class put_IDataManager_MaxFolderCount_Request(NDRPacket):
     fields_desc = [NDRIntField("ulMaxFolderCount", 0)]
 
 
-class put_MaxFolderCount_Response(NDRPacket):
+class put_IDataManager_MaxFolderCount_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1355,30 +2009,30 @@ class ResourcePolicy(IntEnum):
     plaDeleteOldest = 1
 
 
-class get_ResourcePolicy_Request(NDRPacket):
+class get_IDataManager_ResourcePolicy_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ResourcePolicy_Response(NDRPacket):
+class get_IDataManager_ResourcePolicy_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("pPolicy", 0, ResourcePolicy),
         NDRIntField("status", 0),
     ]
 
 
-class put_ResourcePolicy_Request(NDRPacket):
+class put_IDataManager_ResourcePolicy_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("Policy", 0, ResourcePolicy)]
 
 
-class put_ResourcePolicy_Response(NDRPacket):
+class put_IDataManager_ResourcePolicy_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FolderActions_Request(NDRPacket):
+class get_IDataManager_FolderActions_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FolderActions_Response(NDRPacket):
+class get_IDataManager_FolderActions_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("Actions", MInterfacePointer(), MInterfacePointer)
@@ -1387,11 +2041,11 @@ class get_FolderActions_Response(NDRPacket):
     ]
 
 
-class get_ReportSchema_Request(NDRPacket):
+class get_IDataManager_ReportSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReportSchema_Response(NDRPacket):
+class get_IDataManager_ReportSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1400,21 +2054,21 @@ class get_ReportSchema_Response(NDRPacket):
     ]
 
 
-class put_ReportSchema_Request(NDRPacket):
+class put_IDataManager_ReportSchema_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_ReportSchema_Response(NDRPacket):
+class put_IDataManager_ReportSchema_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ReportFileName_Request(NDRPacket):
+class get_IDataManager_ReportFileName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ReportFileName_Response(NDRPacket):
+class get_IDataManager_ReportFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1423,21 +2077,21 @@ class get_ReportFileName_Response(NDRPacket):
     ]
 
 
-class put_ReportFileName_Request(NDRPacket):
+class put_IDataManager_ReportFileName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_ReportFileName_Response(NDRPacket):
+class put_IDataManager_ReportFileName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_RuleTargetFileName_Request(NDRPacket):
+class get_IDataManager_RuleTargetFileName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RuleTargetFileName_Response(NDRPacket):
+class get_IDataManager_RuleTargetFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1446,19 +2100,19 @@ class get_RuleTargetFileName_Response(NDRPacket):
     ]
 
 
-class put_RuleTargetFileName_Request(NDRPacket):
+class put_IDataManager_RuleTargetFileName_Request(NDRPacket):
     fields_desc = [NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_RuleTargetFileName_Response(NDRPacket):
+class put_IDataManager_RuleTargetFileName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventsFileName_Request(NDRPacket):
+class get_IDataManager_EventsFileName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventsFileName_Response(NDRPacket):
+class get_IDataManager_EventsFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1467,21 +2121,21 @@ class get_EventsFileName_Response(NDRPacket):
     ]
 
 
-class put_EventsFileName_Request(NDRPacket):
+class put_IDataManager_EventsFileName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_EventsFileName_Response(NDRPacket):
+class put_IDataManager_EventsFileName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Rules_Request(NDRPacket):
+class get_IDataManager_Rules_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Rules_Response(NDRPacket):
+class get_IDataManager_Rules_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1490,11 +2144,11 @@ class get_Rules_Response(NDRPacket):
     ]
 
 
-class put_Rules_Request(NDRPacket):
+class put_IDataManager_Rules_Request(NDRPacket):
     fields_desc = [NDRPacketField("bstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Rules_Response(NDRPacket):
+class put_IDataManager_Rules_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1540,29 +2194,75 @@ IDATAMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    8: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    9: DceRpcOp(get_CheckBeforeRunning_Request, get_CheckBeforeRunning_Response),
-    10: DceRpcOp(put_CheckBeforeRunning_Request, put_CheckBeforeRunning_Response),
-    11: DceRpcOp(get_MinFreeDisk_Request, get_MinFreeDisk_Response),
-    12: DceRpcOp(put_MinFreeDisk_Request, put_MinFreeDisk_Response),
-    13: DceRpcOp(get_MaxSize_Request, get_MaxSize_Response),
-    14: DceRpcOp(put_MaxSize_Request, put_MaxSize_Response),
-    15: DceRpcOp(get_MaxFolderCount_Request, get_MaxFolderCount_Response),
-    16: DceRpcOp(put_MaxFolderCount_Request, put_MaxFolderCount_Response),
-    17: DceRpcOp(get_ResourcePolicy_Request, get_ResourcePolicy_Response),
-    18: DceRpcOp(put_ResourcePolicy_Request, put_ResourcePolicy_Response),
-    19: DceRpcOp(get_FolderActions_Request, get_FolderActions_Response),
-    20: DceRpcOp(get_ReportSchema_Request, get_ReportSchema_Response),
-    21: DceRpcOp(put_ReportSchema_Request, put_ReportSchema_Response),
-    22: DceRpcOp(get_ReportFileName_Request, get_ReportFileName_Response),
-    23: DceRpcOp(put_ReportFileName_Request, put_ReportFileName_Response),
-    24: DceRpcOp(get_RuleTargetFileName_Request, get_RuleTargetFileName_Response),
-    25: DceRpcOp(put_RuleTargetFileName_Request, put_RuleTargetFileName_Response),
-    26: DceRpcOp(get_EventsFileName_Request, get_EventsFileName_Response),
-    27: DceRpcOp(put_EventsFileName_Request, put_EventsFileName_Response),
-    28: DceRpcOp(get_Rules_Request, get_Rules_Response),
-    29: DceRpcOp(put_Rules_Request, put_Rules_Response),
+    7: DceRpcOp(get_IDataManager_Enabled_Request, get_IDataManager_Enabled_Response),
+    8: DceRpcOp(put_IDataManager_Enabled_Request, put_IDataManager_Enabled_Response),
+    9: DceRpcOp(
+        get_IDataManager_CheckBeforeRunning_Request,
+        get_IDataManager_CheckBeforeRunning_Response,
+    ),
+    10: DceRpcOp(
+        put_IDataManager_CheckBeforeRunning_Request,
+        put_IDataManager_CheckBeforeRunning_Response,
+    ),
+    11: DceRpcOp(
+        get_IDataManager_MinFreeDisk_Request, get_IDataManager_MinFreeDisk_Response
+    ),
+    12: DceRpcOp(
+        put_IDataManager_MinFreeDisk_Request, put_IDataManager_MinFreeDisk_Response
+    ),
+    13: DceRpcOp(get_IDataManager_MaxSize_Request, get_IDataManager_MaxSize_Response),
+    14: DceRpcOp(put_IDataManager_MaxSize_Request, put_IDataManager_MaxSize_Response),
+    15: DceRpcOp(
+        get_IDataManager_MaxFolderCount_Request,
+        get_IDataManager_MaxFolderCount_Response,
+    ),
+    16: DceRpcOp(
+        put_IDataManager_MaxFolderCount_Request,
+        put_IDataManager_MaxFolderCount_Response,
+    ),
+    17: DceRpcOp(
+        get_IDataManager_ResourcePolicy_Request,
+        get_IDataManager_ResourcePolicy_Response,
+    ),
+    18: DceRpcOp(
+        put_IDataManager_ResourcePolicy_Request,
+        put_IDataManager_ResourcePolicy_Response,
+    ),
+    19: DceRpcOp(
+        get_IDataManager_FolderActions_Request, get_IDataManager_FolderActions_Response
+    ),
+    20: DceRpcOp(
+        get_IDataManager_ReportSchema_Request, get_IDataManager_ReportSchema_Response
+    ),
+    21: DceRpcOp(
+        put_IDataManager_ReportSchema_Request, put_IDataManager_ReportSchema_Response
+    ),
+    22: DceRpcOp(
+        get_IDataManager_ReportFileName_Request,
+        get_IDataManager_ReportFileName_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataManager_ReportFileName_Request,
+        put_IDataManager_ReportFileName_Response,
+    ),
+    24: DceRpcOp(
+        get_IDataManager_RuleTargetFileName_Request,
+        get_IDataManager_RuleTargetFileName_Response,
+    ),
+    25: DceRpcOp(
+        put_IDataManager_RuleTargetFileName_Request,
+        put_IDataManager_RuleTargetFileName_Response,
+    ),
+    26: DceRpcOp(
+        get_IDataManager_EventsFileName_Request,
+        get_IDataManager_EventsFileName_Response,
+    ),
+    27: DceRpcOp(
+        put_IDataManager_EventsFileName_Request,
+        put_IDataManager_EventsFileName_Response,
+    ),
+    28: DceRpcOp(get_IDataManager_Rules_Request, get_IDataManager_Rules_Response),
+    29: DceRpcOp(put_IDataManager_Rules_Request, put_IDataManager_Rules_Response),
     30: DceRpcOp(Run_Request, Run_Response),
     31: DceRpcOp(Extract_Request, Extract_Response),
 }
@@ -1573,35 +2273,35 @@ register_com_interface(
 )
 
 
-class get_Age_Request(NDRPacket):
+class get_IFolderAction_Age_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Age_Response(NDRPacket):
+class get_IFolderAction_Age_Response(NDRPacket):
     fields_desc = [NDRIntField("pulAge", 0), NDRIntField("status", 0)]
 
 
-class put_Age_Request(NDRPacket):
+class put_IFolderAction_Age_Request(NDRPacket):
     fields_desc = [NDRIntField("ulAge", 0)]
 
 
-class put_Age_Response(NDRPacket):
+class put_IFolderAction_Age_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Size_Request(NDRPacket):
+class get_IFolderAction_Size_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Size_Response(NDRPacket):
+class get_IFolderAction_Size_Response(NDRPacket):
     fields_desc = [NDRIntField("pulAge", 0), NDRIntField("status", 0)]
 
 
-class put_Size_Request(NDRPacket):
+class put_IFolderAction_Size_Request(NDRPacket):
     fields_desc = [NDRIntField("ulAge", 0)]
 
 
-class put_Size_Response(NDRPacket):
+class put_IFolderAction_Size_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1613,30 +2313,30 @@ class FolderActionSteps(IntEnum):
     plaDeleteReport = 16
 
 
-class get_Actions_Request(NDRPacket):
+class get_IFolderAction_Actions_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Actions_Response(NDRPacket):
+class get_IFolderAction_Actions_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("Steps", 0, FolderActionSteps),
         NDRIntField("status", 0),
     ]
 
 
-class put_Actions_Request(NDRPacket):
+class put_IFolderAction_Actions_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("Steps", 0, FolderActionSteps)]
 
 
-class put_Actions_Response(NDRPacket):
+class put_IFolderAction_Actions_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SendCabTo_Request(NDRPacket):
+class get_IFolderAction_SendCabTo_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SendCabTo_Response(NDRPacket):
+class get_IFolderAction_SendCabTo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1645,13 +2345,13 @@ class get_SendCabTo_Response(NDRPacket):
     ]
 
 
-class put_SendCabTo_Request(NDRPacket):
+class put_IFolderAction_SendCabTo_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_SendCabTo_Response(NDRPacket):
+class put_IFolderAction_SendCabTo_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -1662,14 +2362,18 @@ IFOLDERACTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Age_Request, get_Age_Response),
-    8: DceRpcOp(put_Age_Request, put_Age_Response),
-    9: DceRpcOp(get_Size_Request, get_Size_Response),
-    10: DceRpcOp(put_Size_Request, put_Size_Response),
-    11: DceRpcOp(get_Actions_Request, get_Actions_Response),
-    12: DceRpcOp(put_Actions_Request, put_Actions_Response),
-    13: DceRpcOp(get_SendCabTo_Request, get_SendCabTo_Response),
-    14: DceRpcOp(put_SendCabTo_Request, put_SendCabTo_Response),
+    7: DceRpcOp(get_IFolderAction_Age_Request, get_IFolderAction_Age_Response),
+    8: DceRpcOp(put_IFolderAction_Age_Request, put_IFolderAction_Age_Response),
+    9: DceRpcOp(get_IFolderAction_Size_Request, get_IFolderAction_Size_Response),
+    10: DceRpcOp(put_IFolderAction_Size_Request, put_IFolderAction_Size_Response),
+    11: DceRpcOp(get_IFolderAction_Actions_Request, get_IFolderAction_Actions_Response),
+    12: DceRpcOp(put_IFolderAction_Actions_Request, put_IFolderAction_Actions_Response),
+    13: DceRpcOp(
+        get_IFolderAction_SendCabTo_Request, get_IFolderAction_SendCabTo_Response
+    ),
+    14: DceRpcOp(
+        put_IFolderAction_SendCabTo_Request, put_IFolderAction_SendCabTo_Response
+    ),
 }
 register_com_interface(
     name="IFolderAction",
@@ -1678,19 +2382,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IFolderActionCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IFolderActionCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("Count", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IFolderActionCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("Index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IFolderActionCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("Action", MInterfacePointer(), MInterfacePointer)
@@ -1699,11 +2403,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IFolderActionCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IFolderActionCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("Enum", MInterfacePointer(), MInterfacePointer)
@@ -1764,9 +2468,18 @@ IFOLDERACTIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    7: DceRpcOp(
+        get_IFolderActionCollection_Count_Request,
+        get_IFolderActionCollection_Count_Response,
+    ),
+    8: DceRpcOp(
+        get_IFolderActionCollection_Item_Request,
+        get_IFolderActionCollection_Item_Response,
+    ),
+    9: DceRpcOp(
+        get_IFolderActionCollection__NewEnum_Request,
+        get_IFolderActionCollection__NewEnum_Response,
+    ),
     10: DceRpcOp(Add_Request, Add_Response),
     11: DceRpcOp(Remove_Request, Remove_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
@@ -1780,11 +2493,11 @@ register_com_interface(
 )
 
 
-class get_DataCollectorSet_Request(NDRPacket):
+class get_IDataCollector_DataCollectorSet_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DataCollectorSet_Response(NDRPacket):
+class get_IDataCollector_DataCollectorSet_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("group", MInterfacePointer(), MInterfacePointer)
@@ -1801,22 +2514,22 @@ class DataCollectorType(IntEnum):
     plaApiTrace = 4
 
 
-class get_DataCollectorType_Request(NDRPacket):
+class get_IDataCollector_DataCollectorType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DataCollectorType_Response(NDRPacket):
+class get_IDataCollector_DataCollectorType_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("type", 0, DataCollectorType),
         NDRIntField("status", 0),
     ]
 
 
-class get_FileName_Request(NDRPacket):
+class get_IDataCollector_FileName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileName_Response(NDRPacket):
+class get_IDataCollector_FileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1825,38 +2538,38 @@ class get_FileName_Response(NDRPacket):
     ]
 
 
-class put_FileName_Request(NDRPacket):
+class put_IDataCollector_FileName_Request(NDRPacket):
     fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_FileName_Response(NDRPacket):
+class put_IDataCollector_FileName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FileNameFormat_Request(NDRPacket):
+class get_IDataCollector_FileNameFormat_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileNameFormat_Response(NDRPacket):
+class get_IDataCollector_FileNameFormat_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("format", 0, AutoPathFormat),
         NDRIntField("status", 0),
     ]
 
 
-class put_FileNameFormat_Request(NDRPacket):
+class put_IDataCollector_FileNameFormat_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("format", 0, AutoPathFormat)]
 
 
-class put_FileNameFormat_Response(NDRPacket):
+class put_IDataCollector_FileNameFormat_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FileNameFormatPattern_Request(NDRPacket):
+class get_IDataCollector_FileNameFormatPattern_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileNameFormatPattern_Response(NDRPacket):
+class get_IDataCollector_FileNameFormatPattern_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1865,19 +2578,19 @@ class get_FileNameFormatPattern_Response(NDRPacket):
     ]
 
 
-class put_FileNameFormatPattern_Request(NDRPacket):
+class put_IDataCollector_FileNameFormatPattern_Request(NDRPacket):
     fields_desc = [NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_FileNameFormatPattern_Response(NDRPacket):
+class put_IDataCollector_FileNameFormatPattern_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LatestOutputLocation_Request(NDRPacket):
+class get_IDataCollector_LatestOutputLocation_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LatestOutputLocation_Response(NDRPacket):
+class get_IDataCollector_LatestOutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1886,67 +2599,67 @@ class get_LatestOutputLocation_Response(NDRPacket):
     ]
 
 
-class put_LatestOutputLocation_Request(NDRPacket):
+class put_IDataCollector_LatestOutputLocation_Request(NDRPacket):
     fields_desc = [NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_LatestOutputLocation_Response(NDRPacket):
+class put_IDataCollector_LatestOutputLocation_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LogAppend_Request(NDRPacket):
+class get_IDataCollector_LogAppend_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogAppend_Response(NDRPacket):
+class get_IDataCollector_LogAppend_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("append", 0), NDRIntField("status", 0)]
 
 
-class put_LogAppend_Request(NDRPacket):
+class put_IDataCollector_LogAppend_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("append", 0)]
 
 
-class put_LogAppend_Response(NDRPacket):
+class put_IDataCollector_LogAppend_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LogCircular_Request(NDRPacket):
+class get_IDataCollector_LogCircular_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogCircular_Response(NDRPacket):
+class get_IDataCollector_LogCircular_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("circular", 0), NDRIntField("status", 0)]
 
 
-class put_LogCircular_Request(NDRPacket):
+class put_IDataCollector_LogCircular_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("circular", 0)]
 
 
-class put_LogCircular_Response(NDRPacket):
+class put_IDataCollector_LogCircular_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LogOverwrite_Request(NDRPacket):
+class get_IDataCollector_LogOverwrite_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogOverwrite_Response(NDRPacket):
+class get_IDataCollector_LogOverwrite_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("overwrite", 0), NDRIntField("status", 0)]
 
 
-class put_LogOverwrite_Request(NDRPacket):
+class put_IDataCollector_LogOverwrite_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("overwrite", 0)]
 
 
-class put_LogOverwrite_Response(NDRPacket):
+class put_IDataCollector_LogOverwrite_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Name_Request(NDRPacket):
+class get_IDataCollector_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IDataCollector_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1955,19 +2668,19 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class put_Name_Request(NDRPacket):
+class put_IDataCollector_Name_Request(NDRPacket):
     fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Name_Response(NDRPacket):
+class put_IDataCollector_Name_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_OutputLocation_Request(NDRPacket):
+class get_IDataCollector_OutputLocation_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OutputLocation_Response(NDRPacket):
+class get_IDataCollector_OutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1976,19 +2689,19 @@ class get_OutputLocation_Response(NDRPacket):
     ]
 
 
-class get_Index_Request(NDRPacket):
+class get_IDataCollector_Index_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Index_Response(NDRPacket):
+class get_IDataCollector_Index_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("index", 0), NDRIntField("status", 0)]
 
 
-class get_Xml_Request(NDRPacket):
+class get_IDataCollector_Xml_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Xml_Response(NDRPacket):
+class get_IDataCollector_Xml_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("Xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2017,29 +2730,74 @@ IDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire
 }
@@ -2050,11 +2808,11 @@ register_com_interface(
 )
 
 
-class get_DataSourceName_Request(NDRPacket):
+class get_IPerformanceCounterDataCollector_DataSourceName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DataSourceName_Response(NDRPacket):
+class get_IPerformanceCounterDataCollector_DataSourceName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2063,30 +2821,30 @@ class get_DataSourceName_Response(NDRPacket):
     ]
 
 
-class put_DataSourceName_Request(NDRPacket):
+class put_IPerformanceCounterDataCollector_DataSourceName_Request(NDRPacket):
     fields_desc = [NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_DataSourceName_Response(NDRPacket):
+class put_IPerformanceCounterDataCollector_DataSourceName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_PerformanceCounters_Request(NDRPacket):
+class get_IPerformanceCounterDataCollector_PerformanceCounters_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PerformanceCounters_Response(NDRPacket):
+class get_IPerformanceCounterDataCollector_PerformanceCounters_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("counters", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_PerformanceCounters_Request(NDRPacket):
+class put_IPerformanceCounterDataCollector_PerformanceCounters_Request(NDRPacket):
     fields_desc = [NDRPacketField("counters", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_PerformanceCounters_Response(NDRPacket):
+class put_IPerformanceCounterDataCollector_PerformanceCounters_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -2097,54 +2855,54 @@ class FileFormat(IntEnum):
     plaBinary = 3
 
 
-class get_LogFileFormat_Request(NDRPacket):
+class get_IPerformanceCounterDataCollector_LogFileFormat_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogFileFormat_Response(NDRPacket):
+class get_IPerformanceCounterDataCollector_LogFileFormat_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("format", 0, FileFormat),
         NDRIntField("status", 0),
     ]
 
 
-class put_LogFileFormat_Request(NDRPacket):
+class put_IPerformanceCounterDataCollector_LogFileFormat_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("format", 0, FileFormat)]
 
 
-class put_LogFileFormat_Response(NDRPacket):
+class put_IPerformanceCounterDataCollector_LogFileFormat_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SampleInterval_Request(NDRPacket):
+class get_IPerformanceCounterDataCollector_SampleInterval_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SampleInterval_Response(NDRPacket):
+class get_IPerformanceCounterDataCollector_SampleInterval_Response(NDRPacket):
     fields_desc = [NDRIntField("interval", 0), NDRIntField("status", 0)]
 
 
-class put_SampleInterval_Request(NDRPacket):
+class put_IPerformanceCounterDataCollector_SampleInterval_Request(NDRPacket):
     fields_desc = [NDRIntField("interval", 0)]
 
 
-class put_SampleInterval_Response(NDRPacket):
+class put_IPerformanceCounterDataCollector_SampleInterval_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SegmentMaxRecords_Request(NDRPacket):
+class get_IPerformanceCounterDataCollector_SegmentMaxRecords_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SegmentMaxRecords_Response(NDRPacket):
+class get_IPerformanceCounterDataCollector_SegmentMaxRecords_Response(NDRPacket):
     fields_desc = [NDRIntField("records", 0), NDRIntField("status", 0)]
 
 
-class put_SegmentMaxRecords_Request(NDRPacket):
+class put_IPerformanceCounterDataCollector_SegmentMaxRecords_Request(NDRPacket):
     fields_desc = [NDRIntField("records", 0)]
 
 
-class put_SegmentMaxRecords_Response(NDRPacket):
+class put_IPerformanceCounterDataCollector_SegmentMaxRecords_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -2155,41 +2913,116 @@ IPERFORMANCECOUNTERDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire,
-    32: DceRpcOp(get_DataSourceName_Request, get_DataSourceName_Response),
-    33: DceRpcOp(put_DataSourceName_Request, put_DataSourceName_Response),
-    34: DceRpcOp(get_PerformanceCounters_Request, get_PerformanceCounters_Response),
-    35: DceRpcOp(put_PerformanceCounters_Request, put_PerformanceCounters_Response),
-    36: DceRpcOp(get_LogFileFormat_Request, get_LogFileFormat_Response),
-    37: DceRpcOp(put_LogFileFormat_Request, put_LogFileFormat_Response),
-    38: DceRpcOp(get_SampleInterval_Request, get_SampleInterval_Response),
-    39: DceRpcOp(put_SampleInterval_Request, put_SampleInterval_Response),
-    40: DceRpcOp(get_SegmentMaxRecords_Request, get_SegmentMaxRecords_Response),
-    41: DceRpcOp(put_SegmentMaxRecords_Request, put_SegmentMaxRecords_Response),
+    32: DceRpcOp(
+        get_IPerformanceCounterDataCollector_DataSourceName_Request,
+        get_IPerformanceCounterDataCollector_DataSourceName_Response,
+    ),
+    33: DceRpcOp(
+        put_IPerformanceCounterDataCollector_DataSourceName_Request,
+        put_IPerformanceCounterDataCollector_DataSourceName_Response,
+    ),
+    34: DceRpcOp(
+        get_IPerformanceCounterDataCollector_PerformanceCounters_Request,
+        get_IPerformanceCounterDataCollector_PerformanceCounters_Response,
+    ),
+    35: DceRpcOp(
+        put_IPerformanceCounterDataCollector_PerformanceCounters_Request,
+        put_IPerformanceCounterDataCollector_PerformanceCounters_Response,
+    ),
+    36: DceRpcOp(
+        get_IPerformanceCounterDataCollector_LogFileFormat_Request,
+        get_IPerformanceCounterDataCollector_LogFileFormat_Response,
+    ),
+    37: DceRpcOp(
+        put_IPerformanceCounterDataCollector_LogFileFormat_Request,
+        put_IPerformanceCounterDataCollector_LogFileFormat_Response,
+    ),
+    38: DceRpcOp(
+        get_IPerformanceCounterDataCollector_SampleInterval_Request,
+        get_IPerformanceCounterDataCollector_SampleInterval_Response,
+    ),
+    39: DceRpcOp(
+        put_IPerformanceCounterDataCollector_SampleInterval_Request,
+        put_IPerformanceCounterDataCollector_SampleInterval_Response,
+    ),
+    40: DceRpcOp(
+        get_IPerformanceCounterDataCollector_SegmentMaxRecords_Request,
+        get_IPerformanceCounterDataCollector_SegmentMaxRecords_Response,
+    ),
+    41: DceRpcOp(
+        put_IPerformanceCounterDataCollector_SegmentMaxRecords_Request,
+        put_IPerformanceCounterDataCollector_SegmentMaxRecords_Response,
+    ),
 }
 register_com_interface(
     name="IPerformanceCounterDataCollector",
@@ -2198,35 +3031,35 @@ register_com_interface(
 )
 
 
-class get_BufferSize_Request(NDRPacket):
+class get_ITraceDataCollector_BufferSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BufferSize_Response(NDRPacket):
+class get_ITraceDataCollector_BufferSize_Response(NDRPacket):
     fields_desc = [NDRIntField("size", 0), NDRIntField("status", 0)]
 
 
-class put_BufferSize_Request(NDRPacket):
+class put_ITraceDataCollector_BufferSize_Request(NDRPacket):
     fields_desc = [NDRIntField("size", 0)]
 
 
-class put_BufferSize_Response(NDRPacket):
+class put_ITraceDataCollector_BufferSize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_BuffersLost_Request(NDRPacket):
+class get_ITraceDataCollector_BuffersLost_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BuffersLost_Response(NDRPacket):
+class get_ITraceDataCollector_BuffersLost_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class get_BuffersWritten_Request(NDRPacket):
+class get_ITraceDataCollector_BuffersWritten_Request(NDRPacket):
     fields_desc = []
 
 
-class get_BuffersWritten_Response(NDRPacket):
+class get_ITraceDataCollector_BuffersWritten_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
@@ -2237,195 +3070,195 @@ class ClockType(IntEnum):
     plaCycle = 3
 
 
-class get_ClockType_Request(NDRPacket):
+class get_ITraceDataCollector_ClockType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClockType_Response(NDRPacket):
+class get_ITraceDataCollector_ClockType_Response(NDRPacket):
     fields_desc = [NDRInt3264EnumField("clock", 0, ClockType), NDRIntField("status", 0)]
 
 
-class put_ClockType_Request(NDRPacket):
+class put_ITraceDataCollector_ClockType_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("clock", 0, ClockType)]
 
 
-class put_ClockType_Response(NDRPacket):
+class put_ITraceDataCollector_ClockType_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventsLost_Request(NDRPacket):
+class get_ITraceDataCollector_EventsLost_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventsLost_Response(NDRPacket):
+class get_ITraceDataCollector_EventsLost_Response(NDRPacket):
     fields_desc = [NDRIntField("events", 0), NDRIntField("status", 0)]
 
 
-class get_ExtendedModes_Request(NDRPacket):
+class get_ITraceDataCollector_ExtendedModes_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ExtendedModes_Response(NDRPacket):
+class get_ITraceDataCollector_ExtendedModes_Response(NDRPacket):
     fields_desc = [NDRIntField("mode", 0), NDRIntField("status", 0)]
 
 
-class put_ExtendedModes_Request(NDRPacket):
+class put_ITraceDataCollector_ExtendedModes_Request(NDRPacket):
     fields_desc = [NDRIntField("mode", 0)]
 
 
-class put_ExtendedModes_Response(NDRPacket):
+class put_ITraceDataCollector_ExtendedModes_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FlushTimer_Request(NDRPacket):
+class get_ITraceDataCollector_FlushTimer_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FlushTimer_Response(NDRPacket):
+class get_ITraceDataCollector_FlushTimer_Response(NDRPacket):
     fields_desc = [NDRIntField("seconds", 0), NDRIntField("status", 0)]
 
 
-class put_FlushTimer_Request(NDRPacket):
+class put_ITraceDataCollector_FlushTimer_Request(NDRPacket):
     fields_desc = [NDRIntField("seconds", 0)]
 
 
-class put_FlushTimer_Response(NDRPacket):
+class put_ITraceDataCollector_FlushTimer_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FreeBuffers_Request(NDRPacket):
+class get_ITraceDataCollector_FreeBuffers_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FreeBuffers_Response(NDRPacket):
+class get_ITraceDataCollector_FreeBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class get_Guid_Request(NDRPacket):
+class get_ITraceDataCollector_Guid_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Guid_Response(NDRPacket):
+class get_ITraceDataCollector_Guid_Response(NDRPacket):
     fields_desc = [NDRPacketField("guid", GUID(), GUID), NDRIntField("status", 0)]
 
 
-class put_Guid_Request(NDRPacket):
+class put_ITraceDataCollector_Guid_Request(NDRPacket):
     fields_desc = [NDRPacketField("guid", GUID(), GUID)]
 
 
-class put_Guid_Response(NDRPacket):
+class put_ITraceDataCollector_Guid_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_IsKernelTrace_Request(NDRPacket):
+class get_ITraceDataCollector_IsKernelTrace_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsKernelTrace_Response(NDRPacket):
+class get_ITraceDataCollector_IsKernelTrace_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("kernel", 0), NDRIntField("status", 0)]
 
 
-class get_MaximumBuffers_Request(NDRPacket):
+class get_ITraceDataCollector_MaximumBuffers_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MaximumBuffers_Response(NDRPacket):
+class get_ITraceDataCollector_MaximumBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class put_MaximumBuffers_Request(NDRPacket):
+class put_ITraceDataCollector_MaximumBuffers_Request(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0)]
 
 
-class put_MaximumBuffers_Response(NDRPacket):
+class put_ITraceDataCollector_MaximumBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_MinimumBuffers_Request(NDRPacket):
+class get_ITraceDataCollector_MinimumBuffers_Request(NDRPacket):
     fields_desc = []
 
 
-class get_MinimumBuffers_Response(NDRPacket):
+class get_ITraceDataCollector_MinimumBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class put_MinimumBuffers_Request(NDRPacket):
+class put_ITraceDataCollector_MinimumBuffers_Request(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0)]
 
 
-class put_MinimumBuffers_Response(NDRPacket):
+class put_ITraceDataCollector_MinimumBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_NumberOfBuffers_Request(NDRPacket):
+class get_ITraceDataCollector_NumberOfBuffers_Request(NDRPacket):
     fields_desc = []
 
 
-class get_NumberOfBuffers_Response(NDRPacket):
+class get_ITraceDataCollector_NumberOfBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class put_NumberOfBuffers_Request(NDRPacket):
+class put_ITraceDataCollector_NumberOfBuffers_Request(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0)]
 
 
-class put_NumberOfBuffers_Response(NDRPacket):
+class put_ITraceDataCollector_NumberOfBuffers_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_PreallocateFile_Request(NDRPacket):
+class get_ITraceDataCollector_PreallocateFile_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PreallocateFile_Response(NDRPacket):
+class get_ITraceDataCollector_PreallocateFile_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("allocate", 0), NDRIntField("status", 0)]
 
 
-class put_PreallocateFile_Request(NDRPacket):
+class put_ITraceDataCollector_PreallocateFile_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("allocate", 0)]
 
 
-class put_PreallocateFile_Response(NDRPacket):
+class put_ITraceDataCollector_PreallocateFile_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ProcessMode_Request(NDRPacket):
+class get_ITraceDataCollector_ProcessMode_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ProcessMode_Response(NDRPacket):
+class get_ITraceDataCollector_ProcessMode_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("process", 0), NDRIntField("status", 0)]
 
 
-class put_ProcessMode_Request(NDRPacket):
+class put_ITraceDataCollector_ProcessMode_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("process", 0)]
 
 
-class put_ProcessMode_Response(NDRPacket):
+class put_ITraceDataCollector_ProcessMode_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_RealTimeBuffersLost_Request(NDRPacket):
+class get_ITraceDataCollector_RealTimeBuffersLost_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RealTimeBuffersLost_Response(NDRPacket):
+class get_ITraceDataCollector_RealTimeBuffersLost_Response(NDRPacket):
     fields_desc = [NDRIntField("buffers", 0), NDRIntField("status", 0)]
 
 
-class get_SessionId_Request(NDRPacket):
+class get_ITraceDataCollector_SessionId_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SessionId_Response(NDRPacket):
+class get_ITraceDataCollector_SessionId_Response(NDRPacket):
     fields_desc = [NDRLongField("id", 0), NDRIntField("status", 0)]
 
 
-class get_SessionName_Request(NDRPacket):
+class get_ITraceDataCollector_SessionName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SessionName_Response(NDRPacket):
+class get_ITraceDataCollector_SessionName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2434,19 +3267,19 @@ class get_SessionName_Response(NDRPacket):
     ]
 
 
-class put_SessionName_Request(NDRPacket):
+class put_ITraceDataCollector_SessionName_Request(NDRPacket):
     fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_SessionName_Response(NDRPacket):
+class put_ITraceDataCollector_SessionName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SessionThreadId_Request(NDRPacket):
+class get_ITraceDataCollector_SessionThreadId_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SessionThreadId_Response(NDRPacket):
+class get_ITraceDataCollector_SessionThreadId_Response(NDRPacket):
     fields_desc = [NDRIntField("tid", 0), NDRIntField("status", 0)]
 
 
@@ -2457,27 +3290,27 @@ class StreamMode(IntEnum):
     plaBuffering = 4
 
 
-class get_StreamMode_Request(NDRPacket):
+class get_ITraceDataCollector_StreamMode_Request(NDRPacket):
     fields_desc = []
 
 
-class get_StreamMode_Response(NDRPacket):
+class get_ITraceDataCollector_StreamMode_Response(NDRPacket):
     fields_desc = [NDRInt3264EnumField("mode", 0, StreamMode), NDRIntField("status", 0)]
 
 
-class put_StreamMode_Request(NDRPacket):
+class put_ITraceDataCollector_StreamMode_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("mode", 0, StreamMode)]
 
 
-class put_StreamMode_Response(NDRPacket):
+class put_ITraceDataCollector_StreamMode_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TraceDataProviders_Request(NDRPacket):
+class get_ITraceDataCollector_TraceDataProviders_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TraceDataProviders_Response(NDRPacket):
+class get_ITraceDataCollector_TraceDataProviders_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("providers", MInterfacePointer(), MInterfacePointer)
@@ -2493,71 +3326,213 @@ ITRACEDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire,
-    32: DceRpcOp(get_BufferSize_Request, get_BufferSize_Response),
-    33: DceRpcOp(put_BufferSize_Request, put_BufferSize_Response),
-    34: DceRpcOp(get_BuffersLost_Request, get_BuffersLost_Response),
+    32: DceRpcOp(
+        get_ITraceDataCollector_BufferSize_Request,
+        get_ITraceDataCollector_BufferSize_Response,
+    ),
+    33: DceRpcOp(
+        put_ITraceDataCollector_BufferSize_Request,
+        put_ITraceDataCollector_BufferSize_Response,
+    ),
+    34: DceRpcOp(
+        get_ITraceDataCollector_BuffersLost_Request,
+        get_ITraceDataCollector_BuffersLost_Response,
+    ),
     # 35: Opnum35NotUsedOnWire,
-    36: DceRpcOp(get_BuffersWritten_Request, get_BuffersWritten_Response),
+    36: DceRpcOp(
+        get_ITraceDataCollector_BuffersWritten_Request,
+        get_ITraceDataCollector_BuffersWritten_Response,
+    ),
     # 37: Opnum37NotUsedOnWire,
-    38: DceRpcOp(get_ClockType_Request, get_ClockType_Response),
-    39: DceRpcOp(put_ClockType_Request, put_ClockType_Response),
-    40: DceRpcOp(get_EventsLost_Request, get_EventsLost_Response),
+    38: DceRpcOp(
+        get_ITraceDataCollector_ClockType_Request,
+        get_ITraceDataCollector_ClockType_Response,
+    ),
+    39: DceRpcOp(
+        put_ITraceDataCollector_ClockType_Request,
+        put_ITraceDataCollector_ClockType_Response,
+    ),
+    40: DceRpcOp(
+        get_ITraceDataCollector_EventsLost_Request,
+        get_ITraceDataCollector_EventsLost_Response,
+    ),
     # 41: Opnum41NotUsedOnWire,
-    42: DceRpcOp(get_ExtendedModes_Request, get_ExtendedModes_Response),
-    43: DceRpcOp(put_ExtendedModes_Request, put_ExtendedModes_Response),
-    44: DceRpcOp(get_FlushTimer_Request, get_FlushTimer_Response),
-    45: DceRpcOp(put_FlushTimer_Request, put_FlushTimer_Response),
-    46: DceRpcOp(get_FreeBuffers_Request, get_FreeBuffers_Response),
+    42: DceRpcOp(
+        get_ITraceDataCollector_ExtendedModes_Request,
+        get_ITraceDataCollector_ExtendedModes_Response,
+    ),
+    43: DceRpcOp(
+        put_ITraceDataCollector_ExtendedModes_Request,
+        put_ITraceDataCollector_ExtendedModes_Response,
+    ),
+    44: DceRpcOp(
+        get_ITraceDataCollector_FlushTimer_Request,
+        get_ITraceDataCollector_FlushTimer_Response,
+    ),
+    45: DceRpcOp(
+        put_ITraceDataCollector_FlushTimer_Request,
+        put_ITraceDataCollector_FlushTimer_Response,
+    ),
+    46: DceRpcOp(
+        get_ITraceDataCollector_FreeBuffers_Request,
+        get_ITraceDataCollector_FreeBuffers_Response,
+    ),
     # 47: Opnum47NotUsedOnWire,
-    48: DceRpcOp(get_Guid_Request, get_Guid_Response),
-    49: DceRpcOp(put_Guid_Request, put_Guid_Response),
-    50: DceRpcOp(get_IsKernelTrace_Request, get_IsKernelTrace_Response),
-    51: DceRpcOp(get_MaximumBuffers_Request, get_MaximumBuffers_Response),
-    52: DceRpcOp(put_MaximumBuffers_Request, put_MaximumBuffers_Response),
-    53: DceRpcOp(get_MinimumBuffers_Request, get_MinimumBuffers_Response),
-    54: DceRpcOp(put_MinimumBuffers_Request, put_MinimumBuffers_Response),
-    55: DceRpcOp(get_NumberOfBuffers_Request, get_NumberOfBuffers_Response),
-    56: DceRpcOp(put_NumberOfBuffers_Request, put_NumberOfBuffers_Response),
-    57: DceRpcOp(get_PreallocateFile_Request, get_PreallocateFile_Response),
-    58: DceRpcOp(put_PreallocateFile_Request, put_PreallocateFile_Response),
-    59: DceRpcOp(get_ProcessMode_Request, get_ProcessMode_Response),
-    60: DceRpcOp(put_ProcessMode_Request, put_ProcessMode_Response),
-    61: DceRpcOp(get_RealTimeBuffersLost_Request, get_RealTimeBuffersLost_Response),
+    48: DceRpcOp(
+        get_ITraceDataCollector_Guid_Request, get_ITraceDataCollector_Guid_Response
+    ),
+    49: DceRpcOp(
+        put_ITraceDataCollector_Guid_Request, put_ITraceDataCollector_Guid_Response
+    ),
+    50: DceRpcOp(
+        get_ITraceDataCollector_IsKernelTrace_Request,
+        get_ITraceDataCollector_IsKernelTrace_Response,
+    ),
+    51: DceRpcOp(
+        get_ITraceDataCollector_MaximumBuffers_Request,
+        get_ITraceDataCollector_MaximumBuffers_Response,
+    ),
+    52: DceRpcOp(
+        put_ITraceDataCollector_MaximumBuffers_Request,
+        put_ITraceDataCollector_MaximumBuffers_Response,
+    ),
+    53: DceRpcOp(
+        get_ITraceDataCollector_MinimumBuffers_Request,
+        get_ITraceDataCollector_MinimumBuffers_Response,
+    ),
+    54: DceRpcOp(
+        put_ITraceDataCollector_MinimumBuffers_Request,
+        put_ITraceDataCollector_MinimumBuffers_Response,
+    ),
+    55: DceRpcOp(
+        get_ITraceDataCollector_NumberOfBuffers_Request,
+        get_ITraceDataCollector_NumberOfBuffers_Response,
+    ),
+    56: DceRpcOp(
+        put_ITraceDataCollector_NumberOfBuffers_Request,
+        put_ITraceDataCollector_NumberOfBuffers_Response,
+    ),
+    57: DceRpcOp(
+        get_ITraceDataCollector_PreallocateFile_Request,
+        get_ITraceDataCollector_PreallocateFile_Response,
+    ),
+    58: DceRpcOp(
+        put_ITraceDataCollector_PreallocateFile_Request,
+        put_ITraceDataCollector_PreallocateFile_Response,
+    ),
+    59: DceRpcOp(
+        get_ITraceDataCollector_ProcessMode_Request,
+        get_ITraceDataCollector_ProcessMode_Response,
+    ),
+    60: DceRpcOp(
+        put_ITraceDataCollector_ProcessMode_Request,
+        put_ITraceDataCollector_ProcessMode_Response,
+    ),
+    61: DceRpcOp(
+        get_ITraceDataCollector_RealTimeBuffersLost_Request,
+        get_ITraceDataCollector_RealTimeBuffersLost_Response,
+    ),
     # 62: Opnum62NotUsedOnWire,
-    63: DceRpcOp(get_SessionId_Request, get_SessionId_Response),
+    63: DceRpcOp(
+        get_ITraceDataCollector_SessionId_Request,
+        get_ITraceDataCollector_SessionId_Response,
+    ),
     # 64: Opnum64NotUsedOnWire,
-    65: DceRpcOp(get_SessionName_Request, get_SessionName_Response),
-    66: DceRpcOp(put_SessionName_Request, put_SessionName_Response),
-    67: DceRpcOp(get_SessionThreadId_Request, get_SessionThreadId_Response),
+    65: DceRpcOp(
+        get_ITraceDataCollector_SessionName_Request,
+        get_ITraceDataCollector_SessionName_Response,
+    ),
+    66: DceRpcOp(
+        put_ITraceDataCollector_SessionName_Request,
+        put_ITraceDataCollector_SessionName_Response,
+    ),
+    67: DceRpcOp(
+        get_ITraceDataCollector_SessionThreadId_Request,
+        get_ITraceDataCollector_SessionThreadId_Response,
+    ),
     # 68: Opnum68NotUsedOnWire,
-    69: DceRpcOp(get_StreamMode_Request, get_StreamMode_Response),
-    70: DceRpcOp(put_StreamMode_Request, put_StreamMode_Response),
-    71: DceRpcOp(get_TraceDataProviders_Request, get_TraceDataProviders_Response),
+    69: DceRpcOp(
+        get_ITraceDataCollector_StreamMode_Request,
+        get_ITraceDataCollector_StreamMode_Response,
+    ),
+    70: DceRpcOp(
+        put_ITraceDataCollector_StreamMode_Request,
+        put_ITraceDataCollector_StreamMode_Response,
+    ),
+    71: DceRpcOp(
+        get_ITraceDataCollector_TraceDataProviders_Request,
+        get_ITraceDataCollector_TraceDataProviders_Response,
+    ),
 }
 register_com_interface(
     name="ITraceDataCollector",
@@ -2566,148 +3541,148 @@ register_com_interface(
 )
 
 
-class get_FileMaxCount_Request(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxCount_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileMaxCount_Response(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxCount_Response(NDRPacket):
     fields_desc = [NDRIntField("count", 0), NDRIntField("status", 0)]
 
 
-class put_FileMaxCount_Request(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxCount_Request(NDRPacket):
     fields_desc = [NDRIntField("count", 0)]
 
 
-class put_FileMaxCount_Response(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxCount_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FileMaxRecursiveDepth_Request(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxRecursiveDepth_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileMaxRecursiveDepth_Response(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxRecursiveDepth_Response(NDRPacket):
     fields_desc = [NDRIntField("depth", 0), NDRIntField("status", 0)]
 
 
-class put_FileMaxRecursiveDepth_Request(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxRecursiveDepth_Request(NDRPacket):
     fields_desc = [NDRIntField("depth", 0)]
 
 
-class put_FileMaxRecursiveDepth_Response(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxRecursiveDepth_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FileMaxTotalSize_Request(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxTotalSize_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileMaxTotalSize_Response(NDRPacket):
+class get_IConfigurationDataCollector_FileMaxTotalSize_Response(NDRPacket):
     fields_desc = [NDRIntField("size", 0), NDRIntField("status", 0)]
 
 
-class put_FileMaxTotalSize_Request(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxTotalSize_Request(NDRPacket):
     fields_desc = [NDRIntField("size", 0)]
 
 
-class put_FileMaxTotalSize_Response(NDRPacket):
+class put_IConfigurationDataCollector_FileMaxTotalSize_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Files_Request(NDRPacket):
+class get_IConfigurationDataCollector_Files_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Files_Response(NDRPacket):
+class get_IConfigurationDataCollector_Files_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("Files", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_Files_Request(NDRPacket):
+class put_IConfigurationDataCollector_Files_Request(NDRPacket):
     fields_desc = [NDRPacketField("Files", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_Files_Response(NDRPacket):
+class put_IConfigurationDataCollector_Files_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ManagementQueries_Request(NDRPacket):
+class get_IConfigurationDataCollector_ManagementQueries_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ManagementQueries_Response(NDRPacket):
+class get_IConfigurationDataCollector_ManagementQueries_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_ManagementQueries_Request(NDRPacket):
+class put_IConfigurationDataCollector_ManagementQueries_Request(NDRPacket):
     fields_desc = [NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_ManagementQueries_Response(NDRPacket):
+class put_IConfigurationDataCollector_ManagementQueries_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_QueryNetworkAdapters_Request(NDRPacket):
+class get_IConfigurationDataCollector_QueryNetworkAdapters_Request(NDRPacket):
     fields_desc = []
 
 
-class get_QueryNetworkAdapters_Response(NDRPacket):
+class get_IConfigurationDataCollector_QueryNetworkAdapters_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("network", 0), NDRIntField("status", 0)]
 
 
-class put_QueryNetworkAdapters_Request(NDRPacket):
+class put_IConfigurationDataCollector_QueryNetworkAdapters_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("network", 0)]
 
 
-class put_QueryNetworkAdapters_Response(NDRPacket):
+class put_IConfigurationDataCollector_QueryNetworkAdapters_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_RegistryKeys_Request(NDRPacket):
+class get_IConfigurationDataCollector_RegistryKeys_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RegistryKeys_Response(NDRPacket):
+class get_IConfigurationDataCollector_RegistryKeys_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("query", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_RegistryKeys_Request(NDRPacket):
+class put_IConfigurationDataCollector_RegistryKeys_Request(NDRPacket):
     fields_desc = [NDRPacketField("query", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_RegistryKeys_Response(NDRPacket):
+class put_IConfigurationDataCollector_RegistryKeys_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_RegistryMaxRecursiveDepth_Request(NDRPacket):
+class get_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RegistryMaxRecursiveDepth_Response(NDRPacket):
+class get_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Response(NDRPacket):
     fields_desc = [NDRIntField("depth", 0), NDRIntField("status", 0)]
 
 
-class put_RegistryMaxRecursiveDepth_Request(NDRPacket):
+class put_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Request(NDRPacket):
     fields_desc = [NDRIntField("depth", 0)]
 
 
-class put_RegistryMaxRecursiveDepth_Response(NDRPacket):
+class put_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SystemStateFile_Request(NDRPacket):
+class get_IConfigurationDataCollector_SystemStateFile_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SystemStateFile_Response(NDRPacket):
+class get_IConfigurationDataCollector_SystemStateFile_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2716,11 +3691,11 @@ class get_SystemStateFile_Response(NDRPacket):
     ]
 
 
-class put_SystemStateFile_Request(NDRPacket):
+class put_IConfigurationDataCollector_SystemStateFile_Request(NDRPacket):
     fields_desc = [NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_SystemStateFile_Response(NDRPacket):
+class put_IConfigurationDataCollector_SystemStateFile_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -2731,53 +3706,148 @@ ICONFIGURATIONDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire,
-    32: DceRpcOp(get_FileMaxCount_Request, get_FileMaxCount_Response),
-    33: DceRpcOp(put_FileMaxCount_Request, put_FileMaxCount_Response),
-    34: DceRpcOp(get_FileMaxRecursiveDepth_Request, get_FileMaxRecursiveDepth_Response),
-    35: DceRpcOp(put_FileMaxRecursiveDepth_Request, put_FileMaxRecursiveDepth_Response),
-    36: DceRpcOp(get_FileMaxTotalSize_Request, get_FileMaxTotalSize_Response),
-    37: DceRpcOp(put_FileMaxTotalSize_Request, put_FileMaxTotalSize_Response),
-    38: DceRpcOp(get_Files_Request, get_Files_Response),
-    39: DceRpcOp(put_Files_Request, put_Files_Response),
-    40: DceRpcOp(get_ManagementQueries_Request, get_ManagementQueries_Response),
-    41: DceRpcOp(put_ManagementQueries_Request, put_ManagementQueries_Response),
-    42: DceRpcOp(get_QueryNetworkAdapters_Request, get_QueryNetworkAdapters_Response),
-    43: DceRpcOp(put_QueryNetworkAdapters_Request, put_QueryNetworkAdapters_Response),
-    44: DceRpcOp(get_RegistryKeys_Request, get_RegistryKeys_Response),
-    45: DceRpcOp(put_RegistryKeys_Request, put_RegistryKeys_Response),
+    32: DceRpcOp(
+        get_IConfigurationDataCollector_FileMaxCount_Request,
+        get_IConfigurationDataCollector_FileMaxCount_Response,
+    ),
+    33: DceRpcOp(
+        put_IConfigurationDataCollector_FileMaxCount_Request,
+        put_IConfigurationDataCollector_FileMaxCount_Response,
+    ),
+    34: DceRpcOp(
+        get_IConfigurationDataCollector_FileMaxRecursiveDepth_Request,
+        get_IConfigurationDataCollector_FileMaxRecursiveDepth_Response,
+    ),
+    35: DceRpcOp(
+        put_IConfigurationDataCollector_FileMaxRecursiveDepth_Request,
+        put_IConfigurationDataCollector_FileMaxRecursiveDepth_Response,
+    ),
+    36: DceRpcOp(
+        get_IConfigurationDataCollector_FileMaxTotalSize_Request,
+        get_IConfigurationDataCollector_FileMaxTotalSize_Response,
+    ),
+    37: DceRpcOp(
+        put_IConfigurationDataCollector_FileMaxTotalSize_Request,
+        put_IConfigurationDataCollector_FileMaxTotalSize_Response,
+    ),
+    38: DceRpcOp(
+        get_IConfigurationDataCollector_Files_Request,
+        get_IConfigurationDataCollector_Files_Response,
+    ),
+    39: DceRpcOp(
+        put_IConfigurationDataCollector_Files_Request,
+        put_IConfigurationDataCollector_Files_Response,
+    ),
+    40: DceRpcOp(
+        get_IConfigurationDataCollector_ManagementQueries_Request,
+        get_IConfigurationDataCollector_ManagementQueries_Response,
+    ),
+    41: DceRpcOp(
+        put_IConfigurationDataCollector_ManagementQueries_Request,
+        put_IConfigurationDataCollector_ManagementQueries_Response,
+    ),
+    42: DceRpcOp(
+        get_IConfigurationDataCollector_QueryNetworkAdapters_Request,
+        get_IConfigurationDataCollector_QueryNetworkAdapters_Response,
+    ),
+    43: DceRpcOp(
+        put_IConfigurationDataCollector_QueryNetworkAdapters_Request,
+        put_IConfigurationDataCollector_QueryNetworkAdapters_Response,
+    ),
+    44: DceRpcOp(
+        get_IConfigurationDataCollector_RegistryKeys_Request,
+        get_IConfigurationDataCollector_RegistryKeys_Response,
+    ),
+    45: DceRpcOp(
+        put_IConfigurationDataCollector_RegistryKeys_Request,
+        put_IConfigurationDataCollector_RegistryKeys_Response,
+    ),
     46: DceRpcOp(
-        get_RegistryMaxRecursiveDepth_Request, get_RegistryMaxRecursiveDepth_Response
+        get_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Request,
+        get_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Response,
     ),
     47: DceRpcOp(
-        put_RegistryMaxRecursiveDepth_Request, put_RegistryMaxRecursiveDepth_Response
+        put_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Request,
+        put_IConfigurationDataCollector_RegistryMaxRecursiveDepth_Response,
     ),
-    48: DceRpcOp(get_SystemStateFile_Request, get_SystemStateFile_Response),
-    49: DceRpcOp(put_SystemStateFile_Request, put_SystemStateFile_Response),
+    48: DceRpcOp(
+        get_IConfigurationDataCollector_SystemStateFile_Request,
+        get_IConfigurationDataCollector_SystemStateFile_Response,
+    ),
+    49: DceRpcOp(
+        put_IConfigurationDataCollector_SystemStateFile_Request,
+        put_IConfigurationDataCollector_SystemStateFile_Response,
+    ),
 }
 register_com_interface(
     name="IConfigurationDataCollector",
@@ -2786,62 +3856,62 @@ register_com_interface(
 )
 
 
-class get_AlertThresholds_Request(NDRPacket):
+class get_IAlertDataCollector_AlertThresholds_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AlertThresholds_Response(NDRPacket):
+class get_IAlertDataCollector_AlertThresholds_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_AlertThresholds_Request(NDRPacket):
+class put_IAlertDataCollector_AlertThresholds_Request(NDRPacket):
     fields_desc = [NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_AlertThresholds_Response(NDRPacket):
+class put_IAlertDataCollector_AlertThresholds_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EventLog_Request(NDRPacket):
+class get_IAlertDataCollector_EventLog_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EventLog_Response(NDRPacket):
+class get_IAlertDataCollector_EventLog_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("log", 0), NDRIntField("status", 0)]
 
 
-class put_EventLog_Request(NDRPacket):
+class put_IAlertDataCollector_EventLog_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("log", 0)]
 
 
-class put_EventLog_Response(NDRPacket):
+class put_IAlertDataCollector_EventLog_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_SampleInterval_Request(NDRPacket):
+class get_IAlertDataCollector_SampleInterval_Request(NDRPacket):
     fields_desc = []
 
 
-class get_SampleInterval_Response(NDRPacket):
+class get_IAlertDataCollector_SampleInterval_Response(NDRPacket):
     fields_desc = [NDRIntField("interval", 0), NDRIntField("status", 0)]
 
 
-class put_SampleInterval_Request(NDRPacket):
+class put_IAlertDataCollector_SampleInterval_Request(NDRPacket):
     fields_desc = [NDRIntField("interval", 0)]
 
 
-class put_SampleInterval_Response(NDRPacket):
+class put_IAlertDataCollector_SampleInterval_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Task_Request(NDRPacket):
+class get_IAlertDataCollector_Task_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Task_Response(NDRPacket):
+class get_IAlertDataCollector_Task_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2850,35 +3920,35 @@ class get_Task_Response(NDRPacket):
     ]
 
 
-class put_Task_Request(NDRPacket):
+class put_IAlertDataCollector_Task_Request(NDRPacket):
     fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Task_Response(NDRPacket):
+class put_IAlertDataCollector_Task_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskRunAsSelf_Request(NDRPacket):
+class get_IAlertDataCollector_TaskRunAsSelf_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskRunAsSelf_Response(NDRPacket):
+class get_IAlertDataCollector_TaskRunAsSelf_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("RunAsSelf", 0), NDRIntField("status", 0)]
 
 
-class put_TaskRunAsSelf_Request(NDRPacket):
+class put_IAlertDataCollector_TaskRunAsSelf_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("RunAsSelf", 0)]
 
 
-class put_TaskRunAsSelf_Response(NDRPacket):
+class put_IAlertDataCollector_TaskRunAsSelf_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskArguments_Request(NDRPacket):
+class get_IAlertDataCollector_TaskArguments_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskArguments_Response(NDRPacket):
+class get_IAlertDataCollector_TaskArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2887,19 +3957,19 @@ class get_TaskArguments_Response(NDRPacket):
     ]
 
 
-class put_TaskArguments_Request(NDRPacket):
+class put_IAlertDataCollector_TaskArguments_Request(NDRPacket):
     fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_TaskArguments_Response(NDRPacket):
+class put_IAlertDataCollector_TaskArguments_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TaskUserTextArguments_Request(NDRPacket):
+class get_IAlertDataCollector_TaskUserTextArguments_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TaskUserTextArguments_Response(NDRPacket):
+class get_IAlertDataCollector_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2908,19 +3978,19 @@ class get_TaskUserTextArguments_Response(NDRPacket):
     ]
 
 
-class put_TaskUserTextArguments_Request(NDRPacket):
+class put_IAlertDataCollector_TaskUserTextArguments_Request(NDRPacket):
     fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_TaskUserTextArguments_Response(NDRPacket):
+class put_IAlertDataCollector_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_TriggerDataCollectorSet_Request(NDRPacket):
+class get_IAlertDataCollector_TriggerDataCollectorSet_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TriggerDataCollectorSet_Response(NDRPacket):
+class get_IAlertDataCollector_TriggerDataCollectorSet_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2929,11 +3999,11 @@ class get_TriggerDataCollectorSet_Response(NDRPacket):
     ]
 
 
-class put_TriggerDataCollectorSet_Request(NDRPacket):
+class put_IAlertDataCollector_TriggerDataCollectorSet_Request(NDRPacket):
     fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_TriggerDataCollectorSet_Response(NDRPacket):
+class put_IAlertDataCollector_TriggerDataCollectorSet_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -2944,50 +4014,137 @@ IALERTDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire,
-    32: DceRpcOp(get_AlertThresholds_Request, get_AlertThresholds_Response),
-    33: DceRpcOp(put_AlertThresholds_Request, put_AlertThresholds_Response),
-    34: DceRpcOp(get_EventLog_Request, get_EventLog_Response),
-    35: DceRpcOp(put_EventLog_Request, put_EventLog_Response),
-    36: DceRpcOp(get_SampleInterval_Request, get_SampleInterval_Response),
-    37: DceRpcOp(put_SampleInterval_Request, put_SampleInterval_Response),
-    38: DceRpcOp(get_Task_Request, get_Task_Response),
-    39: DceRpcOp(put_Task_Request, put_Task_Response),
-    40: DceRpcOp(get_TaskRunAsSelf_Request, get_TaskRunAsSelf_Response),
-    41: DceRpcOp(put_TaskRunAsSelf_Request, put_TaskRunAsSelf_Response),
-    42: DceRpcOp(get_TaskArguments_Request, get_TaskArguments_Response),
-    43: DceRpcOp(put_TaskArguments_Request, put_TaskArguments_Response),
-    44: DceRpcOp(get_TaskUserTextArguments_Request, get_TaskUserTextArguments_Response),
-    45: DceRpcOp(put_TaskUserTextArguments_Request, put_TaskUserTextArguments_Response),
+    32: DceRpcOp(
+        get_IAlertDataCollector_AlertThresholds_Request,
+        get_IAlertDataCollector_AlertThresholds_Response,
+    ),
+    33: DceRpcOp(
+        put_IAlertDataCollector_AlertThresholds_Request,
+        put_IAlertDataCollector_AlertThresholds_Response,
+    ),
+    34: DceRpcOp(
+        get_IAlertDataCollector_EventLog_Request,
+        get_IAlertDataCollector_EventLog_Response,
+    ),
+    35: DceRpcOp(
+        put_IAlertDataCollector_EventLog_Request,
+        put_IAlertDataCollector_EventLog_Response,
+    ),
+    36: DceRpcOp(
+        get_IAlertDataCollector_SampleInterval_Request,
+        get_IAlertDataCollector_SampleInterval_Response,
+    ),
+    37: DceRpcOp(
+        put_IAlertDataCollector_SampleInterval_Request,
+        put_IAlertDataCollector_SampleInterval_Response,
+    ),
+    38: DceRpcOp(
+        get_IAlertDataCollector_Task_Request, get_IAlertDataCollector_Task_Response
+    ),
+    39: DceRpcOp(
+        put_IAlertDataCollector_Task_Request, put_IAlertDataCollector_Task_Response
+    ),
+    40: DceRpcOp(
+        get_IAlertDataCollector_TaskRunAsSelf_Request,
+        get_IAlertDataCollector_TaskRunAsSelf_Response,
+    ),
+    41: DceRpcOp(
+        put_IAlertDataCollector_TaskRunAsSelf_Request,
+        put_IAlertDataCollector_TaskRunAsSelf_Response,
+    ),
+    42: DceRpcOp(
+        get_IAlertDataCollector_TaskArguments_Request,
+        get_IAlertDataCollector_TaskArguments_Response,
+    ),
+    43: DceRpcOp(
+        put_IAlertDataCollector_TaskArguments_Request,
+        put_IAlertDataCollector_TaskArguments_Response,
+    ),
+    44: DceRpcOp(
+        get_IAlertDataCollector_TaskUserTextArguments_Request,
+        get_IAlertDataCollector_TaskUserTextArguments_Response,
+    ),
+    45: DceRpcOp(
+        put_IAlertDataCollector_TaskUserTextArguments_Request,
+        put_IAlertDataCollector_TaskUserTextArguments_Response,
+    ),
     46: DceRpcOp(
-        get_TriggerDataCollectorSet_Request, get_TriggerDataCollectorSet_Response
+        get_IAlertDataCollector_TriggerDataCollectorSet_Request,
+        get_IAlertDataCollector_TriggerDataCollectorSet_Response,
     ),
     47: DceRpcOp(
-        put_TriggerDataCollectorSet_Request, put_TriggerDataCollectorSet_Response
+        put_IAlertDataCollector_TriggerDataCollectorSet_Request,
+        put_IAlertDataCollector_TriggerDataCollectorSet_Response,
     ),
 }
 register_com_interface(
@@ -2997,43 +4154,43 @@ register_com_interface(
 )
 
 
-class get_LogApiNamesOnly_Request(NDRPacket):
+class get_IApiTracingDataCollector_LogApiNamesOnly_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogApiNamesOnly_Response(NDRPacket):
+class get_IApiTracingDataCollector_LogApiNamesOnly_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("logapinames", 0), NDRIntField("status", 0)]
 
 
-class put_LogApiNamesOnly_Request(NDRPacket):
+class put_IApiTracingDataCollector_LogApiNamesOnly_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("logapinames", 0)]
 
 
-class put_LogApiNamesOnly_Response(NDRPacket):
+class put_IApiTracingDataCollector_LogApiNamesOnly_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LogApisRecursively_Request(NDRPacket):
+class get_IApiTracingDataCollector_LogApisRecursively_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogApisRecursively_Response(NDRPacket):
+class get_IApiTracingDataCollector_LogApisRecursively_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("logrecursively", 0), NDRIntField("status", 0)]
 
 
-class put_LogApisRecursively_Request(NDRPacket):
+class put_IApiTracingDataCollector_LogApisRecursively_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("logrecursively", 0)]
 
 
-class put_LogApisRecursively_Response(NDRPacket):
+class put_IApiTracingDataCollector_LogApisRecursively_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ExePath_Request(NDRPacket):
+class get_IApiTracingDataCollector_ExePath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ExePath_Response(NDRPacket):
+class get_IApiTracingDataCollector_ExePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3042,19 +4199,19 @@ class get_ExePath_Response(NDRPacket):
     ]
 
 
-class put_ExePath_Request(NDRPacket):
+class put_IApiTracingDataCollector_ExePath_Request(NDRPacket):
     fields_desc = [NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_ExePath_Response(NDRPacket):
+class put_IApiTracingDataCollector_ExePath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_LogFilePath_Request(NDRPacket):
+class get_IApiTracingDataCollector_LogFilePath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LogFilePath_Response(NDRPacket):
+class get_IApiTracingDataCollector_LogFilePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3063,70 +4220,70 @@ class get_LogFilePath_Response(NDRPacket):
     ]
 
 
-class put_LogFilePath_Request(NDRPacket):
+class put_IApiTracingDataCollector_LogFilePath_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_LogFilePath_Response(NDRPacket):
+class put_IApiTracingDataCollector_LogFilePath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_IncludeModules_Request(NDRPacket):
+class get_IApiTracingDataCollector_IncludeModules_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IncludeModules_Response(NDRPacket):
+class get_IApiTracingDataCollector_IncludeModules_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_IncludeModules_Request(NDRPacket):
+class put_IApiTracingDataCollector_IncludeModules_Request(NDRPacket):
     fields_desc = [NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_IncludeModules_Response(NDRPacket):
+class put_IApiTracingDataCollector_IncludeModules_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_IncludeApis_Request(NDRPacket):
+class get_IApiTracingDataCollector_IncludeApis_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IncludeApis_Response(NDRPacket):
+class get_IApiTracingDataCollector_IncludeApis_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_IncludeApis_Request(NDRPacket):
+class put_IApiTracingDataCollector_IncludeApis_Request(NDRPacket):
     fields_desc = [NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_IncludeApis_Response(NDRPacket):
+class put_IApiTracingDataCollector_IncludeApis_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ExcludeApis_Request(NDRPacket):
+class get_IApiTracingDataCollector_ExcludeApis_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ExcludeApis_Response(NDRPacket):
+class get_IApiTracingDataCollector_ExcludeApis_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_ExcludeApis_Request(NDRPacket):
+class put_IApiTracingDataCollector_ExcludeApis_Request(NDRPacket):
     fields_desc = [NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_ExcludeApis_Response(NDRPacket):
+class put_IApiTracingDataCollector_ExcludeApis_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3137,45 +4294,132 @@ IAPITRACINGDATACOLLECTOR_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DataCollectorSet_Request, get_DataCollectorSet_Response),
+    7: DceRpcOp(
+        get_IDataCollector_DataCollectorSet_Request,
+        get_IDataCollector_DataCollectorSet_Response,
+    ),
     # 8: Opnum8NotUsedOnWire,
-    9: DceRpcOp(get_DataCollectorType_Request, get_DataCollectorType_Response),
-    10: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    11: DceRpcOp(put_FileName_Request, put_FileName_Response),
-    12: DceRpcOp(get_FileNameFormat_Request, get_FileNameFormat_Response),
-    13: DceRpcOp(put_FileNameFormat_Request, put_FileNameFormat_Response),
-    14: DceRpcOp(get_FileNameFormatPattern_Request, get_FileNameFormatPattern_Response),
-    15: DceRpcOp(put_FileNameFormatPattern_Request, put_FileNameFormatPattern_Response),
-    16: DceRpcOp(get_LatestOutputLocation_Request, get_LatestOutputLocation_Response),
-    17: DceRpcOp(put_LatestOutputLocation_Request, put_LatestOutputLocation_Response),
-    18: DceRpcOp(get_LogAppend_Request, get_LogAppend_Response),
-    19: DceRpcOp(put_LogAppend_Request, put_LogAppend_Response),
-    20: DceRpcOp(get_LogCircular_Request, get_LogCircular_Response),
-    21: DceRpcOp(put_LogCircular_Request, put_LogCircular_Response),
-    22: DceRpcOp(get_LogOverwrite_Request, get_LogOverwrite_Response),
-    23: DceRpcOp(put_LogOverwrite_Request, put_LogOverwrite_Response),
-    24: DceRpcOp(get_Name_Request, get_Name_Response),
-    25: DceRpcOp(put_Name_Request, put_Name_Response),
-    26: DceRpcOp(get_OutputLocation_Request, get_OutputLocation_Response),
-    27: DceRpcOp(get_Index_Request, get_Index_Response),
+    9: DceRpcOp(
+        get_IDataCollector_DataCollectorType_Request,
+        get_IDataCollector_DataCollectorType_Response,
+    ),
+    10: DceRpcOp(
+        get_IDataCollector_FileName_Request, get_IDataCollector_FileName_Response
+    ),
+    11: DceRpcOp(
+        put_IDataCollector_FileName_Request, put_IDataCollector_FileName_Response
+    ),
+    12: DceRpcOp(
+        get_IDataCollector_FileNameFormat_Request,
+        get_IDataCollector_FileNameFormat_Response,
+    ),
+    13: DceRpcOp(
+        put_IDataCollector_FileNameFormat_Request,
+        put_IDataCollector_FileNameFormat_Response,
+    ),
+    14: DceRpcOp(
+        get_IDataCollector_FileNameFormatPattern_Request,
+        get_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    15: DceRpcOp(
+        put_IDataCollector_FileNameFormatPattern_Request,
+        put_IDataCollector_FileNameFormatPattern_Response,
+    ),
+    16: DceRpcOp(
+        get_IDataCollector_LatestOutputLocation_Request,
+        get_IDataCollector_LatestOutputLocation_Response,
+    ),
+    17: DceRpcOp(
+        put_IDataCollector_LatestOutputLocation_Request,
+        put_IDataCollector_LatestOutputLocation_Response,
+    ),
+    18: DceRpcOp(
+        get_IDataCollector_LogAppend_Request, get_IDataCollector_LogAppend_Response
+    ),
+    19: DceRpcOp(
+        put_IDataCollector_LogAppend_Request, put_IDataCollector_LogAppend_Response
+    ),
+    20: DceRpcOp(
+        get_IDataCollector_LogCircular_Request, get_IDataCollector_LogCircular_Response
+    ),
+    21: DceRpcOp(
+        put_IDataCollector_LogCircular_Request, put_IDataCollector_LogCircular_Response
+    ),
+    22: DceRpcOp(
+        get_IDataCollector_LogOverwrite_Request,
+        get_IDataCollector_LogOverwrite_Response,
+    ),
+    23: DceRpcOp(
+        put_IDataCollector_LogOverwrite_Request,
+        put_IDataCollector_LogOverwrite_Response,
+    ),
+    24: DceRpcOp(get_IDataCollector_Name_Request, get_IDataCollector_Name_Response),
+    25: DceRpcOp(put_IDataCollector_Name_Request, put_IDataCollector_Name_Response),
+    26: DceRpcOp(
+        get_IDataCollector_OutputLocation_Request,
+        get_IDataCollector_OutputLocation_Response,
+    ),
+    27: DceRpcOp(get_IDataCollector_Index_Request, get_IDataCollector_Index_Response),
     # 28: Opnum28NotUsedOnWire,
-    29: DceRpcOp(get_Xml_Request, get_Xml_Response),
+    29: DceRpcOp(get_IDataCollector_Xml_Request, get_IDataCollector_Xml_Response),
     30: DceRpcOp(SetXml_Request, SetXml_Response),
     # 31: Opnum31NotUsedOnWire,
-    32: DceRpcOp(get_LogApiNamesOnly_Request, get_LogApiNamesOnly_Response),
-    33: DceRpcOp(put_LogApiNamesOnly_Request, put_LogApiNamesOnly_Response),
-    34: DceRpcOp(get_LogApisRecursively_Request, get_LogApisRecursively_Response),
-    35: DceRpcOp(put_LogApisRecursively_Request, put_LogApisRecursively_Response),
-    36: DceRpcOp(get_ExePath_Request, get_ExePath_Response),
-    37: DceRpcOp(put_ExePath_Request, put_ExePath_Response),
-    38: DceRpcOp(get_LogFilePath_Request, get_LogFilePath_Response),
-    39: DceRpcOp(put_LogFilePath_Request, put_LogFilePath_Response),
-    40: DceRpcOp(get_IncludeModules_Request, get_IncludeModules_Response),
-    41: DceRpcOp(put_IncludeModules_Request, put_IncludeModules_Response),
-    42: DceRpcOp(get_IncludeApis_Request, get_IncludeApis_Response),
-    43: DceRpcOp(put_IncludeApis_Request, put_IncludeApis_Response),
-    44: DceRpcOp(get_ExcludeApis_Request, get_ExcludeApis_Response),
-    45: DceRpcOp(put_ExcludeApis_Request, put_ExcludeApis_Response),
+    32: DceRpcOp(
+        get_IApiTracingDataCollector_LogApiNamesOnly_Request,
+        get_IApiTracingDataCollector_LogApiNamesOnly_Response,
+    ),
+    33: DceRpcOp(
+        put_IApiTracingDataCollector_LogApiNamesOnly_Request,
+        put_IApiTracingDataCollector_LogApiNamesOnly_Response,
+    ),
+    34: DceRpcOp(
+        get_IApiTracingDataCollector_LogApisRecursively_Request,
+        get_IApiTracingDataCollector_LogApisRecursively_Response,
+    ),
+    35: DceRpcOp(
+        put_IApiTracingDataCollector_LogApisRecursively_Request,
+        put_IApiTracingDataCollector_LogApisRecursively_Response,
+    ),
+    36: DceRpcOp(
+        get_IApiTracingDataCollector_ExePath_Request,
+        get_IApiTracingDataCollector_ExePath_Response,
+    ),
+    37: DceRpcOp(
+        put_IApiTracingDataCollector_ExePath_Request,
+        put_IApiTracingDataCollector_ExePath_Response,
+    ),
+    38: DceRpcOp(
+        get_IApiTracingDataCollector_LogFilePath_Request,
+        get_IApiTracingDataCollector_LogFilePath_Response,
+    ),
+    39: DceRpcOp(
+        put_IApiTracingDataCollector_LogFilePath_Request,
+        put_IApiTracingDataCollector_LogFilePath_Response,
+    ),
+    40: DceRpcOp(
+        get_IApiTracingDataCollector_IncludeModules_Request,
+        get_IApiTracingDataCollector_IncludeModules_Response,
+    ),
+    41: DceRpcOp(
+        put_IApiTracingDataCollector_IncludeModules_Request,
+        put_IApiTracingDataCollector_IncludeModules_Response,
+    ),
+    42: DceRpcOp(
+        get_IApiTracingDataCollector_IncludeApis_Request,
+        get_IApiTracingDataCollector_IncludeApis_Response,
+    ),
+    43: DceRpcOp(
+        put_IApiTracingDataCollector_IncludeApis_Request,
+        put_IApiTracingDataCollector_IncludeApis_Response,
+    ),
+    44: DceRpcOp(
+        get_IApiTracingDataCollector_ExcludeApis_Request,
+        get_IApiTracingDataCollector_ExcludeApis_Response,
+    ),
+    45: DceRpcOp(
+        put_IApiTracingDataCollector_ExcludeApis_Request,
+        put_IApiTracingDataCollector_ExcludeApis_Response,
+    ),
 }
 register_com_interface(
     name="IApiTracingDataCollector",
@@ -3184,19 +4428,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IDataCollectorCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IDataCollectorCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retVal", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IDataCollectorCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IDataCollectorCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("collector", MInterfacePointer(), MInterfacePointer)
@@ -3205,11 +4449,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IDataCollectorCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IDataCollectorCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retVal", MInterfacePointer(), MInterfacePointer)
@@ -3286,9 +4530,18 @@ IDATACOLLECTORCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    7: DceRpcOp(
+        get_IDataCollectorCollection_Count_Request,
+        get_IDataCollectorCollection_Count_Response,
+    ),
+    8: DceRpcOp(
+        get_IDataCollectorCollection_Item_Request,
+        get_IDataCollectorCollection_Item_Response,
+    ),
+    9: DceRpcOp(
+        get_IDataCollectorCollection__NewEnum_Request,
+        get_IDataCollectorCollection__NewEnum_Response,
+    ),
     10: DceRpcOp(Add_Request, Add_Response),
     11: DceRpcOp(Remove_Request, Remove_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
@@ -3305,19 +4558,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IDataCollectorSetCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IDataCollectorSetCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retVal", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IDataCollectorSetCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IDataCollectorSetCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("set", MInterfacePointer(), MInterfacePointer)
@@ -3326,11 +4579,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IDataCollectorSetCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IDataCollectorSetCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retVal", MInterfacePointer(), MInterfacePointer)
@@ -3393,9 +4646,18 @@ IDATACOLLECTORSETCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    7: DceRpcOp(
+        get_IDataCollectorSetCollection_Count_Request,
+        get_IDataCollectorSetCollection_Count_Response,
+    ),
+    8: DceRpcOp(
+        get_IDataCollectorSetCollection_Item_Request,
+        get_IDataCollectorSetCollection_Item_Response,
+    ),
+    9: DceRpcOp(
+        get_IDataCollectorSetCollection__NewEnum_Request,
+        get_IDataCollectorSetCollection__NewEnum_Response,
+    ),
     10: DceRpcOp(Add_Request, Add_Response),
     11: DceRpcOp(Remove_Request, Remove_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
@@ -3409,11 +4671,11 @@ register_com_interface(
 )
 
 
-class get_DisplayName_Request(NDRPacket):
+class get_ITraceDataProvider_DisplayName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DisplayName_Response(NDRPacket):
+class get_ITraceDataProvider_DisplayName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3422,35 +4684,35 @@ class get_DisplayName_Response(NDRPacket):
     ]
 
 
-class put_DisplayName_Request(NDRPacket):
+class put_ITraceDataProvider_DisplayName_Request(NDRPacket):
     fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_DisplayName_Response(NDRPacket):
+class put_ITraceDataProvider_DisplayName_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Guid_Request(NDRPacket):
+class get_ITraceDataProvider_Guid_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Guid_Response(NDRPacket):
+class get_ITraceDataProvider_Guid_Response(NDRPacket):
     fields_desc = [NDRPacketField("guid", GUID(), GUID), NDRIntField("status", 0)]
 
 
-class put_Guid_Request(NDRPacket):
+class put_ITraceDataProvider_Guid_Request(NDRPacket):
     fields_desc = [NDRPacketField("guid", GUID(), GUID)]
 
 
-class put_Guid_Response(NDRPacket):
+class put_ITraceDataProvider_Guid_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Level_Request(NDRPacket):
+class get_ITraceDataProvider_Level_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Level_Response(NDRPacket):
+class get_ITraceDataProvider_Level_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppLevel", MInterfacePointer(), MInterfacePointer)
@@ -3459,11 +4721,11 @@ class get_Level_Response(NDRPacket):
     ]
 
 
-class get_KeywordsAny_Request(NDRPacket):
+class get_ITraceDataProvider_KeywordsAny_Request(NDRPacket):
     fields_desc = []
 
 
-class get_KeywordsAny_Response(NDRPacket):
+class get_ITraceDataProvider_KeywordsAny_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppKeywords", MInterfacePointer(), MInterfacePointer)
@@ -3472,11 +4734,11 @@ class get_KeywordsAny_Response(NDRPacket):
     ]
 
 
-class get_KeywordsAll_Request(NDRPacket):
+class get_ITraceDataProvider_KeywordsAll_Request(NDRPacket):
     fields_desc = []
 
 
-class get_KeywordsAll_Response(NDRPacket):
+class get_ITraceDataProvider_KeywordsAll_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppKeywords", MInterfacePointer(), MInterfacePointer)
@@ -3485,11 +4747,11 @@ class get_KeywordsAll_Response(NDRPacket):
     ]
 
 
-class get_Properties_Request(NDRPacket):
+class get_ITraceDataProvider_Properties_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Properties_Response(NDRPacket):
+class get_ITraceDataProvider_Properties_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppProperties", MInterfacePointer(), MInterfacePointer)
@@ -3498,54 +4760,54 @@ class get_Properties_Response(NDRPacket):
     ]
 
 
-class get_FilterEnabled_Request(NDRPacket):
+class get_ITraceDataProvider_FilterEnabled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FilterEnabled_Response(NDRPacket):
+class get_ITraceDataProvider_FilterEnabled_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("FilterEnabled", 0), NDRIntField("status", 0)]
 
 
-class put_FilterEnabled_Request(NDRPacket):
+class put_ITraceDataProvider_FilterEnabled_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("FilterEnabled", 0)]
 
 
-class put_FilterEnabled_Response(NDRPacket):
+class put_ITraceDataProvider_FilterEnabled_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FilterType_Request(NDRPacket):
+class get_ITraceDataProvider_FilterType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FilterType_Response(NDRPacket):
+class get_ITraceDataProvider_FilterType_Response(NDRPacket):
     fields_desc = [NDRIntField("pulType", 0), NDRIntField("status", 0)]
 
 
-class put_FilterType_Request(NDRPacket):
+class put_ITraceDataProvider_FilterType_Request(NDRPacket):
     fields_desc = [NDRIntField("ulType", 0)]
 
 
-class put_FilterType_Response(NDRPacket):
+class put_ITraceDataProvider_FilterType_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_FilterData_Request(NDRPacket):
+class get_ITraceDataProvider_FilterData_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FilterData_Response(NDRPacket):
+class get_ITraceDataProvider_FilterData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("ppData", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
     ]
 
 
-class put_FilterData_Request(NDRPacket):
+class put_ITraceDataProvider_FilterData_Request(NDRPacket):
     fields_desc = [NDRPacketField("pData", SAFEARRAY(), SAFEARRAY)]
 
 
-class put_FilterData_Response(NDRPacket):
+class put_ITraceDataProvider_FilterData_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3611,20 +4873,59 @@ ITRACEDATAPROVIDER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_DisplayName_Request, get_DisplayName_Response),
-    8: DceRpcOp(put_DisplayName_Request, put_DisplayName_Response),
-    9: DceRpcOp(get_Guid_Request, get_Guid_Response),
-    10: DceRpcOp(put_Guid_Request, put_Guid_Response),
-    11: DceRpcOp(get_Level_Request, get_Level_Response),
-    12: DceRpcOp(get_KeywordsAny_Request, get_KeywordsAny_Response),
-    13: DceRpcOp(get_KeywordsAll_Request, get_KeywordsAll_Response),
-    14: DceRpcOp(get_Properties_Request, get_Properties_Response),
-    15: DceRpcOp(get_FilterEnabled_Request, get_FilterEnabled_Response),
-    16: DceRpcOp(put_FilterEnabled_Request, put_FilterEnabled_Response),
-    17: DceRpcOp(get_FilterType_Request, get_FilterType_Response),
-    18: DceRpcOp(put_FilterType_Request, put_FilterType_Response),
-    19: DceRpcOp(get_FilterData_Request, get_FilterData_Response),
-    20: DceRpcOp(put_FilterData_Request, put_FilterData_Response),
+    7: DceRpcOp(
+        get_ITraceDataProvider_DisplayName_Request,
+        get_ITraceDataProvider_DisplayName_Response,
+    ),
+    8: DceRpcOp(
+        put_ITraceDataProvider_DisplayName_Request,
+        put_ITraceDataProvider_DisplayName_Response,
+    ),
+    9: DceRpcOp(
+        get_ITraceDataProvider_Guid_Request, get_ITraceDataProvider_Guid_Response
+    ),
+    10: DceRpcOp(
+        put_ITraceDataProvider_Guid_Request, put_ITraceDataProvider_Guid_Response
+    ),
+    11: DceRpcOp(
+        get_ITraceDataProvider_Level_Request, get_ITraceDataProvider_Level_Response
+    ),
+    12: DceRpcOp(
+        get_ITraceDataProvider_KeywordsAny_Request,
+        get_ITraceDataProvider_KeywordsAny_Response,
+    ),
+    13: DceRpcOp(
+        get_ITraceDataProvider_KeywordsAll_Request,
+        get_ITraceDataProvider_KeywordsAll_Response,
+    ),
+    14: DceRpcOp(
+        get_ITraceDataProvider_Properties_Request,
+        get_ITraceDataProvider_Properties_Response,
+    ),
+    15: DceRpcOp(
+        get_ITraceDataProvider_FilterEnabled_Request,
+        get_ITraceDataProvider_FilterEnabled_Response,
+    ),
+    16: DceRpcOp(
+        put_ITraceDataProvider_FilterEnabled_Request,
+        put_ITraceDataProvider_FilterEnabled_Response,
+    ),
+    17: DceRpcOp(
+        get_ITraceDataProvider_FilterType_Request,
+        get_ITraceDataProvider_FilterType_Response,
+    ),
+    18: DceRpcOp(
+        put_ITraceDataProvider_FilterType_Request,
+        put_ITraceDataProvider_FilterType_Response,
+    ),
+    19: DceRpcOp(
+        get_ITraceDataProvider_FilterData_Request,
+        get_ITraceDataProvider_FilterData_Response,
+    ),
+    20: DceRpcOp(
+        put_ITraceDataProvider_FilterData_Request,
+        put_ITraceDataProvider_FilterData_Response,
+    ),
     21: DceRpcOp(Query_Request, Query_Response),
     22: DceRpcOp(Resolve_Request, Resolve_Response),
     23: DceRpcOp(SetSecurity_Request, SetSecurity_Response),
@@ -3638,19 +4939,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_ITraceDataProviderCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_ITraceDataProviderCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retVal", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_ITraceDataProviderCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_ITraceDataProviderCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppProvider", MInterfacePointer(), MInterfacePointer)
@@ -3659,11 +4960,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_ITraceDataProviderCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_ITraceDataProviderCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retVal", MInterfacePointer(), MInterfacePointer)
@@ -3749,9 +5050,18 @@ ITRACEDATAPROVIDERCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    7: DceRpcOp(
+        get_ITraceDataProviderCollection_Count_Request,
+        get_ITraceDataProviderCollection_Count_Response,
+    ),
+    8: DceRpcOp(
+        get_ITraceDataProviderCollection_Item_Request,
+        get_ITraceDataProviderCollection_Item_Response,
+    ),
+    9: DceRpcOp(
+        get_ITraceDataProviderCollection__NewEnum_Request,
+        get_ITraceDataProviderCollection__NewEnum_Response,
+    ),
     10: DceRpcOp(Add_Request, Add_Response),
     11: DceRpcOp(Remove_Request, Remove_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
@@ -3769,60 +5079,60 @@ register_com_interface(
 )
 
 
-class get_StartDate_Request(NDRPacket):
+class get_ISchedule_StartDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_StartDate_Response(NDRPacket):
+class get_ISchedule_StartDate_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class put_StartDate_Request(NDRPacket):
+class put_ISchedule_StartDate_Request(NDRPacket):
     fields_desc = [NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_StartDate_Response(NDRPacket):
+class put_ISchedule_StartDate_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_EndDate_Request(NDRPacket):
+class get_ISchedule_EndDate_Request(NDRPacket):
     fields_desc = []
 
 
-class get_EndDate_Response(NDRPacket):
+class get_ISchedule_EndDate_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class put_EndDate_Request(NDRPacket):
+class put_ISchedule_EndDate_Request(NDRPacket):
     fields_desc = [NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_EndDate_Response(NDRPacket):
+class put_ISchedule_EndDate_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_StartTime_Request(NDRPacket):
+class get_ISchedule_StartTime_Request(NDRPacket):
     fields_desc = []
 
 
-class get_StartTime_Response(NDRPacket):
+class get_ISchedule_StartTime_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class put_StartTime_Request(NDRPacket):
+class put_ISchedule_StartTime_Request(NDRPacket):
     fields_desc = [NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_StartTime_Response(NDRPacket):
+class put_ISchedule_StartTime_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3838,19 +5148,19 @@ class WeekDays(IntEnum):
     plaEveryday = 127
 
 
-class get_Days_Request(NDRPacket):
+class get_ISchedule_Days_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Days_Response(NDRPacket):
+class get_ISchedule_Days_Response(NDRPacket):
     fields_desc = [NDRInt3264EnumField("days", 0, WeekDays), NDRIntField("status", 0)]
 
 
-class put_Days_Request(NDRPacket):
+class put_ISchedule_Days_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("days", 0, WeekDays)]
 
 
-class put_Days_Response(NDRPacket):
+class put_ISchedule_Days_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -3861,14 +5171,14 @@ ISCHEDULE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_StartDate_Request, get_StartDate_Response),
-    8: DceRpcOp(put_StartDate_Request, put_StartDate_Response),
-    9: DceRpcOp(get_EndDate_Request, get_EndDate_Response),
-    10: DceRpcOp(put_EndDate_Request, put_EndDate_Response),
-    11: DceRpcOp(get_StartTime_Request, get_StartTime_Response),
-    12: DceRpcOp(put_StartTime_Request, put_StartTime_Response),
-    13: DceRpcOp(get_Days_Request, get_Days_Response),
-    14: DceRpcOp(put_Days_Request, put_Days_Response),
+    7: DceRpcOp(get_ISchedule_StartDate_Request, get_ISchedule_StartDate_Response),
+    8: DceRpcOp(put_ISchedule_StartDate_Request, put_ISchedule_StartDate_Response),
+    9: DceRpcOp(get_ISchedule_EndDate_Request, get_ISchedule_EndDate_Response),
+    10: DceRpcOp(put_ISchedule_EndDate_Request, put_ISchedule_EndDate_Response),
+    11: DceRpcOp(get_ISchedule_StartTime_Request, get_ISchedule_StartTime_Response),
+    12: DceRpcOp(put_ISchedule_StartTime_Request, put_ISchedule_StartTime_Response),
+    13: DceRpcOp(get_ISchedule_Days_Request, get_ISchedule_Days_Response),
+    14: DceRpcOp(put_ISchedule_Days_Request, put_ISchedule_Days_Response),
 }
 register_com_interface(
     name="ISchedule",
@@ -3877,19 +5187,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IScheduleCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IScheduleCollection_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retVal", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IScheduleCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IScheduleCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchedule", MInterfacePointer(), MInterfacePointer)
@@ -3898,11 +5208,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IScheduleCollection__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IScheduleCollection__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retVal", MInterfacePointer(), MInterfacePointer)
@@ -3963,9 +5273,16 @@ ISCHEDULECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
+    7: DceRpcOp(
+        get_IScheduleCollection_Count_Request, get_IScheduleCollection_Count_Response
+    ),
+    8: DceRpcOp(
+        get_IScheduleCollection_Item_Request, get_IScheduleCollection_Item_Response
+    ),
+    9: DceRpcOp(
+        get_IScheduleCollection__NewEnum_Request,
+        get_IScheduleCollection__NewEnum_Response,
+    ),
     10: DceRpcOp(Add_Request, Add_Response),
     11: DceRpcOp(Remove_Request, Remove_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
@@ -3979,11 +5296,11 @@ register_com_interface(
 )
 
 
-class get_Description_Request(NDRPacket):
+class get_IValueMapItem_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IValueMapItem_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -3992,37 +5309,37 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class put_Description_Request(NDRPacket):
+class put_IValueMapItem_Description_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_Description_Response(NDRPacket):
+class put_IValueMapItem_Description_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Enabled_Request(NDRPacket):
+class get_IValueMapItem_Enabled_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Enabled_Response(NDRPacket):
+class get_IValueMapItem_Enabled_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("enabled", 0), NDRIntField("status", 0)]
 
 
-class put_Enabled_Request(NDRPacket):
+class put_IValueMapItem_Enabled_Request(NDRPacket):
     fields_desc = [NDRSignedShortField("enabled", 0)]
 
 
-class put_Enabled_Response(NDRPacket):
+class put_IValueMapItem_Enabled_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Key_Request(NDRPacket):
+class get_IValueMapItem_Key_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Key_Response(NDRPacket):
+class get_IValueMapItem_Key_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4031,30 +5348,30 @@ class get_Key_Response(NDRPacket):
     ]
 
 
-class put_Key_Request(NDRPacket):
+class put_IValueMapItem_Key_Request(NDRPacket):
     fields_desc = [NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Key_Response(NDRPacket):
+class put_IValueMapItem_Key_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Value_Request(NDRPacket):
+class get_IValueMapItem_Value_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Value_Response(NDRPacket):
+class get_IValueMapItem_Value_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class put_Value_Request(NDRPacket):
+class put_IValueMapItem_Value_Request(NDRPacket):
     fields_desc = [NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_Value_Response(NDRPacket):
+class put_IValueMapItem_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -4065,22 +5382,22 @@ class ValueMapType(IntEnum):
     plaValidation = 4
 
 
-class get_ValueMapType_Request(NDRPacket):
+class get_IValueMapItem_ValueMapType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValueMapType_Response(NDRPacket):
+class get_IValueMapItem_ValueMapType_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("type", 0, ValueMapType),
         NDRIntField("status", 0),
     ]
 
 
-class put_ValueMapType_Request(NDRPacket):
+class put_IValueMapItem_ValueMapType_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("type", 0, ValueMapType)]
 
 
-class put_ValueMapType_Response(NDRPacket):
+class put_IValueMapItem_ValueMapType_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -4091,16 +5408,24 @@ IVALUEMAPITEM_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Description_Request, get_Description_Response),
-    8: DceRpcOp(put_Description_Request, put_Description_Response),
-    9: DceRpcOp(get_Enabled_Request, get_Enabled_Response),
-    10: DceRpcOp(put_Enabled_Request, put_Enabled_Response),
-    11: DceRpcOp(get_Key_Request, get_Key_Response),
-    12: DceRpcOp(put_Key_Request, put_Key_Response),
-    13: DceRpcOp(get_Value_Request, get_Value_Response),
-    14: DceRpcOp(put_Value_Request, put_Value_Response),
-    15: DceRpcOp(get_ValueMapType_Request, get_ValueMapType_Response),
-    16: DceRpcOp(put_ValueMapType_Request, put_ValueMapType_Response),
+    7: DceRpcOp(
+        get_IValueMapItem_Description_Request, get_IValueMapItem_Description_Response
+    ),
+    8: DceRpcOp(
+        put_IValueMapItem_Description_Request, put_IValueMapItem_Description_Response
+    ),
+    9: DceRpcOp(get_IValueMapItem_Enabled_Request, get_IValueMapItem_Enabled_Response),
+    10: DceRpcOp(put_IValueMapItem_Enabled_Request, put_IValueMapItem_Enabled_Response),
+    11: DceRpcOp(get_IValueMapItem_Key_Request, get_IValueMapItem_Key_Response),
+    12: DceRpcOp(put_IValueMapItem_Key_Request, put_IValueMapItem_Key_Response),
+    13: DceRpcOp(get_IValueMapItem_Value_Request, get_IValueMapItem_Value_Response),
+    14: DceRpcOp(put_IValueMapItem_Value_Request, put_IValueMapItem_Value_Response),
+    15: DceRpcOp(
+        get_IValueMapItem_ValueMapType_Request, get_IValueMapItem_ValueMapType_Response
+    ),
+    16: DceRpcOp(
+        put_IValueMapItem_ValueMapType_Request, put_IValueMapItem_ValueMapType_Response
+    ),
 }
 register_com_interface(
     name="IValueMapItem",
@@ -4109,19 +5434,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IValueMap_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IValueMap_Count_Response(NDRPacket):
     fields_desc = [NDRSignedIntField("retVal", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IValueMap_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IValueMap_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("value", MInterfacePointer(), MInterfacePointer)
@@ -4130,11 +5455,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get__NewEnum_Request(NDRPacket):
+class get_IValueMap__NewEnum_Request(NDRPacket):
     fields_desc = []
 
 
-class get__NewEnum_Response(NDRPacket):
+class get_IValueMap__NewEnum_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("retVal", MInterfacePointer(), MInterfacePointer)
@@ -4143,11 +5468,11 @@ class get__NewEnum_Response(NDRPacket):
     ]
 
 
-class get_Description_Request(NDRPacket):
+class get_IValueMap_Description_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Description_Response(NDRPacket):
+class get_IValueMap_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -4156,51 +5481,51 @@ class get_Description_Response(NDRPacket):
     ]
 
 
-class put_Description_Request(NDRPacket):
+class put_IValueMap_Description_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_Description_Response(NDRPacket):
+class put_IValueMap_Description_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Value_Request(NDRPacket):
+class get_IValueMap_Value_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Value_Response(NDRPacket):
+class get_IValueMap_Value_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)),
         NDRIntField("status", 0),
     ]
 
 
-class put_Value_Request(NDRPacket):
+class put_IValueMap_Value_Request(NDRPacket):
     fields_desc = [NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_Value_Response(NDRPacket):
+class put_IValueMap_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ValueMapType_Request(NDRPacket):
+class get_IValueMap_ValueMapType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValueMapType_Response(NDRPacket):
+class get_IValueMap_ValueMapType_Response(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("type", 0, ValueMapType),
         NDRIntField("status", 0),
     ]
 
 
-class put_ValueMapType_Request(NDRPacket):
+class put_IValueMap_ValueMapType_Request(NDRPacket):
     fields_desc = [NDRInt3264EnumField("type", 0, ValueMapType)]
 
 
-class put_ValueMapType_Response(NDRPacket):
+class put_IValueMap_ValueMapType_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -4256,15 +5581,19 @@ IVALUEMAP_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     4: DceRpcOp(GetTypeInfo_Request, GetTypeInfo_Response),
     5: DceRpcOp(GetIDsOfNames_Request, GetIDsOfNames_Response),
     6: DceRpcOp(Invoke_Request, Invoke_Response),
-    7: DceRpcOp(get_Count_Request, get_Count_Response),
-    8: DceRpcOp(get_Item_Request, get_Item_Response),
-    9: DceRpcOp(get__NewEnum_Request, get__NewEnum_Response),
-    10: DceRpcOp(get_Description_Request, get_Description_Response),
-    11: DceRpcOp(put_Description_Request, put_Description_Response),
-    12: DceRpcOp(get_Value_Request, get_Value_Response),
-    13: DceRpcOp(put_Value_Request, put_Value_Response),
-    14: DceRpcOp(get_ValueMapType_Request, get_ValueMapType_Response),
-    15: DceRpcOp(put_ValueMapType_Request, put_ValueMapType_Response),
+    7: DceRpcOp(get_IValueMap_Count_Request, get_IValueMap_Count_Response),
+    8: DceRpcOp(get_IValueMap_Item_Request, get_IValueMap_Item_Response),
+    9: DceRpcOp(get_IValueMap__NewEnum_Request, get_IValueMap__NewEnum_Response),
+    10: DceRpcOp(get_IValueMap_Description_Request, get_IValueMap_Description_Response),
+    11: DceRpcOp(put_IValueMap_Description_Request, put_IValueMap_Description_Response),
+    12: DceRpcOp(get_IValueMap_Value_Request, get_IValueMap_Value_Response),
+    13: DceRpcOp(put_IValueMap_Value_Request, put_IValueMap_Value_Response),
+    14: DceRpcOp(
+        get_IValueMap_ValueMapType_Request, get_IValueMap_ValueMapType_Response
+    ),
+    15: DceRpcOp(
+        put_IValueMap_ValueMapType_Request, put_IValueMap_ValueMapType_Response
+    ),
     16: DceRpcOp(Add_Request, Add_Response),
     17: DceRpcOp(Remove_Request, Remove_Response),
     18: DceRpcOp(Clear_Request, Clear_Response),

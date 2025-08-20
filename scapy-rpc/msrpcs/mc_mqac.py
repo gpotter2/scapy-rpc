@@ -182,7 +182,7 @@ class Next_Response(NDRPacket):
     fields_desc = [
         NDRConfVarPacketListField(
             "rgcd",
-            [CONNECTDATA()],
+            [],
             CONNECTDATA,
             size_is=lambda pkt: pkt.cConnections,
             length_is=lambda pkt: pkt.pcFetched,

@@ -17,11 +17,13 @@ from scapy.fields import StrFixedLenField
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfStrLenField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     register_dcerpc_interface,
 )
@@ -51,7 +53,13 @@ class GetKey_Request(NDRPacket):
 class GetKey_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcbOut", None, size_of="ppbOut"),
-        NDRConfStrLenField("ppbOut", "", size_is=lambda pkt: pkt.pcbOut),
+        NDRConfFieldListField(
+            "ppbOut",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.pcbOut,
+            ptr_pack=True,
+        ),
         NDRIntField("status", 0),
     ]
 

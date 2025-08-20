@@ -22,8 +22,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarFieldListField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -185,9 +185,10 @@ class PRPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -223,10 +224,7 @@ class PLSAPR_TRANSLATED_SIDS(NDRPacket):
         NDRIntField("Entries", None, size_of="Sids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Sids",
-                [PLSA_TRANSLATED_SID()],
-                PLSA_TRANSLATED_SID,
-                size_is=lambda pkt: pkt.Entries,
+                "Sids", [], PLSA_TRANSLATED_SID, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -250,9 +248,10 @@ class RPC_UNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -274,10 +273,7 @@ class PLSAPR_REFERENCED_DOMAIN_LIST(NDRPacket):
         NDRIntField("Entries", None, size_of="Domains"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Domains",
-                [PLSAPR_TRUST_INFORMATION()],
-                PLSAPR_TRUST_INFORMATION,
-                size_is=lambda pkt: pkt.Entries,
+                "Domains", [], PLSAPR_TRUST_INFORMATION, size_is=lambda pkt: pkt.Entries
             )
         ),
         NDRIntField("MaxEntries", 0),
@@ -289,10 +285,7 @@ class LsarLookupNames_Request(NDRPacket):
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Count", None, size_of="Names"),
         NDRConfPacketListField(
-            "Names",
-            [PRPC_UNICODE_STRING()],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.Count,
+            "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Count
         ),
         NDRPacketField(
             "TranslatedSids", PLSAPR_TRANSLATED_SIDS(), PLSAPR_TRANSLATED_SIDS
@@ -330,10 +323,7 @@ class PLSAPR_SID_ENUM_BUFFER(NDRPacket):
         NDRIntField("Entries", None, size_of="SidInfo"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "SidInfo",
-                [PLSAPR_SID_INFORMATION()],
-                PLSAPR_SID_INFORMATION,
-                size_is=lambda pkt: pkt.Entries,
+                "SidInfo", [], PLSAPR_SID_INFORMATION, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -354,10 +344,7 @@ class PLSAPR_TRANSLATED_NAMES(NDRPacket):
         NDRIntField("Entries", None, size_of="Names"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Names",
-                [PLSAPR_TRANSLATED_NAME()],
-                PLSAPR_TRANSLATED_NAME,
-                size_is=lambda pkt: pkt.Entries,
+                "Names", [], PLSAPR_TRANSLATED_NAME, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -455,10 +442,7 @@ class PLSAPR_TRANSLATED_NAMES_EX(NDRPacket):
         NDRIntField("Entries", None, size_of="Names"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Names",
-                [PLSAPR_TRANSLATED_NAME_EX()],
-                PLSAPR_TRANSLATED_NAME_EX,
-                size_is=lambda pkt: pkt.Entries,
+                "Names", [], PLSAPR_TRANSLATED_NAME_EX, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -513,10 +497,7 @@ class PLSAPR_TRANSLATED_SIDS_EX(NDRPacket):
         NDRIntField("Entries", None, size_of="Sids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Sids",
-                [PLSAPR_TRANSLATED_SID_EX()],
-                PLSAPR_TRANSLATED_SID_EX,
-                size_is=lambda pkt: pkt.Entries,
+                "Sids", [], PLSAPR_TRANSLATED_SID_EX, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -527,10 +508,7 @@ class LsarLookupNames2_Request(NDRPacket):
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Count", None, size_of="Names"),
         NDRConfPacketListField(
-            "Names",
-            [PRPC_UNICODE_STRING()],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.Count,
+            "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Count
         ),
         NDRPacketField(
             "TranslatedSids", PLSAPR_TRANSLATED_SIDS_EX(), PLSAPR_TRANSLATED_SIDS_EX
@@ -575,10 +553,7 @@ class PLSAPR_TRANSLATED_SIDS_EX2(NDRPacket):
         NDRIntField("Entries", None, size_of="Sids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Sids",
-                [PLSAPR_TRANSLATED_SID_EX2()],
-                PLSAPR_TRANSLATED_SID_EX2,
-                size_is=lambda pkt: pkt.Entries,
+                "Sids", [], PLSAPR_TRANSLATED_SID_EX2, size_is=lambda pkt: pkt.Entries
             )
         ),
     ]
@@ -589,10 +564,7 @@ class LsarLookupNames3_Request(NDRPacket):
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Count", None, size_of="Names"),
         NDRConfPacketListField(
-            "Names",
-            [PRPC_UNICODE_STRING()],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.Count,
+            "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Count
         ),
         NDRPacketField(
             "TranslatedSids", PLSAPR_TRANSLATED_SIDS_EX2(), PLSAPR_TRANSLATED_SIDS_EX2
@@ -657,10 +629,7 @@ class LsarLookupNames4_Request(NDRPacket):
     fields_desc = [
         NDRIntField("Count", None, size_of="Names"),
         NDRConfPacketListField(
-            "Names",
-            [PRPC_UNICODE_STRING()],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.Count,
+            "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Count
         ),
         NDRPacketField(
             "TranslatedSids", PLSAPR_TRANSLATED_SIDS_EX2(), PLSAPR_TRANSLATED_SIDS_EX2

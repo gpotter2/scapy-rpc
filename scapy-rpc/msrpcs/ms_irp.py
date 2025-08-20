@@ -359,7 +359,9 @@ class LPINET_INFO_STATISTICS_0(NDRPacket):
         NDRPacketField("CacheCtrs", INETA_CACHE_STATISTICS(), INETA_CACHE_STATISTICS),
         NDRPacketField("AtqCtrs", INETA_ATQ_STATISTICS(), INETA_ATQ_STATISTICS),
         NDRIntField("nAuxCounters", 0),
-        NDRFieldListField("rgCounters", [], NDRIntField("", 0), length_is=lambda _: 20),
+        NDRFieldListField(
+            "rgCounters", [0] * 20, NDRIntField("", 0), length_is=lambda _: 20
+        ),
     ]
 
 
@@ -436,7 +438,7 @@ class LPINET_INFO_CAPABILITIES_STRUCT(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "CapFlags",
-                [LPINET_INFO_CAP_FLAGS()],
+                [],
                 LPINET_INFO_CAP_FLAGS,
                 size_is=lambda pkt: pkt.NumCapFlags,
             )
@@ -524,7 +526,9 @@ class LPW3_STATISTICS_1(NDRPacket):
         NDRIntField("ServiceUptime", 0),
         NDRIntField("TimeOfLastClear", 0),
         NDRIntField("nAuxCounters", 0),
-        NDRFieldListField("rgCounters", [], NDRIntField("", 0), length_is=lambda _: 20),
+        NDRFieldListField(
+            "rgCounters", [0] * 20, NDRIntField("", 0), length_is=lambda _: 20
+        ),
     ]
 
 
@@ -660,10 +664,7 @@ class LPIIS_USER_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPIIS_USER_INFO_1()],
-                LPIIS_USER_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPIIS_USER_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]

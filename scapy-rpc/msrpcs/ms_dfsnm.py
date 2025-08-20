@@ -265,7 +265,7 @@ class DFS_INFO_9(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
-                [LPDFS_STORAGE_INFO_1()],
+                [],
                 LPDFS_STORAGE_INFO_1,
                 size_is=lambda pkt: pkt.NumberOfStorages,
             )
@@ -845,10 +845,7 @@ class DFS_INFO_8_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPDFS_INFO_8()],
-                LPDFS_INFO_8,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPDFS_INFO_8, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -876,7 +873,7 @@ class LPDFS_INFO_9(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Storage",
-                [LPDFS_STORAGE_INFO_1()],
+                [],
                 LPDFS_STORAGE_INFO_1,
                 size_is=lambda pkt: pkt.NumberOfStorages,
             )
@@ -890,10 +887,7 @@ class DFS_INFO_9_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPDFS_INFO_9()],
-                LPDFS_INFO_9,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPDFS_INFO_9, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]

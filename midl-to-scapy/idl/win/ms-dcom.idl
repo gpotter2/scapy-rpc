@@ -40,7 +40,7 @@
  typedef struct tagORPCTHIS
  {
      COMVERSION      version;    
-     unsigned long   flags;      
+     tagCPFLAGS   flags;      
      unsigned long   reserved1;  
      CID             cid;        
      [unique] ORPC_EXTENT_ARRAY *extensions;

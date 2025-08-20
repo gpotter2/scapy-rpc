@@ -54,11 +54,15 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
+    NDRIEEEDoubleField,
+    NDRIEEEFloatField,
     NDRIntField,
+    NDRLongField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRRefEmbPointerField,
     NDRShortField,
+    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedLongField,
     NDRSignedShortField,
@@ -89,11 +93,11 @@ class FLAGGED_WORD_BLOB(NDRPacket):
     ]
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostMethod_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostMethod_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -113,11 +117,11 @@ class MInterfacePointer(NDRPacket):
     ]
 
 
-class get_Schema_Request(NDRPacket):
+class get_IAppHostMethod_Schema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Schema_Response(NDRPacket):
+class get_IAppHostMethod_Schema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppMethodSchema", MInterfacePointer(), MInterfacePointer)
@@ -142,8 +146,8 @@ class CreateInstance_Response(NDRPacket):
 IAPPHOSTMETHOD_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    3: DceRpcOp(get_IAppHostMethod_Name_Request, get_IAppHostMethod_Name_Response),
+    4: DceRpcOp(get_IAppHostMethod_Schema_Request, get_IAppHostMethod_Schema_Response),
     5: DceRpcOp(CreateInstance_Request, CreateInstance_Response),
 }
 register_com_interface(
@@ -153,11 +157,11 @@ register_com_interface(
 )
 
 
-class get_Input_Request(NDRPacket):
+class get_IAppHostMethodInstance_Input_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Input_Response(NDRPacket):
+class get_IAppHostMethodInstance_Input_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppInputElement", MInterfacePointer(), MInterfacePointer)
@@ -166,11 +170,11 @@ class get_Input_Response(NDRPacket):
     ]
 
 
-class get_Output_Request(NDRPacket):
+class get_IAppHostMethodInstance_Output_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Output_Response(NDRPacket):
+class get_IAppHostMethodInstance_Output_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppOutputElement", MInterfacePointer(), MInterfacePointer)
@@ -251,7 +255,11 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size
+                "aBstr",
+                [],
+                FLAGGED_WORD_BLOB,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -263,7 +271,11 @@ class SAFEARR_UNKNOWN(NDRPacket):
         NDRIntField("Size", None, size_of="apUnknown"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
@@ -275,14 +287,248 @@ class SAFEARR_DISPATCH(NDRPacket):
         NDRIntField("Size", None, size_of="apDispatch"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "apDispatch", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
+                "apDispatch",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
             )
         ),
     ]
 
 
-class wireVARIANTStr(NDRPacket):
+class SAFEARR_VARIANT(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aVariant"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aVariant",
+                [],
+                NDRRecursiveClass("wireVARIANTStr"),
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class wireBRECORDStr(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("fFlags", 0),
+        NDRIntField("clSize", None, size_of="pRecord"),
+        NDRFullEmbPointerField(
+            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class SAFEARR_BRECORD(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="aRecord"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "aRecord",
+                [],
+                wireBRECORDStr,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+    ]
+
+
+class GUID(NDRPacket):
     ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("Data1", 0),
+        NDRShortField("Data2", 0),
+        NDRShortField("Data3", 0),
+        StrFixedLenField("Data4", "", length=8),
+    ]
+
+
+class SAFEARR_HAVEIID(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("Size", None, size_of="apUnknown"),
+        NDRRefEmbPointerField(
+            NDRConfPacketListField(
+                "apUnknown",
+                [],
+                MInterfacePointer,
+                size_is=lambda pkt: pkt.Size,
+                ptr_pack=True,
+            )
+        ),
+        NDRPacketField("iid", GUID(), GUID),
+    ]
+
+
+class BYTE_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class WORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
+        ),
+    ]
+
+
+class DWORD_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRIntField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class HYPER_SIZEDARR(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("clSize", None, size_of="pData"),
+        NDRFullEmbPointerField(
+            NDRConfFieldListField(
+                "pData", [], NDRSignedLongField("", 0), size_is=lambda pkt: pkt.clSize
+            )
+        ),
+    ]
+
+
+class SAFEARRAYBOUND(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [NDRIntField("cElements", 0), NDRSignedIntField("lLbound", 0)]
+
+
+class SAFEARRAY(NDRPacket):
+    ALIGNMENT = (4, 8)
+    DEPORTED_CONFORMANTS = ["rgsabound"]
+    fields_desc = [
+        NDRShortField("cDims", None, size_of="rgsabound"),
+        NDRShortField("fFeatures", 0),
+        NDRIntField("cbElements", 0),
+        NDRIntField("cLocks", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BSTR(), SAFEARR_BSTR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_BSTR),
+                        (lambda _, val: val.tag == SF_TYPE.SF_BSTR),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_UNKNOWN(), SAFEARR_UNKNOWN),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_UNKNOWN),
+                        (lambda _, val: val.tag == SF_TYPE.SF_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "uArrayStructs", SAFEARR_DISPATCH(), SAFEARR_DISPATCH
+                    ),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_DISPATCH),
+                        (lambda _, val: val.tag == SF_TYPE.SF_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_VARIANT(), SAFEARR_VARIANT),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_VARIANT),
+                        (lambda _, val: val.tag == SF_TYPE.SF_VARIANT),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_BRECORD(), SAFEARR_BRECORD),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_RECORD),
+                        (lambda _, val: val.tag == SF_TYPE.SF_RECORD),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", SAFEARR_HAVEIID(), SAFEARR_HAVEIID),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_HAVEIID),
+                        (lambda _, val: val.tag == SF_TYPE.SF_HAVEIID),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", BYTE_SIZEDARR(), BYTE_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I1),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I1),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", WORD_SIZEDARR(), WORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I2),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I2),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", DWORD_SIZEDARR(), DWORD_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I4),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I4),
+                    ),
+                ),
+                (
+                    NDRPacketField("uArrayStructs", HYPER_SIZEDARR(), HYPER_SIZEDARR),
+                    (
+                        (lambda pkt: None == SF_TYPE.SF_I8),
+                        (lambda _, val: val.tag == SF_TYPE.SF_I8),
+                    ),
+                ),
+            ],
+            StrFixedLenField("uArrayStructs", "", length=0),
+            align=(4, 8),
+            switch_fmt=("I", "I"),
+        ),
+        NDRConfPacketListField(
+            "rgsabound",
+            [],
+            SAFEARRAYBOUND,
+            size_is=lambda pkt: pkt.cDims,
+            conformant_in_struct=True,
+        ),
+    ]
+
+
+class DECIMAL(NDRPacket):
+    ALIGNMENT = (8, 8)
+    fields_desc = [
+        NDRShortField("wReserved", 0),
+        NDRSignedByteField("scale", 0),
+        NDRSignedByteField("sign", 0),
+        NDRIntField("Hi32", 0),
+        NDRLongField("Lo64", 0),
+    ]
+
+
+class wireVARIANTStr(NDRPacket):
+    ALIGNMENT = (8, 8)
     fields_desc = [
         NDRIntField("clSize", 0),
         NDRIntField("rpcReserved", 0),
@@ -290,7 +536,495 @@ class wireVARIANTStr(NDRPacket):
         NDRShortField("wReserved1", 0),
         NDRShortField("wReserved2", 0),
         NDRShortField("wReserved3", 0),
-        NDRRecursiveField("_varUnion"),
+        NDRUnionField(
+            [
+                (
+                    NDRSignedLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I8),
+                        (lambda _, val: val.tag == VARENUM.VT_I8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I4),
+                        (lambda _, val: val.tag == VARENUM.VT_I4),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI1),
+                        (lambda _, val: val.tag == VARENUM.VT_UI1),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I2),
+                        (lambda _, val: val.tag == VARENUM.VT_I2),
+                    ),
+                ),
+                (
+                    NDRIEEEFloatField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R4),
+                        (lambda _, val: val.tag == VARENUM.VT_R4),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_R8),
+                        (lambda _, val: val.tag == VARENUM.VT_R8),
+                    ),
+                ),
+                (
+                    NDRSignedShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BOOL),
+                        (lambda _, val: val.tag == VARENUM.VT_BOOL),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ERROR),
+                        (lambda _, val: val.tag == VARENUM.VT_ERROR),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", CURRENCY(), CURRENCY),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_CY),
+                        (lambda _, val: val.tag == VARENUM.VT_CY),
+                    ),
+                ),
+                (
+                    NDRIEEEDoubleField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DATE),
+                        (lambda _, val: val.tag == VARENUM.VT_DATE),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_BSTR),
+                        (lambda _, val: val.tag == VARENUM.VT_BSTR),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UNKNOWN),
+                        (lambda _, val: val.tag == VARENUM.VT_UNKNOWN),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField(
+                            "_varUnion", MInterfacePointer(), MInterfacePointer
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DISPATCH),
+                        (lambda _, val: val.tag == VARENUM.VT_DISPATCH),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                        )
+                    ),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_ARRAY),
+                        (lambda _, val: val.tag == VARENUM.VT_ARRAY),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", wireBRECORDStr(), wireBRECORDStr)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            in [
+                                VARENUM.VT_RECORD,
+                                (VARENUM.VT_RECORD | VARENUM.VT_BYREF),
+                            ]
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEFloatField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_R8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_R8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BOOL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ERROR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", CURRENCY(), CURRENCY)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_CY | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_CY | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIEEEDoubleField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DATE | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_BSTR | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UNKNOWN | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", MInterfacePointer(), MInterfacePointer
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DISPATCH | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRFullEmbPointerField(
+                                NDRPacketField("_varUnion", SAFEARRAY(), SAFEARRAY)
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_ARRAY | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRFullEmbPointerField(
+                            NDRPacketField(
+                                "_varUnion", None, NDRRecursiveClass("wireVARIANTStr")
+                            )
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_VARIANT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRSignedByteField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_I1),
+                        (lambda _, val: val.tag == VARENUM.VT_I1),
+                    ),
+                ),
+                (
+                    NDRShortField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI2),
+                        (lambda _, val: val.tag == VARENUM.VT_UI2),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI4),
+                        (lambda _, val: val.tag == VARENUM.VT_UI4),
+                    ),
+                ),
+                (
+                    NDRLongField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UI8),
+                        (lambda _, val: val.tag == VARENUM.VT_UI8),
+                    ),
+                ),
+                (
+                    NDRSignedIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_INT),
+                        (lambda _, val: val.tag == VARENUM.VT_INT),
+                    ),
+                ),
+                (
+                    NDRIntField("_varUnion", 0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_UINT),
+                        (lambda _, val: val.tag == VARENUM.VT_UINT),
+                    ),
+                ),
+                (
+                    NDRPacketField("_varUnion", DECIMAL(), DECIMAL),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_DECIMAL),
+                        (lambda _, val: val.tag == VARENUM.VT_DECIMAL),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedByteField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_I1 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_I1 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRShortField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI2 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI4 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRLongField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_UI8 | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRSignedIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_INT | VARENUM.VT_BYREF)
+                        ),
+                        (lambda _, val: val.tag == (VARENUM.VT_INT | VARENUM.VT_BYREF)),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(NDRIntField("_varUnion", 0)),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_UINT | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullEmbPointerField(
+                        NDRPacketField("_varUnion", DECIMAL(), DECIMAL)
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "vt", None)
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == (VARENUM.VT_DECIMAL | VARENUM.VT_BYREF)
+                        ),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_EMPTY),
+                        (lambda _, val: val.tag == VARENUM.VT_EMPTY),
+                    ),
+                ),
+                (
+                    StrFixedLenField("_varUnion", "", length=0),
+                    (
+                        (lambda pkt: getattr(pkt, "vt", None) == VARENUM.VT_NULL),
+                        (lambda _, val: val.tag == VARENUM.VT_NULL),
+                    ),
+                ),
+            ],
+            StrFixedLenField("_varUnion", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "H"),
+        ),
     ]
 
 
@@ -321,8 +1055,14 @@ class SetMetadata_Response(NDRPacket):
 IAPPHOSTMETHODINSTANCE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Input_Request, get_Input_Response),
-    4: DceRpcOp(get_Output_Request, get_Output_Response),
+    3: DceRpcOp(
+        get_IAppHostMethodInstance_Input_Request,
+        get_IAppHostMethodInstance_Input_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostMethodInstance_Output_Request,
+        get_IAppHostMethodInstance_Output_Response,
+    ),
     5: DceRpcOp(Execute_Request, Execute_Response),
     6: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     7: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
@@ -334,11 +1074,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostElement_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostElement_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -347,11 +1087,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Collection_Request(NDRPacket):
+class get_IAppHostElement_Collection_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Collection_Response(NDRPacket):
+class get_IAppHostElement_Collection_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppCollection", MInterfacePointer(), MInterfacePointer)
@@ -360,11 +1100,11 @@ class get_Collection_Response(NDRPacket):
     ]
 
 
-class get_Properties_Request(NDRPacket):
+class get_IAppHostElement_Properties_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Properties_Response(NDRPacket):
+class get_IAppHostElement_Properties_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppProperties", MInterfacePointer(), MInterfacePointer)
@@ -373,11 +1113,11 @@ class get_Properties_Response(NDRPacket):
     ]
 
 
-class get_ChildElements_Request(NDRPacket):
+class get_IAppHostElement_ChildElements_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ChildElements_Response(NDRPacket):
+class get_IAppHostElement_ChildElements_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppElements", MInterfacePointer(), MInterfacePointer)
@@ -410,11 +1150,11 @@ class SetMetadata_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Schema_Request(NDRPacket):
+class get_IAppHostElement_Schema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Schema_Response(NDRPacket):
+class get_IAppHostElement_Schema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchema", MInterfacePointer(), MInterfacePointer)
@@ -461,11 +1201,11 @@ class Clear_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Methods_Request(NDRPacket):
+class get_IAppHostElement_Methods_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Methods_Response(NDRPacket):
+class get_IAppHostElement_Methods_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppMethods", MInterfacePointer(), MInterfacePointer)
@@ -477,17 +1217,28 @@ class get_Methods_Response(NDRPacket):
 IAPPHOSTELEMENT_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Collection_Request, get_Collection_Response),
-    5: DceRpcOp(get_Properties_Request, get_Properties_Response),
-    6: DceRpcOp(get_ChildElements_Request, get_ChildElements_Response),
+    3: DceRpcOp(get_IAppHostElement_Name_Request, get_IAppHostElement_Name_Response),
+    4: DceRpcOp(
+        get_IAppHostElement_Collection_Request, get_IAppHostElement_Collection_Response
+    ),
+    5: DceRpcOp(
+        get_IAppHostElement_Properties_Request, get_IAppHostElement_Properties_Response
+    ),
+    6: DceRpcOp(
+        get_IAppHostElement_ChildElements_Request,
+        get_IAppHostElement_ChildElements_Response,
+    ),
     7: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     8: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    9: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    9: DceRpcOp(
+        get_IAppHostElement_Schema_Request, get_IAppHostElement_Schema_Response
+    ),
     10: DceRpcOp(GetElementByName_Request, GetElementByName_Response),
     11: DceRpcOp(GetPropertyByName_Request, GetPropertyByName_Response),
     12: DceRpcOp(Clear_Request, Clear_Response),
-    13: DceRpcOp(get_Methods_Request, get_Methods_Response),
+    13: DceRpcOp(
+        get_IAppHostElement_Methods_Request, get_IAppHostElement_Methods_Response
+    ),
 }
 register_com_interface(
     name="IAppHostElement",
@@ -496,11 +1247,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostProperty_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostProperty_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -509,11 +1260,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Value_Request(NDRPacket):
+class get_IAppHostProperty_Value_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Value_Response(NDRPacket):
+class get_IAppHostProperty_Value_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pVariant", wireVARIANTStr(), wireVARIANTStr)
@@ -522,11 +1273,11 @@ class get_Value_Response(NDRPacket):
     ]
 
 
-class put_Value_Request(NDRPacket):
+class put_IAppHostProperty_Value_Request(NDRPacket):
     fields_desc = [NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class put_Value_Response(NDRPacket):
+class put_IAppHostProperty_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -538,11 +1289,11 @@ class Clear_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_StringValue_Request(NDRPacket):
+class get_IAppHostProperty_StringValue_Request(NDRPacket):
     fields_desc = []
 
 
-class get_StringValue_Response(NDRPacket):
+class get_IAppHostProperty_StringValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -551,11 +1302,11 @@ class get_StringValue_Response(NDRPacket):
     ]
 
 
-class get_Exception_Request(NDRPacket):
+class get_IAppHostProperty_Exception_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Exception_Response(NDRPacket):
+class get_IAppHostProperty_Exception_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppException", MInterfacePointer(), MInterfacePointer)
@@ -588,11 +1339,11 @@ class SetMetadata_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Schema_Request(NDRPacket):
+class get_IAppHostProperty_Schema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Schema_Response(NDRPacket):
+class get_IAppHostProperty_Schema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchema", MInterfacePointer(), MInterfacePointer)
@@ -604,15 +1355,26 @@ class get_Schema_Response(NDRPacket):
 IAPPHOSTPROPERTY_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Value_Request, get_Value_Response),
-    5: DceRpcOp(put_Value_Request, put_Value_Response),
+    3: DceRpcOp(get_IAppHostProperty_Name_Request, get_IAppHostProperty_Name_Response),
+    4: DceRpcOp(
+        get_IAppHostProperty_Value_Request, get_IAppHostProperty_Value_Response
+    ),
+    5: DceRpcOp(
+        put_IAppHostProperty_Value_Request, put_IAppHostProperty_Value_Response
+    ),
     6: DceRpcOp(Clear_Request, Clear_Response),
-    7: DceRpcOp(get_StringValue_Request, get_StringValue_Response),
-    8: DceRpcOp(get_Exception_Request, get_Exception_Response),
+    7: DceRpcOp(
+        get_IAppHostProperty_StringValue_Request,
+        get_IAppHostProperty_StringValue_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostProperty_Exception_Request, get_IAppHostProperty_Exception_Response
+    ),
     9: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     10: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    11: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    11: DceRpcOp(
+        get_IAppHostProperty_Schema_Request, get_IAppHostProperty_Schema_Response
+    ),
 }
 register_com_interface(
     name="IAppHostProperty",
@@ -621,11 +1383,11 @@ register_com_interface(
 )
 
 
-class get_Path_Request(NDRPacket):
+class get_IAppHostConfigLocation_Path_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Path_Response(NDRPacket):
+class get_IAppHostConfigLocation_Path_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrLocationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -634,19 +1396,19 @@ class get_Path_Response(NDRPacket):
     ]
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostConfigLocation_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostConfigLocation_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostConfigLocation_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostConfigLocation_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSection", MInterfacePointer(), MInterfacePointer)
@@ -681,9 +1443,18 @@ class DeleteConfigSection_Response(NDRPacket):
 IAPPHOSTCONFIGLOCATION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Path_Request, get_Path_Response),
-    4: DceRpcOp(get_Count_Request, get_Count_Response),
-    5: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostConfigLocation_Path_Request,
+        get_IAppHostConfigLocation_Path_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConfigLocation_Count_Request,
+        get_IAppHostConfigLocation_Count_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostConfigLocation_Item_Request,
+        get_IAppHostConfigLocation_Item_Response,
+    ),
     6: DceRpcOp(AddConfigSection_Request, AddConfigSection_Response),
     7: DceRpcOp(DeleteConfigSection_Request, DeleteConfigSection_Response),
 }
@@ -694,11 +1465,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostElementSchema_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostElementSchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -707,11 +1478,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_DoesAllowUnschematizedProperties_Request(NDRPacket):
+class get_IAppHostElementSchema_DoesAllowUnschematizedProperties_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DoesAllowUnschematizedProperties_Response(NDRPacket):
+class get_IAppHostElementSchema_DoesAllowUnschematizedProperties_Response(NDRPacket):
     fields_desc = [
         NDRSignedShortField("pfAllowUnschematized", 0),
         NDRIntField("status", 0),
@@ -731,11 +1502,11 @@ class GetMetadata_Response(NDRPacket):
     ]
 
 
-class get_CollectionSchema_Request(NDRPacket):
+class get_IAppHostElementSchema_CollectionSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CollectionSchema_Response(NDRPacket):
+class get_IAppHostElementSchema_CollectionSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppCollectionSchema", MInterfacePointer(), MInterfacePointer)
@@ -744,11 +1515,11 @@ class get_CollectionSchema_Response(NDRPacket):
     ]
 
 
-class get_ChildElementSchemas_Request(NDRPacket):
+class get_IAppHostElementSchema_ChildElementSchemas_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ChildElementSchemas_Response(NDRPacket):
+class get_IAppHostElementSchema_ChildElementSchemas_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppChildSchemas", MInterfacePointer(), MInterfacePointer)
@@ -757,11 +1528,11 @@ class get_ChildElementSchemas_Response(NDRPacket):
     ]
 
 
-class get_PropertySchemas_Request(NDRPacket):
+class get_IAppHostElementSchema_PropertySchemas_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PropertySchemas_Response(NDRPacket):
+class get_IAppHostElementSchema_PropertySchemas_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppPropertySchemas", MInterfacePointer(), MInterfacePointer)
@@ -770,11 +1541,11 @@ class get_PropertySchemas_Response(NDRPacket):
     ]
 
 
-class get_IsCollectionDefault_Request(NDRPacket):
+class get_IAppHostElementSchema_IsCollectionDefault_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsCollectionDefault_Response(NDRPacket):
+class get_IAppHostElementSchema_IsCollectionDefault_Response(NDRPacket):
     fields_desc = [
         NDRSignedShortField("pfIsCollectionDefault", 0),
         NDRIntField("status", 0),
@@ -784,16 +1555,30 @@ class get_IsCollectionDefault_Response(NDRPacket):
 IAPPHOSTELEMENTSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
+    3: DceRpcOp(
+        get_IAppHostElementSchema_Name_Request, get_IAppHostElementSchema_Name_Response
+    ),
     4: DceRpcOp(
-        get_DoesAllowUnschematizedProperties_Request,
-        get_DoesAllowUnschematizedProperties_Response,
+        get_IAppHostElementSchema_DoesAllowUnschematizedProperties_Request,
+        get_IAppHostElementSchema_DoesAllowUnschematizedProperties_Response,
     ),
     5: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    6: DceRpcOp(get_CollectionSchema_Request, get_CollectionSchema_Response),
-    7: DceRpcOp(get_ChildElementSchemas_Request, get_ChildElementSchemas_Response),
-    8: DceRpcOp(get_PropertySchemas_Request, get_PropertySchemas_Response),
-    9: DceRpcOp(get_IsCollectionDefault_Request, get_IsCollectionDefault_Response),
+    6: DceRpcOp(
+        get_IAppHostElementSchema_CollectionSchema_Request,
+        get_IAppHostElementSchema_CollectionSchema_Response,
+    ),
+    7: DceRpcOp(
+        get_IAppHostElementSchema_ChildElementSchemas_Request,
+        get_IAppHostElementSchema_ChildElementSchemas_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostElementSchema_PropertySchemas_Request,
+        get_IAppHostElementSchema_PropertySchemas_Response,
+    ),
+    9: DceRpcOp(
+        get_IAppHostElementSchema_IsCollectionDefault_Request,
+        get_IAppHostElementSchema_IsCollectionDefault_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostElementSchema",
@@ -802,11 +1587,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostPropertySchema_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostPropertySchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -815,11 +1600,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Type_Request(NDRPacket):
+class get_IAppHostPropertySchema_Type_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Type_Response(NDRPacket):
+class get_IAppHostPropertySchema_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -828,11 +1613,11 @@ class get_Type_Response(NDRPacket):
     ]
 
 
-class get_DefaultValue_Request(NDRPacket):
+class get_IAppHostPropertySchema_DefaultValue_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DefaultValue_Response(NDRPacket):
+class get_IAppHostPropertySchema_DefaultValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pDefaultValue", wireVARIANTStr(), wireVARIANTStr)
@@ -841,43 +1626,43 @@ class get_DefaultValue_Response(NDRPacket):
     ]
 
 
-class get_IsRequired_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsRequired_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsRequired_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsRequired_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsRequired", 0), NDRIntField("status", 0)]
 
 
-class get_IsUniqueKey_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsUniqueKey_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsUniqueKey_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsUniqueKey_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsUniqueKey", 0), NDRIntField("status", 0)]
 
 
-class get_IsCombinedKey_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsCombinedKey_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsCombinedKey_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsCombinedKey_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsCombinedKey", 0), NDRIntField("status", 0)]
 
 
-class get_IsExpanded_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsExpanded_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsExpanded_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsExpanded_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsExpanded", 0), NDRIntField("status", 0)]
 
 
-class get_ValidationType_Request(NDRPacket):
+class get_IAppHostPropertySchema_ValidationType_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValidationType_Response(NDRPacket):
+class get_IAppHostPropertySchema_ValidationType_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -888,11 +1673,11 @@ class get_ValidationType_Response(NDRPacket):
     ]
 
 
-class get_ValidationParameter_Request(NDRPacket):
+class get_IAppHostPropertySchema_ValidationParameter_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValidationParameter_Response(NDRPacket):
+class get_IAppHostPropertySchema_ValidationParameter_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -916,22 +1701,22 @@ class GetMetadata_Response(NDRPacket):
     ]
 
 
-class get_IsCaseSensitive_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsCaseSensitive_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsCaseSensitive_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsCaseSensitive_Response(NDRPacket):
     fields_desc = [
         NDRSignedShortField("pfIsCaseSensitive", 0),
         NDRIntField("status", 0),
     ]
 
 
-class get_PossibleValues_Request(NDRPacket):
+class get_IAppHostPropertySchema_PossibleValues_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PossibleValues_Response(NDRPacket):
+class get_IAppHostPropertySchema_PossibleValues_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppValues", MInterfacePointer(), MInterfacePointer)
@@ -940,27 +1725,27 @@ class get_PossibleValues_Response(NDRPacket):
     ]
 
 
-class get_DoesAllowInfinite_Request(NDRPacket):
+class get_IAppHostPropertySchema_DoesAllowInfinite_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DoesAllowInfinite_Response(NDRPacket):
+class get_IAppHostPropertySchema_DoesAllowInfinite_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfAllowInfinite", 0), NDRIntField("status", 0)]
 
 
-class get_IsEncrypted_Request(NDRPacket):
+class get_IAppHostPropertySchema_IsEncrypted_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsEncrypted_Response(NDRPacket):
+class get_IAppHostPropertySchema_IsEncrypted_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsEncrypted", 0), NDRIntField("status", 0)]
 
 
-class get_TimeSpanFormat_Request(NDRPacket):
+class get_IAppHostPropertySchema_TimeSpanFormat_Request(NDRPacket):
     fields_desc = []
 
 
-class get_TimeSpanFormat_Response(NDRPacket):
+class get_IAppHostPropertySchema_TimeSpanFormat_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -974,21 +1759,63 @@ class get_TimeSpanFormat_Response(NDRPacket):
 IAPPHOSTPROPERTYSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Type_Request, get_Type_Response),
-    5: DceRpcOp(get_DefaultValue_Request, get_DefaultValue_Response),
-    6: DceRpcOp(get_IsRequired_Request, get_IsRequired_Response),
-    7: DceRpcOp(get_IsUniqueKey_Request, get_IsUniqueKey_Response),
-    8: DceRpcOp(get_IsCombinedKey_Request, get_IsCombinedKey_Response),
-    9: DceRpcOp(get_IsExpanded_Request, get_IsExpanded_Response),
-    10: DceRpcOp(get_ValidationType_Request, get_ValidationType_Response),
-    11: DceRpcOp(get_ValidationParameter_Request, get_ValidationParameter_Response),
+    3: DceRpcOp(
+        get_IAppHostPropertySchema_Name_Request,
+        get_IAppHostPropertySchema_Name_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostPropertySchema_Type_Request,
+        get_IAppHostPropertySchema_Type_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostPropertySchema_DefaultValue_Request,
+        get_IAppHostPropertySchema_DefaultValue_Response,
+    ),
+    6: DceRpcOp(
+        get_IAppHostPropertySchema_IsRequired_Request,
+        get_IAppHostPropertySchema_IsRequired_Response,
+    ),
+    7: DceRpcOp(
+        get_IAppHostPropertySchema_IsUniqueKey_Request,
+        get_IAppHostPropertySchema_IsUniqueKey_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostPropertySchema_IsCombinedKey_Request,
+        get_IAppHostPropertySchema_IsCombinedKey_Response,
+    ),
+    9: DceRpcOp(
+        get_IAppHostPropertySchema_IsExpanded_Request,
+        get_IAppHostPropertySchema_IsExpanded_Response,
+    ),
+    10: DceRpcOp(
+        get_IAppHostPropertySchema_ValidationType_Request,
+        get_IAppHostPropertySchema_ValidationType_Response,
+    ),
+    11: DceRpcOp(
+        get_IAppHostPropertySchema_ValidationParameter_Request,
+        get_IAppHostPropertySchema_ValidationParameter_Response,
+    ),
     12: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    13: DceRpcOp(get_IsCaseSensitive_Request, get_IsCaseSensitive_Response),
-    14: DceRpcOp(get_PossibleValues_Request, get_PossibleValues_Response),
-    15: DceRpcOp(get_DoesAllowInfinite_Request, get_DoesAllowInfinite_Response),
-    16: DceRpcOp(get_IsEncrypted_Request, get_IsEncrypted_Response),
-    17: DceRpcOp(get_TimeSpanFormat_Request, get_TimeSpanFormat_Response),
+    13: DceRpcOp(
+        get_IAppHostPropertySchema_IsCaseSensitive_Request,
+        get_IAppHostPropertySchema_IsCaseSensitive_Response,
+    ),
+    14: DceRpcOp(
+        get_IAppHostPropertySchema_PossibleValues_Request,
+        get_IAppHostPropertySchema_PossibleValues_Response,
+    ),
+    15: DceRpcOp(
+        get_IAppHostPropertySchema_DoesAllowInfinite_Request,
+        get_IAppHostPropertySchema_DoesAllowInfinite_Response,
+    ),
+    16: DceRpcOp(
+        get_IAppHostPropertySchema_IsEncrypted_Request,
+        get_IAppHostPropertySchema_IsEncrypted_Response,
+    ),
+    17: DceRpcOp(
+        get_IAppHostPropertySchema_TimeSpanFormat_Request,
+        get_IAppHostPropertySchema_TimeSpanFormat_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostPropertySchema",
@@ -997,11 +1824,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostConstantValue_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostConstantValue_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1010,19 +1837,24 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Value_Request(NDRPacket):
+class get_IAppHostConstantValue_Value_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Value_Response(NDRPacket):
+class get_IAppHostConstantValue_Value_Response(NDRPacket):
     fields_desc = [NDRIntField("pdwValue", 0), NDRIntField("status", 0)]
 
 
 IAPPHOSTCONSTANTVALUE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Value_Request, get_Value_Response),
+    3: DceRpcOp(
+        get_IAppHostConstantValue_Name_Request, get_IAppHostConstantValue_Name_Response
+    ),
+    4: DceRpcOp(
+        get_IAppHostConstantValue_Value_Request,
+        get_IAppHostConstantValue_Value_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostConstantValue",
@@ -1151,19 +1983,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostChildElementCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostChildElementCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostChildElementCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostChildElementCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppElement", MInterfacePointer(), MInterfacePointer)
@@ -1175,8 +2007,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTCHILDELEMENTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostChildElementCollection_Count_Request,
+        get_IAppHostChildElementCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostChildElementCollection_Item_Request,
+        get_IAppHostChildElementCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostChildElementCollection",
@@ -1185,19 +2023,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostPropertyCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostPropertyCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostPropertyCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostPropertyCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppProperty", MInterfacePointer(), MInterfacePointer)
@@ -1209,8 +2047,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTPROPERTYCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostPropertyCollection_Count_Request,
+        get_IAppHostPropertyCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostPropertyCollection_Item_Request,
+        get_IAppHostPropertyCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostPropertyCollection",
@@ -1219,19 +2063,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostConfigLocationCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostConfigLocationCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostConfigLocationCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostConfigLocationCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppLocation", MInterfacePointer(), MInterfacePointer)
@@ -1266,8 +2110,14 @@ class DeleteLocation_Response(NDRPacket):
 IAPPHOSTCONFIGLOCATIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostConfigLocationCollection_Count_Request,
+        get_IAppHostConfigLocationCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConfigLocationCollection_Item_Request,
+        get_IAppHostConfigLocationCollection_Item_Response,
+    ),
     5: DceRpcOp(AddLocation_Request, AddLocation_Response),
     6: DceRpcOp(DeleteLocation_Request, DeleteLocation_Response),
 }
@@ -1278,19 +2128,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostMethodCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostMethodCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostMethodCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostMethodCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppMethod", MInterfacePointer(), MInterfacePointer)
@@ -1302,8 +2152,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTMETHODCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostMethodCollection_Count_Request,
+        get_IAppHostMethodCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostMethodCollection_Item_Request,
+        get_IAppHostMethodCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostMethodCollection",
@@ -1312,19 +2168,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostElementSchemaCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostElementSchemaCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostElementSchemaCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostElementSchemaCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppElementSchema", MInterfacePointer(), MInterfacePointer)
@@ -1336,8 +2192,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTELEMENTSCHEMACOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostElementSchemaCollection_Count_Request,
+        get_IAppHostElementSchemaCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostElementSchemaCollection_Item_Request,
+        get_IAppHostElementSchemaCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostElementSchemaCollection",
@@ -1346,19 +2208,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostPropertySchemaCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostPropertySchemaCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostPropertySchemaCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostPropertySchemaCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppPropertySchema", MInterfacePointer(), MInterfacePointer)
@@ -1370,8 +2232,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTPROPERTYSCHEMACOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostPropertySchemaCollection_Count_Request,
+        get_IAppHostPropertySchemaCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostPropertySchemaCollection_Item_Request,
+        get_IAppHostPropertySchemaCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostPropertySchemaCollection",
@@ -1380,19 +2248,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostConstantValueCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostConstantValueCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostConstantValueCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostConstantValueCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppConstantValue", MInterfacePointer(), MInterfacePointer)
@@ -1404,8 +2272,14 @@ class get_Item_Response(NDRPacket):
 IAPPHOSTCONSTANTVALUECOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostConstantValueCollection_Count_Request,
+        get_IAppHostConstantValueCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConstantValueCollection_Item_Request,
+        get_IAppHostConstantValueCollection_Item_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostConstantValueCollection",
@@ -1414,11 +2288,11 @@ register_com_interface(
 )
 
 
-class get_AddElementNames_Request(NDRPacket):
+class get_IAppHostCollectionSchema_AddElementNames_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AddElementNames_Response(NDRPacket):
+class get_IAppHostCollectionSchema_AddElementNames_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1442,11 +2316,11 @@ class GetAddElementSchema_Response(NDRPacket):
     ]
 
 
-class get_RemoveElementSchema_Request(NDRPacket):
+class get_IAppHostCollectionSchema_RemoveElementSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RemoveElementSchema_Response(NDRPacket):
+class get_IAppHostCollectionSchema_RemoveElementSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchema", MInterfacePointer(), MInterfacePointer)
@@ -1455,11 +2329,11 @@ class get_RemoveElementSchema_Response(NDRPacket):
     ]
 
 
-class get_ClearElementSchema_Request(NDRPacket):
+class get_IAppHostCollectionSchema_ClearElementSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ClearElementSchema_Response(NDRPacket):
+class get_IAppHostCollectionSchema_ClearElementSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchema", MInterfacePointer(), MInterfacePointer)
@@ -1468,11 +2342,11 @@ class get_ClearElementSchema_Response(NDRPacket):
     ]
 
 
-class get_IsMergeAppend_Request(NDRPacket):
+class get_IAppHostCollectionSchema_IsMergeAppend_Request(NDRPacket):
     fields_desc = []
 
 
-class get_IsMergeAppend_Response(NDRPacket):
+class get_IAppHostCollectionSchema_IsMergeAppend_Response(NDRPacket):
     fields_desc = [NDRSignedShortField("pfIsMergeAppend", 0), NDRIntField("status", 0)]
 
 
@@ -1489,11 +2363,11 @@ class GetMetadata_Response(NDRPacket):
     ]
 
 
-class get_DoesAllowDuplicates_Request(NDRPacket):
+class get_IAppHostCollectionSchema_DoesAllowDuplicates_Request(NDRPacket):
     fields_desc = []
 
 
-class get_DoesAllowDuplicates_Response(NDRPacket):
+class get_IAppHostCollectionSchema_DoesAllowDuplicates_Response(NDRPacket):
     fields_desc = [
         NDRSignedShortField("pfAllowDuplicates", 0),
         NDRIntField("status", 0),
@@ -1503,13 +2377,28 @@ class get_DoesAllowDuplicates_Response(NDRPacket):
 IAPPHOSTCOLLECTIONSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_AddElementNames_Request, get_AddElementNames_Response),
+    3: DceRpcOp(
+        get_IAppHostCollectionSchema_AddElementNames_Request,
+        get_IAppHostCollectionSchema_AddElementNames_Response,
+    ),
     4: DceRpcOp(GetAddElementSchema_Request, GetAddElementSchema_Response),
-    5: DceRpcOp(get_RemoveElementSchema_Request, get_RemoveElementSchema_Response),
-    6: DceRpcOp(get_ClearElementSchema_Request, get_ClearElementSchema_Response),
-    7: DceRpcOp(get_IsMergeAppend_Request, get_IsMergeAppend_Response),
+    5: DceRpcOp(
+        get_IAppHostCollectionSchema_RemoveElementSchema_Request,
+        get_IAppHostCollectionSchema_RemoveElementSchema_Response,
+    ),
+    6: DceRpcOp(
+        get_IAppHostCollectionSchema_ClearElementSchema_Request,
+        get_IAppHostCollectionSchema_ClearElementSchema_Response,
+    ),
+    7: DceRpcOp(
+        get_IAppHostCollectionSchema_IsMergeAppend_Request,
+        get_IAppHostCollectionSchema_IsMergeAppend_Response,
+    ),
     8: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
-    9: DceRpcOp(get_DoesAllowDuplicates_Request, get_DoesAllowDuplicates_Response),
+    9: DceRpcOp(
+        get_IAppHostCollectionSchema_DoesAllowDuplicates_Request,
+        get_IAppHostCollectionSchema_DoesAllowDuplicates_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostCollectionSchema",
@@ -1518,11 +2407,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostMethodSchema_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostMethodSchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1531,11 +2420,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_InputSchema_Request(NDRPacket):
+class get_IAppHostMethodSchema_InputSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_InputSchema_Response(NDRPacket):
+class get_IAppHostMethodSchema_InputSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppInputSchema", MInterfacePointer(), MInterfacePointer)
@@ -1544,11 +2433,11 @@ class get_InputSchema_Response(NDRPacket):
     ]
 
 
-class get_OutputSchema_Request(NDRPacket):
+class get_IAppHostMethodSchema_OutputSchema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OutputSchema_Response(NDRPacket):
+class get_IAppHostMethodSchema_OutputSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppOutputSchema", MInterfacePointer(), MInterfacePointer)
@@ -1573,9 +2462,17 @@ class GetMetadata_Response(NDRPacket):
 IAPPHOSTMETHODSCHEMA_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_InputSchema_Request, get_InputSchema_Response),
-    5: DceRpcOp(get_OutputSchema_Request, get_OutputSchema_Response),
+    3: DceRpcOp(
+        get_IAppHostMethodSchema_Name_Request, get_IAppHostMethodSchema_Name_Response
+    ),
+    4: DceRpcOp(
+        get_IAppHostMethodSchema_InputSchema_Request,
+        get_IAppHostMethodSchema_InputSchema_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostMethodSchema_OutputSchema_Request,
+        get_IAppHostMethodSchema_OutputSchema_Response,
+    ),
     6: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
 }
 register_com_interface(
@@ -1585,19 +2482,19 @@ register_com_interface(
 )
 
 
-class get_LineNumber_Request(NDRPacket):
+class get_IAppHostConfigException_LineNumber_Request(NDRPacket):
     fields_desc = []
 
 
-class get_LineNumber_Response(NDRPacket):
+class get_IAppHostConfigException_LineNumber_Response(NDRPacket):
     fields_desc = [NDRIntField("pcLineNumber", 0), NDRIntField("status", 0)]
 
 
-class get_FileName_Request(NDRPacket):
+class get_IAppHostConfigException_FileName_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FileName_Response(NDRPacket):
+class get_IAppHostConfigException_FileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrFileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1606,11 +2503,11 @@ class get_FileName_Response(NDRPacket):
     ]
 
 
-class get_ConfigPath_Request(NDRPacket):
+class get_IAppHostConfigException_ConfigPath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ConfigPath_Response(NDRPacket):
+class get_IAppHostConfigException_ConfigPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1619,11 +2516,11 @@ class get_ConfigPath_Response(NDRPacket):
     ]
 
 
-class get_ErrorLine_Request(NDRPacket):
+class get_IAppHostConfigException_ErrorLine_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ErrorLine_Response(NDRPacket):
+class get_IAppHostConfigException_ErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1632,11 +2529,11 @@ class get_ErrorLine_Response(NDRPacket):
     ]
 
 
-class get_PreErrorLine_Request(NDRPacket):
+class get_IAppHostConfigException_PreErrorLine_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PreErrorLine_Response(NDRPacket):
+class get_IAppHostConfigException_PreErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrPreErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1645,11 +2542,11 @@ class get_PreErrorLine_Response(NDRPacket):
     ]
 
 
-class get_PostErrorLine_Request(NDRPacket):
+class get_IAppHostConfigException_PostErrorLine_Request(NDRPacket):
     fields_desc = []
 
 
-class get_PostErrorLine_Response(NDRPacket):
+class get_IAppHostConfigException_PostErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrPostErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1658,11 +2555,11 @@ class get_PostErrorLine_Response(NDRPacket):
     ]
 
 
-class get_ErrorString_Request(NDRPacket):
+class get_IAppHostConfigException_ErrorString_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ErrorString_Response(NDRPacket):
+class get_IAppHostConfigException_ErrorString_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrErrorString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1674,13 +2571,34 @@ class get_ErrorString_Response(NDRPacket):
 IAPPHOSTCONFIGEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_LineNumber_Request, get_LineNumber_Response),
-    4: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    5: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
-    6: DceRpcOp(get_ErrorLine_Request, get_ErrorLine_Response),
-    7: DceRpcOp(get_PreErrorLine_Request, get_PreErrorLine_Response),
-    8: DceRpcOp(get_PostErrorLine_Request, get_PostErrorLine_Response),
-    9: DceRpcOp(get_ErrorString_Request, get_ErrorString_Response),
+    3: DceRpcOp(
+        get_IAppHostConfigException_LineNumber_Request,
+        get_IAppHostConfigException_LineNumber_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConfigException_FileName_Request,
+        get_IAppHostConfigException_FileName_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostConfigException_ConfigPath_Request,
+        get_IAppHostConfigException_ConfigPath_Response,
+    ),
+    6: DceRpcOp(
+        get_IAppHostConfigException_ErrorLine_Request,
+        get_IAppHostConfigException_ErrorLine_Response,
+    ),
+    7: DceRpcOp(
+        get_IAppHostConfigException_PreErrorLine_Request,
+        get_IAppHostConfigException_PreErrorLine_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostConfigException_PostErrorLine_Request,
+        get_IAppHostConfigException_PostErrorLine_Response,
+    ),
+    9: DceRpcOp(
+        get_IAppHostConfigException_ErrorString_Request,
+        get_IAppHostConfigException_ErrorString_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostConfigException",
@@ -1689,11 +2607,11 @@ register_com_interface(
 )
 
 
-class get_InvalidValue_Request(NDRPacket):
+class get_IAppHostPropertyException_InvalidValue_Request(NDRPacket):
     fields_desc = []
 
 
-class get_InvalidValue_Response(NDRPacket):
+class get_IAppHostPropertyException_InvalidValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -1702,11 +2620,11 @@ class get_InvalidValue_Response(NDRPacket):
     ]
 
 
-class get_ValidationFailureReason_Request(NDRPacket):
+class get_IAppHostPropertyException_ValidationFailureReason_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValidationFailureReason_Response(NDRPacket):
+class get_IAppHostPropertyException_ValidationFailureReason_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -1717,221 +2635,11 @@ class get_ValidationFailureReason_Response(NDRPacket):
     ]
 
 
-class SAFEARR_VARIANT(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("Size", None, size_of="aVariant"),
-        NDRRefEmbPointerField(
-            NDRConfPacketListField(
-                "aVariant", [], wireVARIANTStr, size_is=lambda pkt: pkt.Size
-            )
-        ),
-    ]
-
-
-class wireBRECORDStr(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("fFlags", 0),
-        NDRIntField("clSize", None, size_of="pRecord"),
-        NDRFullEmbPointerField(
-            NDRPacketField("pRecInfo", MInterfacePointer(), MInterfacePointer)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfStrLenField("pRecord", "", size_is=lambda pkt: pkt.clSize)
-        ),
-    ]
-
-
-class SAFEARR_BRECORD(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("Size", None, size_of="aRecord"),
-        NDRRefEmbPointerField(
-            NDRConfPacketListField(
-                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size
-            )
-        ),
-    ]
-
-
-class GUID(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [
-        NDRIntField("Data1", 0),
-        NDRShortField("Data2", 0),
-        NDRShortField("Data3", 0),
-        StrFixedLenField("Data4", "", length=8),
-    ]
-
-
-class SAFEARR_HAVEIID(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("Size", None, size_of="apUnknown"),
-        NDRRefEmbPointerField(
-            NDRConfPacketListField(
-                "apUnknown", [], MInterfacePointer, size_is=lambda pkt: pkt.Size
-            )
-        ),
-        NDRPacketField("iid", GUID(), GUID),
-    ]
-
-
-class BYTE_SIZEDARR(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("clSize", None, size_of="pData"),
-        NDRFullEmbPointerField(
-            NDRConfStrLenField("pData", "", size_is=lambda pkt: pkt.clSize)
-        ),
-    ]
-
-
-class WORD_SIZEDARR(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("clSize", None, size_of="pData"),
-        NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("pData", "", size_is=lambda pkt: pkt.clSize)
-        ),
-    ]
-
-
-class DWORD_SIZEDARR(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("clSize", None, size_of="pData"),
-        NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "pData", [], NDRIntField("pData", 0), size_is=lambda pkt: pkt.clSize
-            )
-        ),
-    ]
-
-
-class HYPER_SIZEDARR(NDRPacket):
-    ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRIntField("clSize", None, size_of="pData"),
-        NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "pData",
-                [],
-                NDRSignedLongField("pData", 0),
-                size_is=lambda pkt: pkt.clSize,
-            )
-        ),
-    ]
-
-
-class SAFEARRAYBOUND(NDRPacket):
-    ALIGNMENT = (4, 4)
-    fields_desc = [NDRIntField("cElements", 0), NDRSignedIntField("lLbound", 0)]
-
-
-class SAFEARRAY(NDRPacket):
-    ALIGNMENT = (4, 8)
-    DEPORTED_CONFORMANTS = ["rgsabound"]
-    fields_desc = [
-        NDRShortField("cDims", None, size_of="rgsabound"),
-        NDRShortField("fFeatures", 0),
-        NDRIntField("cbElements", 0),
-        NDRIntField("cLocks", 0),
-        NDRUnionField(
-            [
-                (
-                    NDRPacketField("uArrayStructs", SAFEARR_BSTR(), SAFEARR_BSTR),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_BSTR),
-                        (lambda _, val: val.tag == SF_TYPE.SF_BSTR),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", SAFEARR_UNKNOWN(), SAFEARR_UNKNOWN),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_UNKNOWN),
-                        (lambda _, val: val.tag == SF_TYPE.SF_UNKNOWN),
-                    ),
-                ),
-                (
-                    NDRPacketField(
-                        "uArrayStructs", SAFEARR_DISPATCH(), SAFEARR_DISPATCH
-                    ),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_DISPATCH),
-                        (lambda _, val: val.tag == SF_TYPE.SF_DISPATCH),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", SAFEARR_VARIANT(), SAFEARR_VARIANT),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_VARIANT),
-                        (lambda _, val: val.tag == SF_TYPE.SF_VARIANT),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", SAFEARR_BRECORD(), SAFEARR_BRECORD),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_RECORD),
-                        (lambda _, val: val.tag == SF_TYPE.SF_RECORD),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", SAFEARR_HAVEIID(), SAFEARR_HAVEIID),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_HAVEIID),
-                        (lambda _, val: val.tag == SF_TYPE.SF_HAVEIID),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", BYTE_SIZEDARR(), BYTE_SIZEDARR),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_I1),
-                        (lambda _, val: val.tag == SF_TYPE.SF_I1),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", WORD_SIZEDARR(), WORD_SIZEDARR),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_I2),
-                        (lambda _, val: val.tag == SF_TYPE.SF_I2),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", DWORD_SIZEDARR(), DWORD_SIZEDARR),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_I4),
-                        (lambda _, val: val.tag == SF_TYPE.SF_I4),
-                    ),
-                ),
-                (
-                    NDRPacketField("uArrayStructs", HYPER_SIZEDARR(), HYPER_SIZEDARR),
-                    (
-                        (lambda pkt: None == SF_TYPE.SF_I8),
-                        (lambda _, val: val.tag == SF_TYPE.SF_I8),
-                    ),
-                ),
-            ],
-            StrFixedLenField("uArrayStructs", "", length=0),
-            align=(4, 8),
-            switch_fmt=("I", "I"),
-        ),
-        NDRConfPacketListField(
-            "rgsabound",
-            [],
-            SAFEARRAYBOUND,
-            size_is=lambda pkt: pkt.cDims,
-            conformant_in_struct=True,
-        ),
-    ]
-
-
-class get_ValidationFailureParameters_Request(NDRPacket):
+class get_IAppHostPropertyException_ValidationFailureParameters_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ValidationFailureParameters_Response(NDRPacket):
+class get_IAppHostPropertyException_ValidationFailureParameters_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRPacketField("pParameterArray", SAFEARRAY(), SAFEARRAY)),
         NDRIntField("status", 0),
@@ -1941,20 +2649,45 @@ class get_ValidationFailureParameters_Response(NDRPacket):
 IAPPHOSTPROPERTYEXCEPTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_LineNumber_Request, get_LineNumber_Response),
-    4: DceRpcOp(get_FileName_Request, get_FileName_Response),
-    5: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
-    6: DceRpcOp(get_ErrorLine_Request, get_ErrorLine_Response),
-    7: DceRpcOp(get_PreErrorLine_Request, get_PreErrorLine_Response),
-    8: DceRpcOp(get_PostErrorLine_Request, get_PostErrorLine_Response),
-    9: DceRpcOp(get_ErrorString_Request, get_ErrorString_Response),
-    10: DceRpcOp(get_InvalidValue_Request, get_InvalidValue_Response),
+    3: DceRpcOp(
+        get_IAppHostConfigException_LineNumber_Request,
+        get_IAppHostConfigException_LineNumber_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConfigException_FileName_Request,
+        get_IAppHostConfigException_FileName_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostConfigException_ConfigPath_Request,
+        get_IAppHostConfigException_ConfigPath_Response,
+    ),
+    6: DceRpcOp(
+        get_IAppHostConfigException_ErrorLine_Request,
+        get_IAppHostConfigException_ErrorLine_Response,
+    ),
+    7: DceRpcOp(
+        get_IAppHostConfigException_PreErrorLine_Request,
+        get_IAppHostConfigException_PreErrorLine_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostConfigException_PostErrorLine_Request,
+        get_IAppHostConfigException_PostErrorLine_Response,
+    ),
+    9: DceRpcOp(
+        get_IAppHostConfigException_ErrorString_Request,
+        get_IAppHostConfigException_ErrorString_Response,
+    ),
+    10: DceRpcOp(
+        get_IAppHostPropertyException_InvalidValue_Request,
+        get_IAppHostPropertyException_InvalidValue_Response,
+    ),
     11: DceRpcOp(
-        get_ValidationFailureReason_Request, get_ValidationFailureReason_Response
+        get_IAppHostPropertyException_ValidationFailureReason_Request,
+        get_IAppHostPropertyException_ValidationFailureReason_Response,
     ),
     12: DceRpcOp(
-        get_ValidationFailureParameters_Request,
-        get_ValidationFailureParameters_Response,
+        get_IAppHostPropertyException_ValidationFailureParameters_Request,
+        get_IAppHostPropertyException_ValidationFailureParameters_Response,
     ),
 }
 register_com_interface(
@@ -1964,19 +2697,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostElementCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostElementCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcElementCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostElementCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostElementCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppElement", MInterfacePointer(), MInterfacePointer)
@@ -2027,11 +2760,11 @@ class CreateNewElement_Response(NDRPacket):
     ]
 
 
-class get_Schema_Request(NDRPacket):
+class get_IAppHostElementCollection_Schema_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Schema_Response(NDRPacket):
+class get_IAppHostElementCollection_Schema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSchema", MInterfacePointer(), MInterfacePointer)
@@ -2043,13 +2776,22 @@ class get_Schema_Response(NDRPacket):
 IAPPHOSTELEMENTCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostElementCollection_Count_Request,
+        get_IAppHostElementCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostElementCollection_Item_Request,
+        get_IAppHostElementCollection_Item_Response,
+    ),
     5: DceRpcOp(AddElement_Request, AddElement_Response),
     6: DceRpcOp(DeleteElement_Request, DeleteElement_Response),
     7: DceRpcOp(Clear_Request, Clear_Response),
     8: DceRpcOp(CreateNewElement_Request, CreateNewElement_Response),
-    9: DceRpcOp(get_Schema_Request, get_Schema_Response),
+    9: DceRpcOp(
+        get_IAppHostElementCollection_Schema_Request,
+        get_IAppHostElementCollection_Schema_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostElementCollection",
@@ -2058,11 +2800,11 @@ register_com_interface(
 )
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostSectionDefinition_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostSectionDefinition_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2071,11 +2813,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Type_Request(NDRPacket):
+class get_IAppHostSectionDefinition_Type_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Type_Response(NDRPacket):
+class get_IAppHostSectionDefinition_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2084,19 +2826,19 @@ class get_Type_Response(NDRPacket):
     ]
 
 
-class put_Type_Request(NDRPacket):
+class put_IAppHostSectionDefinition_Type_Request(NDRPacket):
     fields_desc = [NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Type_Response(NDRPacket):
+class put_IAppHostSectionDefinition_Type_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_OverrideModeDefault_Request(NDRPacket):
+class get_IAppHostSectionDefinition_OverrideModeDefault_Request(NDRPacket):
     fields_desc = []
 
 
-class get_OverrideModeDefault_Response(NDRPacket):
+class get_IAppHostSectionDefinition_OverrideModeDefault_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -2107,7 +2849,7 @@ class get_OverrideModeDefault_Response(NDRPacket):
     ]
 
 
-class put_OverrideModeDefault_Request(NDRPacket):
+class put_IAppHostSectionDefinition_OverrideModeDefault_Request(NDRPacket):
     fields_desc = [
         NDRPacketField(
             "bstrOverrideModeDefault", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
@@ -2115,15 +2857,15 @@ class put_OverrideModeDefault_Request(NDRPacket):
     ]
 
 
-class put_OverrideModeDefault_Response(NDRPacket):
+class put_IAppHostSectionDefinition_OverrideModeDefault_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_AllowDefinition_Request(NDRPacket):
+class get_IAppHostSectionDefinition_AllowDefinition_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AllowDefinition_Response(NDRPacket):
+class get_IAppHostSectionDefinition_AllowDefinition_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField(
@@ -2134,21 +2876,21 @@ class get_AllowDefinition_Response(NDRPacket):
     ]
 
 
-class put_AllowDefinition_Request(NDRPacket):
+class put_IAppHostSectionDefinition_AllowDefinition_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrAllowDefinition", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_AllowDefinition_Response(NDRPacket):
+class put_IAppHostSectionDefinition_AllowDefinition_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_AllowLocation_Request(NDRPacket):
+class get_IAppHostSectionDefinition_AllowLocation_Request(NDRPacket):
     fields_desc = []
 
 
-class get_AllowLocation_Response(NDRPacket):
+class get_IAppHostSectionDefinition_AllowLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2157,28 +2899,55 @@ class get_AllowLocation_Response(NDRPacket):
     ]
 
 
-class put_AllowLocation_Request(NDRPacket):
+class put_IAppHostSectionDefinition_AllowLocation_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_AllowLocation_Response(NDRPacket):
+class put_IAppHostSectionDefinition_AllowLocation_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
 IAPPHOSTSECTIONDEFINITION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Name_Request, get_Name_Response),
-    4: DceRpcOp(get_Type_Request, get_Type_Response),
-    5: DceRpcOp(put_Type_Request, put_Type_Response),
-    6: DceRpcOp(get_OverrideModeDefault_Request, get_OverrideModeDefault_Response),
-    7: DceRpcOp(put_OverrideModeDefault_Request, put_OverrideModeDefault_Response),
-    8: DceRpcOp(get_AllowDefinition_Request, get_AllowDefinition_Response),
-    9: DceRpcOp(put_AllowDefinition_Request, put_AllowDefinition_Response),
-    10: DceRpcOp(get_AllowLocation_Request, get_AllowLocation_Response),
-    11: DceRpcOp(put_AllowLocation_Request, put_AllowLocation_Response),
+    3: DceRpcOp(
+        get_IAppHostSectionDefinition_Name_Request,
+        get_IAppHostSectionDefinition_Name_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostSectionDefinition_Type_Request,
+        get_IAppHostSectionDefinition_Type_Response,
+    ),
+    5: DceRpcOp(
+        put_IAppHostSectionDefinition_Type_Request,
+        put_IAppHostSectionDefinition_Type_Response,
+    ),
+    6: DceRpcOp(
+        get_IAppHostSectionDefinition_OverrideModeDefault_Request,
+        get_IAppHostSectionDefinition_OverrideModeDefault_Response,
+    ),
+    7: DceRpcOp(
+        put_IAppHostSectionDefinition_OverrideModeDefault_Request,
+        put_IAppHostSectionDefinition_OverrideModeDefault_Response,
+    ),
+    8: DceRpcOp(
+        get_IAppHostSectionDefinition_AllowDefinition_Request,
+        get_IAppHostSectionDefinition_AllowDefinition_Response,
+    ),
+    9: DceRpcOp(
+        put_IAppHostSectionDefinition_AllowDefinition_Request,
+        put_IAppHostSectionDefinition_AllowDefinition_Response,
+    ),
+    10: DceRpcOp(
+        get_IAppHostSectionDefinition_AllowLocation_Request,
+        get_IAppHostSectionDefinition_AllowLocation_Response,
+    ),
+    11: DceRpcOp(
+        put_IAppHostSectionDefinition_AllowLocation_Request,
+        put_IAppHostSectionDefinition_AllowLocation_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostSectionDefinition",
@@ -2187,19 +2956,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostSectionDefinitionCollection_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostSectionDefinitionCollection_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcCount", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostSectionDefinitionCollection_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostSectionDefinitionCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppConfigSection", MInterfacePointer(), MInterfacePointer)
@@ -2234,8 +3003,14 @@ class DeleteSection_Response(NDRPacket):
 IAPPHOSTSECTIONDEFINITIONCOLLECTION_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
+    3: DceRpcOp(
+        get_IAppHostSectionDefinitionCollection_Count_Request,
+        get_IAppHostSectionDefinitionCollection_Count_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostSectionDefinitionCollection_Item_Request,
+        get_IAppHostSectionDefinitionCollection_Item_Response,
+    ),
     5: DceRpcOp(AddSection_Request, AddSection_Response),
     6: DceRpcOp(DeleteSection_Request, DeleteSection_Response),
 }
@@ -2246,19 +3021,19 @@ register_com_interface(
 )
 
 
-class get_Count_Request(NDRPacket):
+class get_IAppHostSectionGroup_Count_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Count_Response(NDRPacket):
+class get_IAppHostSectionGroup_Count_Response(NDRPacket):
     fields_desc = [NDRIntField("pcSectionGroup", 0), NDRIntField("status", 0)]
 
 
-class get_Item_Request(NDRPacket):
+class get_IAppHostSectionGroup_Item_Request(NDRPacket):
     fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
 
 
-class get_Item_Response(NDRPacket):
+class get_IAppHostSectionGroup_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSectionGroup", MInterfacePointer(), MInterfacePointer)
@@ -2267,11 +3042,11 @@ class get_Item_Response(NDRPacket):
     ]
 
 
-class get_Sections_Request(NDRPacket):
+class get_IAppHostSectionGroup_Sections_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Sections_Response(NDRPacket):
+class get_IAppHostSectionGroup_Sections_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSections", MInterfacePointer(), MInterfacePointer)
@@ -2303,11 +3078,11 @@ class DeleteSectionGroup_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_Name_Request(NDRPacket):
+class get_IAppHostSectionGroup_Name_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Name_Response(NDRPacket):
+class get_IAppHostSectionGroup_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2316,11 +3091,11 @@ class get_Name_Response(NDRPacket):
     ]
 
 
-class get_Type_Request(NDRPacket):
+class get_IAppHostSectionGroup_Type_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Type_Response(NDRPacket):
+class get_IAppHostSectionGroup_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2329,25 +3104,38 @@ class get_Type_Response(NDRPacket):
     ]
 
 
-class put_Type_Request(NDRPacket):
+class put_IAppHostSectionGroup_Type_Request(NDRPacket):
     fields_desc = [NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
 
 
-class put_Type_Response(NDRPacket):
+class put_IAppHostSectionGroup_Type_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
 IAPPHOSTSECTIONGROUP_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_Count_Request, get_Count_Response),
-    4: DceRpcOp(get_Item_Request, get_Item_Response),
-    5: DceRpcOp(get_Sections_Request, get_Sections_Response),
+    3: DceRpcOp(
+        get_IAppHostSectionGroup_Count_Request, get_IAppHostSectionGroup_Count_Response
+    ),
+    4: DceRpcOp(
+        get_IAppHostSectionGroup_Item_Request, get_IAppHostSectionGroup_Item_Response
+    ),
+    5: DceRpcOp(
+        get_IAppHostSectionGroup_Sections_Request,
+        get_IAppHostSectionGroup_Sections_Response,
+    ),
     6: DceRpcOp(AddSectionGroup_Request, AddSectionGroup_Response),
     7: DceRpcOp(DeleteSectionGroup_Request, DeleteSectionGroup_Response),
-    8: DceRpcOp(get_Name_Request, get_Name_Response),
-    9: DceRpcOp(get_Type_Request, get_Type_Response),
-    10: DceRpcOp(put_Type_Request, put_Type_Response),
+    8: DceRpcOp(
+        get_IAppHostSectionGroup_Name_Request, get_IAppHostSectionGroup_Name_Response
+    ),
+    9: DceRpcOp(
+        get_IAppHostSectionGroup_Type_Request, get_IAppHostSectionGroup_Type_Response
+    ),
+    10: DceRpcOp(
+        put_IAppHostSectionGroup_Type_Request, put_IAppHostSectionGroup_Type_Response
+    ),
 }
 register_com_interface(
     name="IAppHostSectionGroup",
@@ -2356,11 +3144,11 @@ register_com_interface(
 )
 
 
-class get_ConfigPath_Request(NDRPacket):
+class get_IAppHostConfigFile_ConfigPath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ConfigPath_Response(NDRPacket):
+class get_IAppHostConfigFile_ConfigPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2369,11 +3157,11 @@ class get_ConfigPath_Response(NDRPacket):
     ]
 
 
-class get_FilePath_Request(NDRPacket):
+class get_IAppHostConfigFile_FilePath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_FilePath_Response(NDRPacket):
+class get_IAppHostConfigFile_FilePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2382,11 +3170,11 @@ class get_FilePath_Response(NDRPacket):
     ]
 
 
-class get_Locations_Request(NDRPacket):
+class get_IAppHostConfigFile_Locations_Request(NDRPacket):
     fields_desc = []
 
 
-class get_Locations_Response(NDRPacket):
+class get_IAppHostConfigFile_Locations_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppLocations", MInterfacePointer(), MInterfacePointer)
@@ -2443,11 +3231,11 @@ class ClearInvalidSections_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_RootSectionGroup_Request(NDRPacket):
+class get_IAppHostConfigFile_RootSectionGroup_Request(NDRPacket):
     fields_desc = []
 
 
-class get_RootSectionGroup_Response(NDRPacket):
+class get_IAppHostConfigFile_RootSectionGroup_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppSectionGroups", MInterfacePointer(), MInterfacePointer)
@@ -2459,14 +3247,26 @@ class get_RootSectionGroup_Response(NDRPacket):
 IAPPHOSTCONFIGFILE_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     # 1: Opnum1NotUsedOnWire,
     # 2: Opnum2NotUsedOnWire,
-    3: DceRpcOp(get_ConfigPath_Request, get_ConfigPath_Response),
-    4: DceRpcOp(get_FilePath_Request, get_FilePath_Response),
-    5: DceRpcOp(get_Locations_Request, get_Locations_Response),
+    3: DceRpcOp(
+        get_IAppHostConfigFile_ConfigPath_Request,
+        get_IAppHostConfigFile_ConfigPath_Response,
+    ),
+    4: DceRpcOp(
+        get_IAppHostConfigFile_FilePath_Request,
+        get_IAppHostConfigFile_FilePath_Response,
+    ),
+    5: DceRpcOp(
+        get_IAppHostConfigFile_Locations_Request,
+        get_IAppHostConfigFile_Locations_Response,
+    ),
     6: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
     7: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     8: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
     9: DceRpcOp(ClearInvalidSections_Request, ClearInvalidSections_Response),
-    10: DceRpcOp(get_RootSectionGroup_Request, get_RootSectionGroup_Response),
+    10: DceRpcOp(
+        get_IAppHostConfigFile_RootSectionGroup_Request,
+        get_IAppHostConfigFile_RootSectionGroup_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostConfigFile",
@@ -2570,11 +3370,11 @@ class SetMetadata_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_ConfigManager_Request(NDRPacket):
+class get_IAppHostAdminManager_ConfigManager_Request(NDRPacket):
     fields_desc = []
 
 
-class get_ConfigManager_Response(NDRPacket):
+class get_IAppHostAdminManager_ConfigManager_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("ppConfigManager", MInterfacePointer(), MInterfacePointer)
@@ -2589,7 +3389,10 @@ IAPPHOSTADMINMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     3: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
     4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    6: DceRpcOp(get_ConfigManager_Request, get_ConfigManager_Response),
+    6: DceRpcOp(
+        get_IAppHostAdminManager_ConfigManager_Request,
+        get_IAppHostAdminManager_ConfigManager_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostAdminManager",
@@ -2606,11 +3409,11 @@ class CommitChanges_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
-class get_CommitPath_Request(NDRPacket):
+class get_IAppHostWritableAdminManager_CommitPath_Request(NDRPacket):
     fields_desc = []
 
 
-class get_CommitPath_Response(NDRPacket):
+class get_IAppHostWritableAdminManager_CommitPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
             NDRPacketField("pbstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
@@ -2619,13 +3422,13 @@ class get_CommitPath_Response(NDRPacket):
     ]
 
 
-class put_CommitPath_Request(NDRPacket):
+class put_IAppHostWritableAdminManager_CommitPath_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("bstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
     ]
 
 
-class put_CommitPath_Response(NDRPacket):
+class put_IAppHostWritableAdminManager_CommitPath_Response(NDRPacket):
     fields_desc = [NDRIntField("status", 0)]
 
 
@@ -2635,10 +3438,19 @@ IAPPHOSTWRITABLEADMINMANAGER_OPNUMS = {  # 0: Opnum0NotUsedOnWire,
     3: DceRpcOp(GetAdminSection_Request, GetAdminSection_Response),
     4: DceRpcOp(GetMetadata_Request, GetMetadata_Response),
     5: DceRpcOp(SetMetadata_Request, SetMetadata_Response),
-    6: DceRpcOp(get_ConfigManager_Request, get_ConfigManager_Response),
+    6: DceRpcOp(
+        get_IAppHostAdminManager_ConfigManager_Request,
+        get_IAppHostAdminManager_ConfigManager_Response,
+    ),
     7: DceRpcOp(CommitChanges_Request, CommitChanges_Response),
-    8: DceRpcOp(get_CommitPath_Request, get_CommitPath_Response),
-    9: DceRpcOp(put_CommitPath_Request, put_CommitPath_Response),
+    8: DceRpcOp(
+        get_IAppHostWritableAdminManager_CommitPath_Request,
+        get_IAppHostWritableAdminManager_CommitPath_Response,
+    ),
+    9: DceRpcOp(
+        put_IAppHostWritableAdminManager_CommitPath_Request,
+        put_IAppHostWritableAdminManager_CommitPath_Response,
+    ),
 }
 register_com_interface(
     name="IAppHostWritableAdminManager",

@@ -20,6 +20,7 @@ from scapy.layers.dcerpc import (
     DceRpcOp,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarFieldListField,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
@@ -338,10 +339,7 @@ class LPWKSTA_USER_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPWKSTA_USER_INFO_0()],
-                LPWKSTA_USER_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPWKSTA_USER_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -363,10 +361,7 @@ class LPWKSTA_USER_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPWKSTA_USER_INFO_1()],
-                LPWKSTA_USER_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPWKSTA_USER_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -454,7 +449,7 @@ class LPWKSTA_TRANSPORT_INFO_0_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
-                [LPWKSTA_TRANSPORT_INFO_0()],
+                [],
                 LPWKSTA_TRANSPORT_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -1104,9 +1099,10 @@ class PUNICODE_STRING(NDRPacket):
             "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfVarFieldListField(
                 "Buffer",
-                "",
+                [],
+                NDRShortField("", 0),
                 size_is=lambda pkt: (pkt.MaximumLength // 2),
                 length_is=lambda pkt: (pkt.Length // 2),
             )
@@ -1120,10 +1116,7 @@ class PNET_COMPUTER_NAME_ARRAY(NDRPacket):
         NDRIntField("EntryCount", None, size_of="ComputerNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ComputerNames",
-                [PUNICODE_STRING()],
-                PUNICODE_STRING,
-                size_is=lambda pkt: pkt.EntryCount,
+                "ComputerNames", [], PUNICODE_STRING, size_is=lambda pkt: pkt.EntryCount
             )
         ),
     ]

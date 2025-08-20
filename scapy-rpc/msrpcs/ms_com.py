@@ -18,7 +18,10 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRByteField,
+    NDRConfFieldListField,
     NDRConfStrLenField,
+    NDRFullPointerField,
     NDRIntField,
     register_com_interface,
 )
@@ -48,8 +51,12 @@ class GetSeqAndTxViaExport_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pulCurrentSeq", 0),
         NDRIntField("pulcbExportCookie", None, size_of="prgbExportCookie"),
-        NDRConfStrLenField(
-            "prgbExportCookie", "", size_is=lambda pkt: pkt.pulcbExportCookie
+        NDRConfFieldListField(
+            "prgbExportCookie",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pulcbExportCookie,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -63,8 +70,12 @@ class GetSeqAndTxViaTransmitter_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pulCurrentSeq", 0),
         NDRIntField("pulcbTransmitterBuffer", None, size_of="prgbTransmitterBuffer"),
-        NDRConfStrLenField(
-            "prgbTransmitterBuffer", "", size_is=lambda pkt: pkt.pulcbTransmitterBuffer
+        NDRConfFieldListField(
+            "prgbTransmitterBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pulcbTransmitterBuffer,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -83,8 +94,12 @@ class GetTxViaExport_Request(NDRPacket):
 class GetTxViaExport_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pulcbExportCookie", None, size_of="prgbExportCookie"),
-        NDRConfStrLenField(
-            "prgbExportCookie", "", size_is=lambda pkt: pkt.pulcbExportCookie
+        NDRConfFieldListField(
+            "prgbExportCookie",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pulcbExportCookie,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -97,8 +112,12 @@ class GetTxViaTransmitter_Request(NDRPacket):
 class GetTxViaTransmitter_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pulcbTransmitterBuffer", None, size_of="prgbTransmitterBuffer"),
-        NDRConfStrLenField(
-            "prgbTransmitterBuffer", "", size_is=lambda pkt: pkt.pulcbTransmitterBuffer
+        NDRConfFieldListField(
+            "prgbTransmitterBuffer",
+            [],
+            NDRFullPointerField(NDRByteField("", 0)),
+            size_is=lambda pkt: pkt.pulcbTransmitterBuffer,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

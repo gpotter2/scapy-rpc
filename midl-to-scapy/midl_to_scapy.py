@@ -86,12 +86,12 @@ def get_base(out):
                         # Union
                         "NDRUnionField",
                         # Misc
-                        "NDRPacketField",
-                        "NDRFullPointerField",
-                        "NDRFullEmbPointerField",
-                        "NDRRefEmbPointerField",
-                        "NDRRecursiveField",
                         "NDRContextHandle",
+                        "NDRFullEmbPointerField",
+                        "NDRFullPointerField",
+                        "NDRPacketField",
+                        "NDRRecursiveClass",
+                        "NDRRefEmbPointerField",
                         # Enums
                         "NDRIntEnumField",
                         "NDRInt3264EnumField",

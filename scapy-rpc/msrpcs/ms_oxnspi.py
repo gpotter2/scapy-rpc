@@ -22,6 +22,8 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
     NDRConfVarFieldListField,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -29,9 +31,8 @@ from scapy.layers.dcerpc import (
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
-    NDRRecursiveField,
+    NDRRecursiveClass,
     NDRShortField,
-    NDRSignedByteField,
     NDRSignedIntField,
     NDRSignedShortField,
     NDRUnionField,
@@ -115,8 +116,8 @@ class PropertyTagArray_r(NDRPacket):
             [],
             NDRIntField("", 0),
             size_is=lambda pkt: (pkt.cValues + 1),
-            length_is=lambda pkt: pkt.cValues,
             conformant_in_struct=True,
+            length_is=lambda pkt: pkt.cValues,
         ),
     ]
 
@@ -152,7 +153,7 @@ class LongArray_r(NDRPacket):
         NDRIntField("cValues", None, size_of="lpl"),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "lpl", [], NDRSignedIntField("lpl", 0), size_is=lambda pkt: pkt.cValues
+                "lpl", [], NDRSignedIntField("", 0), size_is=lambda pkt: pkt.cValues
             )
         ),
     ]
@@ -163,12 +164,7 @@ class StringArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszA"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "lppszA",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullField("lppszA", "")),
-                size_is=lambda pkt: pkt.cValues,
-            )
+            NDRConfVarStrLenField("lppszA", "", size_is=lambda pkt: pkt.cValues)
         ),
     ]
 
@@ -202,12 +198,7 @@ class WStringArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszW"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "lppszW",
-                [],
-                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("lppszW", "")),
-                size_is=lambda pkt: pkt.cValues,
-            )
+            NDRConfVarStrLenFieldUtf16("lppszW", "", size_is=lambda pkt: pkt.cValues)
         ),
     ]
 
@@ -541,9 +532,229 @@ class NspiSeekEntries_Response(NDRPacket):
     ]
 
 
-class _Restriction_r(NDRPacket):
+class AndRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("cRes", None, size_of="lpRes"),
+        NDRFullEmbPointerField(
+            NDRConfPacketListField(
+                "lpRes",
+                [],
+                NDRRecursiveClass("_Restriction_r"),
+                size_is=lambda pkt: pkt.cRes,
+            )
+        ),
+    ]
+
+
+class OrRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("cRes", None, size_of="lpRes"),
+        NDRFullEmbPointerField(
+            NDRConfPacketListField(
+                "lpRes",
+                [],
+                NDRRecursiveClass("_Restriction_r"),
+                size_is=lambda pkt: pkt.cRes,
+            )
+        ),
+    ]
+
+
+class NotRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRFullEmbPointerField(
+            NDRPacketField("lpRes", None, NDRRecursiveClass("_Restriction_r"))
+        )
+    ]
+
+
+class ContentRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("ulFuzzyLevel", 0),
+        NDRIntField("ulPropTag", 0),
+        NDRFullEmbPointerField(
+            NDRPacketField("lpProp", _PropertyValue_r(), _PropertyValue_r)
+        ),
+    ]
+
+
+class PropertyRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("relop", 0),
+        NDRIntField("ulPropTag", 0),
+        NDRFullEmbPointerField(
+            NDRPacketField("lpProp", _PropertyValue_r(), _PropertyValue_r)
+        ),
+    ]
+
+
+class ComparePropsRestriction_r(NDRPacket):
     ALIGNMENT = (4, 4)
-    fields_desc = [NDRIntField("rt", 0), NDRRecursiveField("res")]
+    fields_desc = [
+        NDRIntField("relop", 0),
+        NDRIntField("ulPropTag1", 0),
+        NDRIntField("ulPropTag2", 0),
+    ]
+
+
+class BitMaskRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("relBMR", 0),
+        NDRIntField("ulPropTag", 0),
+        NDRIntField("ulMask", 0),
+    ]
+
+
+class SizeRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("relop", 0),
+        NDRIntField("ulPropTag", 0),
+        NDRIntField("cb", 0),
+    ]
+
+
+class ExistRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("ulReserved1", 0),
+        NDRIntField("ulPropTag", 0),
+        NDRIntField("ulReserved2", 0),
+    ]
+
+
+class SubRestriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("ulSubObject", 0),
+        NDRFullEmbPointerField(
+            NDRPacketField("lpRes", None, NDRRecursiveClass("_Restriction_r"))
+        ),
+    ]
+
+
+class _Restriction_r(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("rt", 0),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField("res", AndRestriction_r(), AndRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 0
+                        ),
+                        (lambda _, val: val.tag == 0),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", OrRestriction_r(), OrRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 1
+                        ),
+                        (lambda _, val: val.tag == 1),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", NotRestriction_r(), NotRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 2
+                        ),
+                        (lambda _, val: val.tag == 2),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", ContentRestriction_r(), ContentRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 3
+                        ),
+                        (lambda _, val: val.tag == 3),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "res", PropertyRestriction_r(), PropertyRestriction_r
+                    ),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 4
+                        ),
+                        (lambda _, val: val.tag == 4),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "res", ComparePropsRestriction_r(), ComparePropsRestriction_r
+                    ),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 5
+                        ),
+                        (lambda _, val: val.tag == 5),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", BitMaskRestriction_r(), BitMaskRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 6
+                        ),
+                        (lambda _, val: val.tag == 6),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", SizeRestriction_r(), SizeRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 7
+                        ),
+                        (lambda _, val: val.tag == 7),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", ExistRestriction_r(), ExistRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 8
+                        ),
+                        (lambda _, val: val.tag == 8),
+                    ),
+                ),
+                (
+                    NDRPacketField("res", SubRestriction_r(), SubRestriction_r),
+                    (
+                        (
+                            lambda pkt: (getattr(pkt, "rt", None) & 0xFFFFFFFFFFFFFFFF)
+                            == 9
+                        ),
+                        (lambda _, val: val.tag == 9),
+                    ),
+                ),
+            ],
+            StrFixedLenField("res", "", length=0),
+            align=(4, 8),
+            switch_fmt=("L", "L"),
+        ),
+    ]
 
 
 class PropertyName_r(NDRPacket):
@@ -615,12 +826,7 @@ class StringsArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "Strings",
-                [],
-                NDRFullEmbPointerField(NDRSignedByteField("Strings", 0)),
-                size_is=lambda pkt: pkt.Count,
-            )
+            NDRConfVarStrLenField("Strings", "", size_is=lambda pkt: pkt.Count)
         ),
     ]
 
@@ -805,12 +1011,7 @@ class WStringsArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
         NDRFullEmbPointerField(
-            NDRConfFieldListField(
-                "Strings",
-                [],
-                NDRFullEmbPointerField(NDRShortField("Strings", 0)),
-                size_is=lambda pkt: pkt.Count,
-            )
+            NDRConfVarStrLenFieldUtf16("Strings", "", size_is=lambda pkt: pkt.Count)
         ),
     ]
 

@@ -17,8 +17,11 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfStrLenField,
+    NDRFullPointerField,
     NDRIntField,
+    NDRSignedByteField,
     register_dcerpc_interface,
 )
 
@@ -35,8 +38,12 @@ class WdsRpcMessage_Request(NDRPacket):
 class WdsRpcMessage_Response(NDRPacket):
     fields_desc = [
         NDRIntField("puReplyPacketSize", None, size_of="pbReplyPacket"),
-        NDRConfStrLenField(
-            "pbReplyPacket", "", size_is=lambda pkt: pkt.puReplyPacketSize
+        NDRConfFieldListField(
+            "pbReplyPacket",
+            [],
+            NDRFullPointerField(NDRSignedByteField("", 0)),
+            size_is=lambda pkt: pkt.puReplyPacketSize,
+            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

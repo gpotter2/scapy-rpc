@@ -1,0 +1,13 @@
+diff --git a/midl-to-scapy/idl/win/ms-dcom.idl b/midl-to-scapy/idl/win/ms-dcom.idl
+index 1eada62..8dd7684 100644
+--- a/midl-to-scapy/idl/win/ms-dcom.idl
++++ b/midl-to-scapy/idl/win/ms-dcom.idl
+@@ -40,7 +40,7 @@
+  typedef struct tagORPCTHIS
+  {
+      COMVERSION      version;    
+-     unsigned long   flags;      
++     tagCPFLAGS   flags;      
+      unsigned long   reserved1;  
+      CID             cid;        
+      [unique] ORPC_EXTENT_ARRAY *extensions;

@@ -43,10 +43,7 @@ class LPSERVER_INFO_100_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSERVER_INFO_100()],
-                LPSERVER_INFO_100,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSERVER_INFO_100, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]

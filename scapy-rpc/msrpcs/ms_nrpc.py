@@ -158,11 +158,19 @@ class CYPHER_BLOCK(NDRPacket):
 
 
 class LM_OWF_PASSWORD(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class NT_OWF_PASSWORD(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class PNETLOGON_INTERACTIVE_INFO(NDRPacket):
@@ -271,7 +279,11 @@ class PGROUP_MEMBERSHIP(NDRPacket):
 
 
 class USER_SESSION_KEY(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
@@ -321,10 +333,7 @@ class PNETLOGON_VALIDATION_SAM_INFO(NDRPacket):
         NDRIntField("GroupCount", None, size_of="GroupIds"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "GroupIds",
-                [PGROUP_MEMBERSHIP()],
-                PGROUP_MEMBERSHIP,
-                size_is=lambda pkt: pkt.GroupCount,
+                "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
         ),
         NDRIntField("UserFlags", 0),
@@ -333,7 +342,7 @@ class PNETLOGON_VALIDATION_SAM_INFO(NDRPacket):
         NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PRPC_SID(), PRPC_SID)),
         NDRFieldListField(
-            "ExpansionRoom", [], NDRIntField("", 0), length_is=lambda _: 10
+            "ExpansionRoom", [0] * 10, NDRIntField("", 0), length_is=lambda _: 10
         ),
     ]
 
@@ -368,10 +377,7 @@ class PNETLOGON_VALIDATION_SAM_INFO2(NDRPacket):
         NDRIntField("GroupCount", None, size_of="GroupIds"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "GroupIds",
-                [PGROUP_MEMBERSHIP()],
-                PGROUP_MEMBERSHIP,
-                size_is=lambda pkt: pkt.GroupCount,
+                "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
         ),
         NDRIntField("UserFlags", 0),
@@ -380,13 +386,13 @@ class PNETLOGON_VALIDATION_SAM_INFO2(NDRPacket):
         NDRPacketField("LogonDomainName", UNICODE_STRING(), UNICODE_STRING),
         NDRFullEmbPointerField(NDRPacketField("LogonDomainId", PRPC_SID(), PRPC_SID)),
         NDRFieldListField(
-            "ExpansionRoom", [], NDRIntField("", 0), length_is=lambda _: 10
+            "ExpansionRoom", [0] * 10, NDRIntField("", 0), length_is=lambda _: 10
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
-                [PNETLOGON_SID_AND_ATTRIBUTES()],
+                [],
                 PNETLOGON_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
             )
@@ -426,10 +432,7 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
         NDRIntField("GroupCount", None, size_of="GroupIds"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "GroupIds",
-                [PGROUP_MEMBERSHIP()],
-                PGROUP_MEMBERSHIP,
-                size_is=lambda pkt: pkt.GroupCount,
+                "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
         ),
         NDRIntField("UserFlags", 0),
@@ -443,12 +446,14 @@ class PNETLOGON_VALIDATION_SAM_INFO4(NDRPacket):
         NDRPacketField("LastSuccessfulILogon", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRPacketField("LastFailedILogon", OLD_LARGE_INTEGER(), OLD_LARGE_INTEGER),
         NDRIntField("FailedILogonCount", 0),
-        NDRFieldListField("Reserved4", [], NDRIntField("", 0), length_is=lambda _: 1),
+        NDRFieldListField(
+            "Reserved4", [0] * 1, NDRIntField("", 0), length_is=lambda _: 1
+        ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
-                [PNETLOGON_SID_AND_ATTRIBUTES()],
+                [],
                 PNETLOGON_SID_AND_ATTRIBUTES,
                 size_is=lambda pkt: pkt.SidCount,
             )
@@ -1044,7 +1049,11 @@ class NetrServerAuthenticate_Response(NDRPacket):
 
 
 class PENCRYPTED_NT_OWF_PASSWORD(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class NetrServerPasswordSet_Request(NDRPacket):
@@ -1195,11 +1204,19 @@ class NLPR_LOGON_HOURS(NDRPacket):
 
 
 class ENCRYPTED_NT_OWF_PASSWORD(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class ENCRYPTED_LM_OWF_PASSWORD(NDRPacket):
-    fields_desc = [PacketListField("data", [], CYPHER_BLOCK, count_from=lambda _: 2)]
+    fields_desc = [
+        PacketListField(
+            "data", [CYPHER_BLOCK()] * 2, CYPHER_BLOCK, count_from=lambda _: 2
+        )
+    ]
 
 
 class NLPR_USER_PRIVATE_INFO(NDRPacket):
@@ -1290,17 +1307,14 @@ class PNETLOGON_DELTA_GROUP_MEMBER(NDRPacket):
     fields_desc = [
         NDRFullEmbPointerField(
             NDRConfFieldListField(
-                "Members",
-                [],
-                NDRIntField("Members", 0),
-                size_is=lambda pkt: pkt.MemberCount,
+                "Members", [], NDRIntField("", 0), size_is=lambda pkt: pkt.MemberCount
             )
         ),
         NDRFullEmbPointerField(
             NDRConfFieldListField(
                 "Attributes",
                 [],
-                NDRIntField("Attributes", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.MemberCount,
             )
         ),
@@ -1364,10 +1378,7 @@ class NLPR_SID_ARRAY(NDRPacket):
         NDRIntField("Count", None, size_of="Sids"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Sids",
-                [PNLPR_SID_INFORMATION()],
-                PNLPR_SID_INFORMATION,
-                size_is=lambda pkt: pkt.Count,
+                "Sids", [], PNLPR_SID_INFORMATION, size_is=lambda pkt: pkt.Count
             )
         ),
     ]
@@ -1412,7 +1423,7 @@ class PNETLOGON_DELTA_POLICY(NDRPacket):
             NDRConfFieldListField(
                 "EventAuditingOptions",
                 [],
-                NDRIntField("EventAuditingOptions", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: (pkt.MaximumAuditEventCount + 1),
             )
         ),
@@ -1458,7 +1469,7 @@ class PNETLOGON_DELTA_TRUSTED_DOMAINS(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "ControllerNames",
-                [PUNICODE_STRING()],
+                [],
                 PUNICODE_STRING,
                 size_is=lambda pkt: pkt.NumControllerEntries,
             )
@@ -1490,14 +1501,14 @@ class PNETLOGON_DELTA_ACCOUNTS(NDRPacket):
             NDRConfFieldListField(
                 "PrivilegeAttributes",
                 [],
-                NDRIntField("PrivilegeAttributes", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.PrivilegeEntries,
             )
         ),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "PrivilegeNames",
-                [PUNICODE_STRING()],
+                [],
                 PUNICODE_STRING,
                 size_is=lambda pkt: pkt.PrivilegeEntries,
             )
@@ -1994,7 +2005,7 @@ class PNETLOGON_DELTA_ENUM_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Deltas",
-                [PNETLOGON_DELTA_ENUM()],
+                [],
                 PNETLOGON_DELTA_ENUM,
                 size_is=lambda pkt: pkt.CountReturned,
             )
@@ -2854,7 +2865,7 @@ class PNETLOGON_DOMAIN_INFO(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "TrustedDomains",
-                [PNETLOGON_ONE_DOMAIN_INFO()],
+                [],
                 PNETLOGON_ONE_DOMAIN_INFO,
                 size_is=lambda pkt: pkt.TrustedDomainCount,
             )
@@ -3067,10 +3078,7 @@ class PNL_SITE_NAME_ARRAY(NDRPacket):
         NDRIntField("EntryCount", None, size_of="SiteNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "SiteNames",
-                [PUNICODE_STRING()],
-                PUNICODE_STRING,
-                size_is=lambda pkt: pkt.EntryCount,
+                "SiteNames", [], PUNICODE_STRING, size_is=lambda pkt: pkt.EntryCount
             )
         ),
     ]
@@ -3082,7 +3090,7 @@ class DsrAddressToSiteNamesW_Request(NDRPacket):
         NDRIntField("EntryCount", None, size_of="SocketAddresses"),
         NDRConfPacketListField(
             "SocketAddresses",
-            [PNL_SOCKET_ADDRESS()],
+            [],
             PNL_SOCKET_ADDRESS,
             size_is=lambda pkt: pkt.EntryCount,
         ),
@@ -3155,10 +3163,7 @@ class PNETLOGON_TRUSTED_DOMAIN_ARRAY(NDRPacket):
         NDRIntField("DomainCount", None, size_of="Domains"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Domains",
-                [PDS_DOMAIN_TRUSTSW()],
-                PDS_DOMAIN_TRUSTSW,
-                size_is=lambda pkt: pkt.DomainCount,
+                "Domains", [], PDS_DOMAIN_TRUSTSW, size_is=lambda pkt: pkt.DomainCount
             )
         ),
     ]
@@ -3183,18 +3188,12 @@ class PNL_SITE_NAME_EX_ARRAY(NDRPacket):
         NDRIntField("EntryCount", None, size_of="SubnetNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "SiteNames",
-                [PUNICODE_STRING()],
-                PUNICODE_STRING,
-                size_is=lambda pkt: pkt.EntryCount,
+                "SiteNames", [], PUNICODE_STRING, size_is=lambda pkt: pkt.EntryCount
             )
         ),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "SubnetNames",
-                [PUNICODE_STRING()],
-                PUNICODE_STRING,
-                size_is=lambda pkt: pkt.EntryCount,
+                "SubnetNames", [], PUNICODE_STRING, size_is=lambda pkt: pkt.EntryCount
             )
         ),
     ]
@@ -3206,7 +3205,7 @@ class DsrAddressToSiteNamesExW_Request(NDRPacket):
         NDRIntField("EntryCount", None, size_of="SocketAddresses"),
         NDRConfPacketListField(
             "SocketAddresses",
-            [PNL_SOCKET_ADDRESS()],
+            [],
             PNL_SOCKET_ADDRESS,
             size_is=lambda pkt: pkt.EntryCount,
         ),
@@ -4034,7 +4033,7 @@ class PNL_GENERIC_RPC_DATA(NDRPacket):
             NDRConfFieldListField(
                 "UlongData",
                 [],
-                NDRIntField("UlongData", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.UlongEntryCount,
             )
         ),
@@ -4042,7 +4041,7 @@ class PNL_GENERIC_RPC_DATA(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "UnicodeStringData",
-                [PUNICODE_STRING()],
+                [],
                 PUNICODE_STRING,
                 size_is=lambda pkt: pkt.UnicodeStringEntryCount,
             )
@@ -4113,7 +4112,7 @@ class PNL_DNS_NAME_INFO_ARRAY(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "DnsNamesInfo",
-                [PNL_DNS_NAME_INFO()],
+                [],
                 PNL_DNS_NAME_INFO,
                 size_is=lambda pkt: pkt.EntryCount,
             )

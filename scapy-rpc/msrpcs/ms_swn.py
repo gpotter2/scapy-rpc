@@ -50,7 +50,7 @@ class PWITNESS_INTERFACE_LIST(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "InterfaceInfo",
-                [PWITNESS_INTERFACE_INFO()],
+                [],
                 PWITNESS_INTERFACE_INFO,
                 size_is=lambda pkt: pkt.NumberOfInterfaces,
             )

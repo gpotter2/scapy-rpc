@@ -17,12 +17,12 @@ import uuid
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
-    NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
+    NDRConfFieldListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullPointerField,
     NDRIntField,
+    NDRShortField,
     register_dcerpc_interface,
 )
 
@@ -57,13 +57,17 @@ class SAGetNSAccountInformation_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Handle", "")),
         NDRIntField("ccBufferSize", None, size_of="wszBuffer"),
-        NDRConfStrLenFieldUtf16("wszBuffer", "", size_is=lambda pkt: pkt.ccBufferSize),
+        NDRConfFieldListField(
+            "wszBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.ccBufferSize
+        ),
     ]
 
 
 class SAGetNSAccountInformation_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16("wszBuffer", "", size_is=lambda pkt: pkt.ccBufferSize),
+        NDRConfFieldListField(
+            "wszBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.ccBufferSize
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -73,13 +77,17 @@ class SAGetAccountInformation_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Handle", "")),
         NDRConfVarStrNullFieldUtf16("pwszJobName", ""),
         NDRIntField("ccBufferSize", None, size_of="wszBuffer"),
-        NDRConfStrLenFieldUtf16("wszBuffer", "", size_is=lambda pkt: pkt.ccBufferSize),
+        NDRConfFieldListField(
+            "wszBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.ccBufferSize
+        ),
     ]
 
 
 class SAGetAccountInformation_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16("wszBuffer", "", size_is=lambda pkt: pkt.ccBufferSize),
+        NDRConfFieldListField(
+            "wszBuffer", [], NDRShortField("", 0), size_is=lambda pkt: pkt.ccBufferSize
+        ),
         NDRIntField("status", 0),
     ]
 

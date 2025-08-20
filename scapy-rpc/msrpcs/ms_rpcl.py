@@ -136,7 +136,7 @@ class I_nsi_lookup_next_Response(NDRPacket):
 
 
 class NSI_UUID_VECTOR_T(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["uuid"]
     fields_desc = [
         NDRIntField("count", None, size_of="uuid"),

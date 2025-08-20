@@ -23,6 +23,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -178,7 +180,7 @@ class PTS_COUNTER(NDRPacket):
 class RpcGetSessionCounters_Request(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "pCounter", [PTS_COUNTER()], PTS_COUNTER, size_is=lambda pkt: pkt.uEntries
+            "pCounter", [], PTS_COUNTER, size_is=lambda pkt: pkt.uEntries
         ),
         NDRIntField("uEntries", None, size_of="pCounter"),
     ]
@@ -187,7 +189,7 @@ class RpcGetSessionCounters_Request(NDRPacket):
 class RpcGetSessionCounters_Response(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "pCounter", [PTS_COUNTER()], PTS_COUNTER, size_is=lambda pkt: pkt.uEntries
+            "pCounter", [], PTS_COUNTER, size_is=lambda pkt: pkt.uEntries
         ),
         NDRIntField("status", 0),
     ]
@@ -579,7 +581,7 @@ class RpcGetSessionIds_Response(NDRPacket):
         NDRConfFieldListField(
             "pSessionIds",
             [],
-            NDRSignedIntField("", 0),
+            NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pcSessionIds,
             ptr_pack=True,
         ),
@@ -738,11 +740,21 @@ class EXECENVDATAEX_LEVEL1(NDRPacket):
         NDRSignedIntField("ExecEnvId", 0),
         NDRSignedIntField("State", 0),
         NDRSignedIntField("AbsSessionId", 0),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszSessionName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszHostName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszUserName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszDomainName", "")),
-        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pszFarmName", "")),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("pszSessionName", "", size_is=lambda pkt: 256)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("pszHostName", "", size_is=lambda pkt: 256)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("pszUserName", "", size_is=lambda pkt: 256)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("pszDomainName", "", size_is=lambda pkt: 256)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16("pszFarmName", "", size_is=lambda pkt: 256)
+        ),
     ]
 
 

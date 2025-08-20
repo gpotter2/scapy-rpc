@@ -22,7 +22,8 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
+    NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRContextHandle,
     NDRFullEmbPointerField,
     NDRFullPointerField,
@@ -172,7 +173,7 @@ class AUTHZR_ACCESS_REPLY(NDRPacket):
             NDRConfFieldListField(
                 "GrantedAccessMask",
                 [],
-                NDRIntField("GrantedAccessMask", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.ResultListLength,
             )
         ),
@@ -180,7 +181,7 @@ class AUTHZR_ACCESS_REPLY(NDRPacket):
             NDRConfFieldListField(
                 "Error",
                 [],
-                NDRIntField("Error", 0),
+                NDRIntField("", 0),
                 size_is=lambda pkt: pkt.ResultListLength,
             )
         ),
@@ -264,7 +265,7 @@ class AUTHZR_SECURITY_ATTRIBUTE_STRING_VALUE(NDRPacket):
     fields_desc = [
         NDRIntField("Length", None, size_of="Value"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
+            NDRConfVarStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
         ),
     ]
 
@@ -313,7 +314,7 @@ class AUTHZR_SECURITY_ATTRIBUTE_V1(NDRPacket):
     fields_desc = [
         NDRIntField("Length", None, size_of="Value"),
         NDRFullEmbPointerField(
-            NDRConfStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
+            NDRConfVarStrLenFieldUtf16("Value", "", size_is=lambda pkt: pkt.Length)
         ),
         NDRShortField("ValueType", 0),
         NDRShortField("Reserved", 0),
@@ -434,9 +435,7 @@ class AuthzrModifyClaims_Request(NDRPacket):
         NDRConfFieldListField(
             "pClaimOperations",
             [],
-            NDRInt3264EnumField(
-                "pClaimOperations", 0, AUTHZ_SECURITY_ATTRIBUTE_OPERATION
-            ),
+            NDRInt3264EnumField("", 0, AUTHZ_SECURITY_ATTRIBUTE_OPERATION),
             size_is=lambda pkt: pkt.OperationCount,
         ),
         NDRFullPointerField(
@@ -469,7 +468,7 @@ class AuthzrModifySids_Request(NDRPacket):
         NDRConfFieldListField(
             "pSidOperations",
             [],
-            NDRInt3264EnumField("pSidOperations", 0, AUTHZ_SID_OPERATION),
+            NDRInt3264EnumField("", 0, AUTHZ_SID_OPERATION),
             size_is=lambda pkt: pkt.OperationCount,
         ),
         NDRFullPointerField(

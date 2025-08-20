@@ -18,9 +18,9 @@ from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
     NDRByteField,
+    NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfStrLenFieldUtf16,
     NDRConfVarPacketListField,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
@@ -49,10 +49,7 @@ class CONNECT_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPCONNECTION_INFO_0()],
-                LPCONNECTION_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPCONNECTION_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -77,10 +74,7 @@ class CONNECT_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPCONNECTION_INFO_1()],
-                LPCONNECTION_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPCONNECTION_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -156,10 +150,7 @@ class FILE_INFO_2_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPFILE_INFO_2()],
-                LPFILE_INFO_2,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPFILE_INFO_2, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -182,10 +173,7 @@ class FILE_INFO_3_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPFILE_INFO_3()],
-                LPFILE_INFO_3,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPFILE_INFO_3, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -310,10 +298,7 @@ class SESSION_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSESSION_INFO_0()],
-                LPSESSION_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSESSION_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -337,10 +322,7 @@ class SESSION_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSESSION_INFO_1()],
-                LPSESSION_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSESSION_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -365,10 +347,7 @@ class SESSION_INFO_2_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSESSION_INFO_2()],
-                LPSESSION_INFO_2,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSESSION_INFO_2, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -390,10 +369,7 @@ class SESSION_INFO_10_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSESSION_INFO_10()],
-                LPSESSION_INFO_10,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSESSION_INFO_10, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -419,10 +395,7 @@ class SESSION_INFO_502_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSESSION_INFO_502()],
-                LPSESSION_INFO_502,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSESSION_INFO_502, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -787,10 +760,7 @@ class SHARE_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_0()],
-                LPSHARE_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -802,10 +772,7 @@ class SHARE_INFO_1_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_1()],
-                LPSHARE_INFO_1,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_1, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -817,10 +784,7 @@ class SHARE_INFO_2_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_2()],
-                LPSHARE_INFO_2,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_2, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -832,10 +796,7 @@ class SHARE_INFO_501_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_501()],
-                LPSHARE_INFO_501,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_501, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -847,10 +808,7 @@ class SHARE_INFO_502_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_502_I()],
-                LPSHARE_INFO_502_I,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_502_I, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -862,10 +820,7 @@ class SHARE_INFO_503_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSHARE_INFO_503_I()],
-                LPSHARE_INFO_503_I,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSHARE_INFO_503_I, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
@@ -2849,7 +2804,7 @@ class NetrServerSetInfo_Response(NDRPacket):
 
 class LPDISK_INFO(NDRPacket):
     ALIGNMENT = (2, 2)
-    fields_desc = [NDRVarStrLenFieldUtf16("Disk", "")]
+    fields_desc = [NDRVarStrLenFieldUtf16("Disk", "", length_is=lambda _: 3)]
 
 
 class DISK_ENUM_CONTAINER(NDRPacket):
@@ -2859,7 +2814,7 @@ class DISK_ENUM_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfVarPacketListField(
                 "Buffer",
-                [LPDISK_INFO()],
+                [],
                 LPDISK_INFO,
                 size_is=lambda pkt: pkt.EntriesRead,
                 length_is=lambda pkt: pkt.EntriesRead,
@@ -2968,7 +2923,7 @@ class PSERVER_XPORT_INFO_0_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
-                [LPSERVER_TRANSPORT_INFO_0()],
+                [],
                 LPSERVER_TRANSPORT_INFO_0,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -3003,7 +2958,7 @@ class PSERVER_XPORT_INFO_1_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
-                [LPSERVER_TRANSPORT_INFO_1()],
+                [],
                 LPSERVER_TRANSPORT_INFO_1,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -3039,7 +2994,7 @@ class PSERVER_XPORT_INFO_2_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
-                [LPSERVER_TRANSPORT_INFO_2()],
+                [],
                 LPSERVER_TRANSPORT_INFO_2,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -3077,7 +3032,7 @@ class PSERVER_XPORT_INFO_3_CONTAINER(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
-                [LPSERVER_TRANSPORT_INFO_3()],
+                [],
                 LPSERVER_TRANSPORT_INFO_3,
                 size_is=lambda pkt: pkt.EntriesRead,
             )
@@ -3288,7 +3243,9 @@ class NetprNameCanonicalize_Request(NDRPacket):
 
 class NetprNameCanonicalize_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16("Outbuf", "", size_is=lambda pkt: pkt.OutbufLen),
+        NDRConfFieldListField(
+            "Outbuf", [], NDRShortField("", 0), size_is=lambda pkt: pkt.OutbufLen
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -3570,10 +3527,7 @@ class LPNET_DFS_ENTRY_ID_CONTAINER(NDRPacket):
         NDRIntField("Count", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPNET_DFS_ENTRY_ID()],
-                LPNET_DFS_ENTRY_ID,
-                size_is=lambda pkt: pkt.Count,
+                "Buffer", [], LPNET_DFS_ENTRY_ID, size_is=lambda pkt: pkt.Count
             )
         ),
     ]
@@ -3634,8 +3588,11 @@ class NetrDfsCreateExitPoint_Request(NDRPacket):
 
 class NetrDfsCreateExitPoint_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenFieldUtf16(
-            "ShortPrefix", "", size_is=lambda pkt: pkt.ShortPrefixLen
+        NDRConfFieldListField(
+            "ShortPrefix",
+            [],
+            NDRShortField("", 0),
+            size_is=lambda pkt: pkt.ShortPrefixLen,
         ),
         NDRIntField("status", 0),
     ]
@@ -3830,10 +3787,7 @@ class SERVER_ALIAS_INFO_0_CONTAINER(NDRPacket):
         NDRIntField("EntriesRead", None, size_of="Buffer"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "Buffer",
-                [LPSERVER_ALIAS_INFO_0()],
-                LPSERVER_ALIAS_INFO_0,
-                size_is=lambda pkt: pkt.EntriesRead,
+                "Buffer", [], LPSERVER_ALIAS_INFO_0, size_is=lambda pkt: pkt.EntriesRead
             )
         ),
     ]
