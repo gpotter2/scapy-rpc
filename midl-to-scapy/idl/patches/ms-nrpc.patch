@@ -1,0 +1,13 @@
+diff --git a/midl-to-scapy/idl/win/ms-nrpc.idl b/midl-to-scapy/idl/win/ms-nrpc.idl
+index b00daf8..84bc88e 100644
+--- a/midl-to-scapy/idl/win/ms-nrpc.idl
++++ b/midl-to-scapy/idl/win/ms-nrpc.idl
+@@ -18,7 +18,7 @@
+     typedef struct _UNICODE_STRING {
+            USHORT Length;
+            USHORT MaximumLength;
+-           PWSTR  Buffer;
++           [size_is(MaximumLength/2), length_is(Length/2)] PWSTR  Buffer;
+     } UNICODE_STRING, * PUNICODE_STRING;
+   
+     typedef struct _OLD_LARGE_INTEGER {

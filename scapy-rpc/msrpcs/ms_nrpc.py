@@ -23,6 +23,7 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarStrLenField,
+    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFieldListField,
@@ -131,9 +132,18 @@ class NETLOGON_LOGON_INFO_CLASS(IntEnum):
 class UNICODE_STRING(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRShortField("Length", 0),
-        NDRShortField("MaximumLength", 0),
-        NDRFullEmbPointerField(NDRShortField("Buffer", 0)),
+        NDRShortField("Length", None, size_of="Buffer", adjust=lambda _, x: (x * 2)),
+        NDRShortField(
+            "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "Buffer",
+                "",
+                size_is=lambda pkt: (pkt.MaximumLength // 2),
+                length_is=lambda pkt: (pkt.Length // 2),
+            )
+        ),
     ]
 
 
@@ -1455,9 +1465,18 @@ class PNETLOGON_DELTA_POLICY(NDRPacket):
 class PUNICODE_STRING(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRShortField("Length", 0),
-        NDRShortField("MaximumLength", 0),
-        NDRFullEmbPointerField(NDRShortField("Buffer", 0)),
+        NDRShortField("Length", None, size_of="Buffer", adjust=lambda _, x: (x * 2)),
+        NDRShortField(
+            "MaximumLength", None, size_of="Buffer", adjust=lambda _, x: (x * 2)
+        ),
+        NDRFullEmbPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "Buffer",
+                "",
+                size_is=lambda pkt: (pkt.MaximumLength // 2),
+                length_is=lambda pkt: (pkt.Length // 2),
+            )
+        ),
     ]
 
 

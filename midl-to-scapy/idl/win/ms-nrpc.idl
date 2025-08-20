@@ -18,7 +18,7 @@
     typedef struct _UNICODE_STRING {
            USHORT Length;
            USHORT MaximumLength;
-           PWSTR  Buffer;
+           [size_is(MaximumLength/2), length_is(Length/2)] PWSTR  Buffer;
     } UNICODE_STRING, * PUNICODE_STRING;
   
     typedef struct _OLD_LARGE_INTEGER {
