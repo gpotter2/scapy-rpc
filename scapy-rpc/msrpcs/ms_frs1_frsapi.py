@@ -56,13 +56,17 @@ class NtFrsApi_Rpc_Get_DsPollingIntervalW_Response(NDRPacket):
 class NtFrsApi_Rpc_InfoW_Request(NDRPacket):
     fields_desc = [
         NDRIntField("BlobSize", None, size_of="Blob"),
-        NDRConfStrLenField("Blob", "", size_is=lambda pkt: pkt.BlobSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Blob", "", size_is=lambda pkt: pkt.BlobSize)
+        ),
     ]
 
 
 class NtFrsApi_Rpc_InfoW_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Blob", "", size_is=lambda pkt: pkt.BlobSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Blob", "", size_is=lambda pkt: pkt.BlobSize)
+        ),
         NDRIntField("status", 0),
     ]
 

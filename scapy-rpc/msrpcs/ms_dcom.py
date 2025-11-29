@@ -155,7 +155,11 @@ class RemoteActivation_Request(NDRPacket):
         NDRIntField("ClientImpLevel", 0),
         NDRIntField("Mode", 0),
         NDRIntField("Interfaces", None, size_of="pIIDs"),
-        NDRConfPacketListField("pIIDs", [], GUID, size_is=lambda pkt: pkt.Interfaces),
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "pIIDs", [], GUID, size_is=lambda pkt: pkt.Interfaces
+            )
+        ),
         NDRShortField("cRequestedProtseqs", None, size_of="aRequestedProtseqs"),
         NDRConfFieldListField(
             "aRequestedProtseqs",

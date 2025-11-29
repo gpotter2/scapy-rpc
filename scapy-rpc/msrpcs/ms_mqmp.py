@@ -903,7 +903,11 @@ class R_QMCreateObjectInternal_Request(NDRPacket):
         NDRIntField("dwObjectType", 0),
         NDRConfVarStrNullFieldUtf16("lpwcsPathName", ""),
         NDRIntField("SDSize", None, size_of="pSecurityDescriptor"),
-        NDRConfStrLenField("pSecurityDescriptor", "", size_is=lambda pkt: pkt.SDSize),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.SDSize
+            )
+        ),
         NDRIntField("cp", None, size_of="apVar"),
         NDRConfFieldListField(
             "aProp", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cp
@@ -946,7 +950,11 @@ class R_QMSetObjectSecurityInternal_Request(NDRPacket):
         NDRPacketField("pObjectFormat", OBJECT_FORMAT(), OBJECT_FORMAT),
         NDRIntField("SecurityInformation", 0),
         NDRIntField("SDSize", None, size_of="pSecurityDescriptor"),
-        NDRConfStrLenField("pSecurityDescriptor", "", size_is=lambda pkt: pkt.SDSize),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.SDSize
+            )
+        ),
     ]
 
 
@@ -1154,12 +1162,14 @@ class rpc_ACHandleToFormatName_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hQueue", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwFormatNameRPCBufferLen", None, size_of="lpwcsFormatName"),
-        NDRConfVarFieldListField(
-            "lpwcsFormatName",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
-            length_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+        NDRFullPointerField(
+            NDRConfVarFieldListField(
+                "lpwcsFormatName",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+                length_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+            )
         ),
         NDRIntField("pdwLength", 0),
     ]
@@ -1167,12 +1177,14 @@ class rpc_ACHandleToFormatName_Request(NDRPacket):
 
 class rpc_ACHandleToFormatName_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarFieldListField(
-            "lpwcsFormatName",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
-            length_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+        NDRFullPointerField(
+            NDRConfVarFieldListField(
+                "lpwcsFormatName",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+                length_is=lambda pkt: pkt.dwFormatNameRPCBufferLen,
+            )
         ),
         NDRIntField("pdwLength", 0),
         NDRIntField("status", 0),

@@ -135,11 +135,13 @@ class RRPC_FWGetGlobalConfig_Request(NDRPacket):
         NDRInt3264EnumField("StoreType", 0, FW_STORE_TYPE),
         NDRInt3264EnumField("configID", 0, FW_GLOBAL_CONFIG),
         NDRIntField("dwFlags", 0),
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("cbData", None, size_of="pBuffer"),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
@@ -148,11 +150,13 @@ class RRPC_FWGetGlobalConfig_Request(NDRPacket):
 
 class RRPC_FWGetGlobalConfig_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
         NDRIntField("pcbRequired", 0),
@@ -166,7 +170,9 @@ class RRPC_FWSetGlobalConfig_Request(NDRPacket):
         NDRShortField("BinaryVersion", 0),
         NDRInt3264EnumField("StoreType", 0, FW_STORE_TYPE),
         NDRInt3264EnumField("configID", 0, FW_GLOBAL_CONFIG),
-        NDRConfStrLenField("lpBuffer", "", size_is=lambda pkt: pkt.dwBufSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpBuffer", "", size_is=lambda pkt: pkt.dwBufSize)
+        ),
         NDRIntField("dwBufSize", None, size_of="lpBuffer"),
     ]
 
@@ -809,11 +815,13 @@ class RRPC_FWGetConfig_Request(NDRPacket):
         NDRInt3264EnumField("configID", 0, FW_PROFILE_CONFIG),
         NDRIntEnumField("Profile", 0, FW_PROFILE_TYPE),
         NDRIntField("dwFlags", 0),
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("cbData", None, size_of="pBuffer"),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
@@ -822,11 +830,13 @@ class RRPC_FWGetConfig_Request(NDRPacket):
 
 class RRPC_FWGetConfig_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
         NDRIntField("pcbRequired", 0),
@@ -2532,11 +2542,13 @@ class RRPC_FWGetGlobalConfig2_10_Request(NDRPacket):
         NDRInt3264EnumField("StoreType", 0, FW_STORE_TYPE),
         NDRInt3264EnumField("configID", 0, FW_GLOBAL_CONFIG),
         NDRIntField("dwFlags", 0),
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("cbData", None, size_of="pBuffer"),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
@@ -2545,11 +2557,13 @@ class RRPC_FWGetGlobalConfig2_10_Request(NDRPacket):
 
 class RRPC_FWGetGlobalConfig2_10_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
         NDRIntField("pcbRequired", 0),
@@ -2565,11 +2579,13 @@ class RRPC_FWGetConfig2_10_Request(NDRPacket):
         NDRInt3264EnumField("configID", 0, FW_PROFILE_CONFIG),
         NDRIntEnumField("Profile", 0, FW_PROFILE_TYPE),
         NDRIntField("dwFlags", 0),
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("cbData", None, size_of="pBuffer"),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
@@ -2578,11 +2594,13 @@ class RRPC_FWGetConfig2_10_Request(NDRPacket):
 
 class RRPC_FWGetConfig2_10_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenField(
-            "pBuffer",
-            "",
-            size_is=lambda pkt: pkt.cbData,
-            length_is=lambda pkt: pkt.pcbTransmittedLen,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "pBuffer",
+                "",
+                size_is=lambda pkt: pkt.cbData,
+                length_is=lambda pkt: pkt.pcbTransmittedLen,
+            )
         ),
         NDRIntField("pcbTransmittedLen", None, size_of="pBuffer"),
         NDRIntField("pcbRequired", 0),

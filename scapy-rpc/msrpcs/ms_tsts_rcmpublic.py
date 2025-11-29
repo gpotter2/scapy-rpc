@@ -264,7 +264,9 @@ class RpcQuerySessionData_Request(NDRPacket):
     fields_desc = [
         NDRIntField("SessionId", 0),
         NDRInt3264EnumField("type", 0, QUERY_SESSION_DATA_TYPE),
-        NDRConfStrLenField("pbInputData", "", size_is=lambda pkt: pkt.cbInputData),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbInputData", "", size_is=lambda pkt: pkt.cbInputData)
+        ),
         NDRIntField("cbInputData", None, size_of="pbInputData"),
         NDRIntField("cbSessionData", 0),
     ]

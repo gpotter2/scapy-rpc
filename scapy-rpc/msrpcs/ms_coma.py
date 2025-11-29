@@ -175,12 +175,16 @@ class GetClientTableInfo_Request(NDRPacket):
         NDRPacketField("pCatalogIdentifier", GUID(), GUID),
         NDRPacketField("pTableIdentifier", GUID(), GUID),
         NDRIntField("tableFlags", 0),
-        NDRConfStrLenField(
-            "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+            )
         ),
         NDRIntField("cbQueryCellArray", None, size_of="pQueryCellArray"),
-        NDRConfStrLenField(
-            "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+            )
         ),
         NDRIntField("cbQueryComparison", None, size_of="pQueryComparison"),
         NDRIntField("eQueryFormat", 0),
@@ -245,12 +249,16 @@ class ReadTable_Request(NDRPacket):
         NDRPacketField("pCatalogIdentifier", GUID(), GUID),
         NDRPacketField("pTableIdentifier", GUID(), GUID),
         NDRIntField("tableFlags", 0),
-        NDRConfStrLenField(
-            "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+            )
         ),
         NDRIntField("cbQueryCellArray", None, size_of="pQueryCellArray"),
-        NDRConfStrLenField(
-            "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+            )
         ),
         NDRIntField("cbQueryComparison", None, size_of="pQueryComparison"),
         NDRIntField("eQueryFormat", 0),
@@ -320,12 +328,16 @@ class WriteTable_Request(NDRPacket):
         NDRPacketField("pCatalogIdentifier", GUID(), GUID),
         NDRPacketField("pTableIdentifier", GUID(), GUID),
         NDRIntField("tableFlags", 0),
-        NDRConfStrLenField(
-            "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryCellArray", "", size_is=lambda pkt: pkt.cbQueryCellArray
+            )
         ),
         NDRIntField("cbQueryCellArray", None, size_of="pQueryCellArray"),
-        NDRConfStrLenField(
-            "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pQueryComparison", "", size_is=lambda pkt: pkt.cbQueryComparison
+            )
         ),
         NDRIntField("cbQueryComparison", None, size_of="pQueryComparison"),
         NDRIntField("eQueryFormat", 0),
@@ -378,8 +390,10 @@ class RegisterModule_Request(NDRPacket):
         NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.cModules),
         NDRIntField("cModules", None, size_of="ppModules"),
         NDRIntField("dwFlags", 0),
-        NDRConfPacketListField(
-            "pRequestedCLSIDs", [], GUID, size_is=lambda pkt: pkt.cRequested
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "pRequestedCLSIDs", [], GUID, size_is=lambda pkt: pkt.cRequested
+            )
         ),
         NDRIntField("cRequested", None, size_of="pRequestedCLSIDs"),
     ]
@@ -482,8 +496,10 @@ class RegisterModule2_Request(NDRPacket):
         NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.cModules),
         NDRIntField("cModules", None, size_of="ppModules"),
         NDRIntField("dwFlags", 0),
-        NDRConfPacketListField(
-            "pRequestedCLSIDs", [], GUID, size_is=lambda pkt: pkt.cRequested
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "pRequestedCLSIDs", [], GUID, size_is=lambda pkt: pkt.cRequested
+            )
         ),
         NDRIntField("cRequested", None, size_of="pRequestedCLSIDs"),
     ]

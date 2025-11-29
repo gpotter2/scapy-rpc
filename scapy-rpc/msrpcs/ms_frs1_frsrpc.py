@@ -77,15 +77,23 @@ class FrsRpcStartPromotionParent_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("PartnerPrincName", "")),
         NDRIntField("PartnerAuthLevel", 0),
         NDRIntField("GuidSize", None, size_of="ParentGuid"),
-        NDRConfStrLenField("CxtionGuid", "", size_is=lambda pkt: pkt.GuidSize),
-        NDRConfStrLenField("PartnerGuid", "", size_is=lambda pkt: pkt.GuidSize),
-        NDRConfStrLenField("ParentGuid", "", size_is=lambda pkt: pkt.GuidSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("CxtionGuid", "", size_is=lambda pkt: pkt.GuidSize)
+        ),
+        NDRFullPointerField(
+            NDRConfStrLenField("PartnerGuid", "", size_is=lambda pkt: pkt.GuidSize)
+        ),
+        NDRFullPointerField(
+            NDRConfStrLenField("ParentGuid", "", size_is=lambda pkt: pkt.GuidSize)
+        ),
     ]
 
 
 class FrsRpcStartPromotionParent_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("ParentGuid", "", size_is=lambda pkt: pkt.GuidSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("ParentGuid", "", size_is=lambda pkt: pkt.GuidSize)
+        ),
         NDRIntField("status", 0),
     ]
 

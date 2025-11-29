@@ -60,14 +60,18 @@ class RpcInfo(NDRPacket):
 
 class EvtRpcRegisterRemoteSubscription_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "channelPath", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_NAME_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "channelPath", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_NAME_LENGTH
+            )
         ),
         NDRConfVarStrLenFieldUtf16(
             "query", "", size_is=lambda pkt: pkt.MAX_RPC_QUERY_LENGTH
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "bookmarkXml", "", size_is=lambda pkt: pkt.MAX_RPC_BOOKMARK_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "bookmarkXml", "", size_is=lambda pkt: pkt.MAX_RPC_BOOKMARK_LENGTH
+            )
         ),
         NDRIntField("flags", 0),
     ]
@@ -186,8 +190,10 @@ class EvtRpcRegisterControllableOperation_Response(NDRPacket):
 
 class EvtRpcRegisterLogQuery_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "path", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_PATH_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "path", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_PATH_LENGTH
+            )
         ),
         NDRConfVarStrLenFieldUtf16(
             "query", "", size_is=lambda pkt: pkt.MAX_RPC_QUERY_LENGTH
@@ -219,8 +225,10 @@ class EvtRpcClearLog_Request(NDRPacket):
         NDRConfVarStrLenFieldUtf16(
             "channelPath", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_NAME_LENGTH
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "backupPath", "", size_is=lambda pkt: pkt.MAX_RPC_FILE_PATH_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "backupPath", "", size_is=lambda pkt: pkt.MAX_RPC_FILE_PATH_LENGTH
+            )
         ),
         NDRIntField("flags", 0),
     ]
@@ -236,8 +244,10 @@ class EvtRpcClearLog_Response(NDRPacket):
 class EvtRpcExportLog_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("control", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrLenFieldUtf16(
-            "channelPath", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_NAME_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "channelPath", "", size_is=lambda pkt: pkt.MAX_RPC_CHANNEL_NAME_LENGTH
+            )
         ),
         NDRConfVarStrLenFieldUtf16(
             "query", "", size_is=lambda pkt: pkt.MAX_RPC_QUERY_LENGTH
@@ -615,8 +625,10 @@ class EvtRpcQuerySeek_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("logQuery", NDRContextHandle(), NDRContextHandle),
         NDRSignedLongField("pos", 0),
-        NDRConfVarStrLenFieldUtf16(
-            "bookmarkXml", "", size_is=lambda pkt: pkt.MAX_RPC_BOOKMARK_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "bookmarkXml", "", size_is=lambda pkt: pkt.MAX_RPC_BOOKMARK_LENGTH
+            )
         ),
         NDRIntField("timeOut", 0),
         NDRIntField("flags", 0),
@@ -787,11 +799,15 @@ class EvtRpcGetPublisherListForChannel_Response(NDRPacket):
 
 class EvtRpcGetPublisherMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "publisherId", "", size_is=lambda pkt: pkt.MAX_RPC_PUBLISHER_ID_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "publisherId", "", size_is=lambda pkt: pkt.MAX_RPC_PUBLISHER_ID_LENGTH
+            )
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "logFilePath", "", size_is=lambda pkt: pkt.MAX_RPC_FILE_PATH_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "logFilePath", "", size_is=lambda pkt: pkt.MAX_RPC_FILE_PATH_LENGTH
+            )
         ),
         NDRIntField("locale", 0),
         NDRIntField("flags", 0),
@@ -825,8 +841,10 @@ class EvtRpcGetEventMetadataEnum_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("pubMetadata", NDRContextHandle(), NDRContextHandle),
         NDRIntField("flags", 0),
-        NDRConfVarStrLenFieldUtf16(
-            "reservedForFilter", "", size_is=lambda pkt: pkt.MAX_RPC_FILTER_LENGTH
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16(
+                "reservedForFilter", "", size_is=lambda pkt: pkt.MAX_RPC_FILTER_LENGTH
+            )
         ),
     ]
 

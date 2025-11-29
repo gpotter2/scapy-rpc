@@ -29,7 +29,9 @@ from scapy.layers.dcerpc import (
 class ExchangePublicKeys_Request(NDRPacket):
     fields_desc = [
         NDRIntField("ClientKeyLength", None, size_of="ClientKey"),
-        NDRConfStrLenField("ClientKey", "", size_is=lambda pkt: pkt.ClientKeyLength),
+        NDRFullPointerField(
+            NDRConfStrLenField("ClientKey", "", size_is=lambda pkt: pkt.ClientKeyLength)
+        ),
     ]
 
 

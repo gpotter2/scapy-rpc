@@ -686,14 +686,18 @@ class RpcAsyncGetJob_Request(NDRPacket):
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("JobId", 0),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pJob"),
     ]
 
 
 class RpcAsyncGetJob_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
     ]
@@ -705,14 +709,18 @@ class RpcAsyncEnumJobs_Request(NDRPacket):
         NDRIntField("FirstJob", 0),
         NDRIntField("NoJobs", 0),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pJob"),
     ]
 
 
 class RpcAsyncEnumJobs_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -723,14 +731,18 @@ class RpcAsyncAddJob_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pAddJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pAddJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pAddJob"),
     ]
 
 
 class RpcAsyncAddJob_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pAddJob", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pAddJob", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
     ]
@@ -773,14 +785,18 @@ class RpcAsyncGetPrinter_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pPrinter", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinter", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pPrinter"),
     ]
 
 
 class RpcAsyncGetPrinter_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pPrinter", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinter", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
     ]
@@ -1048,14 +1064,18 @@ class RpcAsyncGetForm_Request(NDRPacket):
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRConfVarStrNullFieldUtf16("pFormName", ""),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pForm"),
     ]
 
 
 class RpcAsyncGetForm_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
     ]
@@ -1077,14 +1097,18 @@ class RpcAsyncEnumForms_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pForm"),
     ]
 
 
 class RpcAsyncEnumForms_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pForm", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -1096,7 +1120,9 @@ class RpcAsyncGetPrinterDriver_Request(NDRPacket):
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pDriver", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDriver", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pDriver"),
         NDRIntField("dwClientMajorVersion", 0),
         NDRIntField("dwClientMinorVersion", 0),
@@ -1105,7 +1131,9 @@ class RpcAsyncGetPrinterDriver_Request(NDRPacket):
 
 class RpcAsyncGetPrinterDriver_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pDriver", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDriver", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pdwServerMaxVersion", 0),
         NDRIntField("pdwServerMinVersion", 0),
@@ -1447,14 +1475,18 @@ class RpcAsyncEnumPrinters_Request(NDRPacket):
         NDRIntField("Flags", 0),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("Name", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pPrinterEnum"),
     ]
 
 
 class RpcAsyncEnumPrinters_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -1735,14 +1767,18 @@ class RpcAsyncEnumPrinterDrivers_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pDrivers", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDrivers", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pDrivers"),
     ]
 
 
 class RpcAsyncEnumPrinterDrivers_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pDrivers", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDrivers", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -1754,14 +1790,18 @@ class RpcAsyncGetPrinterDriverDirectory_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pDriverDirectory", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDriverDirectory", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pDriverDirectory"),
     ]
 
 
 class RpcAsyncGetPrinterDriverDirectory_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pDriverDirectory", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDriverDirectory", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
     ]
@@ -1811,14 +1851,18 @@ class RpcAsyncEnumPrintProcessors_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pPrintProcessorInfo", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrintProcessorInfo", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pPrintProcessorInfo"),
     ]
 
 
 class RpcAsyncEnumPrintProcessors_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pPrintProcessorInfo", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrintProcessorInfo", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -1830,8 +1874,10 @@ class RpcAsyncGetPrintProcessorDirectory_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pEnvironment", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField(
-            "pPrintProcessorDirectory", "", size_is=lambda pkt: pkt.cbBuf
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pPrintProcessorDirectory", "", size_is=lambda pkt: pkt.cbBuf
+            )
         ),
         NDRIntField("cbBuf", None, size_of="pPrintProcessorDirectory"),
     ]
@@ -1839,8 +1885,10 @@ class RpcAsyncGetPrintProcessorDirectory_Request(NDRPacket):
 
 class RpcAsyncGetPrintProcessorDirectory_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField(
-            "pPrintProcessorDirectory", "", size_is=lambda pkt: pkt.cbBuf
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pPrintProcessorDirectory", "", size_is=lambda pkt: pkt.cbBuf
+            )
         ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("status", 0),
@@ -1851,14 +1899,18 @@ class RpcAsyncEnumPorts_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pPort", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPort", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pPort"),
     ]
 
 
 class RpcAsyncEnumPorts_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pPort", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPort", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -1869,14 +1921,18 @@ class RpcAsyncEnumMonitors_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pMonitor", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pMonitor", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pMonitor"),
     ]
 
 
 class RpcAsyncEnumMonitors_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pMonitor", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pMonitor", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -2093,14 +2149,18 @@ class RpcAsyncEnumPrintProcessorDatatypes_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pPrintProcessorName", "")),
         NDRIntField("Level", 0),
-        NDRConfStrLenField("pDatatypes", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDatatypes", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pDatatypes"),
     ]
 
 
 class RpcAsyncEnumPrintProcessorDatatypes_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pDatatypes", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pDatatypes", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -2134,14 +2194,18 @@ class RpcAsyncDeletePerMachineConnection_Response(NDRPacket):
 class RpcAsyncEnumPerMachineConnections_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pServer", "")),
-        NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("cbBuf", None, size_of="pPrinterEnum"),
     ]
 
 
 class RpcAsyncEnumPerMachineConnections_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf),
+        NDRFullPointerField(
+            NDRConfStrLenField("pPrinterEnum", "", size_is=lambda pkt: pkt.cbBuf)
+        ),
         NDRIntField("pcbNeeded", 0),
         NDRIntField("pcReturned", 0),
         NDRIntField("status", 0),
@@ -2563,11 +2627,13 @@ class RpcAsyncUploadPrinterDriverPackage_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("pszInfPath", ""),
         NDRConfVarStrNullFieldUtf16("pszEnvironment", ""),
         NDRIntField("dwFlags", 0),
-        NDRConfFieldListField(
-            "pszDestInfPath",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.pcchDestInfPath,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "pszDestInfPath",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.pcchDestInfPath,
+            )
         ),
         NDRIntField("pcchDestInfPath", None, size_of="pszDestInfPath"),
     ]
@@ -2575,11 +2641,13 @@ class RpcAsyncUploadPrinterDriverPackage_Request(NDRPacket):
 
 class RpcAsyncUploadPrinterDriverPackage_Response(NDRPacket):
     fields_desc = [
-        NDRConfFieldListField(
-            "pszDestInfPath",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.pcchDestInfPath,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "pszDestInfPath",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.pcchDestInfPath,
+            )
         ),
         NDRIntField("pcchDestInfPath", None, size_of="pszDestInfPath"),
         NDRIntField("status", 0),
@@ -2653,11 +2721,13 @@ class RpcAsyncGetPrinterDriverPackagePath_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("pszEnvironment", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pszLanguage", "")),
         NDRConfVarStrNullFieldUtf16("pszPackageID", ""),
-        NDRConfFieldListField(
-            "pszDriverPackageCab",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.cchDriverPackageCab,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "pszDriverPackageCab",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDriverPackageCab,
+            )
         ),
         NDRIntField("cchDriverPackageCab", None, size_of="pszDriverPackageCab"),
     ]
@@ -2665,11 +2735,13 @@ class RpcAsyncGetPrinterDriverPackagePath_Request(NDRPacket):
 
 class RpcAsyncGetPrinterDriverPackagePath_Response(NDRPacket):
     fields_desc = [
-        NDRConfFieldListField(
-            "pszDriverPackageCab",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.cchDriverPackageCab,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "pszDriverPackageCab",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchDriverPackageCab,
+            )
         ),
         NDRIntField("pcchRequiredSize", 0),
         NDRIntField("status", 0),

@@ -3066,11 +3066,13 @@ class QueryPlexes_Response(NDRPacket):
 
 class Extend_Request(NDRPacket):
     fields_desc = [
-        NDRConfPacketListField(
-            "pInputDiskArray",
-            [],
-            VDS_INPUT_DISK,
-            size_is=lambda pkt: pkt.lNumberOfDisks,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "pInputDiskArray",
+                [],
+                VDS_INPUT_DISK,
+                size_is=lambda pkt: pkt.lNumberOfDisks,
+            )
         ),
         NDRSignedIntField("lNumberOfDisks", None, size_of="pInputDiskArray"),
     ]

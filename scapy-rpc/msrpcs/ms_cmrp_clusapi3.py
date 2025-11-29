@@ -753,11 +753,13 @@ class ApiCreateGroupResourceEnum_Response(NDRPacket):
 class ApiSetGroupNodeList_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hGroup", NDRContextHandle(), NDRContextHandle),
-        NDRConfFieldListField(
-            "multiSzNodeList",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.cchListSize,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "multiSzNodeList",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.cchListSize,
+            )
         ),
         NDRIntField("cchListSize", None, size_of="multiSzNodeList"),
     ]
@@ -964,7 +966,9 @@ class ApiNodeResourceControl_Request(NDRPacket):
         NDRPacketField("hResource", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -988,7 +992,9 @@ class ApiResourceControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hResource", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1014,7 +1020,9 @@ class ApiNodeResourceTypeControl_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("lpszResourceTypeName", ""),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1039,7 +1047,9 @@ class ApiResourceTypeControl_Request(NDRPacket):
         NDRPacketField("hCluster", NDRContextHandle(), NDRContextHandle),
         NDRConfVarStrNullFieldUtf16("lpszResourceTypeName", ""),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1064,7 +1074,9 @@ class ApiNodeGroupControl_Request(NDRPacket):
         NDRPacketField("hGroup", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1088,7 +1100,9 @@ class ApiGroupControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hGroup", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1113,7 +1127,9 @@ class ApiNodeNodeControl_Request(NDRPacket):
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hHostNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1137,7 +1153,9 @@ class ApiNodeControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1238,7 +1256,9 @@ class ApiNodeNetworkControl_Request(NDRPacket):
         NDRPacketField("hNetwork", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1262,7 +1282,9 @@ class ApiNetworkControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hNetwork", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1370,7 +1392,9 @@ class ApiNodeNetInterfaceControl_Request(NDRPacket):
         NDRPacketField("hNetInterface", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1394,7 +1418,9 @@ class ApiNetInterfaceControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hNetInterface", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1515,7 +1541,9 @@ class ApiNodeClusterControl_Request(NDRPacket):
         NDRPacketField("hCluster", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hHostNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -1539,7 +1567,9 @@ class ApiClusterControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hCluster", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -2084,9 +2114,15 @@ class PGROUP_ENUM_LIST(NDRPacket):
 class ApiCreateGroupEnum_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hCluster", NDRContextHandle(), NDRContextHandle),
-        NDRConfStrLenField("pProperties", "", size_is=lambda pkt: pkt.cbProperties),
+        NDRFullPointerField(
+            NDRConfStrLenField("pProperties", "", size_is=lambda pkt: pkt.cbProperties)
+        ),
         NDRIntField("cbProperties", None, size_of="pProperties"),
-        NDRConfStrLenField("pRoProperties", "", size_is=lambda pkt: pkt.cbRoProperties),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pRoProperties", "", size_is=lambda pkt: pkt.cbRoProperties
+            )
+        ),
         NDRIntField("cbRoProperties", None, size_of="pRoProperties"),
     ]
 
@@ -2138,9 +2174,15 @@ class PRESOURCE_ENUM_LIST(NDRPacket):
 class ApiCreateResourceEnum_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hCluster", NDRContextHandle(), NDRContextHandle),
-        NDRConfStrLenField("pProperties", "", size_is=lambda pkt: pkt.cbProperties),
+        NDRFullPointerField(
+            NDRConfStrLenField("pProperties", "", size_is=lambda pkt: pkt.cbProperties)
+        ),
         NDRIntField("cbProperties", None, size_of="pProperties"),
-        NDRConfStrLenField("pRoProperties", "", size_is=lambda pkt: pkt.cbRoProperties),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pRoProperties", "", size_is=lambda pkt: pkt.cbRoProperties
+            )
+        ),
         NDRIntField("cbRoProperties", None, size_of="pRoProperties"),
     ]
 
@@ -2351,7 +2393,9 @@ class ApiNodeGroupSetControl_Request(NDRPacket):
         NDRPacketField("hGroupSet", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("hNode", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]
@@ -2375,7 +2419,9 @@ class ApiGroupSetControl_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hGroupSet", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwControlCode", 0),
-        NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("lpInBuffer", "", size_is=lambda pkt: pkt.nInBufferSize)
+        ),
         NDRIntField("nInBufferSize", None, size_of="lpInBuffer"),
         NDRIntField("nOutBufferSize", 0),
     ]

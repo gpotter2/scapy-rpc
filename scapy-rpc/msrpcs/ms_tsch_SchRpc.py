@@ -66,8 +66,10 @@ class SchRpcRegisterTask_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("sddl", "")),
         NDRIntField("logonType", 0),
         NDRIntField("cCreds", None, size_of="pCreds"),
-        NDRConfPacketListField(
-            "pCreds", [], TASK_USER_CRED, size_is=lambda pkt: pkt.cCreds
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "pCreds", [], TASK_USER_CRED, size_is=lambda pkt: pkt.cCreds
+            )
         ),
     ]
 
@@ -244,7 +246,9 @@ class SchRpcRun_Request(NDRPacket):
     fields_desc = [
         NDRConfVarStrNullFieldUtf16("path", ""),
         NDRIntField("cArgs", None, size_of="pArgs"),
-        NDRConfVarStrLenFieldUtf16("pArgs", "", size_is=lambda pkt: pkt.cArgs),
+        NDRFullPointerField(
+            NDRConfVarStrLenFieldUtf16("pArgs", "", size_is=lambda pkt: pkt.cArgs)
+        ),
         NDRIntField("flags", 0),
         NDRIntField("sessionId", 0),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("user", "")),

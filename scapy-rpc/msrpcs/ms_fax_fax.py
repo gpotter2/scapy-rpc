@@ -317,8 +317,10 @@ class FAX_SetRoutingInfo_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("FaxPortHandle", NDRContextHandle(), NDRContextHandle),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("RoutingGuid", "")),
-        NDRConfStrLenField(
-            "RoutingInfoBuffer", "", size_is=lambda pkt: pkt.RoutingInfoBufferSize
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "RoutingInfoBuffer", "", size_is=lambda pkt: pkt.RoutingInfoBufferSize
+            )
         ),
         NDRIntField("RoutingInfoBufferSize", None, size_of="RoutingInfoBuffer"),
     ]
@@ -447,7 +449,9 @@ class FAX_GetLoggingCategories_Response(NDRPacket):
 
 class FAX_SetLoggingCategories_Request(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Buffer", "", size_is=lambda pkt: pkt.BufferSize)
+        ),
         NDRIntField("BufferSize", None, size_of="Buffer"),
         NDRIntField("NumberCategories", 0),
     ]
@@ -478,8 +482,10 @@ class FAX_GetSecurity_Response(NDRPacket):
 class FAX_SetSecurity_Request(NDRPacket):
     fields_desc = [
         NDRIntField("SecurityInformation", 0),
-        NDRConfStrLenField(
-            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
+            )
         ),
         NDRIntField("dwBufferSize", None, size_of="pSecurityDescriptor"),
     ]
@@ -1801,8 +1807,10 @@ class FAX_GetSecurityEx2_Response(NDRPacket):
 class FAX_SetSecurityEx2_Request(NDRPacket):
     fields_desc = [
         NDRIntField("SecurityInformation", 0),
-        NDRConfStrLenField(
-            "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.dwBufferSize
+            )
         ),
         NDRIntField("dwBufferSize", None, size_of="pSecurityDescriptor"),
     ]

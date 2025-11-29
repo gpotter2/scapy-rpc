@@ -262,11 +262,13 @@ class BaseRegEnumValue_Request(NDRPacket):
         NDRIntField("dwIndex", 0),
         NDRPacketField("lpValueNameIn", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRConfVarStrLenField(
-            "lpData",
-            "",
-            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpData",
+                "",
+                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+            )
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -277,11 +279,13 @@ class BaseRegEnumValue_Response(NDRPacket):
     fields_desc = [
         NDRPacketField("lpValueNameOut", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRConfVarStrLenField(
-            "lpData",
-            "",
-            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpData",
+                "",
+                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+            )
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -391,11 +395,13 @@ class BaseRegQueryValue_Request(NDRPacket):
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("lpValueName", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRConfVarStrLenField(
-            "lpData",
-            "",
-            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpData",
+                "",
+                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+            )
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -405,11 +411,13 @@ class BaseRegQueryValue_Request(NDRPacket):
 class BaseRegQueryValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRIntField("lpType", 0)),
-        NDRConfVarStrLenField(
-            "lpData",
-            "",
-            size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
-            length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpData",
+                "",
+                size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
+            )
         ),
         NDRFullPointerField(NDRIntField("lpcbData", 0)),
         NDRFullPointerField(NDRIntField("lpcbLen", 0)),
@@ -546,11 +554,13 @@ class BaseRegQueryMultipleValues_Request(NDRPacket):
             length_is=lambda pkt: pkt.num_vals,
         ),
         NDRIntField("num_vals", None, size_of="val_listIn"),
-        NDRConfVarStrLenField(
-            "lpvalueBuf",
-            "",
-            size_is=lambda pkt: pkt.ldwTotsize,
-            length_is=lambda pkt: pkt.ldwTotsize,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpvalueBuf",
+                "",
+                size_is=lambda pkt: pkt.ldwTotsize,
+                length_is=lambda pkt: pkt.ldwTotsize,
+            )
         ),
         NDRIntField("ldwTotsize", None, size_of="lpvalueBuf"),
     ]
@@ -565,11 +575,13 @@ class BaseRegQueryMultipleValues_Response(NDRPacket):
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,
         ),
-        NDRConfVarStrLenField(
-            "lpvalueBuf",
-            "",
-            size_is=lambda pkt: pkt.ldwTotsize,
-            length_is=lambda pkt: pkt.ldwTotsize,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpvalueBuf",
+                "",
+                size_is=lambda pkt: pkt.ldwTotsize,
+                length_is=lambda pkt: pkt.ldwTotsize,
+            )
         ),
         NDRIntField("ldwTotsize", None, size_of="lpvalueBuf"),
         NDRIntField("status", 0),
@@ -634,11 +646,13 @@ class BaseRegQueryMultipleValues2_Request(NDRPacket):
             length_is=lambda pkt: pkt.num_vals,
         ),
         NDRIntField("num_vals", None, size_of="val_listIn"),
-        NDRConfVarStrLenField(
-            "lpvalueBuf",
-            "",
-            size_is=lambda pkt: pkt.ldwTotsize,
-            length_is=lambda pkt: pkt.ldwTotsize,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpvalueBuf",
+                "",
+                size_is=lambda pkt: pkt.ldwTotsize,
+                length_is=lambda pkt: pkt.ldwTotsize,
+            )
         ),
         NDRIntField("ldwTotsize", None, size_of="lpvalueBuf"),
     ]
@@ -653,11 +667,13 @@ class BaseRegQueryMultipleValues2_Response(NDRPacket):
             size_is=lambda pkt: pkt.num_vals,
             length_is=lambda pkt: pkt.num_vals,
         ),
-        NDRConfVarStrLenField(
-            "lpvalueBuf",
-            "",
-            size_is=lambda pkt: pkt.ldwTotsize,
-            length_is=lambda pkt: pkt.ldwTotsize,
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "lpvalueBuf",
+                "",
+                size_is=lambda pkt: pkt.ldwTotsize,
+                length_is=lambda pkt: pkt.ldwTotsize,
+            )
         ),
         NDRIntField("ldwRequiredSize", 0),
         NDRIntField("status", 0),

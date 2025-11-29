@@ -242,7 +242,9 @@ class ElfrReportEventW_Request(NDRPacket):
             size_is=lambda pkt: pkt.NumStrings,
             ptr_pack=True,
         ),
-        NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
+        ),
         NDRShortField("Flags", 0),
         NDRFullPointerField(NDRIntField("RecordNumber", 0)),
         NDRFullPointerField(NDRIntField("TimeWritten", 0)),
@@ -378,7 +380,9 @@ class ElfrReportEventA_Request(NDRPacket):
             size_is=lambda pkt: pkt.NumStrings,
             ptr_pack=True,
         ),
-        NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
+        ),
         NDRShortField("Flags", 0),
         NDRFullPointerField(NDRIntField("RecordNumber", 0)),
         NDRFullPointerField(NDRIntField("TimeWritten", 0)),
@@ -428,7 +432,9 @@ class ElfrReportEventAndSourceW_Request(NDRPacket):
             size_is=lambda pkt: pkt.NumStrings,
             ptr_pack=True,
         ),
-        NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
+        ),
         NDRShortField("Flags", 0),
         NDRFullPointerField(NDRIntField("RecordNumber", 0)),
         NDRFullPointerField(NDRIntField("TimeWritten", 0)),
@@ -466,7 +472,9 @@ class ElfrReportEventExW_Request(NDRPacket):
             size_is=lambda pkt: pkt.NumStrings,
             ptr_pack=True,
         ),
-        NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
+        ),
         NDRShortField("Flags", 0),
         NDRFullPointerField(NDRIntField("RecordNumber", 0)),
     ]
@@ -497,7 +505,9 @@ class ElfrReportEventExA_Request(NDRPacket):
             size_is=lambda pkt: pkt.NumStrings,
             ptr_pack=True,
         ),
-        NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
+        ),
         NDRShortField("Flags", 0),
         NDRFullPointerField(NDRIntField("RecordNumber", 0)),
     ]

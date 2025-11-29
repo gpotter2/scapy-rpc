@@ -872,8 +872,10 @@ class RequestChallenge_Response(NDRPacket):
 class WBEMLogin_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("reserved1", "")),
-        NDRConfVarStrLenField(
-            "reserved2", "", size_is=lambda pkt: 16, length_is=lambda pkt: 16
+        NDRFullPointerField(
+            NDRConfVarStrLenField(
+                "reserved2", "", size_is=lambda pkt: 16, length_is=lambda pkt: 16
+            )
         ),
         NDRSignedIntField("reserved3", 0),
         NDRPacketField("reserved4", MInterfacePointer(), MInterfacePointer),

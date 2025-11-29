@@ -406,8 +406,10 @@ class S_DSCreateObject_Request(NDRPacket):
         NDRIntField("dwObjectType", 0),
         NDRFullPointerField(NDRShortField("pwcsPathName", 0)),
         NDRIntField("dwSDLength", None, size_of="SecurityDescriptor"),
-        NDRConfStrLenField(
-            "SecurityDescriptor", "", size_is=lambda pkt: pkt.dwSDLength
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "SecurityDescriptor", "", size_is=lambda pkt: pkt.dwSDLength
+            )
         ),
         NDRIntField("cp", None, size_of="apVar"),
         NDRConfFieldListField(
@@ -510,7 +512,11 @@ class S_DSSetObjectSecurity_Request(NDRPacket):
         NDRIntField("dwObjectType", 0),
         NDRShortField("pwcsPathName", 0),
         NDRIntField("SecurityInformation", 0),
-        NDRConfStrLenField("pSecurityDescriptor", "", size_is=lambda pkt: pkt.nLength),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.nLength
+            )
+        ),
         NDRIntField("nLength", None, size_of="pSecurityDescriptor"),
     ]
 
@@ -710,7 +716,11 @@ class S_DSSetObjectSecurityGuid_Request(NDRPacket):
         NDRIntField("dwObjectType", 0),
         NDRPacketField("pGuid", GUID(), GUID),
         NDRIntField("SecurityInformation", 0),
-        NDRConfStrLenField("pSecurityDescriptor", "", size_is=lambda pkt: pkt.nLength),
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pSecurityDescriptor", "", size_is=lambda pkt: pkt.nLength
+            )
+        ),
         NDRIntField("nLength", None, size_of="pSecurityDescriptor"),
     ]
 

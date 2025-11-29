@@ -2016,14 +2016,18 @@ class RasRpcGetSystemDirectory_Response(NDRPacket):
 
 class RasRpcSubmitRequest_Request(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize)
+        ),
         NDRIntField("dwcbBufSize", None, size_of="pReqBuffer"),
     ]
 
 
 class RasRpcSubmitRequest_Response(NDRPacket):
     fields_desc = [
-        NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("pReqBuffer", "", size_is=lambda pkt: pkt.dwcbBufSize)
+        ),
         NDRIntField("status", 0),
     ]
 

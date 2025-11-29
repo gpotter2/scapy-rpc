@@ -495,7 +495,9 @@ class R_WinsGetDbRecsByName_Request(NDRPacket):
             NDRPacketField("pWinsAdd", PWINSINTF_ADD_T(), PWINSINTF_ADD_T)
         ),
         NDRIntField("Location", 0),
-        NDRConfStrLenField("pName", "", size_is=lambda pkt: (pkt.NameLen + 1)),
+        NDRFullPointerField(
+            NDRConfStrLenField("pName", "", size_is=lambda pkt: (pkt.NameLen + 1))
+        ),
         NDRIntField("NameLen", None, size_of="pName", adjust=lambda _, x: (x - 1)),
         NDRIntField("NoOfRecsDesired", 0),
         NDRIntField("fOnlyStatic", 0),

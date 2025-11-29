@@ -130,9 +130,13 @@ class CreateVirtualSmartCard_Request(NDRPacket):
         NDRByteField("bAdminAlgId", 0),
         NDRConfStrLenField("pbAdminKey", "", size_is=lambda pkt: pkt.cbAdminKey),
         NDRIntField("cbAdminKey", None, size_of="pbAdminKey"),
-        NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv)
+        ),
         NDRIntField("cbAdminKcv", None, size_of="pbAdminKcv"),
-        NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk)
+        ),
         NDRIntField("cbPuk", None, size_of="pbPuk"),
         NDRConfStrLenField("pbPin", "", size_is=lambda pkt: pkt.cbPin),
         NDRIntField("cbPin", None, size_of="pbPin"),
@@ -183,13 +187,19 @@ class CreateVirtualSmartCardWithPinPolicy_Request(NDRPacket):
         NDRByteField("bAdminAlgId", 0),
         NDRConfStrLenField("pbAdminKey", "", size_is=lambda pkt: pkt.cbAdminKey),
         NDRIntField("cbAdminKey", None, size_of="pbAdminKey"),
-        NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv)
+        ),
         NDRIntField("cbAdminKcv", None, size_of="pbAdminKcv"),
-        NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk)
+        ),
         NDRIntField("cbPuk", None, size_of="pbPuk"),
         NDRConfStrLenField("pbPin", "", size_is=lambda pkt: pkt.cbPin),
         NDRIntField("cbPin", None, size_of="pbPin"),
-        NDRConfStrLenField("pbPinPolicy", "", size_is=lambda pkt: pkt.cbPinPolicy),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbPinPolicy", "", size_is=lambda pkt: pkt.cbPinPolicy)
+        ),
         NDRIntField("cbPinPolicy", None, size_of="pbPinPolicy"),
         NDRSignedIntField("fGenerate", 0),
         NDRFullPointerField(
@@ -235,13 +245,19 @@ class CreateVirtualSmartCardWithAttestation_Request(NDRPacket):
         NDRByteField("bAdminAlgId", 0),
         NDRConfStrLenField("pbAdminKey", "", size_is=lambda pkt: pkt.cbAdminKey),
         NDRIntField("cbAdminKey", None, size_of="pbAdminKey"),
-        NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbAdminKcv", "", size_is=lambda pkt: pkt.cbAdminKcv)
+        ),
         NDRIntField("cbAdminKcv", None, size_of="pbAdminKcv"),
-        NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbPuk", "", size_is=lambda pkt: pkt.cbPuk)
+        ),
         NDRIntField("cbPuk", None, size_of="pbPuk"),
         NDRConfStrLenField("pbPin", "", size_is=lambda pkt: pkt.cbPin),
         NDRIntField("cbPin", None, size_of="pbPin"),
-        NDRConfStrLenField("pbPinPolicy", "", size_is=lambda pkt: pkt.cbPinPolicy),
+        NDRFullPointerField(
+            NDRConfStrLenField("pbPinPolicy", "", size_is=lambda pkt: pkt.cbPinPolicy)
+        ),
         NDRIntField("cbPinPolicy", None, size_of="pbPinPolicy"),
         NDRIntEnumField("attestationType", 0, TPMVSC_ATTESTATION_TYPE),
         NDRSignedIntField("fGenerate", 0),

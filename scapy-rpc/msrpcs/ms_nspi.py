@@ -487,8 +487,13 @@ class NspiQueryRows_Request(NDRPacket):
         NDRIntField("dwFlags", 0),
         NDRPacketField("pStat", STAT(), STAT),
         NDRIntField("dwETableCount", None, size_of="lpETable"),
-        NDRConfFieldListField(
-            "lpETable", [], NDRIntField("", 0), size_is=lambda pkt: pkt.dwETableCount
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "lpETable",
+                [],
+                NDRIntField("", 0),
+                size_is=lambda pkt: pkt.dwETableCount,
+            )
         ),
         NDRIntField("Count", 0),
         NDRFullPointerField(

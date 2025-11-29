@@ -68,7 +68,9 @@ class RpcWinStationEnumerate_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
         NDRIntField("pEntries", 0),
-        NDRConfStrLenField("pLogonId", "", size_is=lambda pkt: pkt.pByteCount),
+        NDRFullPointerField(
+            NDRConfStrLenField("pLogonId", "", size_is=lambda pkt: pkt.pByteCount)
+        ),
         NDRIntField("pByteCount", None, size_of="pLogonId"),
         NDRIntField("pIndex", 0),
     ]
@@ -78,7 +80,9 @@ class RpcWinStationEnumerate_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pResult", 0),
         NDRIntField("pEntries", 0),
-        NDRConfStrLenField("pLogonId", "", size_is=lambda pkt: pkt.pByteCount),
+        NDRFullPointerField(
+            NDRConfStrLenField("pLogonId", "", size_is=lambda pkt: pkt.pByteCount)
+        ),
         NDRIntField("pByteCount", None, size_of="pLogonId"),
         NDRIntField("pIndex", 0),
         NDRIntField("status", 0),
@@ -114,10 +118,12 @@ class RpcWinStationQueryInformation_Request(NDRPacket):
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
         NDRIntField("LogonId", 0),
         NDRIntField("WinStationInformationClass", 0),
-        NDRConfStrLenField(
-            "pWinStationInformation",
-            "",
-            size_is=lambda pkt: pkt.WinStationInformationLength,
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pWinStationInformation",
+                "",
+                size_is=lambda pkt: pkt.WinStationInformationLength,
+            )
         ),
         NDRIntField(
             "WinStationInformationLength", None, size_of="pWinStationInformation"
@@ -128,10 +134,12 @@ class RpcWinStationQueryInformation_Request(NDRPacket):
 class RpcWinStationQueryInformation_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pResult", 0),
-        NDRConfStrLenField(
-            "pWinStationInformation",
-            "",
-            size_is=lambda pkt: pkt.WinStationInformationLength,
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pWinStationInformation",
+                "",
+                size_is=lambda pkt: pkt.WinStationInformationLength,
+            )
         ),
         NDRIntField("pReturnLength", 0),
         NDRIntField("status", 0),
@@ -143,10 +151,12 @@ class RpcWinStationSetInformation_Request(NDRPacket):
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
         NDRIntField("LogonId", 0),
         NDRIntField("WinStationInformationClass", 0),
-        NDRConfStrLenField(
-            "pWinStationInformation",
-            "",
-            size_is=lambda pkt: pkt.WinStationInformationLength,
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pWinStationInformation",
+                "",
+                size_is=lambda pkt: pkt.WinStationInformationLength,
+            )
         ),
         NDRIntField(
             "WinStationInformationLength", None, size_of="pWinStationInformation"
@@ -157,10 +167,12 @@ class RpcWinStationSetInformation_Request(NDRPacket):
 class RpcWinStationSetInformation_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pResult", 0),
-        NDRConfStrLenField(
-            "pWinStationInformation",
-            "",
-            size_is=lambda pkt: pkt.WinStationInformationLength,
+        NDRFullPointerField(
+            NDRConfStrLenField(
+                "pWinStationInformation",
+                "",
+                size_is=lambda pkt: pkt.WinStationInformationLength,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -313,11 +325,13 @@ class RpcWinStationShadow_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
         NDRIntField("LogonId", 0),
-        NDRConfFieldListField(
-            "pTargetServerName",
-            [],
-            NDRShortField("", 0),
-            size_is=lambda pkt: pkt.NameSize,
+        NDRFullPointerField(
+            NDRConfFieldListField(
+                "pTargetServerName",
+                [],
+                NDRShortField("", 0),
+                size_is=lambda pkt: pkt.NameSize,
+            )
         ),
         NDRIntField("NameSize", None, size_of="pTargetServerName"),
         NDRIntField("TargetLogonId", 0),
@@ -491,7 +505,9 @@ class RpcWinStationGetProcessSid_Request(NDRPacket):
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
         NDRIntField("dwUniqueProcessId", 0),
         NDRPacketField("ProcessStartTime", LARGE_INTEGER(), LARGE_INTEGER),
-        NDRConfStrLenField("pProcessUserSid", "", size_is=lambda pkt: pkt.dwSidSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("pProcessUserSid", "", size_is=lambda pkt: pkt.dwSidSize)
+        ),
         NDRIntField("dwSidSize", None, size_of="pProcessUserSid"),
         NDRIntField("pdwSizeNeeded", 0),
     ]
@@ -500,7 +516,9 @@ class RpcWinStationGetProcessSid_Request(NDRPacket):
 class RpcWinStationGetProcessSid_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("pResult", 0),
-        NDRConfStrLenField("pProcessUserSid", "", size_is=lambda pkt: pkt.dwSidSize),
+        NDRFullPointerField(
+            NDRConfStrLenField("pProcessUserSid", "", size_is=lambda pkt: pkt.dwSidSize)
+        ),
         NDRIntField("pdwSizeNeeded", 0),
         NDRIntField("status", 0),
     ]
