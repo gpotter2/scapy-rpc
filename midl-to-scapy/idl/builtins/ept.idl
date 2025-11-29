@@ -71,7 +71,7 @@ interface ept
         [in, out] ept_lookup_handle_t* entry_handle,
         [in, range(0,500)] unsigned long max_towers,
         [out] unsigned long* num_towers,
-        [out, ptr, size_is(max_towers), length_is(*num_towers)] 
+        [out, ref, size_is(max_towers), length_is(*num_towers)]
         twr_p_t* ITowers,
         [out] error_status* status
     );

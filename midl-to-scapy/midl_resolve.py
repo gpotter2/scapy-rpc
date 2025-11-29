@@ -400,19 +400,20 @@ class Resolver:
                 newarg = ArrayType(
                     None, ("array", ("id", arg.name), "*"), None, []
                 )  # dummy
+
+                # This will be a pointer to an array of whatever the type was
                 arg.ptr_lvl -= 1
-                if toplevel:
-                    # "A parameter that is a pointer to a type is treated as an array of that type"
-                    new_ptr_lvl = 0
-                else:
-                    # "If a structure field is a pointer .. then it is a pointer to an array of data."
-                    new_ptr_lvl = 1
+                new_ptr_lvl = 1
+
+                # The attributes to keep in the parent (the array)
                 idl_attributes = [
                     x
                     for x in idl_attributes
                     if x[0] in ("size_is", "length_is", "max_is", "min_is", "case")
                     or x in ("ref", "unique", "ptr")
                 ]
+
+                # The child attributes
                 arg.idl_attributes = [
                     x
                     for x in arg.idl_attributes
@@ -423,6 +424,8 @@ class Resolver:
                     )
                     and (x[0] != "id" or x[1] not in ("ref", "unique", "ptr"))
                 ]
+
+                # Set the child subtype
                 newarg.subtype = arg
                 arg = newarg
             arg.ptr_lvl = new_ptr_lvl
