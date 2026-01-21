@@ -29,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedIntField,
     NDRUnionField,
@@ -2920,7 +2921,7 @@ class PSERVER_XPORT_INFO_0_CONTAINER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Buffer"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "Buffer",
                 [],
@@ -3670,9 +3671,7 @@ class NetrDfsManagerReportSiteInfo_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppSiteInfo", LPDFS_SITELIST_INFO(), LPDFS_SITELIST_INFO)
-            )
+            NDRPacketField("ppSiteInfo", LPDFS_SITELIST_INFO(), LPDFS_SITELIST_INFO)
         ),
     ]
 
@@ -3680,9 +3679,7 @@ class NetrDfsManagerReportSiteInfo_Request(NDRPacket):
 class NetrDfsManagerReportSiteInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("ppSiteInfo", LPDFS_SITELIST_INFO(), LPDFS_SITELIST_INFO)
-            )
+            NDRPacketField("ppSiteInfo", LPDFS_SITELIST_INFO(), LPDFS_SITELIST_INFO)
         ),
         NDRIntField("status", 0),
     ]

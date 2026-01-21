@@ -50,9 +50,7 @@ class PREG_UNICODE_STRING(NDRPacket):
 class BaseInitiateSystemShutdown_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRShortField("ServerName", 0)),
-        NDRFullPointerField(
-            NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
-        ),
+        NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING),
         NDRIntField("dwTimeout", 0),
         NDRByteField("bForceAppsClosed", 0),
         NDRByteField("bRebootAfterShutdown", 0),
@@ -74,9 +72,7 @@ class BaseAbortSystemShutdown_Response(NDRPacket):
 class BaseInitiateSystemShutdownEx_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRShortField("ServerName", 0)),
-        NDRFullPointerField(
-            NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
-        ),
+        NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING),
         NDRIntField("dwTimeout", 0),
         NDRByteField("bForceAppsClosed", 0),
         NDRByteField("bRebootAfterShutdown", 0),

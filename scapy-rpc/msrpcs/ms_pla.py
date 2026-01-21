@@ -1030,12 +1030,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1043,16 +1045,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1109,7 +1115,9 @@ class get_IDataCollectorSet_Description_Request(NDRPacket):
 class get_IDataCollectorSet_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1117,7 +1125,9 @@ class get_IDataCollectorSet_Description_Response(NDRPacket):
 
 class put_IDataCollectorSet_Description_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1132,7 +1142,9 @@ class get_IDataCollectorSet_DescriptionUnresolved_Request(NDRPacket):
 class get_IDataCollectorSet_DescriptionUnresolved_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("Descr", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("Descr", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1145,7 +1157,9 @@ class get_IDataCollectorSet_DisplayName_Request(NDRPacket):
 class get_IDataCollectorSet_DisplayName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1153,7 +1167,9 @@ class get_IDataCollectorSet_DisplayName_Response(NDRPacket):
 
 class put_IDataCollectorSet_DisplayName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("DisplayName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1168,7 +1184,9 @@ class get_IDataCollectorSet_DisplayNameUnresolved_Request(NDRPacket):
 class get_IDataCollectorSet_DisplayNameUnresolved_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1180,13 +1198,17 @@ class get_IDataCollectorSet_Keywords_Request(NDRPacket):
 
 class get_IDataCollectorSet_Keywords_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_Keywords_Request(NDRPacket):
-    fields_desc = [NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("keywords", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IDataCollectorSet_Keywords_Response(NDRPacket):
@@ -1200,14 +1222,20 @@ class get_IDataCollectorSet_LatestOutputLocation_Request(NDRPacket):
 class get_IDataCollectorSet_LatestOutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_LatestOutputLocation_Request(NDRPacket):
-    fields_desc = [NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_LatestOutputLocation_Response(NDRPacket):
@@ -1221,7 +1249,9 @@ class get_IDataCollectorSet_Name_Request(NDRPacket):
 class get_IDataCollectorSet_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1234,7 +1264,9 @@ class get_IDataCollectorSet_OutputLocation_Request(NDRPacket):
 class get_IDataCollectorSet_OutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1247,14 +1279,20 @@ class get_IDataCollectorSet_RootPath_Request(NDRPacket):
 class get_IDataCollectorSet_RootPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_RootPath_Request(NDRPacket):
-    fields_desc = [NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_RootPath_Response(NDRPacket):
@@ -1332,7 +1370,9 @@ class get_IDataCollectorSet_Server_Request(NDRPacket):
 class get_IDataCollectorSet_Server_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("server", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("server", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1364,14 +1404,20 @@ class get_IDataCollectorSet_Subdirectory_Request(NDRPacket):
 class get_IDataCollectorSet_Subdirectory_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_Subdirectory_Request(NDRPacket):
-    fields_desc = [NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("folder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_Subdirectory_Response(NDRPacket):
@@ -1417,14 +1463,20 @@ class get_IDataCollectorSet_SubdirectoryFormatPattern_Request(NDRPacket):
 class get_IDataCollectorSet_SubdirectoryFormatPattern_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_SubdirectoryFormatPattern_Request(NDRPacket):
-    fields_desc = [NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_SubdirectoryFormatPattern_Response(NDRPacket):
@@ -1438,14 +1490,20 @@ class get_IDataCollectorSet_Task_Request(NDRPacket):
 class get_IDataCollectorSet_Task_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_Task_Request(NDRPacket):
-    fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_Task_Response(NDRPacket):
@@ -1475,14 +1533,20 @@ class get_IDataCollectorSet_TaskArguments_Request(NDRPacket):
 class get_IDataCollectorSet_TaskArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_TaskArguments_Request(NDRPacket):
-    fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_TaskArguments_Response(NDRPacket):
@@ -1496,14 +1560,20 @@ class get_IDataCollectorSet_TaskUserTextArguments_Request(NDRPacket):
 class get_IDataCollectorSet_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollectorSet_TaskUserTextArguments_Request(NDRPacket):
-    fields_desc = [NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("UserText", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollectorSet_TaskUserTextArguments_Response(NDRPacket):
@@ -1546,7 +1616,9 @@ class get_IDataCollectorSet_UserAccount_Request(NDRPacket):
 class get_IDataCollectorSet_UserAccount_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("user", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("user", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1559,7 +1631,9 @@ class get_IDataCollectorSet_Xml_Request(NDRPacket):
 class get_IDataCollectorSet_Xml_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1572,7 +1646,9 @@ class get_IDataCollectorSet_Security_Request(NDRPacket):
 class get_IDataCollectorSet_Security_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1580,7 +1656,9 @@ class get_IDataCollectorSet_Security_Response(NDRPacket):
 
 class put_IDataCollectorSet_Security_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSecurity", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1627,7 +1705,9 @@ class SetCredentials_Response(NDRPacket):
 
 class Query_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("server", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
@@ -1640,7 +1720,9 @@ class Query_Response(NDRPacket):
 
 class Commit_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("server", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
@@ -1681,7 +1763,11 @@ class Stop_Response(NDRPacket):
 
 
 class SetXml_Request(NDRPacket):
-    fields_desc = [NDRPacketField("xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class SetXml_Response(NDRPacket):
@@ -1708,7 +1794,9 @@ class GetValue_Request(NDRPacket):
 class GetValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2048,7 +2136,9 @@ class get_IDataManager_ReportSchema_Request(NDRPacket):
 class get_IDataManager_ReportSchema_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2056,7 +2146,9 @@ class get_IDataManager_ReportSchema_Response(NDRPacket):
 
 class put_IDataManager_ReportSchema_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("ReportSchema", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2071,7 +2163,9 @@ class get_IDataManager_ReportFileName_Request(NDRPacket):
 class get_IDataManager_ReportFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2079,7 +2173,9 @@ class get_IDataManager_ReportFileName_Response(NDRPacket):
 
 class put_IDataManager_ReportFileName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2094,14 +2190,20 @@ class get_IDataManager_RuleTargetFileName_Request(NDRPacket):
 class get_IDataManager_RuleTargetFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataManager_RuleTargetFileName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("Filename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataManager_RuleTargetFileName_Response(NDRPacket):
@@ -2115,7 +2217,9 @@ class get_IDataManager_EventsFileName_Request(NDRPacket):
 class get_IDataManager_EventsFileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2123,7 +2227,9 @@ class get_IDataManager_EventsFileName_Response(NDRPacket):
 
 class put_IDataManager_EventsFileName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("pbstrFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2138,14 +2244,20 @@ class get_IDataManager_Rules_Request(NDRPacket):
 class get_IDataManager_Rules_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataManager_Rules_Request(NDRPacket):
-    fields_desc = [NDRPacketField("bstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("bstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataManager_Rules_Response(NDRPacket):
@@ -2163,7 +2275,9 @@ class DataManagerSteps(IntEnum):
 class Run_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("Steps", 0, DataManagerSteps),
-        NDRPacketField("bstrFolder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrFolder", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2178,8 +2292,12 @@ class Run_Response(NDRPacket):
 
 class Extract_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("CabFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("DestinationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("CabFilename", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("DestinationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2339,7 +2457,11 @@ class get_IFolderAction_SendCabTo_Request(NDRPacket):
 class get_IFolderAction_SendCabTo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2347,7 +2469,9 @@ class get_IFolderAction_SendCabTo_Response(NDRPacket):
 
 class put_IFolderAction_SendCabTo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrDestination", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2391,7 +2515,9 @@ class get_IFolderActionCollection_Count_Response(NDRPacket):
 
 
 class get_IFolderActionCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("Index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IFolderActionCollection_Item_Response(NDRPacket):
@@ -2532,14 +2658,20 @@ class get_IDataCollector_FileName_Request(NDRPacket):
 class get_IDataCollector_FileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollector_FileName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollector_FileName_Response(NDRPacket):
@@ -2572,14 +2704,20 @@ class get_IDataCollector_FileNameFormatPattern_Request(NDRPacket):
 class get_IDataCollector_FileNameFormatPattern_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollector_FileNameFormatPattern_Request(NDRPacket):
-    fields_desc = [NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollector_FileNameFormatPattern_Response(NDRPacket):
@@ -2593,14 +2731,20 @@ class get_IDataCollector_LatestOutputLocation_Request(NDRPacket):
 class get_IDataCollector_LatestOutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollector_LatestOutputLocation_Request(NDRPacket):
-    fields_desc = [NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollector_LatestOutputLocation_Response(NDRPacket):
@@ -2662,14 +2806,20 @@ class get_IDataCollector_Name_Request(NDRPacket):
 class get_IDataCollector_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IDataCollector_Name_Request(NDRPacket):
-    fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IDataCollector_Name_Response(NDRPacket):
@@ -2683,7 +2833,9 @@ class get_IDataCollector_OutputLocation_Request(NDRPacket):
 class get_IDataCollector_OutputLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("path", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2704,14 +2856,20 @@ class get_IDataCollector_Xml_Request(NDRPacket):
 class get_IDataCollector_Xml_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("Xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("Xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class SetXml_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("Xml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class SetXml_Response(NDRPacket):
@@ -2815,14 +2973,20 @@ class get_IPerformanceCounterDataCollector_DataSourceName_Request(NDRPacket):
 class get_IPerformanceCounterDataCollector_DataSourceName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IPerformanceCounterDataCollector_DataSourceName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("dsn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IPerformanceCounterDataCollector_DataSourceName_Response(NDRPacket):
@@ -2835,13 +2999,17 @@ class get_IPerformanceCounterDataCollector_PerformanceCounters_Request(NDRPacket
 
 class get_IPerformanceCounterDataCollector_PerformanceCounters_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("counters", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("counters", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IPerformanceCounterDataCollector_PerformanceCounters_Request(NDRPacket):
-    fields_desc = [NDRPacketField("counters", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("counters", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IPerformanceCounterDataCollector_PerformanceCounters_Response(NDRPacket):
@@ -3261,14 +3429,20 @@ class get_ITraceDataCollector_SessionName_Request(NDRPacket):
 class get_ITraceDataCollector_SessionName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ITraceDataCollector_SessionName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_ITraceDataCollector_SessionName_Response(NDRPacket):
@@ -3595,13 +3769,15 @@ class get_IConfigurationDataCollector_Files_Request(NDRPacket):
 
 class get_IConfigurationDataCollector_Files_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Files", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("Files", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IConfigurationDataCollector_Files_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Files", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [NDRFullPointerField(NDRPacketField("Files", SAFEARRAY(), SAFEARRAY))]
 
 
 class put_IConfigurationDataCollector_Files_Response(NDRPacket):
@@ -3614,13 +3790,17 @@ class get_IConfigurationDataCollector_ManagementQueries_Request(NDRPacket):
 
 class get_IConfigurationDataCollector_ManagementQueries_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IConfigurationDataCollector_ManagementQueries_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("Queries", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IConfigurationDataCollector_ManagementQueries_Response(NDRPacket):
@@ -3649,13 +3829,15 @@ class get_IConfigurationDataCollector_RegistryKeys_Request(NDRPacket):
 
 class get_IConfigurationDataCollector_RegistryKeys_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("query", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("query", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IConfigurationDataCollector_RegistryKeys_Request(NDRPacket):
-    fields_desc = [NDRPacketField("query", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [NDRFullPointerField(NDRPacketField("query", SAFEARRAY(), SAFEARRAY))]
 
 
 class put_IConfigurationDataCollector_RegistryKeys_Response(NDRPacket):
@@ -3685,14 +3867,20 @@ class get_IConfigurationDataCollector_SystemStateFile_Request(NDRPacket):
 class get_IConfigurationDataCollector_SystemStateFile_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IConfigurationDataCollector_SystemStateFile_Request(NDRPacket):
-    fields_desc = [NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("FileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IConfigurationDataCollector_SystemStateFile_Response(NDRPacket):
@@ -3862,13 +4050,17 @@ class get_IAlertDataCollector_AlertThresholds_Request(NDRPacket):
 
 class get_IAlertDataCollector_AlertThresholds_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAlertDataCollector_AlertThresholds_Request(NDRPacket):
-    fields_desc = [NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("alerts", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IAlertDataCollector_AlertThresholds_Response(NDRPacket):
@@ -3914,14 +4106,20 @@ class get_IAlertDataCollector_Task_Request(NDRPacket):
 class get_IAlertDataCollector_Task_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAlertDataCollector_Task_Request(NDRPacket):
-    fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAlertDataCollector_Task_Response(NDRPacket):
@@ -3951,14 +4149,20 @@ class get_IAlertDataCollector_TaskArguments_Request(NDRPacket):
 class get_IAlertDataCollector_TaskArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAlertDataCollector_TaskArguments_Request(NDRPacket):
-    fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAlertDataCollector_TaskArguments_Response(NDRPacket):
@@ -3972,14 +4176,20 @@ class get_IAlertDataCollector_TaskUserTextArguments_Request(NDRPacket):
 class get_IAlertDataCollector_TaskUserTextArguments_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAlertDataCollector_TaskUserTextArguments_Request(NDRPacket):
-    fields_desc = [NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("task", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAlertDataCollector_TaskUserTextArguments_Response(NDRPacket):
@@ -3993,14 +4203,20 @@ class get_IAlertDataCollector_TriggerDataCollectorSet_Request(NDRPacket):
 class get_IAlertDataCollector_TriggerDataCollectorSet_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAlertDataCollector_TriggerDataCollectorSet_Request(NDRPacket):
-    fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAlertDataCollector_TriggerDataCollectorSet_Response(NDRPacket):
@@ -4193,14 +4409,20 @@ class get_IApiTracingDataCollector_ExePath_Request(NDRPacket):
 class get_IApiTracingDataCollector_ExePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IApiTracingDataCollector_ExePath_Request(NDRPacket):
-    fields_desc = [NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("exepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IApiTracingDataCollector_ExePath_Response(NDRPacket):
@@ -4214,7 +4436,9 @@ class get_IApiTracingDataCollector_LogFilePath_Request(NDRPacket):
 class get_IApiTracingDataCollector_LogFilePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4222,7 +4446,9 @@ class get_IApiTracingDataCollector_LogFilePath_Response(NDRPacket):
 
 class put_IApiTracingDataCollector_LogFilePath_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("logfilepath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -4236,13 +4462,19 @@ class get_IApiTracingDataCollector_IncludeModules_Request(NDRPacket):
 
 class get_IApiTracingDataCollector_IncludeModules_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IApiTracingDataCollector_IncludeModules_Request(NDRPacket):
-    fields_desc = [NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("includemodules", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IApiTracingDataCollector_IncludeModules_Response(NDRPacket):
@@ -4255,13 +4487,17 @@ class get_IApiTracingDataCollector_IncludeApis_Request(NDRPacket):
 
 class get_IApiTracingDataCollector_IncludeApis_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IApiTracingDataCollector_IncludeApis_Request(NDRPacket):
-    fields_desc = [NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("includeapis", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IApiTracingDataCollector_IncludeApis_Response(NDRPacket):
@@ -4274,13 +4510,17 @@ class get_IApiTracingDataCollector_ExcludeApis_Request(NDRPacket):
 
 class get_IApiTracingDataCollector_ExcludeApis_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IApiTracingDataCollector_ExcludeApis_Request(NDRPacket):
-    fields_desc = [NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("excludeapis", SAFEARRAY(), SAFEARRAY))
+    ]
 
 
 class put_IApiTracingDataCollector_ExcludeApis_Response(NDRPacket):
@@ -4437,7 +4677,9 @@ class get_IDataCollectorCollection_Count_Response(NDRPacket):
 
 
 class get_IDataCollectorCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IDataCollectorCollection_Item_Response(NDRPacket):
@@ -4495,7 +4737,11 @@ class AddRange_Response(NDRPacket):
 
 
 class CreateDataCollectorFromXml_Request(NDRPacket):
-    fields_desc = [NDRPacketField("bstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("bstrXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class CreateDataCollectorFromXml_Response(NDRPacket):
@@ -4567,7 +4813,9 @@ class get_IDataCollectorSetCollection_Count_Response(NDRPacket):
 
 
 class get_IDataCollectorSetCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IDataCollectorSetCollection_Item_Response(NDRPacket):
@@ -4678,14 +4926,20 @@ class get_ITraceDataProvider_DisplayName_Request(NDRPacket):
 class get_ITraceDataProvider_DisplayName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ITraceDataProvider_DisplayName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("name", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_ITraceDataProvider_DisplayName_Response(NDRPacket):
@@ -4798,13 +5052,15 @@ class get_ITraceDataProvider_FilterData_Request(NDRPacket):
 
 class get_ITraceDataProvider_FilterData_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("ppData", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("ppData", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ITraceDataProvider_FilterData_Request(NDRPacket):
-    fields_desc = [NDRPacketField("pData", SAFEARRAY(), SAFEARRAY)]
+    fields_desc = [NDRFullPointerField(NDRPacketField("pData", SAFEARRAY(), SAFEARRAY))]
 
 
 class put_ITraceDataProvider_FilterData_Response(NDRPacket):
@@ -4813,7 +5069,9 @@ class put_ITraceDataProvider_FilterData_Response(NDRPacket):
 
 class Query_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("bstrServer", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
         ),
@@ -4833,7 +5091,11 @@ class Resolve_Response(NDRPacket):
 
 
 class SetSecurity_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Sddl", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("Sddl", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class SetSecurity_Response(NDRPacket):
@@ -4847,7 +5109,9 @@ class GetSecurity_Request(NDRPacket):
 class GetSecurity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("Sddl", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("Sddl", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4948,7 +5212,9 @@ class get_ITraceDataProviderCollection_Count_Response(NDRPacket):
 
 
 class get_ITraceDataProviderCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_ITraceDataProviderCollection_Item_Response(NDRPacket):
@@ -5085,13 +5351,19 @@ class get_ISchedule_StartDate_Request(NDRPacket):
 
 class get_ISchedule_StartDate_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ISchedule_StartDate_Request(NDRPacket):
-    fields_desc = [NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_ISchedule_StartDate_Response(NDRPacket):
@@ -5104,13 +5376,17 @@ class get_ISchedule_EndDate_Request(NDRPacket):
 
 class get_ISchedule_EndDate_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr))
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ISchedule_EndDate_Request(NDRPacket):
-    fields_desc = [NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("end", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_ISchedule_EndDate_Response(NDRPacket):
@@ -5123,13 +5399,19 @@ class get_ISchedule_StartTime_Request(NDRPacket):
 
 class get_ISchedule_StartTime_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ISchedule_StartTime_Request(NDRPacket):
-    fields_desc = [NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("start", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_ISchedule_StartTime_Response(NDRPacket):
@@ -5196,7 +5478,9 @@ class get_IScheduleCollection_Count_Response(NDRPacket):
 
 
 class get_IScheduleCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IScheduleCollection_Item_Response(NDRPacket):
@@ -5303,7 +5587,9 @@ class get_IValueMapItem_Description_Request(NDRPacket):
 class get_IValueMapItem_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5311,7 +5597,9 @@ class get_IValueMapItem_Description_Response(NDRPacket):
 
 class put_IValueMapItem_Description_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -5342,14 +5630,20 @@ class get_IValueMapItem_Key_Request(NDRPacket):
 class get_IValueMapItem_Key_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IValueMapItem_Key_Request(NDRPacket):
-    fields_desc = [NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("key", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IValueMapItem_Key_Response(NDRPacket):
@@ -5362,13 +5656,19 @@ class get_IValueMapItem_Value_Request(NDRPacket):
 
 class get_IValueMapItem_Value_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IValueMapItem_Value_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_IValueMapItem_Value_Response(NDRPacket):
@@ -5443,7 +5743,9 @@ class get_IValueMap_Count_Response(NDRPacket):
 
 
 class get_IValueMap_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("index", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IValueMap_Item_Response(NDRPacket):
@@ -5475,7 +5777,9 @@ class get_IValueMap_Description_Request(NDRPacket):
 class get_IValueMap_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5483,7 +5787,9 @@ class get_IValueMap_Description_Response(NDRPacket):
 
 class put_IValueMap_Description_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("description", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -5497,13 +5803,19 @@ class get_IValueMap_Value_Request(NDRPacket):
 
 class get_IValueMap_Value_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IValueMap_Value_Request(NDRPacket):
-    fields_desc = [NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("Value", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_IValueMap_Value_Response(NDRPacket):

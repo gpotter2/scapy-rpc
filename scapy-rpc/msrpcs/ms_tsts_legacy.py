@@ -494,7 +494,6 @@ class RpcWinStationGetAllProcesses_Response(NDRPacket):
             [],
             PTS_ALL_PROCESSES_INFO,
             size_is=lambda pkt: pkt.pNumberOfProcesses,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -772,7 +771,6 @@ class RpcWinStationGetAllProcesses_NT6_Response(NDRPacket):
             [],
             PTS_ALL_PROCESSES_INFO_NT6,
             size_is=lambda pkt: pkt.pNumberOfProcesses,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

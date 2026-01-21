@@ -1704,9 +1704,7 @@ class RRPC_FWEnumPhase1SAs_Request(NDRPacket):
     fields_desc = [
         NDRLongField("rpcConnHandle", 0),
         NDRPacketField("hPolicyStore", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS)
-        ),
+        NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS),
     ]
 
 
@@ -1714,11 +1712,7 @@ class RRPC_FWEnumPhase1SAs_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwNumSAs", None, size_of="ppSAs"),
         NDRConfPacketListField(
-            "ppSAs",
-            [],
-            PFW_PHASE1_SA_DETAILS,
-            size_is=lambda pkt: pkt.pdwNumSAs,
-            ptr_pack=True,
+            "ppSAs", [], PFW_PHASE1_SA_DETAILS, size_is=lambda pkt: pkt.pdwNumSAs
         ),
         NDRIntField("status", 0),
     ]
@@ -1759,9 +1753,7 @@ class RRPC_FWEnumPhase2SAs_Request(NDRPacket):
     fields_desc = [
         NDRLongField("rpcConnHandle", 0),
         NDRPacketField("hPolicyStore", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS)
-        ),
+        NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS),
     ]
 
 
@@ -1769,11 +1761,7 @@ class RRPC_FWEnumPhase2SAs_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwNumSAs", None, size_of="ppSAs"),
         NDRConfPacketListField(
-            "ppSAs",
-            [],
-            PFW_PHASE2_SA_DETAILS,
-            size_is=lambda pkt: pkt.pdwNumSAs,
-            ptr_pack=True,
+            "ppSAs", [], PFW_PHASE2_SA_DETAILS, size_is=lambda pkt: pkt.pdwNumSAs
         ),
         NDRIntField("status", 0),
     ]
@@ -1783,9 +1771,7 @@ class RRPC_FWDeletePhase1SAs_Request(NDRPacket):
     fields_desc = [
         NDRLongField("rpcConnHandle", 0),
         NDRPacketField("hPolicyStore", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS)
-        ),
+        NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS),
     ]
 
 
@@ -1797,9 +1783,7 @@ class RRPC_FWDeletePhase2SAs_Request(NDRPacket):
     fields_desc = [
         NDRLongField("rpcConnHandle", 0),
         NDRPacketField("hPolicyStore", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS)
-        ),
+        NDRPacketField("pEndpoints", PFW_ENDPOINTS(), PFW_ENDPOINTS),
     ]
 
 
@@ -1846,11 +1830,7 @@ class RRPC_FWEnumProducts_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwNumProducts", None, size_of="ppProducts"),
         NDRConfPacketListField(
-            "ppProducts",
-            [],
-            PFW_PRODUCT,
-            size_is=lambda pkt: pkt.pdwNumProducts,
-            ptr_pack=True,
+            "ppProducts", [], PFW_PRODUCT, size_is=lambda pkt: pkt.pdwNumProducts
         ),
         NDRIntField("status", 0),
     ]
@@ -2496,11 +2476,7 @@ class RRPC_FWEnumNetworks_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwNumNetworks", None, size_of="ppNetworks"),
         NDRConfPacketListField(
-            "ppNetworks",
-            [],
-            PFW_NETWORK,
-            size_is=lambda pkt: pkt.pdwNumNetworks,
-            ptr_pack=True,
+            "ppNetworks", [], PFW_NETWORK, size_is=lambda pkt: pkt.pdwNumNetworks
         ),
         NDRIntField("status", 0),
     ]
@@ -2525,11 +2501,7 @@ class RRPC_FWEnumAdapters_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwNumAdapters", None, size_of="ppAdapters"),
         NDRConfPacketListField(
-            "ppAdapters",
-            [],
-            PFW_ADAPTER,
-            size_is=lambda pkt: pkt.pdwNumAdapters,
-            ptr_pack=True,
+            "ppAdapters", [], PFW_ADAPTER, size_is=lambda pkt: pkt.pdwNumAdapters
         ),
         NDRIntField("status", 0),
     ]

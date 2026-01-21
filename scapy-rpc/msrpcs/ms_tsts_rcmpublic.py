@@ -199,11 +199,7 @@ class RpcGetAllListeners_Request(NDRPacket):
 class RpcGetAllListeners_Response(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "ppListeners",
-            [],
-            PLISTENERENUM,
-            size_is=lambda pkt: pkt.pNumListeners,
-            ptr_pack=True,
+            "ppListeners", [], PLISTENERENUM, size_is=lambda pkt: pkt.pNumListeners
         ),
         NDRIntField("pNumListeners", None, size_of="ppListeners"),
         NDRIntField("status", 0),

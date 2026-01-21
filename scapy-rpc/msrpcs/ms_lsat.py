@@ -403,9 +403,7 @@ class LsarGetUserName_Request(NDRPacket):
             NDRPacketField("UserName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("DomainName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-            )
+            NDRPacketField("DomainName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
     ]
 
@@ -416,9 +414,7 @@ class LsarGetUserName_Response(NDRPacket):
             NDRPacketField("UserName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField("DomainName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-            )
+            NDRPacketField("DomainName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
         NDRIntField("status", 0),
     ]

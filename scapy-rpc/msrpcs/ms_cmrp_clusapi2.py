@@ -404,12 +404,8 @@ class ApiCreateKey_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("lpSubKey", ""),
         NDRIntField("dwOptions", 0),
         NDRIntField("samDesired", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "lpSecurityAttributes",
-                PRPC_SECURITY_ATTRIBUTES(),
-                PRPC_SECURITY_ATTRIBUTES,
-            )
+        NDRPacketField(
+            "lpSecurityAttributes", PRPC_SECURITY_ATTRIBUTES(), PRPC_SECURITY_ATTRIBUTES
         ),
     ]
 

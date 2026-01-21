@@ -1022,12 +1022,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1035,16 +1037,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1072,7 +1078,9 @@ class RetrieveEventList_Request(NDRPacket):
 class RetrieveEventList_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrEventList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrEventList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1088,10 +1096,18 @@ class GetSystemAffinity_Response(NDRPacket):
 
 class ImportXMLFiles_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1106,17 +1122,27 @@ class ExportXMLFiles_Request(NDRPacket):
 class ExportXMLFiles_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pbstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pbstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1144,7 +1170,9 @@ class OBJECT_TYPE(IntEnum):
 
 class GetDependencies_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrObjectName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrObjectName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRIntEnumField("enumObject", 0, OBJECT_TYPE),
     ]
 
@@ -1152,8 +1180,10 @@ class GetDependencies_Request(NDRPacket):
 class GetDependencies_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrDependencyList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrDependencyList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1167,7 +1197,11 @@ class GetServiceList_Request(NDRPacket):
 class GetServiceList_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrServiceList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrServiceList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1180,13 +1214,17 @@ class GetIISAppPoolNames_Request(NDRPacket):
 class GetIISAppPoolNames_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrIISAppPoolList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrIISAppPoolList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSystemDirectory", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSystemDirectory", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1200,7 +1238,11 @@ class GetServerName_Request(NDRPacket):
 class GetServerName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrServerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrServerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1241,14 +1283,20 @@ register_com_interface(
 
 class GetCalendarInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetCalendarInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1256,7 +1304,9 @@ class GetCalendarInfo_Response(NDRPacket):
 
 class CreateCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
 
@@ -1267,7 +1317,9 @@ class CreateCalendar_Response(NDRPacket):
 
 class ModifyCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bOverwrite", 0),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
@@ -1279,7 +1331,9 @@ class ModifyCalendar_Response(NDRPacket):
 
 class DeleteCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
 
@@ -1290,8 +1344,16 @@ class DeleteCalendar_Response(NDRPacket):
 
 class RenameCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrOldCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrNewCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrOldCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrNewCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
     ]
 
 
@@ -1301,8 +1363,12 @@ class RenameCalendar_Response(NDRPacket):
 
 class ComputeEvents_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("szStartTime", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("szEndTime", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("szStartTime", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("szEndTime", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("fMergeEvents", 0),
     ]
 
@@ -1310,10 +1376,14 @@ class ComputeEvents_Request(NDRPacket):
 class ComputeEvents_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrEvents", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrEvents", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pbstrConflicts", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrConflicts", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1321,14 +1391,20 @@ class ComputeEvents_Response(NDRPacket):
 
 class GetScheduleInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetScheduleInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1336,7 +1412,9 @@ class GetScheduleInfo_Response(NDRPacket):
 
 class CreateSchedule_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1346,7 +1424,9 @@ class CreateSchedule_Response(NDRPacket):
 
 class ModifySchedule_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrScheduleXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bOverwrite", 0),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
@@ -1358,7 +1438,9 @@ class ModifySchedule_Response(NDRPacket):
 
 class DeleteSchedule_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1368,8 +1450,16 @@ class DeleteSchedule_Response(NDRPacket):
 
 class RenameSchedule_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrOldScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrNewScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrOldScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrNewScheduleName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
     ]
 
 
@@ -1379,8 +1469,14 @@ class RenameSchedule_Response(NDRPacket):
 
 class MoveBeforeCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrRefCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrRefCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
 
@@ -1391,8 +1487,14 @@ class MoveBeforeCalendar_Response(NDRPacket):
 
 class MoveAfterCalendar_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrRefCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrRefCalendarName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRSignedIntField("bChangeActivePolicy", 0),
     ]
 
@@ -1440,14 +1542,20 @@ register_com_interface(
 
 class GetPolicyInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetPolicyInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1455,7 +1563,9 @@ class GetPolicyInfo_Response(NDRPacket):
 
 class CreatePolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1465,7 +1575,9 @@ class CreatePolicy_Response(NDRPacket):
 
 class ModifyPolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bOverwrite", 0),
     ]
 
@@ -1476,7 +1588,9 @@ class ModifyPolicy_Response(NDRPacket):
 
 class DeletePolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1486,8 +1600,12 @@ class DeletePolicy_Response(NDRPacket):
 
 class RenameAllocationPolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrNewPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrOldPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrNewPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrOldPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1497,10 +1615,18 @@ class RenameAllocationPolicy_Response(NDRPacket):
 
 class MoveBefore_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField(
-            "bstrRefResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrRefResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -1511,10 +1637,18 @@ class MoveBefore_Response(NDRPacket):
 
 class MoveAfter_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField(
-            "bstrRefResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrRefResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -1525,7 +1659,11 @@ class MoveAfter_Response(NDRPacket):
 
 class SetCalDefaultPolicyName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrDefaultPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrDefaultPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1540,8 +1678,10 @@ class GetCalDefaultPolicyName_Request(NDRPacket):
 class GetCalDefaultPolicyName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrDefaultPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrDefaultPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1550,14 +1690,20 @@ class GetCalDefaultPolicyName_Response(NDRPacket):
 
 class GetProcessList_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetProcessList_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrProcessList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrProcessList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1576,8 +1722,10 @@ class GetCurrentPolicy_Request(NDRPacket):
 class GetCurrentPolicy_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrCurrentPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCurrentPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntEnumField("enumManage", 0, MANAGEMENT_TYPE),
@@ -1587,7 +1735,9 @@ class GetCurrentPolicy_Response(NDRPacket):
 
 class SetCurrentPolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRIntEnumField("enumManage", 0, MANAGEMENT_TYPE),
     ]
 
@@ -1603,8 +1753,10 @@ class GetCurrentStateAndActivePolicyName_Request(NDRPacket):
 class GetCurrentStateAndActivePolicyName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrCurrentPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCurrentPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntEnumField("enumManage", 0, MANAGEMENT_TYPE),
@@ -1614,14 +1766,20 @@ class GetCurrentStateAndActivePolicyName_Response(NDRPacket):
 
 class GetConditionalPolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetConditionalPolicy_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1629,7 +1787,9 @@ class GetConditionalPolicy_Response(NDRPacket):
 
 class SetConditionalPolicy_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1672,15 +1832,21 @@ register_com_interface(
 
 class GetResourceGroupInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
 class GetResourceGroupInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1689,7 +1855,11 @@ class GetResourceGroupInfo_Response(NDRPacket):
 
 class ModifyResourceGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRSignedIntField("bOverwrite", 0),
     ]
 
@@ -1700,7 +1870,11 @@ class ModifyResourceGroup_Response(NDRPacket):
 
 class CreateResourceGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1710,7 +1884,11 @@ class CreateResourceGroup_Response(NDRPacket):
 
 class DeleteResourceGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1720,11 +1898,15 @@ class DeleteResourceGroup_Response(NDRPacket):
 
 class RenameResourceGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrNewResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrNewResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField(
-            "bstrOldResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrOldResourceGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -1755,10 +1937,16 @@ register_com_interface(
 
 class CreateAccountingDb_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrServerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrServerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("bWindowsAuth", 0),
-        NDRPacketField("bstrUserName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPasswd", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrUserName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPasswd", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1773,7 +1961,9 @@ class GetAccountingMetadata_Request(NDRPacket):
 class GetAccountingMetadata_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrMetaData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrMetaData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1781,16 +1971,26 @@ class GetAccountingMetadata_Response(NDRPacket):
 
 class ExecuteAccountingQuery_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrAccountingQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrAccountingQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
 class ExecuteAccountingQuery_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRSignedIntField("pbIsThereMoreData", 0),
         NDRIntField("status", 0),
@@ -1799,16 +1999,24 @@ class ExecuteAccountingQuery_Response(NDRPacket):
 
 class GetRawAccountingData_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
 class GetRawAccountingData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRSignedIntField("pbIsThereMoreData", 0),
         NDRIntField("status", 0),
@@ -1822,7 +2030,9 @@ class GetNextAccountingDataBatch_Request(NDRPacket):
 class GetNextAccountingDataBatch_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrResult", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRSignedIntField("pbIsThereMoreData", 0),
         NDRIntField("status", 0),
@@ -1831,9 +2041,15 @@ class GetNextAccountingDataBatch_Response(NDRPacket):
 
 class DeleteAccountingData_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrStartingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrEndingDate", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1859,7 +2075,9 @@ class CancelAccountingQuery_Response(NDRPacket):
 
 class RegisterAccountingClient_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrClientId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrClientId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1869,7 +2087,9 @@ class RegisterAccountingClient_Response(NDRPacket):
 
 class DumpAccountingData_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrAccountingData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrAccountingData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1884,7 +2104,9 @@ class GetAccountingClients_Request(NDRPacket):
 class GetAccountingClients_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrClientIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrClientIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1892,7 +2114,9 @@ class GetAccountingClients_Response(NDRPacket):
 
 class SetAccountingClientStatus_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrClientIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrClientIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1910,7 +2134,9 @@ class CheckAccountingConnection_Response(NDRPacket):
 
 class SetClientPermissions_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrClientId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrClientId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("fAddPermissions", 0),
     ]
 
@@ -1963,7 +2189,11 @@ class GetConfig_Request(NDRPacket):
 class GetConfig_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrConfigInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConfigInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1971,7 +2201,9 @@ class GetConfig_Response(NDRPacket):
 
 class SetConfig_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConfigInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrConfigInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRIntEnumField("enumConfigType", 0, CONFIGTYPE),
     ]
 
@@ -2012,7 +2244,11 @@ class GetExclusionList_Request(NDRPacket):
 class GetExclusionList_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrExclusionList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrExclusionList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2020,7 +2256,9 @@ class GetExclusionList_Response(NDRPacket):
 
 class SetExclusionList_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrExclusionList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrExclusionList", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2083,8 +2321,10 @@ class GetSupportedClient_Request(NDRPacket):
 class GetSupportedClient_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSupportedClients", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSupportedClients", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2109,10 +2349,16 @@ register_com_interface(
 
 class CreateMachineGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField("bstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
     ]
 
 
@@ -2122,15 +2368,19 @@ class CreateMachineGroup_Response(NDRPacket):
 
 class GetMachineGroupInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMachineGroupInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2146,8 +2396,14 @@ class MACHINE_GROUP_MERGE_OPTIONS(IntEnum):
 
 class ModifyMachineGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrMachineGroupInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRIntEnumField("enumMGMergeOptions", 0, MACHINE_GROUP_MERGE_OPTIONS),
     ]
 
@@ -2158,7 +2414,9 @@ class ModifyMachineGroup_Response(NDRPacket):
 
 class DeleteMachineGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2168,11 +2426,15 @@ class DeleteMachineGroup_Response(NDRPacket):
 
 class RenameMachineGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrOldMachineGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrOldMachineGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField(
-            "bstrNewMachineGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrNewMachineGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -2183,10 +2445,14 @@ class RenameMachineGroup_Response(NDRPacket):
 
 class AddMachine_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField("bstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2196,14 +2462,20 @@ class AddMachine_Response(NDRPacket):
 
 class GetMachineInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMachineInfo_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2211,11 +2483,17 @@ class GetMachineInfo_Response(NDRPacket):
 
 class ModifyMachineInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2225,10 +2503,14 @@ class ModifyMachineInfo_Response(NDRPacket):
 
 class DeleteMachine_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrParentMachineGroupId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineId", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2262,7 +2544,9 @@ register_com_interface(
 
 class ExportObjects_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrObjectIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrObjectIds", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRIntEnumField("enumObjectType", 0, OBJECT_TYPE),
     ]
 
@@ -2270,7 +2554,9 @@ class ExportObjects_Request(NDRPacket):
 class ExportObjects_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrObjectXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrObjectXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2278,20 +2564,38 @@ class ExportObjects_Response(NDRPacket):
 
 class GetImportConflicts_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
     ]
 
 
 class GetImportConflicts_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrConflictingObjects", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConflictingObjects", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2308,12 +2612,28 @@ class IMPORT_TYPE(IntEnum):
 
 class ImportXml_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRIntEnumField("enumImportType", 0, IMPORT_TYPE),
     ]
 
@@ -2329,27 +2649,41 @@ class ExportXml_Request(NDRPacket):
 class ExportXml_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pbstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pbstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pbstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField("pbstrPMCXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
             )
         ),
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField("pbstrPolicyXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
             )
         ),
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCalendarXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConditionalXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrMachineGroupXml", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConfigurationXmls", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2382,8 +2716,12 @@ class GetRemoteUserCategories_Request(NDRPacket):
 class GetRemoteUserCategories_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrRemoteUserCategoriesInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrRemoteUserCategoriesInfo",
+                    FLAGGED_WORD_BLOB(),
+                    FLAGGED_WORD_BLOB,
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2392,8 +2730,10 @@ class GetRemoteUserCategories_Response(NDRPacket):
 
 class SetRemoteUserCategories_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrRemoteUserCategoriesInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrRemoteUserCategoriesInfo", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2404,8 +2744,10 @@ class SetRemoteUserCategories_Response(NDRPacket):
 
 class RefreshRemoteSessionWeights_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrTaregetUserSessions", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrTaregetUserSessions", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
         NDRSignedIntField("bUpdateAll", 0),
     ]

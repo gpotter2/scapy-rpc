@@ -296,8 +296,8 @@ class PSYSTEMTIME(NDRPacket):
 class SchRpcScheduledRuntimes_Request(NDRPacket):
     fields_desc = [
         NDRConfVarStrNullFieldUtf16("path", ""),
-        NDRFullPointerField(NDRPacketField("start", PSYSTEMTIME(), PSYSTEMTIME)),
-        NDRFullPointerField(NDRPacketField("end", PSYSTEMTIME(), PSYSTEMTIME)),
+        NDRPacketField("start", PSYSTEMTIME(), PSYSTEMTIME),
+        NDRPacketField("end", PSYSTEMTIME(), PSYSTEMTIME),
         NDRIntField("flags", 0),
         NDRIntField("cRequested", 0),
     ]
@@ -307,11 +307,7 @@ class SchRpcScheduledRuntimes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcRuntimes", None, size_of="pRuntimes"),
         NDRConfPacketListField(
-            "pRuntimes",
-            [],
-            PSYSTEMTIME,
-            size_is=lambda pkt: pkt.pcRuntimes,
-            ptr_pack=True,
+            "pRuntimes", [], PSYSTEMTIME, size_is=lambda pkt: pkt.pcRuntimes
         ),
         NDRIntField("status", 0),
     ]

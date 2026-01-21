@@ -100,7 +100,9 @@ class MInterfacePointer(NDRPacket):
 
 class OpenNamespace_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strNamespace", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strNamespace", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRFullPointerField(
@@ -159,7 +161,9 @@ class QueryObjectSink_Response(NDRPacket):
 
 class GetObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRFullPointerField(
@@ -193,7 +197,9 @@ class GetObject_Response(NDRPacket):
 
 class GetObjectAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -243,7 +249,9 @@ class PutClassAsync_Response(NDRPacket):
 
 class DeleteClass_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRFullPointerField(
@@ -267,7 +275,9 @@ class DeleteClass_Response(NDRPacket):
 
 class DeleteClassAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -280,7 +290,9 @@ class DeleteClassAsync_Response(NDRPacket):
 
 class CreateClassEnum_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strSuperclass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strSuperclass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
     ]
@@ -297,7 +309,9 @@ class CreateClassEnum_Response(NDRPacket):
 
 class CreateClassEnumAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strSuperclass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strSuperclass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -347,7 +361,9 @@ class PutInstanceAsync_Response(NDRPacket):
 
 class DeleteInstance_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRFullPointerField(
@@ -371,7 +387,9 @@ class DeleteInstance_Response(NDRPacket):
 
 class DeleteInstanceAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -384,7 +402,9 @@ class DeleteInstanceAsync_Response(NDRPacket):
 
 class CreateInstanceEnum_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strSuperClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strSuperClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
     ]
@@ -401,7 +421,9 @@ class CreateInstanceEnum_Response(NDRPacket):
 
 class CreateInstanceEnumAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strSuperClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strSuperClass", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -414,8 +436,12 @@ class CreateInstanceEnumAsync_Response(NDRPacket):
 
 class ExecQuery_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
     ]
@@ -432,8 +458,12 @@ class ExecQuery_Response(NDRPacket):
 
 class ExecQueryAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -446,8 +476,12 @@ class ExecQueryAsync_Response(NDRPacket):
 
 class ExecNotificationQuery_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
     ]
@@ -464,8 +498,12 @@ class ExecNotificationQuery_Response(NDRPacket):
 
 class ExecNotificationQueryAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strQueryLanguage", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pResponseHandler", MInterfacePointer(), MInterfacePointer),
@@ -478,8 +516,12 @@ class ExecNotificationQueryAsync_Response(NDRPacket):
 
 class ExecMethod_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pInParams", MInterfacePointer(), MInterfacePointer),
@@ -514,8 +556,12 @@ class ExecMethod_Response(NDRPacket):
 
 class ExecMethodAsync_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("strMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strObjectPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("strMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lFlags", 0),
         NDRPacketField("pCtx", MInterfacePointer(), MInterfacePointer),
         NDRPacketField("pInParams", MInterfacePointer(), MInterfacePointer),
@@ -584,7 +630,9 @@ class SetStatus_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("lFlags", 0),
         NDRSignedIntField("hResult", 0),
-        NDRPacketField("strParam", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("strParam", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRPacketField("pObjParam", MInterfacePointer(), MInterfacePointer),
     ]
 
@@ -701,7 +749,11 @@ class GetResultString_Request(NDRPacket):
 class GetResultString_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pstrResultString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pstrResultString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]

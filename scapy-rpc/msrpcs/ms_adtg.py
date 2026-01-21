@@ -80,8 +80,12 @@ class MInterfacePointer(NDRPacket):
 
 class Query_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConnection", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrConnection", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrQuery", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lMarshalOptions", 0),
     ]
 
@@ -97,7 +101,9 @@ class Query_Response(NDRPacket):
 
 class SubmitChanges_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConnection", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrConnection", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRPacketField("pRecordset", MInterfacePointer(), MInterfacePointer),
     ]
 
@@ -113,7 +119,9 @@ class ConvertToString_Request(NDRPacket):
 class ConvertToString_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrInline", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrInline", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -957,7 +965,11 @@ class wireVARIANTStr(NDRPacket):
 
 
 class CreateRecordSet_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varColumnInfos", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varColumnInfos", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class CreateRecordSet_Response(NDRPacket):
@@ -987,15 +999,27 @@ register_dcerpc_interface(
 
 class Execute21_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("QueryString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("QueryString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lMarshalOptions", 0),
-        NDRPacketField("Properties", wireVARIANTStr(), wireVARIANTStr),
-        NDRPacketField("TableId", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("Properties", wireVARIANTStr(), wireVARIANTStr)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("TableId", wireVARIANTStr(), wireVARIANTStr)
+        ),
         NDRSignedIntField("lExecuteOptions", 0),
         NDRFullPointerField(
-            NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1003,7 +1027,9 @@ class Execute21_Request(NDRPacket):
 class Execute21_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
@@ -1014,14 +1040,20 @@ class Execute21_Response(NDRPacket):
 
 class Synchronize21_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lSynchronizeOptions", 0),
         NDRFullPointerField(
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
         ),
         NDRFullPointerField(
-            NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1032,10 +1064,14 @@ class Synchronize21_Response(NDRPacket):
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
         ),
         NDRFullPointerField(
-            NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1061,19 +1097,33 @@ register_dcerpc_interface(
 
 class Execute_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("QueryString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("QueryString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lMarshalOptions", 0),
-        NDRPacketField("Properties", wireVARIANTStr(), wireVARIANTStr),
-        NDRPacketField("TableId", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("Properties", wireVARIANTStr(), wireVARIANTStr)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("TableId", wireVARIANTStr(), wireVARIANTStr)
+        ),
         NDRSignedIntField("lExecuteOptions", 0),
         NDRFullPointerField(
-            NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRSignedIntField("lcid", 0),
         NDRFullPointerField(
-            NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1081,10 +1131,14 @@ class Execute_Request(NDRPacket):
 class Execute_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pParameters", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
@@ -1095,18 +1149,26 @@ class Execute_Response(NDRPacket):
 
 class Synchronize_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("ConnectionString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("HandlerString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("lSynchronizeOptions", 0),
         NDRFullPointerField(
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
         ),
         NDRFullPointerField(
-            NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRSignedIntField("lcid", 0),
         NDRFullPointerField(
-            NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1117,13 +1179,19 @@ class Synchronize_Response(NDRPacket):
             NDRPacketField("ppRecordset", MInterfacePointer(), MInterfacePointer)
         ),
         NDRFullPointerField(
-            NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pStatusArray", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pInformation", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]

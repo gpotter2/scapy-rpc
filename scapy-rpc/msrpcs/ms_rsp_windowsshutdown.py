@@ -20,7 +20,6 @@ from scapy.layers.dcerpc import (
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
     NDRFullEmbPointerField,
-    NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
     NDRShortField,
@@ -48,15 +47,11 @@ class PREG_UNICODE_STRING(NDRPacket):
 
 class WsdrInitiateShutdown_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
-        ),
+        NDRPacketField("lpMessage", PREG_UNICODE_STRING(), PREG_UNICODE_STRING),
         NDRIntField("dwGracePeriod", 0),
         NDRIntField("dwShudownFlags", 0),
         NDRIntField("dwReason", 0),
-        NDRFullPointerField(
-            NDRPacketField("lpClientHint", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
-        ),
+        NDRPacketField("lpClientHint", PREG_UNICODE_STRING(), PREG_UNICODE_STRING),
     ]
 
 
@@ -66,9 +61,7 @@ class WsdrInitiateShutdown_Response(NDRPacket):
 
 class WsdrAbortShutdown_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("lpClientHint", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
-        )
+        NDRPacketField("lpClientHint", PREG_UNICODE_STRING(), PREG_UNICODE_STRING)
     ]
 
 

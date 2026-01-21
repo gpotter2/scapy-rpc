@@ -450,10 +450,8 @@ class RStartServiceW_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hService", NDRContextHandle(), NDRContextHandle),
         NDRIntField("argc", None, size_of="argv"),
-        NDRFullPointerField(
-            NDRConfPacketListField(
-                "argv", [], LPSTRING_PTRSW, size_is=lambda pkt: pkt.argc
-            )
+        NDRConfPacketListField(
+            "argv", [], LPSTRING_PTRSW, size_is=lambda pkt: pkt.argc
         ),
     ]
 
@@ -775,10 +773,8 @@ class RStartServiceA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hService", NDRContextHandle(), NDRContextHandle),
         NDRIntField("argc", None, size_of="argv"),
-        NDRFullPointerField(
-            NDRConfPacketListField(
-                "argv", [], LPSTRING_PTRSA, size_is=lambda pkt: pkt.argc
-            )
+        NDRConfPacketListField(
+            "argv", [], LPSTRING_PTRSA, size_is=lambda pkt: pkt.argc
         ),
     ]
 

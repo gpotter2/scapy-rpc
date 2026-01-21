@@ -5289,12 +5289,8 @@ class R_DnssrvUpdateRecord_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullField("pszZone", "")),
         NDRConfVarStrNullField("pszNodeName", ""),
-        NDRFullPointerField(
-            NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
+        NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
+        NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
     ]
 
 
@@ -9061,12 +9057,8 @@ class R_DnssrvUpdateRecord2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullField("pszZone", "")),
         NDRConfVarStrNullField("pszNodeName", ""),
-        NDRFullPointerField(
-            NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
+        NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
+        NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
     ]
 
 
@@ -9082,12 +9074,8 @@ class R_DnssrvUpdateRecord3_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullField("pszZone", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszZoneScope", "")),
         NDRConfVarStrNullField("pszNodeName", ""),
-        NDRFullPointerField(
-            NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
+        NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
+        NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
     ]
 
 
@@ -14741,12 +14729,8 @@ class R_DnssrvUpdateRecord4_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullField("pszZone", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszZoneScope", "")),
         NDRConfVarStrNullField("pszNodeName", ""),
-        NDRFullPointerField(
-            NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
-        NDRFullPointerField(
-            NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD)
-        ),
+        NDRPacketField("pAddRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
+        NDRPacketField("pDeleteRecord", PDNS_RPC_RECORD(), PDNS_RPC_RECORD),
     ]
 
 

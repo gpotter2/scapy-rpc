@@ -33,6 +33,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedIntField,
     NDRSignedLongField,
@@ -523,17 +524,11 @@ class NetrLogonSamLogon_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("LogonServer", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ComputerName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
-            )
+        NDRPacketField(
+            "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRInt3264EnumField("LogonLevel", 0, NETLOGON_LOGON_INFO_CLASS),
         NDRUnionField(
@@ -701,12 +696,8 @@ class NetrLogonSamLogon_Request(NDRPacket):
 
 class NetrLogonSamLogon_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRUnionField(
             [
@@ -819,17 +810,11 @@ class NetrLogonSamLogoff_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("LogonServer", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ComputerName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
-            )
+        NDRPacketField(
+            "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRInt3264EnumField("LogonLevel", 0, NETLOGON_LOGON_INFO_CLASS),
         NDRUnionField(
@@ -996,12 +981,8 @@ class NetrLogonSamLogoff_Request(NDRPacket):
 
 class NetrLogonSamLogoff_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRIntField("status", 0),
     ]
@@ -1993,7 +1974,7 @@ class PNETLOGON_DELTA_ENUM(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullEmbPointerField(
+                    NDRRefEmbPointerField(
                         NDRPacketField(
                             "DeltaUnion", PNLPR_MODIFIED_COUNT(), PNLPR_MODIFIED_COUNT
                         )
@@ -3750,17 +3731,11 @@ class NetrLogonSamLogonWithFlags_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("LogonServer", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ComputerName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
-            )
+        NDRPacketField(
+            "Authenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRInt3264EnumField("LogonLevel", 0, NETLOGON_LOGON_INFO_CLASS),
         NDRUnionField(
@@ -3929,12 +3904,8 @@ class NetrLogonSamLogonWithFlags_Request(NDRPacket):
 
 class NetrLogonSamLogonWithFlags_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField(
-                "ReturnAuthenticator",
-                PNETLOGON_AUTHENTICATOR(),
-                PNETLOGON_AUTHENTICATOR,
-            )
+        NDRPacketField(
+            "ReturnAuthenticator", PNETLOGON_AUTHENTICATOR(), PNETLOGON_AUTHENTICATOR
         ),
         NDRUnionField(
             [

@@ -29,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
 )
 
@@ -95,7 +96,7 @@ class PDOMAIN_GROUP_MEMBERSHIP(NDRPacket):
             NDRFullEmbPointerField(NDRPacketField("DomainId", PSID(), PSID))
         ),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
@@ -110,7 +111,7 @@ class PDOMAIN_GROUP_MEMBERSHIP(NDRPacket):
             NDRFullEmbPointerField(NDRPacketField("DomainId", PSID(), PSID))
         ),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
@@ -213,7 +214,7 @@ class KERB_VALIDATION_INFO(NDRPacket):
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
@@ -233,7 +234,7 @@ class KERB_VALIDATION_INFO(NDRPacket):
             "Reserved3", [0] * 7, NDRIntField("", 0), length_is=lambda _: 7
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [],
@@ -247,7 +248,7 @@ class KERB_VALIDATION_INFO(NDRPacket):
             )
         ),
         NDRIntField("ResourceGroupCount", None, size_of="ResourceGroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ResourceGroupIds",
                 [],
@@ -278,7 +279,7 @@ class PKERB_VALIDATION_INFO(NDRPacket):
         NDRIntField("UserId", 0),
         NDRIntField("PrimaryGroupId", 0),
         NDRIntField("GroupCount", None, size_of="GroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "GroupIds", [], PGROUP_MEMBERSHIP, size_is=lambda pkt: pkt.GroupCount
             )
@@ -298,7 +299,7 @@ class PKERB_VALIDATION_INFO(NDRPacket):
             "Reserved3", [0] * 7, NDRIntField("", 0), length_is=lambda _: 7
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [],
@@ -312,7 +313,7 @@ class PKERB_VALIDATION_INFO(NDRPacket):
             )
         ),
         NDRIntField("ResourceGroupCount", None, size_of="ResourceGroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ResourceGroupIds",
                 [],
@@ -560,7 +561,7 @@ class PAC_DEVICE_INFO(NDRPacket):
             NDRFullEmbPointerField(NDRPacketField("AccountDomainId", PSID(), PSID))
         ),
         NDRIntField("AccountGroupCount", None, size_of="AccountGroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "AccountGroupIds",
                 [],
@@ -569,7 +570,7 @@ class PAC_DEVICE_INFO(NDRPacket):
             )
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [],
@@ -578,7 +579,7 @@ class PAC_DEVICE_INFO(NDRPacket):
             )
         ),
         NDRIntField("DomainGroupCount", None, size_of="DomainGroup"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "DomainGroup",
                 [],
@@ -598,7 +599,7 @@ class PPAC_DEVICE_INFO(NDRPacket):
             NDRFullEmbPointerField(NDRPacketField("AccountDomainId", PSID(), PSID))
         ),
         NDRIntField("AccountGroupCount", None, size_of="AccountGroupIds"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "AccountGroupIds",
                 [],
@@ -607,7 +608,7 @@ class PPAC_DEVICE_INFO(NDRPacket):
             )
         ),
         NDRIntField("SidCount", None, size_of="ExtraSids"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ExtraSids",
                 [],
@@ -616,7 +617,7 @@ class PPAC_DEVICE_INFO(NDRPacket):
             )
         ),
         NDRIntField("DomainGroupCount", None, size_of="DomainGroup"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "DomainGroup",
                 [],

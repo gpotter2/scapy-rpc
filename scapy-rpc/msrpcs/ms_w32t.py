@@ -26,6 +26,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRSignedIntField,
     NDRSignedLongField,
     NDRUnionField,
@@ -390,13 +391,12 @@ class PW32TIME_CONFIGURATION_INFO(NDRPacket):
             W32TIME_CONFIGURATION_DEFAULT,
         ),
         NDRIntField("cProviderConfig", None, size_of="pProviderConfig"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "pProviderConfig",
                 [],
                 PW32TIME_CONFIGURATION_PROVIDER,
                 size_is=lambda pkt: pkt.cProviderConfig,
-                ptr_pack=True,
             )
         ),
         NDRIntField("cEntries", None, size_of="pEntries"),

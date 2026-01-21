@@ -32,6 +32,7 @@ from scapy.layers.dcerpc import (
     NDRInt3264EnumField,
     NDRIntField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedIntField,
     NDRSignedLongField,
@@ -947,7 +948,7 @@ class LsarSetInformationPolicy_Response(NDRPacket):
 class LsarCreateAccount_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID)),
         NDRIntField("DesiredAccess", 0),
     ]
 
@@ -1030,7 +1031,7 @@ class PLSAPR_TRUSTED_ENUM_BUFFER(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("EntriesRead", None, size_of="Information"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "Information",
                 [],
@@ -1097,7 +1098,7 @@ class LsarCreateSecret_Response(NDRPacket):
 class LsarOpenAccount_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID)),
         NDRIntField("DesiredAccess", 0),
     ]
 
@@ -1160,9 +1161,7 @@ class LsarRemovePrivilegesFromAccount_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("AccountHandle", NDRContextHandle(), NDRContextHandle),
         NDRByteField("AllPrivileges", 0),
-        NDRFullPointerField(
-            NDRPacketField("Privileges", PLSAPR_PRIVILEGE_SET(), PLSAPR_PRIVILEGE_SET)
-        ),
+        NDRPacketField("Privileges", PLSAPR_PRIVILEGE_SET(), PLSAPR_PRIVILEGE_SET),
     ]
 
 
@@ -1194,7 +1193,7 @@ class LsarSetSystemAccessAccount_Response(NDRPacket):
 class LsarOpenTrustedDomain_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID)),
         NDRIntField("DesiredAccess", 0),
     ]
 
@@ -1233,7 +1232,7 @@ class LSAPR_TRUSTED_CONTROLLERS_INFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="Names"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "Names", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Entries
             )
@@ -2078,9 +2077,7 @@ class LsarQuerySecret_Request(NDRPacket):
                 )
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRFullPointerField(
             NDRFullPointerField(
                 NDRPacketField(
@@ -2090,9 +2087,7 @@ class LsarQuerySecret_Request(NDRPacket):
                 )
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
     ]
 
 
@@ -2107,9 +2102,7 @@ class LsarQuerySecret_Response(NDRPacket):
                 )
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRFullPointerField(
             NDRFullPointerField(
                 NDRPacketField(
@@ -2119,9 +2112,7 @@ class LsarQuerySecret_Response(NDRPacket):
                 )
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRIntField("status", 0),
     ]
 
@@ -2191,9 +2182,7 @@ class LsarDeleteObject_Response(NDRPacket):
 class LsarEnumerateAccountsWithUserRight_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("UserRight", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        ),
+        NDRPacketField("UserRight", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
     ]
 
 
@@ -2212,7 +2201,7 @@ class PLSAPR_USER_RIGHT_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Entries", None, size_of="UserRights"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "UserRights", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Entries
             )
@@ -2223,7 +2212,7 @@ class PLSAPR_USER_RIGHT_SET(NDRPacket):
 class LsarEnumerateAccountRights_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -2237,7 +2226,7 @@ class LsarEnumerateAccountRights_Response(NDRPacket):
 class LsarAddAccountRights_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID)),
         NDRPacketField("UserRights", PLSAPR_USER_RIGHT_SET(), PLSAPR_USER_RIGHT_SET),
     ]
 
@@ -2249,7 +2238,7 @@ class LsarAddAccountRights_Response(NDRPacket):
 class LsarRemoveAccountRights_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("AccountSid", PRPC_SID(), PRPC_SID)),
         NDRByteField("AllRights", 0),
         NDRPacketField("UserRights", PLSAPR_USER_RIGHT_SET(), PLSAPR_USER_RIGHT_SET),
     ]
@@ -2262,7 +2251,7 @@ class LsarRemoveAccountRights_Response(NDRPacket):
 class LsarQueryTrustedDomainInfo_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID)),
         NDRInt3264EnumField("InformationClass", 0, TRUSTED_INFORMATION_CLASS),
     ]
 
@@ -2540,7 +2529,7 @@ class LsarQueryTrustedDomainInfo_Response(NDRPacket):
 class LsarSetTrustedDomainInfo_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID)),
         NDRInt3264EnumField("InformationClass", 0, TRUSTED_INFORMATION_CLASS),
         NDRUnionField(
             [
@@ -2814,7 +2803,7 @@ class LsarSetTrustedDomainInfo_Response(NDRPacket):
 class LsarDeleteTrustedDomain_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID),
+        NDRFullPointerField(NDRPacketField("TrustedDomainSid", PRPC_SID(), PRPC_SID)),
     ]
 
 
@@ -2843,8 +2832,10 @@ class LsarRetrievePrivateData_Request(NDRPacket):
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("KeyName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedData", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedData", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
+                )
             )
         ),
     ]
@@ -2853,8 +2844,10 @@ class LsarRetrievePrivateData_Request(NDRPacket):
 class LsarRetrievePrivateData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedData", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
+            NDRFullPointerField(
+                NDRPacketField(
+                    "EncryptedData", PLSAPR_CR_CIPHER_VALUE(), PLSAPR_CR_CIPHER_VALUE
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -4032,10 +4025,12 @@ class PLSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION(NDRPacket):
 class LsarCreateTrustedDomainEx_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField(
-            "TrustedDomainInformation",
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+        NDRFullPointerField(
+            NDRPacketField(
+                "TrustedDomainInformation",
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+            )
         ),
         NDRPacketField(
             "AuthenticationInformation",
@@ -4163,65 +4158,63 @@ class LsarSetDomainInformationPolicy_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
         NDRInt3264EnumField("InformationClass", 0, POLICY_DOMAIN_INFORMATION_CLASS),
-        NDRFullPointerField(
-            NDRUnionField(
-                [
-                    (
-                        NDRPacketField(
-                            "PolicyDomainInformation",
-                            POLICY_DOMAIN_QUALITY_OF_SERVICE_INFO(),
-                            POLICY_DOMAIN_QUALITY_OF_SERVICE_INFO,
-                        ),
-                        (
-                            (
-                                lambda pkt: getattr(pkt, "InformationClass", None)
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainQualityOfServiceInformation
-                            ),
-                            (
-                                lambda _, val: val.tag
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainQualityOfServiceInformation
-                            ),
-                        ),
+        NDRUnionField(
+            [
+                (
+                    NDRPacketField(
+                        "PolicyDomainInformation",
+                        POLICY_DOMAIN_QUALITY_OF_SERVICE_INFO(),
+                        POLICY_DOMAIN_QUALITY_OF_SERVICE_INFO,
                     ),
                     (
-                        NDRPacketField(
-                            "PolicyDomainInformation",
-                            LSAPR_POLICY_DOMAIN_EFS_INFO(),
-                            LSAPR_POLICY_DOMAIN_EFS_INFO,
+                        (
+                            lambda pkt: getattr(pkt, "InformationClass", None)
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainQualityOfServiceInformation
                         ),
                         (
-                            (
-                                lambda pkt: getattr(pkt, "InformationClass", None)
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainEfsInformation
-                            ),
-                            (
-                                lambda _, val: val.tag
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainEfsInformation
-                            ),
+                            lambda _, val: val.tag
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainQualityOfServiceInformation
                         ),
+                    ),
+                ),
+                (
+                    NDRPacketField(
+                        "PolicyDomainInformation",
+                        LSAPR_POLICY_DOMAIN_EFS_INFO(),
+                        LSAPR_POLICY_DOMAIN_EFS_INFO,
                     ),
                     (
-                        NDRPacketField(
-                            "PolicyDomainInformation",
-                            POLICY_DOMAIN_KERBEROS_TICKET_INFO(),
-                            POLICY_DOMAIN_KERBEROS_TICKET_INFO,
+                        (
+                            lambda pkt: getattr(pkt, "InformationClass", None)
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainEfsInformation
                         ),
                         (
-                            (
-                                lambda pkt: getattr(pkt, "InformationClass", None)
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainKerberosTicketInformation
-                            ),
-                            (
-                                lambda _, val: val.tag
-                                == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainKerberosTicketInformation
-                            ),
+                            lambda _, val: val.tag
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainEfsInformation
                         ),
                     ),
-                ],
-                StrFixedLenField("PolicyDomainInformation", "", length=0),
-                align=(2, 8),
-                switch_fmt=("H", "I"),
-            )
+                ),
+                (
+                    NDRPacketField(
+                        "PolicyDomainInformation",
+                        POLICY_DOMAIN_KERBEROS_TICKET_INFO(),
+                        POLICY_DOMAIN_KERBEROS_TICKET_INFO,
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "InformationClass", None)
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainKerberosTicketInformation
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == POLICY_DOMAIN_INFORMATION_CLASS.PolicyDomainKerberosTicketInformation
+                        ),
+                    ),
+                ),
+            ],
+            StrFixedLenField("PolicyDomainInformation", "", length=0),
+            align=(2, 8),
+            switch_fmt=("H", "I"),
         ),
     ]
 
@@ -4257,10 +4250,12 @@ class PLSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION_INTERNAL(NDRPacket):
 class LsarCreateTrustedDomainEx2_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField(
-            "TrustedDomainInformation",
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+        NDRFullPointerField(
+            NDRPacketField(
+                "TrustedDomainInformation",
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+            )
         ),
         NDRPacketField(
             "AuthenticationInformation",
@@ -4501,10 +4496,12 @@ class PLSAPR_TRUSTED_DOMAIN_AUTH_INFORMATION_INTERNAL_AES(NDRPacket):
 class LsarCreateTrustedDomainEx3_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("PolicyHandle", NDRContextHandle(), NDRContextHandle),
-        NDRPacketField(
-            "TrustedDomainInformation",
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
-            PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+        NDRFullPointerField(
+            NDRPacketField(
+                "TrustedDomainInformation",
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX(),
+                PLSAPR_TRUSTED_DOMAIN_INFORMATION_EX,
+            )
         ),
         NDRPacketField(
             "AuthenticationInformation",
@@ -4837,17 +4834,11 @@ class LsarCreateSecret2_Response(NDRPacket):
 class LsarSetSecret2_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedCurrentValue",
-                PLSAPR_AES_CIPHER_VALUE(),
-                PLSAPR_AES_CIPHER_VALUE,
-            )
+        NDRPacketField(
+            "EncryptedCurrentValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedOldValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
-            )
+        NDRPacketField(
+            "EncryptedOldValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
         ),
     ]
 
@@ -4860,58 +4851,38 @@ class LsarQuerySecret2_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("SecretHandle", NDRContextHandle(), NDRContextHandle),
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedCurrentValue",
-                    PLSAPR_AES_CIPHER_VALUE(),
-                    PLSAPR_AES_CIPHER_VALUE,
-                )
+            NDRPacketField(
+                "EncryptedCurrentValue",
+                PLSAPR_AES_CIPHER_VALUE(),
+                PLSAPR_AES_CIPHER_VALUE,
             )
         ),
+        NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRFullPointerField(
-            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedOldValue",
-                    PLSAPR_AES_CIPHER_VALUE(),
-                    PLSAPR_AES_CIPHER_VALUE,
-                )
+            NDRPacketField(
+                "EncryptedOldValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
     ]
 
 
 class LsarQuerySecret2_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedCurrentValue",
-                    PLSAPR_AES_CIPHER_VALUE(),
-                    PLSAPR_AES_CIPHER_VALUE,
-                )
+            NDRPacketField(
+                "EncryptedCurrentValue",
+                PLSAPR_AES_CIPHER_VALUE(),
+                PLSAPR_AES_CIPHER_VALUE,
             )
         ),
+        NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRFullPointerField(
-            NDRPacketField("CurrentValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
-        NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedOldValue",
-                    PLSAPR_AES_CIPHER_VALUE(),
-                    PLSAPR_AES_CIPHER_VALUE,
-                )
+            NDRPacketField(
+                "EncryptedOldValue", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
             )
         ),
-        NDRFullPointerField(
-            NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER)
-        ),
+        NDRPacketField("OldValueSetTime", PLARGE_INTEGER(), PLARGE_INTEGER),
         NDRIntField("status", 0),
     ]
 
@@ -4922,10 +4893,8 @@ class LsarStorePrivateData2_Request(NDRPacket):
         NDRPacketField(
             "EncryptedKeyName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
-            )
+        NDRPacketField(
+            "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
         ),
     ]
 
@@ -4941,10 +4910,8 @@ class LsarRetrievePrivateData2_Request(NDRPacket):
             "EncryptedKeyName", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
         ),
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
-                )
+            NDRPacketField(
+                "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
             )
         ),
     ]
@@ -4953,10 +4920,8 @@ class LsarRetrievePrivateData2_Request(NDRPacket):
 class LsarRetrievePrivateData2_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRFullPointerField(
-                NDRPacketField(
-                    "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
-                )
+            NDRPacketField(
+                "EncryptedData", PLSAPR_AES_CIPHER_VALUE(), PLSAPR_AES_CIPHER_VALUE
             )
         ),
         NDRIntField("status", 0),

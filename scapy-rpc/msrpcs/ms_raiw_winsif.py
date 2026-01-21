@@ -31,6 +31,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedLongField,
     NDRSignedShortField,
@@ -292,7 +293,7 @@ class PWINSINTF_RECS_T(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("BuffSize", 0),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "pRow", [], PWINSINTF_RECORD_ACTION_T, size_is=lambda pkt: pkt.NoOfRecs
             )

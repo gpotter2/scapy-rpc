@@ -35,6 +35,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedIntField,
     NDRSignedLongField,
@@ -958,7 +959,7 @@ class SamrEnumerateAliasesInDomain_Response(NDRPacket):
 class PSAMPR_SID_INFORMATION(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullEmbPointerField(NDRPacketField("SidPointer", PRPC_SID(), PRPC_SID))
+        NDRRefEmbPointerField(NDRPacketField("SidPointer", PRPC_SID(), PRPC_SID))
     ]
 
 
@@ -1026,7 +1027,7 @@ class PSAMPR_RETURNED_USTRING_ARRAY(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("Count", None, size_of="Element"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "Element", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.Count
             )
@@ -2947,50 +2948,38 @@ class SamrChangePasswordUser_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("UserHandle", NDRContextHandle(), NDRContextHandle),
         NDRByteField("LmPresent", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "OldLmEncryptedWithNewLm",
-                PENCRYPTED_LM_OWF_PASSWORD(),
-                PENCRYPTED_LM_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "OldLmEncryptedWithNewLm",
+            PENCRYPTED_LM_OWF_PASSWORD(),
+            PENCRYPTED_LM_OWF_PASSWORD,
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewLmEncryptedWithOldLm",
-                PENCRYPTED_LM_OWF_PASSWORD(),
-                PENCRYPTED_LM_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "NewLmEncryptedWithOldLm",
+            PENCRYPTED_LM_OWF_PASSWORD(),
+            PENCRYPTED_LM_OWF_PASSWORD,
         ),
         NDRByteField("NtPresent", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "OldNtEncryptedWithNewNt",
-                PENCRYPTED_NT_OWF_PASSWORD(),
-                PENCRYPTED_NT_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "OldNtEncryptedWithNewNt",
+            PENCRYPTED_NT_OWF_PASSWORD(),
+            PENCRYPTED_NT_OWF_PASSWORD,
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewNtEncryptedWithOldNt",
-                PENCRYPTED_NT_OWF_PASSWORD(),
-                PENCRYPTED_NT_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "NewNtEncryptedWithOldNt",
+            PENCRYPTED_NT_OWF_PASSWORD(),
+            PENCRYPTED_NT_OWF_PASSWORD,
         ),
         NDRByteField("NtCrossEncryptionPresent", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewNtEncryptedWithNewLm",
-                PENCRYPTED_NT_OWF_PASSWORD(),
-                PENCRYPTED_NT_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "NewNtEncryptedWithNewLm",
+            PENCRYPTED_NT_OWF_PASSWORD(),
+            PENCRYPTED_NT_OWF_PASSWORD,
         ),
         NDRByteField("LmCrossEncryptionPresent", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewLmEncryptedWithNewNt",
-                PENCRYPTED_LM_OWF_PASSWORD(),
-                PENCRYPTED_LM_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "NewLmEncryptedWithNewNt",
+            PENCRYPTED_LM_OWF_PASSWORD(),
+            PENCRYPTED_LM_OWF_PASSWORD,
         ),
     ]
 
@@ -4305,21 +4294,17 @@ class PSAMPR_ENCRYPTED_USER_PASSWORD(NDRPacket):
 
 class SamrOemChangePasswordUser2_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("ServerName", PRPC_STRING(), PRPC_STRING)),
+        NDRPacketField("ServerName", PRPC_STRING(), PRPC_STRING),
         NDRPacketField("UserName", PRPC_STRING(), PRPC_STRING),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewPasswordEncryptedWithOldLm",
-                PSAMPR_ENCRYPTED_USER_PASSWORD(),
-                PSAMPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "NewPasswordEncryptedWithOldLm",
+            PSAMPR_ENCRYPTED_USER_PASSWORD(),
+            PSAMPR_ENCRYPTED_USER_PASSWORD,
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "OldLmOwfPasswordEncryptedWithNewLm",
-                PENCRYPTED_LM_OWF_PASSWORD(),
-                PENCRYPTED_LM_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "OldLmOwfPasswordEncryptedWithNewLm",
+            PENCRYPTED_LM_OWF_PASSWORD(),
+            PENCRYPTED_LM_OWF_PASSWORD,
         ),
     ]
 
@@ -4330,38 +4315,28 @@ class SamrOemChangePasswordUser2_Response(NDRPacket):
 
 class SamrUnicodeChangePasswordUser2_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("ServerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        ),
+        NDRPacketField("ServerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("UserName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewPasswordEncryptedWithOldNt",
-                PSAMPR_ENCRYPTED_USER_PASSWORD(),
-                PSAMPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "NewPasswordEncryptedWithOldNt",
+            PSAMPR_ENCRYPTED_USER_PASSWORD(),
+            PSAMPR_ENCRYPTED_USER_PASSWORD,
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "OldNtOwfPasswordEncryptedWithNewNt",
-                PENCRYPTED_NT_OWF_PASSWORD(),
-                PENCRYPTED_NT_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "OldNtOwfPasswordEncryptedWithNewNt",
+            PENCRYPTED_NT_OWF_PASSWORD(),
+            PENCRYPTED_NT_OWF_PASSWORD,
         ),
         NDRByteField("LmPresent", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "NewPasswordEncryptedWithOldLm",
-                PSAMPR_ENCRYPTED_USER_PASSWORD(),
-                PSAMPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "NewPasswordEncryptedWithOldLm",
+            PSAMPR_ENCRYPTED_USER_PASSWORD(),
+            PSAMPR_ENCRYPTED_USER_PASSWORD,
         ),
-        NDRFullPointerField(
-            NDRPacketField(
-                "OldLmOwfPasswordEncryptedWithNewNt",
-                PENCRYPTED_LM_OWF_PASSWORD(),
-                PENCRYPTED_LM_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "OldLmOwfPasswordEncryptedWithNewNt",
+            PENCRYPTED_LM_OWF_PASSWORD(),
+            PENCRYPTED_LM_OWF_PASSWORD,
         ),
     ]
 
@@ -4371,11 +4346,7 @@ class SamrUnicodeChangePasswordUser2_Response(NDRPacket):
 
 
 class SamrGetDomainPasswordInformation_Request(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Unused", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        )
-    ]
+    fields_desc = [NDRPacketField("Unused", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)]
 
 
 class SamrGetDomainPasswordInformation_Response(NDRPacket):
@@ -4930,16 +4901,12 @@ class SamrRidToSid_Response(NDRPacket):
 
 class SamrSetDSRMPassword_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("Unused", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        ),
+        NDRPacketField("Unused", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("UserId", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedNtOwfPassword",
-                PENCRYPTED_NT_OWF_PASSWORD(),
-                PENCRYPTED_NT_OWF_PASSWORD,
-            )
+        NDRPacketField(
+            "EncryptedNtOwfPassword",
+            PENCRYPTED_NT_OWF_PASSWORD(),
+            PENCRYPTED_NT_OWF_PASSWORD,
         ),
     ]
 
@@ -5212,9 +5179,7 @@ class PSAMPR_ENCRYPTED_PASSWORD_AES(NDRPacket):
 
 class SamrUnicodeChangePasswordUser4_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("ServerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        ),
+        NDRPacketField("ServerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("UserName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField(
             "EncryptedPassword",

@@ -514,12 +514,10 @@ class CreateNtmsMediaPoolA_Request(NDRPacket):
         NDRConfVarStrNullField("lpPoolName", ""),
         NDRFullPointerField(NDRPacketField("lpMediaType", GUID(), GUID)),
         NDRIntField("dwOptions", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "lpSecurityAttributes",
-                LPSECURITY_ATTRIBUTES_NTMS(),
-                LPSECURITY_ATTRIBUTES_NTMS,
-            )
+        NDRPacketField(
+            "lpSecurityAttributes",
+            LPSECURITY_ATTRIBUTES_NTMS(),
+            LPSECURITY_ATTRIBUTES_NTMS,
         ),
     ]
 
@@ -533,12 +531,10 @@ class CreateNtmsMediaPoolW_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("lpPoolName", ""),
         NDRFullPointerField(NDRPacketField("lpMediaType", GUID(), GUID)),
         NDRIntField("dwOptions", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "lpSecurityAttributes",
-                LPSECURITY_ATTRIBUTES_NTMS(),
-                LPSECURITY_ATTRIBUTES_NTMS,
-            )
+        NDRPacketField(
+            "lpSecurityAttributes",
+            LPSECURITY_ATTRIBUTES_NTMS(),
+            LPSECURITY_ATTRIBUTES_NTMS,
         ),
     ]
 
@@ -2258,11 +2254,7 @@ class LPRSM_MESSAGE(NDRPacket):
 
 
 class SendMessage_Request(NDRPacket):
-    fields_desc = [
-        NDRFullPointerField(
-            NDRPacketField("lpRsmMessage", LPRSM_MESSAGE(), LPRSM_MESSAGE)
-        )
-    ]
+    fields_desc = [NDRPacketField("lpRsmMessage", LPRSM_MESSAGE(), LPRSM_MESSAGE)]
 
 
 class SendMessage_Response(NDRPacket):

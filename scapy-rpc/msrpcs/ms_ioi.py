@@ -77,7 +77,9 @@ class GetSerializedBuffer_Request(NDRPacket):
 class GetSerializedBuffer_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBSTR", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBSTR", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -90,7 +92,9 @@ class GetObjectIdentity_Request(NDRPacket):
 class GetObjectIdentity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBSTRGUID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBSTRGUID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRSignedIntField("AppDomainID", 0),
         NDRSignedIntField("pCCW", 0),
@@ -1055,12 +1059,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1068,16 +1074,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1099,26 +1109,34 @@ register_com_interface(
 
 
 class RemoteDispatchAutoDone_Request(NDRPacket):
-    fields_desc = [NDRPacketField("s", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("s", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB))
+    ]
 
 
 class RemoteDispatchAutoDone_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pRetVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pRetVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class RemoteDispatchNotAutoDone_Request(NDRPacket):
-    fields_desc = [NDRPacketField("s", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("s", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB))
+    ]
 
 
 class RemoteDispatchNotAutoDone_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pRetVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pRetVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1148,7 +1166,9 @@ class GetComponentInfo_Request(NDRPacket):
 class GetComponentInfo_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("infoMask", 0),
-        NDRFullPointerField(NDRPacketField("infoArray", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRFullPointerField(NDRPacketField("infoArray", SAFEARRAY(), SAFEARRAY))
+        ),
         NDRIntField("status", 0),
     ]
 
