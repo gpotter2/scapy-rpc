@@ -382,7 +382,7 @@ class Resolver:
                     # The fact that we remove all pointer attributes from children is technically
                     # slightly broken. We should ideally remove them only if they we added because
                     # they were the default value, and also not store default values in the environment.
-                    if x not in idl_attributes and x not in ("ref", "unique", "ptr")
+                    if x not in idl_attributes and x != new_arg.default_idl_attribute
                 ]
                 new_ptr_lvl += new_arg.ptr_lvl
             # Welcome to [C706] 4.2.21. IF, <BUNCH OF CONDITIONS>
@@ -429,6 +429,7 @@ class Resolver:
                 newarg.subtype = arg
                 arg = newarg
             arg.ptr_lvl = new_ptr_lvl
+        default_idl_attribute: str | None = None
         # Apply default pointer policies
         if arg.ptr_lvl and not any(
             x in ("ref", "unique", "ptr") for x in idl_attributes
@@ -438,12 +439,15 @@ class Resolver:
                 # By default, the first indirection operator (an *, asterisk) in a parameter declaration is treated as a
                 # reference pointer.
                 idl_attributes.append("ref")
+                default_idl_attribute = "ref"
             else:
                 # Elsewhere, use interface <ptr_attr>
                 if self.current_interface:
                     idl_attributes.append(self.current_interface.pointer_default)
+                    default_idl_attribute = self.current_interface.pointer_default
                 else:
                     idl_attributes.append("unique")
+                    default_idl_attribute = "unique"
         # Build field
         if arg.TYPE == Types.BUILTIN:
             return ScapyField(
@@ -452,6 +456,7 @@ class Resolver:
                 SCAPY_FIELDS[arg.fmt],
                 arg.type,
                 idl_attributes=idl_attributes,
+                default_idl_attribute=default_idl_attribute
             )
         elif arg.TYPE == Types.CUSTOM:
             if isinstance(new_arg, ScapyStructField):
@@ -461,6 +466,7 @@ class Resolver:
                     new_arg.subtype,
                     new_arg.subtype.name,
                     idl_attributes=idl_attributes,
+                    default_idl_attribute=default_idl_attribute
                 )
             elif isinstance(new_arg, ScapyUnion):
                 return ScapyUnion(
@@ -469,6 +475,7 @@ class Resolver:
                     new_arg.fields,
                     idl_attributes=idl_attributes,
                     struct_name=new_arg.struct_name,
+                    default_idl_attribute=default_idl_attribute
                 )
             elif isinstance(new_arg, ScapyStruct):
                 return ScapyStructField(
@@ -477,6 +484,7 @@ class Resolver:
                     new_arg,
                     new_arg.name,
                     idl_attributes=idl_attributes,
+                    default_idl_attribute=default_idl_attribute
                 )
             elif isinstance(new_arg, ScapyField):
                 return ScapyField(
@@ -485,6 +493,7 @@ class Resolver:
                     new_arg.scapy_field,
                     arg.type,
                     idl_attributes=idl_attributes,
+                    default_idl_attribute=default_idl_attribute
                 )
             else:
                 assert False, "Unimplemented Custom->%s" % repr(arg.type)

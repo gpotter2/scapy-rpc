@@ -372,13 +372,14 @@ def get_alignment(field):
 
 
 class ScapyField:
-    def __init__(self, name, ptr_lvl, scapy_field, field_type_name, idl_attributes):
+    def __init__(self, name, ptr_lvl, scapy_field, field_type_name, idl_attributes, default_idl_attribute = None):
         self.name = name
         self.ptr_lvl = ptr_lvl
         self.sz = SCAPY_SIZES.get(scapy_field, 1)
         self.scapy_field = scapy_field
         self.field_type = field_type_name
         self.idl_attributes = idl_attributes
+        self.default_idl_attribute = default_idl_attribute
         self.inv_length_or_size_is = None
         assert not ptr_lvl or any(
             x in ("ref", "unique", "ptr") for x in idl_attributes
@@ -606,9 +607,9 @@ class ScapyArrayField(ScapyField):
 
 
 class ScapyStructField(ScapyField):
-    def __init__(self, name, ptr_lvl, subtype, struct_name, idl_attributes):
+    def __init__(self, name, ptr_lvl, subtype, struct_name, idl_attributes, default_idl_attribute = None):
         super(ScapyStructField, self).__init__(
-            name, ptr_lvl, "NDRPacketField", struct_name, idl_attributes
+            name, ptr_lvl, "NDRPacketField", struct_name, idl_attributes, default_idl_attribute
         )
         self.subtype = subtype
         self.struct_name = struct_name
@@ -669,7 +670,7 @@ class ScapyStructField(ScapyField):
 
 class ScapyStruct:
     def __init__(
-        self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False
+        self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False, default_idl_attribute = None
     ):
         self.name = name
         self.ptr_lvl = ptr_lvl
@@ -677,6 +678,7 @@ class ScapyStruct:
         self.idl_attributes = idl_attributes
         self.struct_name = struct_name
         self.recursive = recursive
+        self.default_idl_attribute = default_idl_attribute
         if recursive:
             # Super hack. A recursive field is only refered to by other fields,
             # not actually built into a Scapy structure. So we hack its name
@@ -775,9 +777,9 @@ class ScapyStruct:
 
 
 class ScapyUnion(ScapyStruct, ScapyField):
-    def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name):
+    def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name, default_idl_attribute = None):
         super(ScapyUnion, self).__init__(
-            name, ptr_lvl, fields, idl_attributes, struct_name
+            name, ptr_lvl, fields, idl_attributes, struct_name, default_idl_attribute=default_idl_attribute
         )
         self.field_type = name
         for f in self.fields:
