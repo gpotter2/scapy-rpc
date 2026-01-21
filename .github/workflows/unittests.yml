@@ -1,7 +1,6 @@
 name: Scapy RPC unit tests
 
 on:
-  workflow_dispatch:
   push:
     branches: [master]
   pull_request:
