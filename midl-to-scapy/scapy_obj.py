@@ -372,7 +372,15 @@ def get_alignment(field):
 
 
 class ScapyField:
-    def __init__(self, name, ptr_lvl, scapy_field, field_type_name, idl_attributes, default_idl_attribute = None):
+    def __init__(
+        self,
+        name,
+        ptr_lvl,
+        scapy_field,
+        field_type_name,
+        idl_attributes,
+        default_idl_attribute=None,
+    ):
         self.name = name
         self.ptr_lvl = ptr_lvl
         self.sz = SCAPY_SIZES.get(scapy_field, 1)
@@ -607,9 +615,22 @@ class ScapyArrayField(ScapyField):
 
 
 class ScapyStructField(ScapyField):
-    def __init__(self, name, ptr_lvl, subtype, struct_name, idl_attributes, default_idl_attribute = None):
+    def __init__(
+        self,
+        name,
+        ptr_lvl,
+        subtype,
+        struct_name,
+        idl_attributes,
+        default_idl_attribute=None,
+    ):
         super(ScapyStructField, self).__init__(
-            name, ptr_lvl, "NDRPacketField", struct_name, idl_attributes, default_idl_attribute
+            name,
+            ptr_lvl,
+            "NDRPacketField",
+            struct_name,
+            idl_attributes,
+            default_idl_attribute,
         )
         self.subtype = subtype
         self.struct_name = struct_name
@@ -670,7 +691,14 @@ class ScapyStructField(ScapyField):
 
 class ScapyStruct:
     def __init__(
-        self, name, ptr_lvl, fields, idl_attributes, struct_name, recursive=False, default_idl_attribute = None
+        self,
+        name,
+        ptr_lvl,
+        fields,
+        idl_attributes,
+        struct_name,
+        recursive=False,
+        default_idl_attribute=None,
     ):
         self.name = name
         self.ptr_lvl = ptr_lvl
@@ -777,9 +805,22 @@ class ScapyStruct:
 
 
 class ScapyUnion(ScapyStruct, ScapyField):
-    def __init__(self, name, ptr_lvl, fields, idl_attributes, struct_name, default_idl_attribute = None):
+    def __init__(
+        self,
+        name,
+        ptr_lvl,
+        fields,
+        idl_attributes,
+        struct_name,
+        default_idl_attribute=None,
+    ):
         super(ScapyUnion, self).__init__(
-            name, ptr_lvl, fields, idl_attributes, struct_name, default_idl_attribute=default_idl_attribute
+            name,
+            ptr_lvl,
+            fields,
+            idl_attributes,
+            struct_name,
+            default_idl_attribute=default_idl_attribute,
         )
         self.field_type = name
         for f in self.fields:

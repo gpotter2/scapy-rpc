@@ -456,7 +456,7 @@ class Resolver:
                 SCAPY_FIELDS[arg.fmt],
                 arg.type,
                 idl_attributes=idl_attributes,
-                default_idl_attribute=default_idl_attribute
+                default_idl_attribute=default_idl_attribute,
             )
         elif arg.TYPE == Types.CUSTOM:
             if isinstance(new_arg, ScapyStructField):
@@ -466,7 +466,7 @@ class Resolver:
                     new_arg.subtype,
                     new_arg.subtype.name,
                     idl_attributes=idl_attributes,
-                    default_idl_attribute=default_idl_attribute
+                    default_idl_attribute=default_idl_attribute,
                 )
             elif isinstance(new_arg, ScapyUnion):
                 return ScapyUnion(
@@ -475,7 +475,7 @@ class Resolver:
                     new_arg.fields,
                     idl_attributes=idl_attributes,
                     struct_name=new_arg.struct_name,
-                    default_idl_attribute=default_idl_attribute
+                    default_idl_attribute=default_idl_attribute,
                 )
             elif isinstance(new_arg, ScapyStruct):
                 return ScapyStructField(
@@ -484,7 +484,7 @@ class Resolver:
                     new_arg,
                     new_arg.name,
                     idl_attributes=idl_attributes,
-                    default_idl_attribute=default_idl_attribute
+                    default_idl_attribute=default_idl_attribute,
                 )
             elif isinstance(new_arg, ScapyField):
                 return ScapyField(
@@ -493,7 +493,7 @@ class Resolver:
                     new_arg.scapy_field,
                     arg.type,
                     idl_attributes=idl_attributes,
-                    default_idl_attribute=default_idl_attribute
+                    default_idl_attribute=default_idl_attribute,
                 )
             else:
                 assert False, "Unimplemented Custom->%s" % repr(arg.type)
