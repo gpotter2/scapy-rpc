@@ -518,10 +518,12 @@ class ScapyArrayField(ScapyField):
             # NDR defines a special representation for an array whose elements are strings.
             # Modified by [MS-RPCE] 2.2.4.4
             if self.length and self.length != "*":
+                # This is a Varying, non-conformant string. In this case, the length acts
+                # as a 'Maximum Length'. Since we don't implement it... skip it.
                 if self.subtype.scapy_field in CHAR_TYPES:
-                    fld = f'{prefix}StrLenField("{self.name}", "", length_is=lambda _: {self.length})'
+                    fld = f'{prefix}StrLenField("{self.name}", "")'
                 elif self.subtype.scapy_field in WCHAR_TYPES:
-                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", "", length_is=lambda _: {self.length})'
+                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", "")'
                 else:
                     assert False, "Unknown string on %s" % self.subtype.scapy_field
             elif not size_is and not max_is:
