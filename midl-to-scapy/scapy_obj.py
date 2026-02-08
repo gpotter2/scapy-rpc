@@ -763,12 +763,23 @@ class ScapyStruct:
         fields = ",\n".join(
             x.to_string(context, toplevel=toplevel) for x in self.fields
         )
+
+        # Get alignment for the structure ([MS-RPCE] sect 2.2.5.3.4.1)
         alignment = get_alignment(self) if not toplevel else (1, 1)
+
+        # [MS-RPCE] sect 2.2.5.3.4.2 and 2.2.5.3.4.3
+        # When the structure is conformant or varying, the padding is already handled
+        # by the field in charge of the "representation of the array elements"
+        if self.fields and any(
+            x[0] in ["size_is", "max_is", "length_is", "min_is"]
+            for x in self.fields[-1].idl_attributes
+        ):
+            alignment = (1, 1)
+
         return "class %s(NDRPacket):\n%s%s    fields_desc = [%s]\n" % (
             self.name,
-            (
-                ("    ALIGNMENT=%s\n" % str(alignment)) if alignment != (1, 1) else ""
-            ),  # [MS-RPCE] 2.2.5.3.4.1
+            # [MS-RPCE] 2.2.5.3.4.1 - Structure alignment
+            ("    ALIGNMENT=%s\n" % str(alignment)) if alignment != (1, 1) else "",
             context.get_conformant_count(self),
             fields,
         )
