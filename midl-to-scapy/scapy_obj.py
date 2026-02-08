@@ -363,6 +363,11 @@ def get_alignment(field):
         if field.length:
             # No "information type" as fixed length
             return alignment
+        elif not field.ptr_lvl:
+            # (we are never toplevel here)
+            # Conformant in structs are ignored in length calculation.. because
+            # the alignment is performed before them :D
+            return 1, 1
         else:
             return max(alignment[0], 4), max(alignment[1], 8)
     return (field.sz, field.sz)
@@ -462,6 +467,7 @@ class ScapyArrayField(ScapyField):
         length,
         idl_attributes,
     ):
+        # Get the inner Scapy fieldtype
         if isinstance(subtype, ScapyStructField):
             if isinstance(subtype.subtype, ScapyEnum):
                 field = "FieldListField"
@@ -471,10 +477,14 @@ class ScapyArrayField(ScapyField):
             field = "FieldListField"
         else:
             assert False, "Unknown array subtype: %s" % subtype
+
+        # Reprenstation type
         field_type = "%s[%s]" % (subtype.field_type, length or "")
+
         super(ScapyArrayField, self).__init__(
             name, ptr_lvl, field, field_type, idl_attributes
         )
+
         self.subtype = subtype
         self.length = length
 
@@ -500,6 +510,14 @@ class ScapyArrayField(ScapyField):
                 context.add_conformant(self.name)
                 suffix += ", conformant_in_struct=True"
 
+        # When an array has the [string] tag, there are two cases:
+        # - either it's an array of a primitive type, in which case let's take it into account
+        # - or it's an array of pointers to a primitive type, in which case we let the children
+        # handle it and ignore it here.
+        is_string = (
+            "string" in self.subtype.idl_attributes and self.subtype.ptr_lvl == 0
+        ) or "string" in self.idl_attributes
+
         if length_is:
             # Varying arrays
             # [C706] 4.2.18.2 - An array is called varying if none of its <array_bounds_declarator> components is empty
@@ -508,12 +526,12 @@ class ScapyArrayField(ScapyField):
             # [MS-RPCE 2.2.5.3.2.2]
             prefix += "Var"
             suffix += ", length_is=lambda pkt: " + res_size_is(length_is)
-        elif "string" in self.subtype.idl_attributes or "string" in self.idl_attributes:
+        elif is_string:
             # Strings are always considered Varying
             prefix += "Var"
 
         # Find type.
-        if "string" in self.subtype.idl_attributes or "string" in self.idl_attributes:
+        if is_string:
             # [C706] 14.3.5
             # NDR defines a special representation for an array whose elements are strings.
             # Modified by [MS-RPCE] 2.2.4.4
@@ -765,12 +783,14 @@ class ScapyStruct:
         fields = ",\n".join(
             x.to_string(context, toplevel=toplevel) for x in self.fields
         )
+
+        # Get alignment for the structure ([MS-RPCE] sect 2.2.5.3.4.1)
         alignment = get_alignment(self) if not toplevel else (1, 1)
+
         return "class %s(NDRPacket):\n%s%s    fields_desc = [%s]\n" % (
             self.name,
-            (
-                ("    ALIGNMENT=%s\n" % str(alignment)) if alignment != (1, 1) else ""
-            ),  # [MS-RPCE] 2.2.5.3.4.1
+            # [MS-RPCE] 2.2.5.3.4.1 - Structure alignment
+            ("    ALIGNMENT=%s\n" % str(alignment)) if alignment != (1, 1) else "",
             context.get_conformant_count(self),
             fields,
         )
