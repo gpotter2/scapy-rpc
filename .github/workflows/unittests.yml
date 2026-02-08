@@ -20,8 +20,8 @@ jobs:
     name: Code health check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Scapy-rpc
-        uses: actions/checkout@v4
+      - name: Checkout scapy-rpc
+        uses: actions/checkout@v6
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -39,7 +39,28 @@ jobs:
     name: Check SPDX identifiers
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Scapy
-        uses: actions/checkout@v4
+      - name: Checkout scapy-rpc
+        uses: actions/checkout@v6
       - name: Launch script
         run: bash .github/check_spdx.sh
+  unittests:
+    name: Unit tests from secdev/scapy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout scapy-rpc
+        uses: actions/checkout@v6
+      - name: Checkout scapy
+        uses: actions/checkout@v6
+        with:
+          repository: "secdev/scapy"
+          path: "scapy"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install scapy-rpc
+        working-directory: ./scapy-rpc
+        run: pip install .
+      - name: Run scapy tests for scapy-rpc
+        working-directory: ./scapy
+        run: ./test/run_tests -c test/configs/scapy-rpc.utsc
