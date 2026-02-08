@@ -1,4 +1,4 @@
-// [ms-uamg] v14.0 (Tue, 23 Apr 2024)
+// [ms-uamg] v15.0 (Tue, 09 Sep 2025)
   
 
 import "ms-dtyp.idl";
@@ -156,9 +156,6 @@ typedef  enum tagUpdateServiceOption
 {
      usoNonVolatileService = 0x00000001,
 } UpdateServiceOption;
-
-//typedef DECIMAL DECIMAL;
- 
  
 interface ICategoryCollection;
 interface IUpdateCollection;

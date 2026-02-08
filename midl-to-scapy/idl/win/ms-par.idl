@@ -1,4 +1,4 @@
-// [ms-par] v18.0 (Mon, 16 Sep 2024)
+// [ms-par] v19.0 (Mon, 11 Aug 2025)
  // [MS-PAR] interface
  [
      uuid(76F03F96-CDFD-44fc-A22C-64950A001209),
@@ -11,10 +11,6 @@
  interface IRemoteWinspool {
   
  import "ms-dtyp.idl";
-  
- #if __midl < 700
- #define disable_consistency_check
- #endif
   
  // [MS-RPRN] common constants
  #define TABLE_DWORD              0x1
@@ -567,7 +563,7 @@
   
  typedef struct _PORT_VAR_CONTAINER {
      DWORD cbMonitorData;
-     [size_is(cbMonitorData), unique, disable_consistency_check] 
+     [size_is(cbMonitorData), unique] 
        BYTE* pMonitorData;
  } PORT_VAR_CONTAINER;
   
@@ -1538,5 +1534,4 @@
      [in]      PRINTER_HANDLE                   hPrinter,
      [in, ref] RPC_BranchOfficeJobDataContainer *pBranchOfficeJobDataContainer
      );
-  
-}
+ }

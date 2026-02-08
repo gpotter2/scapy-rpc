@@ -1,4 +1,4 @@
-// [ms-fasp] v34.0 (Tue, 19 Nov 2024)
+// [ms-fasp] v35.0 (Fri, 21 Nov 2025)
 // import "wtypes.h";
  import "ms-dtyp.idl";
  // define PWSTR
@@ -2406,7 +2406,8 @@
      FW_CS_RULE_FLAGS_KEY_MANAGER_ALLOW_DICTATE_KEY = 0x40,
      FW_CS_RULE_FLAGS_KEY_MANAGER_ALLOW_NOTIFY_KEY = 0x80,
      FW_CS_RULE_FLAGS_SECURITY_REALM              = 0x100,
-     FW_CS_RULE_FLAGS_MAX                         = 0x200,
+     FW_CS_RULE_FLAGS_TUNNEL_TYPE_POINT_TO_SITE   = 0x200,
+     FW_CS_RULE_FLAGS_MAX                         = 0x400,
      FW_CS_RULE_FLAGS_MAX_V2_1                    = 0x02,
      FW_CS_RULE_FLAGS_MAX_V2_8                    = 0x04,
      FW_CS_RULE_FLAGS_MAX_V2_10                   = 0x40,

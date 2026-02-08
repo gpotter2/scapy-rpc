@@ -1,4 +1,4 @@
-// [ms-cmrp] v43.0 (Tue, 23 Apr 2024)
+// [ms-cmrp] v44.0 (Mon, 11 Aug 2025)
     import "ms-dtyp.idl";
     
     #define MAX_CLUSTER_CONTROL_CODE_BUFFER_SIZE 0x7FFFFFFF
@@ -1430,6 +1430,7 @@
          [case(DiskIdGuid)] GUID DiskGuid;
     };
     } CLUSDSK_DISKID, *PCLUSDSK_DISKID;
+    
     error_status_t
     Opnum158NotUsedOnWire(void);
   
@@ -1706,4 +1707,4 @@ error_status_t
           error_status_t Opnum263Reserved(void);
           // not used on wire
           error_status_t Opnum264NotUsedOnWire(void);
-    }
+          }
