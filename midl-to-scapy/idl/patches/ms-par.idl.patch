@@ -11,17 +11,3 @@ index e665a77..e1256b9 100644
       [case(BIDI_NULL, BIDI_BOOL)]
           int bData;
       [case(BIDI_INT)]
-@@ -1501,7 +1501,6 @@
-     [in, string, unique]    wchar_t*           pDatatype,
-     [in]                    DEVMODE_CONTAINER* pDevModeContainer
-  );
-- }
-   
-  DWORD
-  RpcAsyncGetJobNamedPropertyValue(
-@@ -1539,3 +1538,4 @@
-      [in, ref] RPC_BranchOfficeJobDataContainer *pBranchOfficeJobDataContainer
-      );
-   
-+}
-\ No newline at end of file

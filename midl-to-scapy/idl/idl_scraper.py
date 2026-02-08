@@ -175,9 +175,13 @@ def get_idl_from_url(idl_url):
     idl_soup = BeautifulSoup(idl_page, "html.parser")
     dds = idl_soup.find_all("dd")
     if len(dds) > 0:  # Found an IDL code blob
-        idl_text = "\n".join(
-            dd.find("pre").get_text() for dd in dds
-        )  # Sometimes the code appears across multiple frames :(
+        # Sometimes the code appears across multiple frames :(
+        idl_text = "\n".join(dd.find("pre").get_text() for dd in dds)
+
+        if not idl_text.strip():
+            # Broken page (e.g. [MS-NRPC] as of 08/02/2026)
+            idl_text = "\n".join(x.get_text() for x in idl_soup.find_all("pre"))
+
         return idl_text.replace(
             "\xa0", " "
         )  # There's this stupid character which is in fact single-space
