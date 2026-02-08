@@ -409,7 +409,8 @@ class Resolver:
                 idl_attributes = [
                     x
                     for x in idl_attributes
-                    if x[0] in ("size_is", "length_is", "max_is", "min_is", "case")
+                    if x[0]
+                    in ("size_is", "length_is", "max_is", "min_is", "case", "range")
                     or x in ("ref", "unique", "ptr")
                 ]
 
@@ -420,7 +421,14 @@ class Resolver:
                     if (
                         x[0] != "call"
                         or x[1]
-                        not in ("size_is", "length_is", "max_is", "min_is", "case")
+                        not in (
+                            "size_is",
+                            "length_is",
+                            "max_is",
+                            "min_is",
+                            "case",
+                            "range",
+                        )
                     )
                     and (x[0] != "id" or x[1] not in ("ref", "unique", "ptr"))
                 ]
