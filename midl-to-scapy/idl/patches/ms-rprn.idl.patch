@@ -11,18 +11,3 @@ index add9a67..bb7a122 100644
       [case(BIDI_NULL, BIDI_BOOL)]
           int bData;
       [case(BIDI_INT)]
-@@ -1616,7 +1616,7 @@
-      [out, size_is(,*pcProperties)] RPC_PrintNamedProperty **ppProperties);
-   
-  void
-- Opnum114NotUsedOnWire();}
-+ Opnum114NotUsedOnWire();
-   
-  void
-  Opnum115NotUsedOnWire();
-@@ -1683,3 +1683,4 @@
-      [out, size_is(, *ippResponseBufferSize), ref] BYTE** ippResponseBuffer
-  );
-   
-+ }
-\ No newline at end of file
