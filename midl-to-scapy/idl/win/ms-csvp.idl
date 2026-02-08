@@ -1,4 +1,4 @@
-// [ms-csvp] v33.0 (Mon, 16 Sep 2024)
+// [ms-csvp] v34.0 (Fri, 21 Nov 2025)
  import "ms-oaut.idl";
     //#define SAFEARRAY(type) SAFEARRAY
     
@@ -11,12 +11,12 @@
     
     typedef struct _CPREP_DISKID {
         CPREP_DISKID_ENUM       DiskIdType;
-        [switch_is(DiskIdType)] union {
+        [switch_is(DiskIdType), switch_type(CPREP_DISKID_ENUM)] union DiskId {
             [case(CprepIdSignature)]    unsigned long DiskSignature;
             [case(CprepIdGuid)]         GUID          DiskGuid;
             [case(CprepIdNumber)]       unsigned long DeviceNumber;
             [case(CprepIdUnknown)]      unsigned long Junk;
-        };
+        }DiskId;
     } CPREP_DISKID, *PCPREP_DISKID;
     
     typedef enum _DiskStackType {
@@ -394,7 +394,7 @@
       ClusterLogTypeHealth = 1,
       ClusterLogTypeClusterSet = 2,
       ClusterLogTypeNetwork = 3,
-      ClusterLogTypeOther = 4
+      ClusterLogTypeNetft = 4
    } ClusterLogType;
     
     typedef enum CLUSTER_CERTTYPE {
@@ -601,7 +601,7 @@
     
         HRESULT ExportClusterPerformanceHistory(
           [in] BSTR Pattern,
-          [in] BSTR* StreamName,
+          [in] BSTR StreamName,
           [in] ClusterLogExFlag flags,
           [out] BSTR* LogFilePath
         );
@@ -643,7 +643,7 @@
         pointer_default(unique)
     ]
     interface IClusterLogEx3 : IClusterLogEx2{
-        HRESULT GenerateLogEx2(
+        HRESULT GenerateLogEx2 (
           [ in ] ClusterLogType Type, 
           [ in ] ULONG SpanMinutes,
           [ in ] ClusterLogExFlag flags,

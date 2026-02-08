@@ -1,4 +1,4 @@
-// [ms-dnsp] v38.0 (Tue, 23 Apr 2024)
+// [ms-dnsp] v39.0 (Mon, 26 Jan 2026)
  import "ms-dtyp.idl";
   
  typedef struct _DnsStatHeader
@@ -1706,7 +1706,8 @@
      DNSSRV_TYPEID_POLICY_ENUM,                   //  60
      DNSSRV_TYPEID_RRL,
      DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE,
-     DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+     DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM,
+     DNSSRV_TYPEID_ENCRYPTION_CONFIG
  }
  DNS_RPC_TYPEID, *PDNS_RPC_TYPEID;
   
@@ -2088,8 +2089,8 @@
   
      [case(DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM)]
          PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST VirtualizationInstanceList;
-  
-  
+     [case(DNSSRV_TYPEID_ENCRYPTION_CONFIG)] 
+         PDNS_RPC_ENCRYPTION_CONFIG pEncryptionConfig;
  } DNSSRV_RPC_UNION;
   
  typedef enum _ImportOperationResult
@@ -2107,6 +2108,16 @@
      IMPORT_STATUS_CHANGED
   
  } ImportOpResult;
+  
+ typedef enum _DNS_ENCRYPTION_TYPE {
+     DnsEncryptionNone = 0,
+     DnsEncryptionDoH = 1 
+ } DNS_ENCRYPTION_TYPE;
+  
+ typedef struct _DNS_RPC_ENCRYPTION_CONFIG {
+     DWORD dwDnsEncryptionType;
+     LPWSTR pwszUriTemplate;
+ } DNS_RPC_ENCRYPTION_CONFIG, *PDNS_RPC_ENCRYPTION_CONFIG;
   
   
  [
