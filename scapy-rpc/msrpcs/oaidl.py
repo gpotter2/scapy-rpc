@@ -37,8 +37,6 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
     NDRConfVarFieldListField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -124,7 +122,7 @@ class SetVersion_Response(NDRPacket):
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -190,7 +188,7 @@ class SAFEARRAYBOUND(NDRPacket):
 
 
 class ARRAYDESC(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (2, 2)
     DEPORTED_CONFORMANTS = ["rgbounds"]
     fields_desc = [
         NDRPacketField("tdescElem", None, NDRRecursiveClass("TYPEDESC")),
@@ -282,7 +280,6 @@ class SAFEARR_BSTR(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
             )
         ),
     ]
@@ -298,7 +295,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -314,7 +311,7 @@ class SAFEARR_DISPATCH(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -330,7 +327,7 @@ class SAFEARR_VARIANT(NDRPacket):
                 [],
                 NDRRecursiveClass("wireVARIANTStr"),
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -356,11 +353,7 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRIntField("Size", None, size_of="aRecord"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aRecord",
-                [],
-                wireBRECORDStr,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -376,7 +369,7 @@ class SAFEARR_HAVEIID(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
         NDRPacketField("iid", GUID(), GUID),
@@ -1221,8 +1214,11 @@ class AddVarDesc_Response(NDRPacket):
 class SetFuncAndParamNames_Request(NDRPacket):
     fields_desc = [
         NDRIntField("index", 0),
-        NDRConfVarStrLenFieldUtf16(
-            "rgszNames", "", size_is=lambda pkt: (pkt.cNames & 0xFFFFFFFF)
+        NDRConfFieldListField(
+            "rgszNames",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: (pkt.cNames & 0xFFFFFFFF),
         ),
         NDRIntField("cNames", 0),
     ]
@@ -2170,7 +2166,6 @@ class GetFieldNames_Response(NDRPacket):
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pcNames,
             length_is=lambda pkt: pkt.pcNames,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

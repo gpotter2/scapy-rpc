@@ -57,7 +57,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class RPC_SID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),
@@ -246,7 +245,7 @@ class AUTHZR_TOKEN_USER(NDRPacket):
 
 
 class AUTHZR_TOKEN_GROUPS(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["Groups"]
     fields_desc = [
         NDRIntField("GroupCount", None, size_of="Groups"),

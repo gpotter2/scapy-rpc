@@ -95,7 +95,7 @@ register_com_interface(
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -117,7 +117,7 @@ class Next_Response(NDRPacket):
             MInterfacePointer,
             size_is=lambda pkt: pkt.celt,
             length_is=lambda pkt: pkt.pcFetched,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcFetched", None, size_of="ppObjectArray"),
         NDRIntField("status", 0),
@@ -797,7 +797,7 @@ class QueryFileSystemTypes_Response(NDRPacket):
             [],
             VDS_FILE_SYSTEM_TYPE_PROP,
             size_is=lambda pkt: pkt.plNumberOfFileSystems,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField(
             "plNumberOfFileSystems", None, size_of="ppFileSystemTypeProps"
@@ -2113,7 +2113,7 @@ class QueryExtents_Response(NDRPacket):
             [],
             VDS_DISK_EXTENT,
             size_is=lambda pkt: pkt.plNumberOfExtents,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField("plNumberOfExtents", None, size_of="ppExtentArray"),
         NDRIntField("status", 0),
@@ -2265,7 +2265,7 @@ class QueryFreeExtents_Response(NDRPacket):
             [],
             VDS_DISK_FREE_EXTENT,
             size_is=lambda pkt: pkt.plNumberOfFreeExtents,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField("plNumberOfFreeExtents", None, size_of="ppFreeExtentArray"),
         NDRIntField("status", 0),
@@ -2369,7 +2369,7 @@ class QueryPartitions_Response(NDRPacket):
             [],
             VDS_PARTITION_PROP,
             size_is=lambda pkt: pkt.plNumberOfPartitions,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField("plNumberOfPartitions", None, size_of="ppPartitionPropArray"),
         NDRIntField("status", 0),
@@ -2881,7 +2881,7 @@ class QueryPartitionFileSystemFormatSupport_Response(NDRPacket):
             [],
             VDS_FILE_SYSTEM_FORMAT_SUPPORT_PROP,
             size_is=lambda pkt: pkt.plNumberOfFileSystems,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField(
             "plNumberOfFileSystems", None, size_of="ppFileSystemSupportProps"
@@ -3260,7 +3260,7 @@ class Format_Response(NDRPacket):
 
 class AddAccessPath_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
+        NDRConfVarStrLenFieldUtf16("pwszPath", "", max_is=lambda pkt: (260 - 1))
     ]
 
 
@@ -3274,8 +3274,13 @@ class QueryAccessPaths_Request(NDRPacket):
 
 class QueryAccessPaths_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "pwszPathArray", "", size_is=lambda pkt: pkt.plNumberOfAccessPaths
+        NDRConfFieldListField(
+            "pwszPathArray",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.plNumberOfAccessPaths,
         ),
         NDRSignedIntField("plNumberOfAccessPaths", None, size_of="pwszPathArray"),
         NDRIntField("status", 0),
@@ -3287,7 +3292,7 @@ class PVDS_REPARSE_POINT_PROP(NDRPacket):
     fields_desc = [
         NDRPacketField("SourceVolumeId", GUID(), GUID),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1))
+            NDRConfVarStrLenFieldUtf16("pwszPath", "", max_is=lambda pkt: (260 - 1))
         ),
     ]
 
@@ -3303,7 +3308,7 @@ class QueryReparsePoints_Response(NDRPacket):
             [],
             PVDS_REPARSE_POINT_PROP,
             size_is=lambda pkt: pkt.plNumberOfReparsePointProps,
-            ptr_pack=True,
+            ptr_lvl=2,
         ),
         NDRSignedIntField(
             "plNumberOfReparsePointProps", None, size_of="ppReparsePointProps"
@@ -3314,7 +3319,7 @@ class QueryReparsePoints_Response(NDRPacket):
 
 class DeleteAccessPath_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16("pwszPath", "", size_is=lambda pkt: (260 - 1)),
+        NDRConfVarStrLenFieldUtf16("pwszPath", "", max_is=lambda pkt: (260 - 1)),
         NDRSignedIntField("bForce", 0),
     ]
 
@@ -3398,7 +3403,7 @@ class QueryFileSystemFormatSupport_Response(NDRPacket):
             [],
             VDS_FILE_SYSTEM_FORMAT_SUPPORT_PROP,
             size_is=lambda pkt: pkt.plNumberOfFileSystems,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField(
             "plNumberOfFileSystems", None, size_of="ppFileSystemSupportProps"
@@ -3450,8 +3455,13 @@ class QueryVolumeGuidPathnames_Request(NDRPacket):
 
 class QueryVolumeGuidPathnames_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "pwszPathArray", "", size_is=lambda pkt: pkt.pulNumberOfPaths
+        NDRConfFieldListField(
+            "pwszPathArray",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pulNumberOfPaths,
         ),
         NDRIntField("pulNumberOfPaths", None, size_of="pwszPathArray"),
         NDRIntField("status", 0),
@@ -3623,7 +3633,7 @@ class QueryExtents_Response(NDRPacket):
             [],
             VDS_DISK_EXTENT,
             size_is=lambda pkt: pkt.plNumberOfExtents,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRSignedIntField("plNumberOfExtents", None, size_of="ppExtentArray"),
         NDRIntField("status", 0),

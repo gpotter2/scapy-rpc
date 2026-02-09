@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-tsts] v31.0 (Fri, 23 May 2025)
+# [ms-tsts] v33.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -494,7 +494,7 @@ class RpcWinStationGetAllProcesses_Response(NDRPacket):
             [],
             PTS_ALL_PROCESSES_INFO,
             size_is=lambda pkt: pkt.pNumberOfProcesses,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -586,7 +586,6 @@ class RpcWinStationGetLanAdapterName_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -772,7 +771,7 @@ class RpcWinStationGetAllProcesses_NT6_Response(NDRPacket):
             [],
             PTS_ALL_PROCESSES_INFO_NT6,
             size_is=lambda pkt: pkt.pNumberOfProcesses,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -781,7 +780,7 @@ class RpcWinStationGetAllProcesses_NT6_Response(NDRPacket):
 class RpcWinStationOpenSessionDirectory_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hServer", NDRContextHandle(), NDRContextHandle),
-        NDRConfVarStrLenFieldUtf16("pszServerName", "", size_is=lambda pkt: 64),
+        NDRConfVarStrLenFieldUtf16("pszServerName", "", max_is=lambda pkt: 64),
     ]
 
 

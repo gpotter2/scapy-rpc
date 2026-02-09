@@ -204,7 +204,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class PRPC_SID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),
@@ -240,7 +239,7 @@ class ElfrReportEventW_Request(NDRPacket):
             [],
             PRPC_UNICODE_STRING,
             size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -374,11 +373,7 @@ class ElfrReportEventA_Request(NDRPacket):
         NDRPacketField("ComputerName", PRPC_STRING(), PRPC_STRING),
         NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_STRING, size_is=lambda pkt: pkt.NumStrings, ptr_lvl=1
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -430,7 +425,7 @@ class ElfrReportEventAndSourceW_Request(NDRPacket):
             [],
             PRPC_UNICODE_STRING,
             size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -470,7 +465,7 @@ class ElfrReportEventExW_Request(NDRPacket):
             [],
             PRPC_UNICODE_STRING,
             size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -499,11 +494,7 @@ class ElfrReportEventExA_Request(NDRPacket):
         NDRPacketField("ComputerName", PRPC_STRING(), PRPC_STRING),
         NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_STRING, size_is=lambda pkt: pkt.NumStrings, ptr_lvl=1
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)

@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-cmrp] v43.0 (Tue, 23 Apr 2024)
+# [ms-cmrp] v44.0 (Mon, 11 Aug 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -1613,7 +1613,7 @@ class ApiSetServiceAccountPassword_Response(NDRPacket):
             PIDL_CLUSTER_SET_PASSWORD_STATUS,
             size_is=lambda pkt: pkt.ReturnStatusBufferSize,
             length_is=lambda pkt: pkt.SizeReturned,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("SizeReturned", None, size_of="ReturnStatusBufferPtr"),
         NDRIntField("ExpectedBufferSize", 0),

@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-drsr] v44.0 (Tue, 23 Apr 2024)
+# [ms-drsr] v45.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -57,7 +57,7 @@ class UUID(NDRPacket):
 
 
 class DRS_EXTENSIONS(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgb"]
     fields_desc = [
         NDRIntField("cb", None, size_of="rgb"),
@@ -112,7 +112,7 @@ class NT4SID(NDRPacket):
 
 
 class DSNAME(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["StringName"]
     fields_desc = [
         NDRIntField("structLen", 0),
@@ -124,6 +124,7 @@ class DSNAME(NDRPacket):
             "StringName",
             "",
             size_is=lambda pkt: (pkt.NameLen + 1),
+            max_is=lambda pkt: 10485761,
             conformant_in_struct=True,
         ),
     ]
@@ -210,7 +211,7 @@ class IDL_DRSReplicaSync_Response(NDRPacket):
 
 
 class MTX_ADDR(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["mtx_name"]
     fields_desc = [
         NDRIntField("mtx_namelen", None, size_of="mtx_name"),
@@ -241,7 +242,7 @@ class UPTODATE_CURSOR_V1(NDRPacket):
 
 
 class UPTODATE_VECTOR_V1_EXT(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCursors"]
     fields_desc = [
         NDRIntField("dwVersion", 0),
@@ -259,7 +260,7 @@ class UPTODATE_VECTOR_V1_EXT(NDRPacket):
 
 
 class PARTIAL_ATTR_VECTOR_V1_EXT(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgPartialAttr"]
     fields_desc = [
         NDRIntField("dwVersion", 0),
@@ -569,7 +570,7 @@ class PROPERTY_META_DATA_EXT(NDRPacket):
 
 
 class PROPERTY_META_DATA_EXT_VECTOR(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgMetaData"]
     fields_desc = [
         NDRIntField("cNumProps", None, size_of="rgMetaData"),
@@ -656,7 +657,7 @@ class UPTODATE_CURSOR_V2(NDRPacket):
 
 
 class UPTODATE_VECTOR_V2_EXT(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCursors"]
     fields_desc = [
         NDRIntField("dwVersion", 0),
@@ -1152,7 +1153,7 @@ class DRS_MSG_VERIFYREQ_V1(NDRPacket):
         NDRIntField("cNames", None, size_of="rpNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "rpNames", [], DSNAME, size_is=lambda pkt: pkt.cNames, ptr_pack=True
+                "rpNames", [], DSNAME, size_is=lambda pkt: pkt.cNames, ptr_lvl=1
             )
         ),
         NDRPacketField("RequiredAttrs", ATTRBLOCK(), ATTRBLOCK),
@@ -1236,7 +1237,7 @@ class DRS_MSG_REVMEMB_REQ_V1(NDRPacket):
         NDRIntField("cDsNames", None, size_of="ppDsNames"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_pack=True
+                "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_lvl=1
             )
         ),
         NDRIntField("dwFlags", 0),
@@ -1253,7 +1254,7 @@ class DRS_MSG_REVMEMB_REPLY_V1(NDRPacket):
         NDRIntField("cSidHistory", None, size_of="ppSidHistory"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_pack=True
+                "ppDsNames", [], DSNAME, size_is=lambda pkt: pkt.cDsNames, ptr_lvl=1
             )
         ),
         NDRFullEmbPointerField(
@@ -1267,7 +1268,7 @@ class DRS_MSG_REVMEMB_REPLY_V1(NDRPacket):
                 [],
                 NT4SID,
                 size_is=lambda pkt: pkt.cSidHistory,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -1553,7 +1554,12 @@ class DRS_MSG_CRACKREQ_V1(NDRPacket):
         NDRIntField("formatDesired", 0),
         NDRIntField("cNames", None, size_of="rpNames"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("rpNames", "", size_is=lambda pkt: pkt.cNames)
+            NDRConfFieldListField(
+                "rpNames",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cNames,
+            )
         ),
     ]
 
@@ -1642,7 +1648,12 @@ class DRS_MSG_SPNREQ_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszAccount", "")),
         NDRIntField("cSPN", None, size_of="rpwszSPN"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("rpwszSPN", "", size_is=lambda pkt: pkt.cSPN)
+            NDRConfFieldListField(
+                "rpwszSPN",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cSPN,
+            )
         ),
     ]
 
@@ -2540,7 +2551,7 @@ class DS_REPL_NEIGHBORW(NDRPacket):
 
 
 class DS_REPL_NEIGHBORSW(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgNeighbor"]
     fields_desc = [
         NDRIntField("cNumNeighbors", None, size_of="rgNeighbor"),
@@ -2564,7 +2575,7 @@ class DS_REPL_CURSOR(NDRPacket):
 
 
 class DS_REPL_CURSORS(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCursor"]
     fields_desc = [
         NDRIntField("cNumCursors", None, size_of="rgCursor"),
@@ -2592,7 +2603,7 @@ class DS_REPL_ATTR_META_DATA(NDRPacket):
 
 
 class DS_REPL_OBJ_META_DATA(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgMetaData"]
     fields_desc = [
         NDRIntField("cNumEntries", None, size_of="rgMetaData"),
@@ -2619,7 +2630,7 @@ class DS_REPL_KCC_DSA_FAILUREW(NDRPacket):
 
 
 class DS_REPL_KCC_DSA_FAILURESW(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgDsaFailure"]
     fields_desc = [
         NDRIntField("cNumEntries", None, size_of="rgDsaFailure"),
@@ -2659,7 +2670,7 @@ class DS_REPL_OPW(NDRPacket):
 
 
 class DS_REPL_PENDING_OPSW(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgPendingOp"]
     fields_desc = [
         NDRPacketField("ftimeCurrentOpStarted", FILETIME(), FILETIME),
@@ -2694,7 +2705,7 @@ class DS_REPL_VALUE_META_DATA(NDRPacket):
 
 
 class DS_REPL_ATTR_VALUE_META_DATA(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgMetaData"]
     fields_desc = [
         NDRIntField("cNumEntries", None, size_of="rgMetaData"),
@@ -2719,7 +2730,7 @@ class DS_REPL_CURSOR_2(NDRPacket):
 
 
 class DS_REPL_CURSORS_2(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCursor"]
     fields_desc = [
         NDRIntField("cNumCursors", None, size_of="rgCursor"),
@@ -2745,7 +2756,7 @@ class DS_REPL_CURSOR_3W(NDRPacket):
 
 
 class DS_REPL_CURSORS_3W(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCursor"]
     fields_desc = [
         NDRIntField("cNumCursors", None, size_of="rgCursor"),
@@ -2776,7 +2787,7 @@ class DS_REPL_ATTR_META_DATA_2(NDRPacket):
 
 
 class DS_REPL_OBJ_META_DATA_2(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgMetaData"]
     fields_desc = [
         NDRIntField("cNumEntries", None, size_of="rgMetaData"),
@@ -2814,7 +2825,7 @@ class DS_REPL_VALUE_META_DATA_2(NDRPacket):
 
 
 class DS_REPL_ATTR_VALUE_META_DATA_2(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgMetaData"]
     fields_desc = [
         NDRIntField("cNumEntries", None, size_of="rgMetaData"),
@@ -2844,7 +2855,7 @@ class DS_REPL_SERVER_OUTGOING_CALL(NDRPacket):
 
 
 class DS_REPL_SERVER_OUTGOING_CALLS(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgCall"]
     fields_desc = [
         NDRIntField("cNumCalls", None, size_of="rgCall"),
@@ -2873,7 +2884,7 @@ class DS_REPL_CLIENT_CONTEXT(NDRPacket):
 
 
 class DS_REPL_CLIENT_CONTEXTS(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["rgContext"]
     fields_desc = [
         NDRIntField("cNumContexts", None, size_of="rgContext"),
@@ -3395,8 +3406,11 @@ class DRS_MSG_QUERYSITESREQ_V1(NDRPacket):
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("pwszFromSite", "")),
         NDRIntField("cToSites", None, size_of="rgszToSites"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "rgszToSites", "", size_is=lambda pkt: pkt.cToSites
+            NDRConfFieldListField(
+                "rgszToSites",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cToSites,
             )
         ),
         NDRIntField("dwFlags", 0),

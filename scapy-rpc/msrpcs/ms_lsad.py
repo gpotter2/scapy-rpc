@@ -185,7 +185,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class PRPC_SID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),
@@ -4400,7 +4399,7 @@ class PLSA_FOREST_TRUST_INFORMATION(NDRPacket):
                 [],
                 PLSA_FOREST_TRUST_RECORD,
                 size_is=lambda pkt: pkt.RecordCount,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -4453,7 +4452,7 @@ class PLSA_FOREST_TRUST_COLLISION_INFORMATION(NDRPacket):
                 [],
                 PLSA_FOREST_TRUST_COLLISION_RECORD,
                 size_is=lambda pkt: pkt.RecordCount,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -4680,7 +4679,7 @@ class PLSA_FOREST_TRUST_INFORMATION2(NDRPacket):
                 [],
                 PLSA_FOREST_TRUST_RECORD2,
                 size_is=lambda pkt: pkt.RecordCount,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]

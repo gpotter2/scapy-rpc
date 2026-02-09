@@ -1115,7 +1115,7 @@ class DFSM_ROOT_LIST_ENTRY(NDRPacket):
 
 
 class DFSM_ROOT_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["Entry"]
     fields_desc = [
         NDRIntField("cEntries", None, size_of="Entry"),

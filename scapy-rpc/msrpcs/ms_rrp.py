@@ -267,6 +267,7 @@ class BaseRegEnumValue_Request(NDRPacket):
                 "lpData",
                 "",
                 size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                max_is=lambda pkt: 67108864,
                 length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
             )
         ),
@@ -284,6 +285,7 @@ class BaseRegEnumValue_Response(NDRPacket):
                 "lpData",
                 "",
                 size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                max_is=lambda pkt: 67108864,
                 length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
             )
         ),
@@ -400,6 +402,7 @@ class BaseRegQueryValue_Request(NDRPacket):
                 "lpData",
                 "",
                 size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                max_is=lambda pkt: 67108864,
                 length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
             )
         ),
@@ -416,6 +419,7 @@ class BaseRegQueryValue_Response(NDRPacket):
                 "lpData",
                 "",
                 size_is=lambda pkt: (pkt.lpcbData if pkt.lpcbData else 0),
+                max_is=lambda pkt: 67108864,
                 length_is=lambda pkt: (pkt.lpcbLen if pkt.lpcbLen else 0),
             )
         ),

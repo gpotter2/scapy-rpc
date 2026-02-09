@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-adts] v62.0 (Mon, 19 May 2025)
+# [ms-adts] v64.0 (Wed, 12 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -20,8 +20,6 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -96,8 +94,11 @@ class u_sub2(NDRPacket):
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "StringValues", "", size_is=lambda pkt: pkt.ValueCount
+            NDRConfFieldListField(
+                "StringValues",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.ValueCount,
             )
         ),
     ]
@@ -208,8 +209,11 @@ class u_sub2(NDRPacket):
     fields_desc = [
         NDRIntField("ValueCount", None, size_of="StringValues"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "StringValues", "", size_is=lambda pkt: pkt.ValueCount
+            NDRConfFieldListField(
+                "StringValues",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.ValueCount,
             )
         ),
     ]

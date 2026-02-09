@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-dnsp] v38.0 (Tue, 23 Apr 2024)
+# [ms-dnsp] v39.0 (Mon, 26 Jan 2026)
 
 """
 RPC definitions for the following interfaces:
@@ -38,14 +38,14 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRSignedLongField,
     NDRUnionField,
-    NDRVarStrLenField,
-    NDRVarStrLenFieldUtf16,
+    NDRVarStrNullField,
+    NDRVarStrNullFieldUtf16,
     register_dcerpc_interface,
 )
 
 
 class PIP4_ARRAY(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["AddrArray"]
     fields_desc = [
         NDRIntField("AddrCount", None, size_of="AddrArray"),
@@ -60,7 +60,7 @@ class PIP4_ARRAY(NDRPacket):
 
 
 class PDNS_RPC_BUFFER(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["Buffer"]
     fields_desc = [
         NDRIntField("dwLength", None, size_of="Buffer"),
@@ -267,7 +267,7 @@ class PDNS_RPC_NAME_AND_PARAM(NDRPacket):
 
 
 class PDNS_RPC_ZONE_LIST_W2K(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["ZoneArray"]
     fields_desc = [
         NDRIntField("dwZoneCount", None, size_of="ZoneArray"),
@@ -277,7 +277,7 @@ class PDNS_RPC_ZONE_LIST_W2K(NDRPacket):
             PDNS_RPC_ZONE_W2K,
             size_is=lambda pkt: pkt.dwZoneCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -315,9 +315,7 @@ class PDNS_RPC_SERVER_INFO_DOTNET(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
-        NDRFullEmbPointerField(
-            NDRVarStrLenField("pExtensions", "", length_is=lambda _: 6)
-        ),
+        NDRFullEmbPointerField(NDRVarStrNullField("pExtensions", "")),
         NDRIntField("dwLogLevel", 0),
         NDRIntField("dwDebugLevel", 0),
         NDRIntField("dwForwardTimeout", 0),
@@ -506,7 +504,7 @@ class PDNS_RPC_ZONE_DOTNET(NDRPacket):
 
 
 class PDNS_RPC_ZONE_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["ZoneArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -518,7 +516,7 @@ class PDNS_RPC_ZONE_LIST(NDRPacket):
             PDNS_RPC_ZONE_DOTNET,
             size_is=lambda pkt: pkt.dwZoneCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -554,9 +552,7 @@ class PDNS_RPC_DP_INFO(NDRPacket):
         NDRFieldListField(
             "dwReserved", [0] * 3, NDRIntField("", 0), length_is=lambda _: 3
         ),
-        NDRFullEmbPointerField(
-            NDRVarStrLenFieldUtf16("pwszReserved", "", length_is=lambda _: 3)
-        ),
+        NDRFullEmbPointerField(NDRVarStrNullFieldUtf16("pwszReserved", "")),
         NDRIntField("dwReplicaCount", None, size_of="ReplicaArray"),
         NDRConfPacketListField(
             "ReplicaArray",
@@ -564,7 +560,7 @@ class PDNS_RPC_DP_INFO(NDRPacket):
             PDNS_RPC_DP_REPLICA,
             size_is=lambda pkt: pkt.dwReplicaCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -581,7 +577,7 @@ class PDNS_RPC_DP_ENUM(NDRPacket):
 
 
 class PDNS_RPC_DP_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["DpArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -593,7 +589,7 @@ class PDNS_RPC_DP_LIST(NDRPacket):
             PDNS_RPC_DP_ENUM,
             size_is=lambda pkt: pkt.dwDpCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -625,9 +621,7 @@ class PDNS_RPC_ENUM_ZONES_FILTER(NDRPacket):
         NDRIntField("dwFilter", 0),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszPartitionFqdn", "")),
         NDRFullEmbPointerField(NDRConfVarStrNullField("pszQueryString", "")),
-        NDRFullEmbPointerField(
-            NDRVarStrLenField("pszReserved", "", length_is=lambda _: 6)
-        ),
+        NDRFullEmbPointerField(NDRVarStrNullField("pszReserved", "")),
     ]
 
 
@@ -642,7 +636,7 @@ class DNS_ADDR(NDRPacket):
 
 
 class PDNS_ADDR_ARRAY(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["AddrArray"]
     fields_desc = [
         NDRIntField("MaxCount", 0),
@@ -697,9 +691,7 @@ class PDNS_RPC_SERVER_INFO(NDRPacket):
         NDRFullEmbPointerField(
             NDRConfVarStrNullField("pszForestDirectoryPartition", "")
         ),
-        NDRFullEmbPointerField(
-            NDRVarStrLenField("pExtensions", "", length_is=lambda _: 6)
-        ),
+        NDRFullEmbPointerField(NDRVarStrNullField("pExtensions", "")),
         NDRIntField("dwLogLevel", 0),
         NDRIntField("dwDebugLevel", 0),
         NDRIntField("dwForwardTimeout", 0),
@@ -936,7 +928,7 @@ class PDNS_RPC_SKD(NDRPacket):
 
 
 class PDNS_RPC_SKD_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["SkdArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -948,7 +940,7 @@ class PDNS_RPC_SKD_LIST(NDRPacket):
             PDNS_RPC_SKD,
             size_is=lambda pkt: pkt.dwCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1013,7 +1005,7 @@ class PDNS_RPC_TRUST_POINT(NDRPacket):
 
 
 class PDNS_RPC_TRUST_POINT_LIST(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["TrustPointArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -1025,7 +1017,7 @@ class PDNS_RPC_TRUST_POINT_LIST(NDRPacket):
             PDNS_RPC_TRUST_POINT,
             size_is=lambda pkt: pkt.dwTrustPointCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1061,7 +1053,7 @@ class PDNS_RPC_TRUST_ANCHOR(NDRPacket):
 
 
 class PDNS_RPC_TRUST_ANCHOR_LIST(NDRPacket):
-    ALIGNMENT = (8, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["TrustAnchorArray"]
     fields_desc = [
         NDRIntField("dwRpcStructureVersion", 0),
@@ -1073,7 +1065,7 @@ class PDNS_RPC_TRUST_ANCHOR_LIST(NDRPacket):
             PDNS_RPC_TRUST_ANCHOR,
             size_is=lambda pkt: pkt.dwTrustAnchorCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1373,7 +1365,7 @@ class PDNS_RPC_POLICY_CONTENT(NDRPacket):
 
 
 class PDNS_RPC_POLICY_CONTENT_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["pContent"]
     fields_desc = [
         NDRIntField("dwContentCount", None, size_of="pContent"),
@@ -1383,7 +1375,7 @@ class PDNS_RPC_POLICY_CONTENT_LIST(NDRPacket):
             PDNS_RPC_POLICY_CONTENT,
             size_is=lambda pkt: pkt.dwContentCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1434,7 +1426,7 @@ class PDNS_RPC_POLICY(NDRPacket):
             PDNS_RPC_CRITERIA,
             size_is=lambda pkt: pkt.dwCriteriaCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1450,7 +1442,7 @@ class PDNS_RPC_POLICY_NAME(NDRPacket):
 
 
 class PDNS_RPC_ENUMERATE_POLICY_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["pPolicyArray"]
     fields_desc = [
         NDRIntField("dwPolicyCount", None, size_of="pPolicyArray"),
@@ -1460,7 +1452,7 @@ class PDNS_RPC_ENUMERATE_POLICY_LIST(NDRPacket):
             PDNS_RPC_POLICY_NAME,
             size_is=lambda pkt: pkt.dwPolicyCount,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
@@ -1520,6 +1512,14 @@ class PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(NDRPacket):
             PDNS_RPC_VIRTUALIZATION_INSTANCE_INFO,
             count_from=lambda _: 1,
         ),
+    ]
+
+
+class PDNS_RPC_ENCRYPTION_CONFIG(NDRPacket):
+    ALIGNMENT = (4, 8)
+    fields_desc = [
+        NDRIntField("dwDnsEncryptionType", 0),
+        NDRFullEmbPointerField(NDRShortField("pwszUriTemplate", 0)),
     ]
 
 
@@ -2440,6 +2440,25 @@ class R_DnssrvOperation_Request(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
                         ),
                     ),
                 ),
@@ -3379,6 +3398,25 @@ class R_DnssrvQuery_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -4307,6 +4345,25 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeIn", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -5231,6 +5288,25 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeOut", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -5261,14 +5337,13 @@ class R_DnssrvEnumRecords_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pdwBufferLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
 
 
 class PDNS_RPC_RECORD(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["Buffer"]
     fields_desc = [
         NDRShortField("wDataLength", None, size_of="Buffer"),
@@ -6224,6 +6299,25 @@ class R_DnssrvOperation2_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -7162,6 +7256,25 @@ class R_DnssrvQuery2_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -8092,6 +8205,25 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeIn", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -9016,6 +9148,25 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeOut", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -9048,7 +9199,6 @@ class R_DnssrvEnumRecords2_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pdwBufferLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -9119,7 +9269,6 @@ class R_DnssrvEnumRecords3_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pdwBufferLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -10045,6 +10194,25 @@ class R_DnssrvOperation3_Request(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
                         ),
                     ),
                 ),
@@ -10987,6 +11155,25 @@ class R_DnssrvQuery3_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -11920,6 +12107,25 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeIn", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -12841,6 +13047,25 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeOut", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
                         ),
                     ),
                 ),
@@ -13776,6 +14001,25 @@ class R_DnssrvOperation4_Request(NDRPacket):
                         (
                             lambda _, val: val.tag
                             == DWORD.DNSSRV_TYPEID_VIRTUALIZATION_INSTANCE_ENUM
+                        ),
+                    ),
+                ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "dwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
                         ),
                     ),
                 ),
@@ -14721,6 +14965,25 @@ class R_DnssrvQuery4_Response(NDRPacket):
                         ),
                     ),
                 ),
+                (
+                    NDRFullPointerField(
+                        NDRPacketField(
+                            "ppData",
+                            PDNS_RPC_ENCRYPTION_CONFIG(),
+                            PDNS_RPC_ENCRYPTION_CONFIG,
+                        )
+                    ),
+                    (
+                        (
+                            lambda pkt: getattr(pkt, "pdwTypeId", None)
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                        (
+                            lambda _, val: val.tag
+                            == DWORD.DNSSRV_TYPEID_ENCRYPTION_CONFIG
+                        ),
+                    ),
+                ),
             ],
             StrFixedLenField("ppData", "", length=0),
             align=(4, 8),
@@ -14781,7 +15044,6 @@ class R_DnssrvEnumRecords4_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pdwBufferLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

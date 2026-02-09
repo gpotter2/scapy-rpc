@@ -107,7 +107,7 @@ class NspiUpdateStat_Response(NDRPacket):
 
 
 class PropertyTagArray_r(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aulPropTag"]
     fields_desc = [
         NDRIntField("cValues", None, size_of="aulPropTag"),
@@ -116,6 +116,7 @@ class PropertyTagArray_r(NDRPacket):
             [],
             NDRIntField("", 0),
             size_is=lambda pkt: (pkt.cValues + 1),
+            max_is=lambda pkt: 100001,
             conformant_in_struct=True,
             length_is=lambda pkt: pkt.cValues,
         ),
@@ -164,7 +165,12 @@ class StringArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszA"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenField("lppszA", "", size_is=lambda pkt: pkt.cValues)
+            NDRConfFieldListField(
+                "lppszA",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullField("", "")),
+                size_is=lambda pkt: pkt.cValues,
+            )
         ),
     ]
 
@@ -187,7 +193,7 @@ class FlatUIDArray_r(NDRPacket):
         NDRIntField("cValues", None, size_of="lpguid"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "lpguid", [], FlatUID_r, size_is=lambda pkt: pkt.cValues, ptr_pack=True
+                "lpguid", [], FlatUID_r, size_is=lambda pkt: pkt.cValues, ptr_lvl=1
             )
         ),
     ]
@@ -198,7 +204,12 @@ class WStringArray_r(NDRPacket):
     fields_desc = [
         NDRIntField("cValues", None, size_of="lppszW"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("lppszW", "", size_is=lambda pkt: pkt.cValues)
+            NDRConfFieldListField(
+                "lppszW",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cValues,
+            )
         ),
     ]
 
@@ -467,7 +478,7 @@ class PropertyRow_r(NDRPacket):
 
 
 class PropertyRowSet_r(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aRow"]
     fields_desc = [
         NDRIntField("cRows", None, size_of="aRow"),
@@ -1001,7 +1012,7 @@ class NspiQueryColumns_Response(NDRPacket):
 
 
 class PropertyNameSet_r(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aNames"]
     fields_desc = [
         NDRIntField("cNames", None, size_of="aNames"),
@@ -1047,11 +1058,7 @@ class NspiGetIDsFromNames_Request(NDRPacket):
         NDRIntField("dwFlags", 0),
         NDRIntField("cPropNames", None, size_of="pNames"),
         NDRConfPacketListField(
-            "pNames",
-            [],
-            PropertyName_r,
-            size_is=lambda pkt: pkt.cPropNames,
-            ptr_pack=True,
+            "pNames", [], PropertyName_r, size_is=lambda pkt: pkt.cPropNames, ptr_lvl=1
         ),
     ]
 

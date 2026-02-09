@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-samr] v49.0 (Mon, 10 Feb 2025)
+# [ms-samr] v50.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -137,7 +137,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class PRPC_SID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),

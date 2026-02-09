@@ -32,8 +32,8 @@ from scapy.layers.dcerpc import (
     NDRShortField,
     NDRSignedIntField,
     NDRUnionField,
-    NDRVarStrLenField,
-    NDRVarStrLenFieldUtf16,
+    NDRVarStrNullField,
+    NDRVarStrNullFieldUtf16,
     register_dcerpc_interface,
 )
 
@@ -2804,7 +2804,7 @@ class NetrServerSetInfo_Response(NDRPacket):
 
 class LPDISK_INFO(NDRPacket):
     ALIGNMENT = (2, 2)
-    fields_desc = [NDRVarStrLenFieldUtf16("Disk", "", length_is=lambda _: 3)]
+    fields_desc = [NDRVarStrNullFieldUtf16("Disk", "")]
 
 
 class DISK_ENUM_CONTAINER(NDRPacket):
@@ -3652,7 +3652,7 @@ class DFS_SITENAME_INFO(NDRPacket):
 
 
 class LPDFS_SITELIST_INFO(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["Site"]
     fields_desc = [
         NDRIntField("cSites", None, size_of="Site"),

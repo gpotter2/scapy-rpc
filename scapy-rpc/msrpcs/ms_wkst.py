@@ -18,6 +18,7 @@ from scapy.fields import StrFixedLenField
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarStrLenField,
@@ -1018,7 +1019,14 @@ class NetrGetJoinableOUs2_Request(NDRPacket):
 class NetrGetJoinableOUs2_Response(NDRPacket):
     fields_desc = [
         NDRIntField("OUCount", None, size_of="OUs"),
-        NDRConfVarStrLenFieldUtf16("OUs", "", size_is=lambda pkt: pkt.OUCount),
+        NDRConfFieldListField(
+            "OUs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.OUCount,
+        ),
         NDRIntField("status", 0),
     ]
 

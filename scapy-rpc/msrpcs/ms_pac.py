@@ -38,7 +38,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class PSID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),

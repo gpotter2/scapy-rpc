@@ -24,8 +24,8 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
+    NDRConfVarStrNullField,
+    NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRInt3264EnumField,
@@ -178,7 +178,7 @@ class EnumDisksEx_Response(NDRPacket):
     fields_desc = [
         NDRIntField("diskCount", None, size_of="diskList"),
         NDRConfPacketListField(
-            "diskList", [], diskinfoex, size_is=lambda pkt: pkt.diskCount, ptr_pack=True
+            "diskList", [], diskinfoex, size_is=lambda pkt: pkt.diskCount, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -283,7 +283,7 @@ class EnumDiskRegionsEx_Response(NDRPacket):
             [],
             regioninfoex,
             size_is=lambda pkt: pkt.numRegions,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -532,7 +532,7 @@ class FTEnumVolumes_Response(NDRPacket):
             [],
             VOLUME_INFO,
             size_is=lambda pkt: pkt.volumeCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -550,7 +550,6 @@ class FTEnumLogicalDiskMembers_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.memberCount,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -676,7 +675,7 @@ class EnumDriveLetters_Response(NDRPacket):
             [],
             driveletterinfo,
             size_is=lambda pkt: pkt.driveLetterCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -728,7 +727,7 @@ class EnumLocalFileSystems_Response(NDRPacket):
             [],
             filesysteminfo,
             size_is=lambda pkt: pkt.fileSystemCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -762,11 +761,7 @@ class GetInstalledFileSystems_Response(NDRPacket):
     fields_desc = [
         NDRIntField("fsCount", None, size_of="fsList"),
         NDRConfPacketListField(
-            "fsList",
-            [],
-            ifilesysteminfo,
-            size_is=lambda pkt: pkt.fsCount,
-            ptr_pack=True,
+            "fsList", [], ifilesysteminfo, size_is=lambda pkt: pkt.fsCount, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -801,7 +796,7 @@ class EnumVolumes_Response(NDRPacket):
             [],
             VOLUME_INFO,
             size_is=lambda pkt: pkt.volumeCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -819,7 +814,6 @@ class EnumVolumeMembers_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.memberCount,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -925,7 +919,6 @@ class GetVolumeMountName_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.cchMountName,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -1143,7 +1136,6 @@ class DiskMergeQuery_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedLongField("", 0)),
             size_is=lambda pkt: pkt.numRids,
-            ptr_pack=True,
         ),
         NDRSignedIntField("numObjects", None, size_of="mergeObjectInfo"),
         NDRConfPacketListField(
@@ -1151,7 +1143,7 @@ class DiskMergeQuery_Response(NDRPacket):
             [],
             mergeobjectinfo,
             size_is=lambda pkt: pkt.numObjects,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("flags", 0),
         NDRPacketField("tinfo", taskinfo(), taskinfo),
@@ -1247,14 +1239,13 @@ class GetEncapsulateDiskInfoEx_Response(NDRPacket):
             [],
             diskinfoex,
             size_is=lambda pkt: pkt.affectedDiskCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRConfFieldListField(
             "affectedDiskFlags",
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.affectedDiskCount,
-            ptr_pack=True,
         ),
         NDRIntField("affectedVolumeCount", None, size_of="affectedVolumeList"),
         NDRConfPacketListField(
@@ -1262,7 +1253,7 @@ class GetEncapsulateDiskInfoEx_Response(NDRPacket):
             [],
             VOLUME_INFO,
             size_is=lambda pkt: pkt.affectedVolumeCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("affectedRegionCount", None, size_of="affectedRegionList"),
         NDRConfPacketListField(
@@ -1270,7 +1261,7 @@ class GetEncapsulateDiskInfoEx_Response(NDRPacket):
             [],
             regioninfoex,
             size_is=lambda pkt: pkt.affectedRegionCount,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRPacketField("tinfo", taskinfo(), taskinfo),
         NDRIntField("status", 0),
@@ -1419,7 +1410,7 @@ class EnumTasks_Response(NDRPacket):
     fields_desc = [
         NDRIntField("taskCount", None, size_of="taskList"),
         NDRConfPacketListField(
-            "taskList", [], taskinfo, size_is=lambda pkt: pkt.taskCount, ptr_pack=True
+            "taskList", [], taskinfo, size_is=lambda pkt: pkt.taskCount, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -1455,13 +1446,20 @@ class HrGetErrorData_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwStoredFlags", 0),
         NDRSignedIntField("pcszw", None, size_of="prgszw"),
-        NDRConfVarStrLenFieldUtf16("prgszw", "", size_is=lambda pkt: pkt.pcszw),
+        NDRConfFieldListField(
+            "prgszw",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcszw,
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -1555,7 +1553,7 @@ class EnumAccessPath_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("lCount", None, size_of="paths"),
         NDRConfPacketListField(
-            "paths", [], countedstring, size_is=lambda pkt: pkt.lCount, ptr_pack=True
+            "paths", [], countedstring, size_is=lambda pkt: pkt.lCount, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -1569,7 +1567,7 @@ class EnumAccessPathForVolume_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("lCount", None, size_of="paths"),
         NDRConfPacketListField(
-            "paths", [], countedstring, size_is=lambda pkt: pkt.lCount, ptr_pack=True
+            "paths", [], countedstring, size_is=lambda pkt: pkt.lCount, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -1726,7 +1724,6 @@ class GetVolumeDeviceName_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.cchVolumeDevice,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

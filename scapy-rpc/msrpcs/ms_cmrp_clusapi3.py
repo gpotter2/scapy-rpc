@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-cmrp] v43.0 (Tue, 23 Apr 2024)
+# [ms-cmrp] v44.0 (Mon, 11 Aug 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -1626,7 +1626,7 @@ class ApiSetServiceAccountPassword_Response(NDRPacket):
             PIDL_CLUSTER_SET_PASSWORD_STATUS,
             size_is=lambda pkt: pkt.ReturnStatusBufferSize,
             length_is=lambda pkt: pkt.SizeReturned,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("SizeReturned", None, size_of="ReturnStatusBufferPtr"),
         NDRIntField("ExpectedBufferSize", 0),
@@ -1709,7 +1709,6 @@ class ApiGetBatchNotification_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.cbData,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -2068,7 +2067,7 @@ class ApiGetNotifyV2_Response(NDRPacket):
             [],
             PNOTIFICATION_RPC,
             size_is=lambda pkt: pkt.dwNumNotifications,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("dwNumNotifications", None, size_of="Notifications"),
         NDRIntField("status", 0),
@@ -2212,7 +2211,6 @@ class ApiExecuteReadBatch_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.cbOutData,
-            ptr_pack=True,
         ),
         NDRIntField("rpc_status", 0),
     ]
@@ -2249,7 +2247,7 @@ class ApiGetNotifyAsync_Response(NDRPacket):
             [],
             PNOTIFICATION_DATA_ASYNC_RPC,
             size_is=lambda pkt: pkt.dwNumNotifications,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("dwNumNotifications", None, size_of="Notifications"),
         NDRIntField("status", 0),
@@ -2295,7 +2293,6 @@ class ApiExecuteReadBatchEx_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.cbOutData,
-            ptr_pack=True,
         ),
         NDRIntField("rpc_status", 0),
     ]

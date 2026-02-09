@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-wcce] v50.0 (Mon, 12 May 2025)
+# [ms-wcce] v53.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -20,8 +20,8 @@ from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
     NDRConfStrLenField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
+    NDRConfVarStrNullField,
+    NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
@@ -54,13 +54,9 @@ class CERTTRANSBLOB(NDRPacket):
 class Request_Request(NDRPacket):
     fields_desc = [
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", "")),
         NDRIntField("pdwRequestId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAttributes", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAttributes", "")),
         NDRPacketField("pctbRequest", CERTTRANSBLOB(), CERTTRANSBLOB),
     ]
 
@@ -79,9 +75,7 @@ class Request_Response(NDRPacket):
 class GetCACert_Request(NDRPacket):
     fields_desc = [
         NDRIntField("fchain", 0),
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", "")),
     ]
 
 
@@ -94,9 +88,7 @@ class GetCACert_Response(NDRPacket):
 
 class Ping_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        )
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", ""))
     ]
 
 
@@ -120,17 +112,11 @@ register_com_interface(
 
 class Request2_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", "")),
         NDRIntField("dwFlags", 0),
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszSerialNumber", "", size_is=lambda pkt: 64)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszSerialNumber", "")),
         NDRIntField("pdwRequestId", 0),
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAttributes", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAttributes", "")),
         NDRPacketField("pctbRequest", CERTTRANSBLOB(), CERTTRANSBLOB),
     ]
 
@@ -148,9 +134,7 @@ class Request2_Response(NDRPacket):
 
 class GetCAProperty_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        ),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", "")),
         NDRSignedIntField("PropID", 0),
         NDRSignedIntField("PropIndex", 0),
         NDRSignedIntField("PropType", 0),
@@ -166,9 +150,7 @@ class GetCAProperty_Response(NDRPacket):
 
 class GetCAPropertyInfo_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        )
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", ""))
     ]
 
 
@@ -182,9 +164,7 @@ class GetCAPropertyInfo_Response(NDRPacket):
 
 class Ping2_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pwszAuthority", "", size_is=lambda pkt: 1536)
-        )
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszAuthority", ""))
     ]
 
 

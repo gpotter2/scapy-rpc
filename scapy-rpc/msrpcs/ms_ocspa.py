@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-ocspa] v13.0 (Tue, 23 Apr 2024)
+# [ms-ocspa] v14.0 (Mon, 11 Aug 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -53,7 +53,7 @@ register_com_interface(
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -109,7 +109,7 @@ class CURRENCY(NDRPacket):
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -139,11 +139,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr",
-                [],
-                FLAGGED_WORD_BLOB,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -159,7 +155,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -175,7 +171,7 @@ class SAFEARR_DISPATCH(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -191,7 +187,7 @@ class SAFEARR_VARIANT(NDRPacket):
                 [],
                 NDRRecursiveClass("wireVARIANTStr"),
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -217,11 +213,7 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRIntField("Size", None, size_of="aRecord"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aRecord",
-                [],
-                wireBRECORDStr,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -247,7 +239,7 @@ class SAFEARR_HAVEIID(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
         NDRPacketField("iid", GUID(), GUID),

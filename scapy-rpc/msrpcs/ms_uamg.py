@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-uamg] v14.0 (Tue, 23 Apr 2024)
+# [ms-uamg] v15.0 (Tue, 09 Sep 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -67,8 +67,8 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
+    NDRConfVarStrNullField,
+    NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIEEEDoubleField,
@@ -109,7 +109,7 @@ class GetTypeInfoCount_Response(NDRPacket):
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -145,7 +145,12 @@ class GUID(NDRPacket):
 class GetIDsOfNames_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("riid", GUID(), GUID),
-        NDRConfVarStrLenFieldUtf16("rgszNames", "", size_is=lambda pkt: pkt.cNames),
+        NDRConfFieldListField(
+            "rgszNames",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.cNames,
+        ),
         NDRIntField("cNames", None, size_of="rgszNames"),
         NDRIntField("lcid", 0),
     ]
@@ -205,7 +210,7 @@ class CURRENCY(NDRPacket):
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -236,11 +241,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr",
-                [],
-                FLAGGED_WORD_BLOB,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -256,7 +257,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -272,7 +273,7 @@ class SAFEARR_DISPATCH(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -288,7 +289,7 @@ class SAFEARR_VARIANT(NDRPacket):
                 [],
                 NDRRecursiveClass("wireVARIANTStr"),
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -314,11 +315,7 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRIntField("Size", None, size_of="aRecord"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aRecord",
-                [],
-                wireBRECORDStr,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -334,7 +331,7 @@ class SAFEARR_HAVEIID(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
         NDRPacketField("iid", GUID(), GUID),
@@ -1004,11 +1001,7 @@ class DISPPARAMS(NDRPacket):
     fields_desc = [
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "rgvarg",
-                [],
-                wireVARIANTStr,
-                size_is=lambda pkt: pkt.cArgs,
-                ptr_pack=True,
+                "rgvarg", [], wireVARIANTStr, size_is=lambda pkt: pkt.cArgs, ptr_lvl=1
             )
         ),
         NDRFullEmbPointerField(
@@ -1057,11 +1050,7 @@ class Invoke_Request(NDRPacket):
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
         NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+            "rgVarRef", [], wireVARIANTStr, size_is=lambda pkt: pkt.cVarRef, ptr_lvl=1
         ),
     ]
 
@@ -1074,11 +1063,7 @@ class Invoke_Response(NDRPacket):
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
         NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+            "rgVarRef", [], wireVARIANTStr, size_is=lambda pkt: pkt.cVarRef, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]

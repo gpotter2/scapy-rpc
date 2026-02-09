@@ -33,8 +33,8 @@ from scapy.layers.dcerpc import (
     NDRSignedByteField,
     NDRSignedIntField,
     NDRUnionField,
-    NDRVarStrLenField,
-    NDRVarStrLenFieldUtf16,
+    NDRVarStrNullField,
+    NDRVarStrNullFieldUtf16,
     register_dcerpc_interface,
 )
 
@@ -126,7 +126,7 @@ class FRS_UPDATE(NDRPacket):
         NDRLongField("gvsnVersion", 0),
         NDRPacketField("parentDbGuid", GUID(), GUID),
         NDRLongField("parentVersion", 0),
-        NDRVarStrLenFieldUtf16("name", "", length_is=lambda _: (260 + 1)),
+        NDRVarStrNullFieldUtf16("name", ""),
         NDRSignedIntField("flags", 0),
     ]
 
@@ -294,7 +294,6 @@ class RequestRecords_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.numBytes,
-            ptr_pack=True,
         ),
         NDRInt3264EnumField("recordsStatus", 0, RECORDS_STATUS),
         NDRIntField("status", 0),

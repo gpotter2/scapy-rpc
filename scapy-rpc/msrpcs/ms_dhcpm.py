@@ -934,7 +934,7 @@ class LPDHCP_CLIENT_INFO_ARRAY(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -1433,7 +1433,7 @@ class LPDHCP_CLIENT_INFO_ARRAY_V4(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_V4,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -1777,7 +1777,7 @@ class LPDHCP_CLIENT_INFO_ARRAY_VQ(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_VQ,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -1955,7 +1955,7 @@ class LPDHCP_CLIENT_INFO_ARRAY_V5(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_V5,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -2039,7 +2039,6 @@ class LPDHCP_MSCOPE_TABLE(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
             )
         ),
     ]
@@ -2228,7 +2227,7 @@ class LPDHCP_MCLIENT_INFO_ARRAY(NDRPacket):
                 [],
                 LPDHCP_MCLIENT_INFO,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -3714,7 +3713,7 @@ class LPDHCP_CLIENT_INFO_ARRAY_V6(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_V6,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -4394,7 +4393,7 @@ class LPDHCP_CLIENT_FILTER_STATUS_INFO_ARRAY(NDRPacket):
                 [],
                 LPDHCP_CLIENT_FILTER_STATUS_INFO,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -5127,7 +5126,7 @@ class LPDHCP_CLIENT_INFO_PB_ARRAY(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_PB,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -5257,7 +5256,7 @@ class LPDHCP_RESERVATION_INFO_ARRAY(NDRPacket):
                 [],
                 LPDHCP_IP_RESERVATION_INFO,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -5607,7 +5606,7 @@ class LPDHCP_CLIENT_INFO_EX_ARRAY(NDRPacket):
                 [],
                 LPDHCP_CLIENT_INFO_EX,
                 size_is=lambda pkt: pkt.NumElements,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]

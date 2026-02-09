@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-fasp] v34.0 (Tue, 19 Nov 2024)
+# [ms-fasp] v35.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -23,7 +23,6 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -624,15 +623,9 @@ class PFW_RULE2_0(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -672,39 +665,23 @@ class PFW_RULE2_0(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
     ]
 
@@ -865,11 +842,7 @@ class RRPC_FWSetConfig_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(
-                        NDRConfVarStrLenFieldUtf16(
-                            "pConfig", "", size_is=lambda pkt: 10001
-                        )
-                    ),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pConfig", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "configID", None)
@@ -976,15 +949,9 @@ class PFW_CS_RULE2_0(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRPacketField("Endpoint1", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("Endpoint2", FW_ADDRESSES(), FW_ADDRESSES),
@@ -997,31 +964,17 @@ class PFW_CS_RULE2_0(NDRPacket):
         NDRPacketField("Endpoint1Ports", FW_PORTS(), FW_PORTS),
         NDRPacketField("Endpoint2Ports", FW_PORTS(), FW_PORTS),
         NDRShortField("wIpProtocol", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase1AuthSet", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszPhase2CryptoSet", "", size_is=lambda pkt: 255
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase2AuthSet", "", size_is=lambda pkt: 255)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase1AuthSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2CryptoSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2AuthSet", "")),
         NDRInt3264EnumField("Action", 0, FW_CS_RULE_ACTION),
         NDRShortField("wFlags", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
     ]
 
@@ -1183,20 +1136,10 @@ class PFW_AUTH_SET2_10(NDRPacket):
         ),
         NDRShortField("wSchemaVersion", 0),
         NDRInt3264EnumField("IpSecPhase", 0, FW_IPSEC_PHASE),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszSetId", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSetId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRIntField("dwNumSuites", None, size_of="pSuites"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -1204,9 +1147,7 @@ class PFW_AUTH_SET2_10(NDRPacket):
             )
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRIntField("dwAuthSetFlags", 0),
     ]
@@ -1412,20 +1353,10 @@ class PFW_CRYPTO_SET(NDRPacket):
         ),
         NDRShortField("wSchemaVersion", 0),
         NDRInt3264EnumField("IpSecPhase", 0, FW_IPSEC_PHASE),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszSetId", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSetId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRUnionField(
             [
                 (
@@ -1454,9 +1385,7 @@ class PFW_CRYPTO_SET(NDRPacket):
             switch_fmt=("H", "I"),
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRIntField("dwCryptoSetFlags", 0),
     ]
@@ -1611,12 +1540,8 @@ class u_sub0(NDRPacket):
 class u_sub1(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszMyId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPeerId", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszMyId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPeerId", "")),
     ]
 
 
@@ -1718,7 +1643,7 @@ class RRPC_FWEnumPhase1SAs_Response(NDRPacket):
             [],
             PFW_PHASE1_SA_DETAILS,
             size_is=lambda pkt: pkt.pdwNumSAs,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -1773,7 +1698,7 @@ class RRPC_FWEnumPhase2SAs_Response(NDRPacket):
             [],
             PFW_PHASE2_SA_DETAILS,
             size_is=lambda pkt: pkt.pdwNumSAs,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -1850,7 +1775,7 @@ class RRPC_FWEnumProducts_Response(NDRPacket):
             [],
             PFW_PRODUCT,
             size_is=lambda pkt: pkt.pdwNumProducts,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -1911,39 +1836,21 @@ class PFW_MM_RULE(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRPacketField("Endpoint1", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("Endpoint2", FW_ADDRESSES(), FW_ADDRESSES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase1AuthSet", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszPhase1CryptoSet", "", size_is=lambda pkt: 255
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase1AuthSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase1CryptoSet", "")),
         NDRShortField("wFlags", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
@@ -2070,11 +1977,7 @@ class FW_DATA_TYPE(IntEnum):
 
 class u_sub4(NDRPacket):
     ALIGNMENT = (4, 8)
-    fields_desc = [
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszString", "", size_is=lambda pkt: 10001)
-        )
-    ]
+    fields_desc = [NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszString", ""))]
 
 
 class FW_MATCH_VALUE(NDRPacket):
@@ -2212,15 +2115,9 @@ class PFW_RULE2_10(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -2260,39 +2157,23 @@ class PFW_RULE2_10(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -2335,15 +2216,9 @@ class PFW_CS_RULE2_10(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRPacketField("Endpoint1", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("Endpoint2", FW_ADDRESSES(), FW_ADDRESSES),
@@ -2356,35 +2231,19 @@ class PFW_CS_RULE2_10(NDRPacket):
         NDRPacketField("Endpoint1Ports", FW_PORTS(), FW_PORTS),
         NDRPacketField("Endpoint2Ports", FW_PORTS(), FW_PORTS),
         NDRShortField("wIpProtocol", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase1AuthSet", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszPhase2CryptoSet", "", size_is=lambda pkt: 255
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase2AuthSet", "", size_is=lambda pkt: 255)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase1AuthSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2CryptoSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2AuthSet", "")),
         NDRInt3264EnumField("Action", 0, FW_CS_RULE_ACTION),
         NDRShortField("wFlags", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszMMParentRuleId", "", size_is=lambda pkt: 512)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszMMParentRuleId", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -2500,7 +2359,7 @@ class RRPC_FWEnumNetworks_Response(NDRPacket):
             [],
             PFW_NETWORK,
             size_is=lambda pkt: pkt.pdwNumNetworks,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -2529,7 +2388,7 @@ class RRPC_FWEnumAdapters_Response(NDRPacket):
             [],
             PFW_ADAPTER,
             size_is=lambda pkt: pkt.pdwNumAdapters,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -2816,15 +2675,9 @@ class PFW_CS_RULE(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRPacketField("Endpoint1", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("Endpoint2", FW_ADDRESSES(), FW_ADDRESSES),
@@ -2837,35 +2690,19 @@ class PFW_CS_RULE(NDRPacket):
         NDRPacketField("Endpoint1Ports", FW_PORTS(), FW_PORTS),
         NDRPacketField("Endpoint2Ports", FW_PORTS(), FW_PORTS),
         NDRShortField("wIpProtocol", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase1AuthSet", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszPhase2CryptoSet", "", size_is=lambda pkt: 255
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPhase2AuthSet", "", size_is=lambda pkt: 255)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase1AuthSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2CryptoSet", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPhase2AuthSet", "")),
         NDRInt3264EnumField("Action", 0, FW_CS_RULE_ACTION),
         NDRShortField("wFlags", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszMMParentRuleId", "", size_is=lambda pkt: 512)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszMMParentRuleId", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -2880,22 +2717,16 @@ class PFW_CS_RULE(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteTunnelEndpointFqdn", "", size_is=lambda pkt: 512
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteTunnelEndpointFqdn", "")
         ),
         NDRPacketField("RemoteTunnelEndpoints", FW_ADDRESSES(), FW_ADDRESSES),
         NDRIntField("dwKeyModules", 0),
         NDRIntField("FwdPathSALifetime", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszTransportMachineAuthzSDDL", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszTransportMachineAuthzSDDL", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszTransportUserAuthzSDDL", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszTransportUserAuthzSDDL", "")
         ),
     ]
 
@@ -2999,7 +2830,6 @@ class PFW_CERT_CRITERIA(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRSignedByteField("", 0)),
                 size_is=lambda pkt: pkt.dwNumEku,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszHash", "")),
@@ -3104,20 +2934,10 @@ class PFW_AUTH_SET(NDRPacket):
         ),
         NDRShortField("wSchemaVersion", 0),
         NDRInt3264EnumField("IpSecPhase", 0, FW_IPSEC_PHASE),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszSetId", "", size_is=lambda pkt: 255)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSetId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRIntField("dwNumSuites", None, size_of="pSuites"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -3125,9 +2945,7 @@ class PFW_AUTH_SET(NDRPacket):
             )
         ),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRIntField("dwAuthSetFlags", 0),
     ]
@@ -3216,15 +3034,9 @@ class PFW_RULE2_20(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -3264,39 +3076,23 @@ class PFW_RULE2_20(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -3311,18 +3107,10 @@ class PFW_RULE2_20(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
     ]
 
@@ -3405,8 +3193,11 @@ class FW_NETWORK_NAMES(NDRPacket):
     fields_desc = [
         NDRIntField("dwNumEntries", None, size_of="wszNames"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszNames", "", size_is=lambda pkt: pkt.dwNumEntries
+            NDRConfFieldListField(
+                "wszNames",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.dwNumEntries,
             )
         ),
     ]
@@ -3421,15 +3212,9 @@ class PFW_RULE2_24(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -3469,39 +3254,23 @@ class PFW_RULE2_24(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -3516,25 +3285,13 @@ class PFW_RULE2_24(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
     ]
 
 
@@ -3620,15 +3377,9 @@ class PFW_RULE2_25(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -3668,39 +3419,23 @@ class PFW_RULE2_25(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -3715,25 +3450,13 @@ class PFW_RULE2_25(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
         NDRShortField("wFlags2", 0),
     ]
 
@@ -3820,15 +3543,9 @@ class PFW_RULE2_26(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -3868,39 +3585,23 @@ class PFW_RULE2_26(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -3915,25 +3616,13 @@ class PFW_RULE2_26(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
         NDRShortField("wFlags2", 0),
         NDRPacketField("RemoteOutServerNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
     ]
@@ -4021,15 +3710,9 @@ class PFW_RULE2_27(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -4069,39 +3752,23 @@ class PFW_RULE2_27(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -4116,30 +3783,16 @@ class PFW_RULE2_27(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
         NDRShortField("wFlags2", 0),
         NDRPacketField("RemoteOutServerNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszFqbn", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFqbn", "")),
         NDRIntField("compartmentId", 0),
     ]
 
@@ -4236,15 +3889,9 @@ class PFW_RULE2_31(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -4284,39 +3931,23 @@ class PFW_RULE2_31(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -4331,30 +3962,16 @@ class PFW_RULE2_31(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
         NDRShortField("wFlags2", 0),
         NDRPacketField("RemoteOutServerNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszFqbn", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFqbn", "")),
         NDRIntField("compartmentId", 0),
         NDRPacketField("providerContextKey", GUID(), GUID),
         NDRPacketField(
@@ -4447,15 +4064,9 @@ class PFW_RULE(NDRPacket):
             )
         ),
         NDRShortField("wSchemaVersion", 0),
-        NDRRefEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszRuleId", "", size_is=lambda pkt: 512)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszName", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszDescription", "", size_is=lambda pkt: 10001)
-        ),
+        NDRRefEmbPointerField(NDRConfVarStrNullFieldUtf16("wszRuleId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszName", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszDescription", "")),
         NDRIntField("dwProfiles", 0),
         NDRInt3264EnumField("Direction", 0, FW_DIRECTION),
         NDRShortField("wIpProtocol", 0),
@@ -4495,39 +4106,23 @@ class PFW_RULE(NDRPacket):
         NDRPacketField("RemoteAddresses", FW_ADDRESSES(), FW_ADDRESSES),
         NDRPacketField("LocalInterfaceIds", FW_INTERFACE_LUIDS(), FW_INTERFACE_LUIDS),
         NDRIntField("dwLocalInterfaceTypes", 0),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalApplication", "", size_is=lambda pkt: 10001
-            )
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszLocalService", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalApplication", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalService", "")),
         NDRInt3264EnumField("Action", 0, FW_RULE_ACTION),
         NDRShortField("wFlags", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteMachineAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteMachineAuthorizationList", "")
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszRemoteUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszRemoteUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszEmbeddedContext", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszEmbeddedContext", "")),
         NDRPacketField(
             "PlatformValidityList", FW_OS_PLATFORM_LIST(), FW_OS_PLATFORM_LIST
         ),
         NDRIntEnumField("Status", 0, FW_RULE_STATUS),
         NDRInt3264EnumField("Origin", 0, FW_RULE_ORIGIN_TYPE),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszGPOName", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszGPOName", "")),
         NDRIntField("Reserved", 0),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
@@ -4542,30 +4137,16 @@ class PFW_RULE(NDRPacket):
             )
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserAuthorizationList", "", size_is=lambda pkt: 10001
-            )
+            NDRConfVarStrNullFieldUtf16("wszLocalUserAuthorizationList", "")
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszPackageId", "", size_is=lambda pkt: 10001)
-        ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszLocalUserOwner", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageId", "")),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszLocalUserOwner", "")),
         NDRIntField("dwTrustTupleKeywords", 0),
         NDRPacketField("OnNetworkNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszSecurityRealmId", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszSecurityRealmId", "")),
         NDRShortField("wFlags2", 0),
         NDRPacketField("RemoteOutServerNames", FW_NETWORK_NAMES(), FW_NETWORK_NAMES),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("wszFqbn", "", size_is=lambda pkt: 10001)
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszFqbn", "")),
         NDRIntField("compartmentId", 0),
         NDRPacketField("providerContextKey", GUID(), GUID),
         NDRPacketField(
@@ -4573,11 +4154,7 @@ class PFW_RULE(NDRPacket):
             FW_DYNAMIC_KEYWORD_ADDRESS_ID_LIST(),
             FW_DYNAMIC_KEYWORD_ADDRESS_ID_LIST,
         ),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "wszPackageFamilyName", "", size_is=lambda pkt: 10001
-            )
-        ),
+        NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("wszPackageFamilyName", "")),
     ]
 
 

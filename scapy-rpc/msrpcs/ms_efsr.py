@@ -101,7 +101,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class RPC_SID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),
@@ -151,7 +150,7 @@ class ENCRYPTION_CERTIFICATE_HASH_LIST(NDRPacket):
                 [],
                 ENCRYPTION_CERTIFICATE_HASH,
                 size_is=lambda pkt: pkt.nCert_Hash,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -238,7 +237,7 @@ class ENCRYPTION_CERTIFICATE_LIST(NDRPacket):
                 [],
                 ENCRYPTION_CERTIFICATE,
                 size_is=lambda pkt: pkt.nUsers,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -445,7 +444,7 @@ class PENCRYPTION_PROTECTOR_LIST(NDRPacket):
                 [],
                 PENCRYPTION_PROTECTOR,
                 size_is=lambda pkt: pkt.nProtectors,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]

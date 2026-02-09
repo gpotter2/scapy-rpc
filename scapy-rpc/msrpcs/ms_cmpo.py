@@ -34,12 +34,20 @@ class SESSION_RANK(IntEnum):
     SRANK_SECONDARY = 2
 
 
+class BIND_INFO_BLOB(NDRPacket):
+    ALIGNMENT = (4, 4)
+    fields_desc = [
+        NDRIntField("dwcbThisStruct", 0),
+        NDRIntField("grbitComProtocols", 0),
+    ]
+
+
 class Poke_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
-        NDRConfVarStrLenField("pszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField("pszHostName", "", size_is=lambda pkt: (15 + 1)),
-        NDRConfVarStrLenField("pszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH),
+        NDRConfVarStrLenField("pszCalleeUuid", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenField("pszHostName", "", max_is=lambda pkt: (15 + 1)),
+        NDRConfVarStrLenField("pszUuidString", "", max_is=lambda pkt: 37),
         NDRIntField("dwcbSizeOfBlob", None, size_of="rguchBlob"),
         NDRConfStrLenField("rguchBlob", "", size_is=lambda pkt: pkt.dwcbSizeOfBlob),
     ]
@@ -74,11 +82,11 @@ class BuildContext_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
         NDRPacketField("BindVersionSet", BIND_VERSION_SET(), BIND_VERSION_SET),
-        NDRConfVarStrLenField("pszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField("pszHostName", "", size_is=lambda pkt: (15 + 1)),
-        NDRConfVarStrLenField("pszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField("pszGuidIn", "", size_is=lambda pkt: pkt.GUID_LENGTH),
-        NDRConfVarStrLenField("pszGuidOut", "", size_is=lambda pkt: pkt.GUID_LENGTH),
+        NDRConfVarStrLenField("pszCalleeUuid", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenField("pszHostName", "", max_is=lambda pkt: (15 + 1)),
+        NDRConfVarStrLenField("pszUuidString", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenField("pszGuidIn", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenField("pszGuidOut", "", max_is=lambda pkt: 37),
         NDRPacketField("pBoundVersionSet", BOUND_VERSION_SET(), BOUND_VERSION_SET),
         NDRIntField("dwcbSizeOfBlob", None, size_of="rguchBlob"),
         NDRConfStrLenField("rguchBlob", "", size_is=lambda pkt: pkt.dwcbSizeOfBlob),
@@ -87,7 +95,7 @@ class BuildContext_Request(NDRPacket):
 
 class BuildContext_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenField("pszGuidOut", "", size_is=lambda pkt: pkt.GUID_LENGTH),
+        NDRConfVarStrLenField("pszGuidOut", "", max_is=lambda pkt: 37),
         NDRPacketField("pBoundVersionSet", BOUND_VERSION_SET(), BOUND_VERSION_SET),
         NDRPacketField("ppHandle", NDRContextHandle(), NDRContextHandle),
         NDRIntField("status", 0),
@@ -158,13 +166,9 @@ class BeginTearDown_Response(NDRPacket):
 class PokeW_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
-        NDRConfVarStrLenFieldUtf16("pwszHostName", "", size_is=lambda pkt: (15 + 1)),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszCalleeUuid", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenFieldUtf16("pwszHostName", "", max_is=lambda pkt: (15 + 1)),
+        NDRConfVarStrLenFieldUtf16("pwszUuidString", "", max_is=lambda pkt: 37),
         NDRIntField("dwcbSizeOfBlob", None, size_of="rguchBlob"),
         NDRConfStrLenField("rguchBlob", "", size_is=lambda pkt: pkt.dwcbSizeOfBlob),
     ]
@@ -178,19 +182,11 @@ class BuildContextW_Request(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("sRank", 0, SESSION_RANK),
         NDRPacketField("BindVersionSet", BIND_VERSION_SET(), BIND_VERSION_SET),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszCalleeUuid", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
-        NDRConfVarStrLenFieldUtf16("pwszHostName", "", size_is=lambda pkt: (15 + 1)),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszUuidString", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszGuidIn", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
-        NDRConfVarStrLenFieldUtf16(
-            "pwszGuidOut", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszCalleeUuid", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenFieldUtf16("pwszHostName", "", max_is=lambda pkt: (15 + 1)),
+        NDRConfVarStrLenFieldUtf16("pwszUuidString", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenFieldUtf16("pwszGuidIn", "", max_is=lambda pkt: 37),
+        NDRConfVarStrLenFieldUtf16("pwszGuidOut", "", max_is=lambda pkt: 37),
         NDRPacketField("pBoundVersionSet", BOUND_VERSION_SET(), BOUND_VERSION_SET),
         NDRIntField("dwcbSizeOfBlob", None, size_of="rguchBlob"),
         NDRConfStrLenField("rguchBlob", "", size_is=lambda pkt: pkt.dwcbSizeOfBlob),
@@ -199,9 +195,7 @@ class BuildContextW_Request(NDRPacket):
 
 class BuildContextW_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "pwszGuidOut", "", size_is=lambda pkt: pkt.GUID_LENGTH
-        ),
+        NDRConfVarStrLenFieldUtf16("pwszGuidOut", "", max_is=lambda pkt: 37),
         NDRPacketField("pBoundVersionSet", BOUND_VERSION_SET(), BOUND_VERSION_SET),
         NDRPacketField("ppHandle", NDRContextHandle(), NDRContextHandle),
         NDRIntField("status", 0),

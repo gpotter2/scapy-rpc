@@ -154,7 +154,7 @@ register_com_interface(
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -365,7 +365,7 @@ class Next_Response(NDRPacket):
             MInterfacePointer,
             size_is=lambda pkt: pkt.cConnections,
             length_is=lambda pkt: pkt.pcFetched,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcFetched", None, size_of="ppCP"),
         NDRIntField("status", 0),

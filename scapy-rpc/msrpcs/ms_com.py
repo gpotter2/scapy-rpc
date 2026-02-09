@@ -56,7 +56,6 @@ class GetSeqAndTxViaExport_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pulcbExportCookie,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -75,7 +74,6 @@ class GetSeqAndTxViaTransmitter_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pulcbTransmitterBuffer,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -99,7 +97,6 @@ class GetTxViaExport_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pulcbExportCookie,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -117,7 +114,6 @@ class GetTxViaTransmitter_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pulcbTransmitterBuffer,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

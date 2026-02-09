@@ -25,7 +25,6 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfVarPacketListField,
     NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -167,7 +166,12 @@ class CALPWSTR(NDRPacket):
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
+            NDRConfFieldListField(
+                "pElems",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cElems,
+            )
         ),
     ]
 
@@ -986,7 +990,7 @@ class S_DSGetComputerSites_Response(NDRPacket):
             GUID,
             size_is=lambda pkt: pkt.pdwNumberOfSites,
             length_is=lambda pkt: pkt.pdwNumberOfSites,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRConfStrLenField(
             "pbServerSignature", "", size_is=lambda pkt: pkt.pdwServerSignatureSize

@@ -27,7 +27,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRPacketField,
     NDRShortField,
-    NDRVarStrLenField,
+    NDRVarStrNullField,
     register_dcerpc_interface,
 )
 
@@ -43,7 +43,7 @@ class UUID(NDRPacket):
 
 
 class twr_p_t(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["tower_octet_string"]
     fields_desc = [
         NDRIntField("tower_length", None, size_of="tower_octet_string"),
@@ -61,7 +61,7 @@ class ept_entry_t(NDRPacket):
     fields_desc = [
         NDRPacketField("object", UUID(), UUID),
         NDRFullEmbPointerField(NDRPacketField("tower", twr_p_t(), twr_p_t)),
-        NDRVarStrLenField("annotation", "", length_is=lambda _: 64),
+        NDRVarStrNullField("annotation", ""),
     ]
 
 
@@ -146,7 +146,7 @@ class ept_map_Response(NDRPacket):
             twr_p_t,
             size_is=lambda pkt: pkt.max_towers,
             length_is=lambda pkt: pkt.num_towers,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]

@@ -396,7 +396,7 @@ class PW32TIME_CONFIGURATION_INFO(NDRPacket):
                 [],
                 PW32TIME_CONFIGURATION_PROVIDER,
                 size_is=lambda pkt: pkt.cProviderConfig,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
         NDRIntField("cEntries", None, size_of="pEntries"),

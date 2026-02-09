@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-rprn] v38.0 (Mon, 16 Sep 2024)
+# [ms-rprn] v39.0 (Mon, 11 Aug 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -23,8 +23,6 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -2751,7 +2749,7 @@ class RpcEnumJobNamedProperties_Response(NDRPacket):
             [],
             RPC_PrintNamedProperty,
             size_is=lambda pkt: pkt.pcProperties,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -2989,7 +2987,6 @@ class RpcIppCreateJobOnPrinter_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.ippResponseBufferSize,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -3000,8 +2997,11 @@ class RpcIppGetJobAttributes_Request(NDRPacket):
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("jobId", 0),
         NDRIntField("attributeNameCount", None, size_of="attributeNames"),
-        NDRConfVarStrLenFieldUtf16(
-            "attributeNames", "", size_is=lambda pkt: pkt.attributeNameCount
+        NDRConfFieldListField(
+            "attributeNames",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.attributeNameCount,
         ),
     ]
 
@@ -3014,7 +3014,6 @@ class RpcIppGetJobAttributes_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.ippResponseBufferSize,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -3043,7 +3042,6 @@ class RpcIppSetJobAttributes_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.ippResponseBufferSize,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -3053,8 +3051,11 @@ class RpcIppGetPrinterAttributes_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hPrinter", NDRContextHandle(), NDRContextHandle),
         NDRIntField("attributeNameCount", None, size_of="attributeNames"),
-        NDRConfVarStrLenFieldUtf16(
-            "attributeNames", "", size_is=lambda pkt: pkt.attributeNameCount
+        NDRConfFieldListField(
+            "attributeNames",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.attributeNameCount,
         ),
     ]
 
@@ -3067,7 +3068,6 @@ class RpcIppGetPrinterAttributes_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.ippResponseBufferSize,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -3095,7 +3095,6 @@ class RpcIppSetPrinterAttributes_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.ippResponseBufferSize,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

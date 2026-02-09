@@ -21,8 +21,6 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfStrLenField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -141,7 +139,12 @@ class CALPWSTR(NDRPacket):
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
+            NDRConfFieldListField(
+                "pElems",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cElems,
+            )
         ),
     ]
 

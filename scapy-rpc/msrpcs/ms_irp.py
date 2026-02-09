@@ -66,7 +66,7 @@ class INET_INFO_IP_SEC_ENTRY(NDRPacket):
 
 
 class LPINET_INFO_IP_SEC_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aIPSecEntry"]
     fields_desc = [
         NDRIntField("cEntries", None, size_of="aIPSecEntry"),
@@ -94,7 +94,7 @@ class INET_INFO_VIRTUAL_ROOT_ENTRY(NDRPacket):
 
 
 class LPINET_INFO_VIRTUAL_ROOT_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aVirtRootEntry"]
     fields_desc = [
         NDRIntField("cEntries", None, size_of="aVirtRootEntry"),
@@ -178,7 +178,7 @@ class INET_INFO_SITE_ENTRY(NDRPacket):
 
 
 class LPINET_INFO_SITE_LIST(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["aSiteEntry"]
     fields_desc = [
         NDRIntField("cEntries", None, size_of="aSiteEntry"),

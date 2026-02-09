@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-tsts] v31.0 (Fri, 23 May 2025)
+# [ms-tsts] v33.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -395,7 +395,7 @@ class RpcWaitAsyncNotification_Response(NDRPacket):
             [],
             SESSION_CHANGE,
             size_is=lambda pkt: pkt.pEntries,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pEntries", None, size_of="SessionChange"),
         NDRIntField("status", 0),
@@ -547,7 +547,7 @@ class RpcGetEnumResult_Response(NDRPacket):
             [],
             PSESSIONENUM,
             size_is=lambda pkt: pkt.pEntries,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pEntries", None, size_of="ppSessionEnumResult"),
         NDRIntField("status", 0),
@@ -583,7 +583,6 @@ class RpcGetSessionIds_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pcSessionIds,
-            ptr_pack=True,
         ),
         NDRIntField("pcSessionIds", None, size_of="pSessionIds"),
         NDRIntField("status", 0),
@@ -657,7 +656,7 @@ class RpcGetEnumResultEx_Response(NDRPacket):
             [],
             PSESSIONENUM_EX,
             size_is=lambda pkt: pkt.pEntries,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pEntries", None, size_of="ppSessionEnumResult"),
         NDRIntField("status", 0),
@@ -727,7 +726,7 @@ class RpcGetAllSessions_Response(NDRPacket):
             [],
             PEXECENVDATA,
             size_is=lambda pkt: pkt.pcEntries,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcEntries", None, size_of="ppSessionData"),
         NDRIntField("status", 0),
@@ -741,19 +740,19 @@ class EXECENVDATAEX_LEVEL1(NDRPacket):
         NDRSignedIntField("State", 0),
         NDRSignedIntField("AbsSessionId", 0),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pszSessionName", "", size_is=lambda pkt: 256)
+            NDRConfVarStrLenFieldUtf16("pszSessionName", "", max_is=lambda pkt: 256)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pszHostName", "", size_is=lambda pkt: 256)
+            NDRConfVarStrLenFieldUtf16("pszHostName", "", max_is=lambda pkt: 256)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pszUserName", "", size_is=lambda pkt: 256)
+            NDRConfVarStrLenFieldUtf16("pszUserName", "", max_is=lambda pkt: 256)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pszDomainName", "", size_is=lambda pkt: 256)
+            NDRConfVarStrLenFieldUtf16("pszDomainName", "", max_is=lambda pkt: 256)
         ),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pszFarmName", "", size_is=lambda pkt: 256)
+            NDRConfVarStrLenFieldUtf16("pszFarmName", "", max_is=lambda pkt: 256)
         ),
     ]
 
@@ -792,7 +791,7 @@ class RpcGetAllSessionsEx_Response(NDRPacket):
             [],
             PEXECENVDATAEX,
             size_is=lambda pkt: pkt.pcEntries,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcEntries", None, size_of="ppSessionData"),
         NDRIntField("status", 0),

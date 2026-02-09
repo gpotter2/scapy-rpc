@@ -17,9 +17,8 @@ from scapy.fields import StrFixedLenField
 from scapy.layers.dcerpc import (
     NDRPacket,
     DceRpcOp,
+    NDRConfFieldListField,
     NDRConfPacketListField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -150,7 +149,14 @@ class SchRpcEnumFolders_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pStartIndex", 0),
         NDRIntField("pcNames", None, size_of="pNames"),
-        NDRConfVarStrLenFieldUtf16("pNames", "", size_is=lambda pkt: pkt.pcNames),
+        NDRConfFieldListField(
+            "pNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcNames,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -168,7 +174,14 @@ class SchRpcEnumTasks_Response(NDRPacket):
     fields_desc = [
         NDRIntField("startIndex", 0),
         NDRIntField("pcNames", None, size_of="pNames"),
-        NDRConfVarStrLenFieldUtf16("pNames", "", size_is=lambda pkt: pkt.pcNames),
+        NDRConfFieldListField(
+            "pNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcNames,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -194,7 +207,7 @@ class SchRpcEnumInstances_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcGuids", None, size_of="pGuids"),
         NDRConfPacketListField(
-            "pGuids", [], GUID, size_is=lambda pkt: pkt.pcGuids, ptr_pack=True
+            "pGuids", [], GUID, size_is=lambda pkt: pkt.pcGuids, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -216,7 +229,7 @@ class SchRpcGetInstanceInfo_Response(NDRPacket):
             [],
             GUID,
             size_is=lambda pkt: pkt.pcGroupInstances,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pEnginePID", 0),
         NDRIntField("status", 0),
@@ -247,7 +260,12 @@ class SchRpcRun_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("path", ""),
         NDRIntField("cArgs", None, size_of="pArgs"),
         NDRFullPointerField(
-            NDRConfVarStrLenFieldUtf16("pArgs", "", size_is=lambda pkt: pkt.cArgs)
+            NDRConfFieldListField(
+                "pArgs",
+                [],
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cArgs,
+            )
         ),
         NDRIntField("flags", 0),
         NDRIntField("sessionId", 0),
@@ -307,11 +325,7 @@ class SchRpcScheduledRuntimes_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcRuntimes", None, size_of="pRuntimes"),
         NDRConfPacketListField(
-            "pRuntimes",
-            [],
-            PSYSTEMTIME,
-            size_is=lambda pkt: pkt.pcRuntimes,
-            ptr_pack=True,
+            "pRuntimes", [], PSYSTEMTIME, size_is=lambda pkt: pkt.pcRuntimes, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]

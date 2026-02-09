@@ -54,7 +54,7 @@ class rpc_if_id_vector_p_t(NDRPacket):
         NDRIntField("Count", None, size_of="IfId"),
         NDRFullEmbPointerField(
             NDRConfPacketListField(
-                "IfId", [], RPC_IF_ID, size_is=lambda pkt: pkt.Count, ptr_pack=True
+                "IfId", [], RPC_IF_ID, size_is=lambda pkt: pkt.Count, ptr_lvl=1
             )
         ),
     ]

@@ -43,7 +43,6 @@ class ExchangePublicKeys_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pServerKeyLength,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]

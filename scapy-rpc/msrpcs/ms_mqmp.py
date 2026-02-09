@@ -24,8 +24,6 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfVarFieldListField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -305,7 +303,6 @@ class Receive_sub1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulResponseFormatNameLen,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pulResponseFormatNameLenProp", 0)),
@@ -316,7 +313,6 @@ class Receive_sub1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulAdminFormatNameLen,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pulAdminFormatNameLenProp", 0)),
@@ -327,7 +323,6 @@ class Receive_sub1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulDestFormatNameLen,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pulDestFormatNameLenProp", 0)),
@@ -338,7 +333,6 @@ class Receive_sub1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulOrderingFormatNameLen,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pulOrderingFormatNameLenProp", 0)),
@@ -412,7 +406,6 @@ class CACTransferBufferV1(NDRPacket):
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: 20,
                 length_is=lambda pkt: 20,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pSentTime", 0)),
@@ -429,7 +422,6 @@ class CACTransferBufferV1(NDRPacket):
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.ulAllocBodyBufferInBytes,
                 length_is=lambda pkt: pkt.ulBodyBufferSizeInBytes,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulBodyBufferSizeInBytes", None, size_of="ppBody"),
@@ -442,7 +434,6 @@ class CACTransferBufferV1(NDRPacket):
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulTitleBufferSizeInWCHARs,
                 length_is=lambda pkt: pkt.ulTitleBufferSizeInWCHARs,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulTitleBufferSizeInWCHARs", None, size_of="ppTitle"),
@@ -459,7 +450,6 @@ class CACTransferBufferV1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.uSenderIDLen,
-                ptr_pack=True,
             )
         ),
         NDRFullEmbPointerField(NDRIntField("pulSenderIDLenProp", 0)),
@@ -474,7 +464,6 @@ class CACTransferBufferV1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.ulSenderCertLen,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulSenderCertLen", None, size_of="ppSenderCert"),
@@ -485,7 +474,6 @@ class CACTransferBufferV1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRShortField("", 0)),
                 size_is=lambda pkt: pkt.ulProvNameLen,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulProvNameLen", None, size_of="ppwcsProvName"),
@@ -498,7 +486,6 @@ class CACTransferBufferV1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.ulSymmKeysSize,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulSymmKeysSize", None, size_of="ppSymmKeys"),
@@ -512,7 +499,6 @@ class CACTransferBufferV1(NDRPacket):
                 [],
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.ulSignatureSize,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulSignatureSize", None, size_of="ppSignature"),
@@ -528,7 +514,6 @@ class CACTransferBufferV1(NDRPacket):
                 NDRFullEmbPointerField(NDRByteField("", 0)),
                 size_is=lambda pkt: pkt.ulMsgExtensionBufferInBytes,
                 length_is=lambda pkt: pkt.ulMsgExtensionBufferInBytes,
-                ptr_pack=True,
             )
         ),
         NDRIntField("ulMsgExtensionBufferInBytes", None, size_of="ppMsgExtension"),
@@ -664,7 +649,12 @@ class CALPWSTR(NDRPacket):
     fields_desc = [
         NDRIntField("cElems", None, size_of="pElems"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("pElems", "", size_is=lambda pkt: pkt.cElems)
+            NDRConfFieldListField(
+                "pElems",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.cElems,
+            )
         ),
     ]
 

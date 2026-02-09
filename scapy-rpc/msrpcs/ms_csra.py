@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-csra] v44.0 (Mon, 12 May 2025)
+# [ms-csra] v46.1 (Tue, 13 Jan 2026)
 
 """
 RPC definitions for the following interfaces:
@@ -350,7 +350,6 @@ class BackupGetAttachmentInformation_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pcwcDBFiles,
-            ptr_pack=True,
         ),
         NDRSignedIntField("pcwcDBFiles", None, size_of="ppwszzDBFiles"),
         NDRIntField("status", 0),
@@ -368,7 +367,6 @@ class BackupGetBackupLogs_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pcwcLogFiles,
-            ptr_pack=True,
         ),
         NDRSignedIntField("pcwcLogFiles", None, size_of="ppwszzLogFiles"),
         NDRIntField("status", 0),
@@ -434,7 +432,6 @@ class BackupGetDynamicFiles_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pcwcFiles,
-            ptr_pack=True,
         ),
         NDRSignedIntField("pcwcFiles", None, size_of="ppwszzFiles"),
         NDRIntField("status", 0),
@@ -452,7 +449,6 @@ class RestoreGetDatabaseLocations_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRShortField("", 0)),
             size_is=lambda pkt: pkt.pcwcPaths,
-            ptr_pack=True,
         ),
         NDRSignedIntField("pcwcPaths", None, size_of="ppwszzDatabaseLocations"),
         NDRIntField("status", 0),
@@ -717,7 +713,7 @@ class CURRENCY(NDRPacket):
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -729,7 +725,7 @@ class FLAGGED_WORD_BLOB(NDRPacket):
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),
@@ -759,11 +755,7 @@ class SAFEARR_BSTR(NDRPacket):
         NDRIntField("Size", None, size_of="aBstr"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aBstr",
-                [],
-                FLAGGED_WORD_BLOB,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aBstr", [], FLAGGED_WORD_BLOB, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -779,7 +771,7 @@ class SAFEARR_UNKNOWN(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -795,7 +787,7 @@ class SAFEARR_DISPATCH(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -811,7 +803,7 @@ class SAFEARR_VARIANT(NDRPacket):
                 [],
                 NDRRecursiveClass("wireVARIANTStr"),
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
     ]
@@ -837,11 +829,7 @@ class SAFEARR_BRECORD(NDRPacket):
         NDRIntField("Size", None, size_of="aRecord"),
         NDRRefEmbPointerField(
             NDRConfPacketListField(
-                "aRecord",
-                [],
-                wireBRECORDStr,
-                size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                "aRecord", [], wireBRECORDStr, size_is=lambda pkt: pkt.Size, ptr_lvl=1
             )
         ),
     ]
@@ -867,7 +855,7 @@ class SAFEARR_HAVEIID(NDRPacket):
                 [],
                 MInterfacePointer,
                 size_is=lambda pkt: pkt.Size,
-                ptr_pack=True,
+                ptr_lvl=1,
             )
         ),
         NDRPacketField("iid", GUID(), GUID),

@@ -46,8 +46,8 @@ from scapy.layers.dcerpc import (
     NDRSignedIntField,
     NDRSignedLongField,
     NDRUnionField,
-    NDRVarStrLenField,
-    NDRVarStrLenFieldUtf16,
+    NDRVarStrNullField,
+    NDRVarStrNullFieldUtf16,
     register_com_interface,
 )
 
@@ -1207,9 +1207,9 @@ class NTMS_DRIVEINFORMATIONW(NDRPacket):
         NDRIntField("Number", 0),
         NDRIntField("State", 0),
         NDRPacketField("DriveType", GUID(), GUID),
-        NDRVarStrLenFieldUtf16("szDeviceName", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szSerialNumber", "", length_is=lambda _: 32),
-        NDRVarStrLenFieldUtf16("szRevision", "", length_is=lambda _: 32),
+        NDRVarStrNullFieldUtf16("szDeviceName", ""),
+        NDRVarStrNullFieldUtf16("szSerialNumber", ""),
+        NDRVarStrNullFieldUtf16("szRevision", ""),
         NDRShortField("ScsiPort", 0),
         NDRShortField("ScsiBus", 0),
         NDRShortField("ScsiTarget", 0),
@@ -1226,8 +1226,8 @@ class NTMS_DRIVEINFORMATIONW(NDRPacket):
 class NTMS_DRIVETYPEINFORMATIONW(NDRPacket):
     ALIGNMENT = (4, 4)
     fields_desc = [
-        NDRVarStrLenFieldUtf16("szVendor", "", length_is=lambda _: 128),
-        NDRVarStrLenFieldUtf16("szProduct", "", length_is=lambda _: 128),
+        NDRVarStrNullFieldUtf16("szVendor", ""),
+        NDRVarStrNullFieldUtf16("szProduct", ""),
         NDRIntField("NumberOfHeads", 0),
         NDRIntField("DeviceType", 0),
     ]
@@ -1238,9 +1238,9 @@ class NTMS_CHANGERINFORMATIONW(NDRPacket):
     fields_desc = [
         NDRIntField("Number", 0),
         NDRPacketField("ChangerType", GUID(), GUID),
-        NDRVarStrLenFieldUtf16("szSerialNumber", "", length_is=lambda _: 32),
-        NDRVarStrLenFieldUtf16("szRevision", "", length_is=lambda _: 32),
-        NDRVarStrLenFieldUtf16("szDeviceName", "", length_is=lambda _: 64),
+        NDRVarStrNullFieldUtf16("szSerialNumber", ""),
+        NDRVarStrNullFieldUtf16("szRevision", ""),
+        NDRVarStrNullFieldUtf16("szDeviceName", ""),
         NDRShortField("ScsiPort", 0),
         NDRShortField("ScsiBus", 0),
         NDRShortField("ScsiTarget", 0),
@@ -1252,8 +1252,8 @@ class NTMS_CHANGERINFORMATIONW(NDRPacket):
 class NTMS_CHANGERTYPEINFORMATIONW(NDRPacket):
     ALIGNMENT = (4, 4)
     fields_desc = [
-        NDRVarStrLenFieldUtf16("szVendor", "", length_is=lambda _: 128),
-        NDRVarStrLenFieldUtf16("szProduct", "", length_is=lambda _: 128),
+        NDRVarStrNullFieldUtf16("szVendor", ""),
+        NDRVarStrNullFieldUtf16("szProduct", ""),
         NDRIntField("DeviceType", 0),
     ]
 
@@ -1267,9 +1267,9 @@ class NTMS_PMIDINFORMATIONW(NDRPacket):
         NDRIntField("LocationType", 0),
         NDRPacketField("MediaType", GUID(), GUID),
         NDRPacketField("HomeSlot", GUID(), GUID),
-        NDRVarStrLenFieldUtf16("szBarCode", "", length_is=lambda _: 64),
+        NDRVarStrNullFieldUtf16("szBarCode", ""),
         NDRIntField("BarCodeState", 0),
-        NDRVarStrLenFieldUtf16("szSequenceNumber", "", length_is=lambda _: 32),
+        NDRVarStrNullFieldUtf16("szSequenceNumber", ""),
         NDRIntField("MediaState", 0),
         NDRIntField("dwNumberOfPartitions", 0),
         NDRIntField("dwMediaTypeCode", 0),
@@ -1287,8 +1287,8 @@ class NTMS_PARTITIONINFORMATIONW(NDRPacket):
         NDRShortField("Side", 0),
         NDRIntField("dwOmidLabelIdLength", 0),
         StrFixedLenField("OmidLabelId", "", length=255),
-        NDRVarStrLenFieldUtf16("szOmidLabelType", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szOmidLabelInfo", "", length_is=lambda _: 256),
+        NDRVarStrNullFieldUtf16("szOmidLabelType", ""),
+        NDRVarStrNullFieldUtf16("szOmidLabelInfo", ""),
         NDRIntField("dwMountCount", 0),
         NDRIntField("dwAllocateCount", 0),
         NDRPacketField("Capacity", LARGE_INTEGER(), LARGE_INTEGER),
@@ -1308,9 +1308,9 @@ class NTMS_LIBREQUESTINFORMATIONW(NDRPacket):
         NDRPacketField("SlotId", GUID(), GUID),
         NDRPacketField("TimeQueued", SYSTEMTIME(), SYSTEMTIME),
         NDRPacketField("TimeCompleted", SYSTEMTIME(), SYSTEMTIME),
-        NDRVarStrLenFieldUtf16("szApplication", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szUser", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szComputer", "", length_is=lambda _: 64),
+        NDRVarStrNullFieldUtf16("szApplication", ""),
+        NDRVarStrNullFieldUtf16("szUser", ""),
+        NDRVarStrNullFieldUtf16("szComputer", ""),
         NDRIntField("dwErrorCode", 0),
         NDRPacketField("WorkItemId", GUID(), GUID),
         NDRIntField("dwPriority", 0),
@@ -1323,14 +1323,14 @@ class NTMS_OPREQUESTINFORMATIONW(NDRPacket):
         NDRIntField("Request", 0),
         NDRPacketField("Submitted", SYSTEMTIME(), SYSTEMTIME),
         NDRIntField("State", 0),
-        NDRVarStrLenFieldUtf16("szMessage", "", length_is=lambda _: 256),
+        NDRVarStrNullFieldUtf16("szMessage", ""),
         NDRIntField("Arg1Type", 0),
         NDRPacketField("Arg1", GUID(), GUID),
         NDRIntField("Arg2Type", 0),
         NDRPacketField("Arg2", GUID(), GUID),
-        NDRVarStrLenFieldUtf16("szApplication", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szUser", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szComputer", "", length_is=lambda _: 64),
+        NDRVarStrNullFieldUtf16("szApplication", ""),
+        NDRVarStrNullFieldUtf16("szUser", ""),
+        NDRVarStrNullFieldUtf16("szComputer", ""),
     ]
 
 
@@ -1344,8 +1344,8 @@ class LPNTMS_OBJECTINFORMATIONW(NDRPacket):
         NDRPacketField("ObjectGuid", GUID(), GUID),
         NDRSignedIntField("Enabled", 0),
         NDRIntField("dwOperationalState", 0),
-        NDRVarStrLenFieldUtf16("szName", "", length_is=lambda _: 64),
-        NDRVarStrLenFieldUtf16("szDescription", "", length_is=lambda _: 127),
+        NDRVarStrNullFieldUtf16("szName", ""),
+        NDRVarStrNullFieldUtf16("szDescription", ""),
         NDRUnionField(
             [
                 (
@@ -2292,7 +2292,7 @@ register_com_interface(
 
 
 class MInterfacePointer(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["abData"]
     fields_desc = [
         NDRIntField("ulCntData", None, size_of="abData"),

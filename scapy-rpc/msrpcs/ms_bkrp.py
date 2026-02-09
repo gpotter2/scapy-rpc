@@ -54,7 +54,6 @@ class BackuprKey_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbDataOut,
-            ptr_pack=True,
         ),
         NDRIntField("pcbDataOut", None, size_of="ppDataOut"),
         NDRIntField("status", 0),

@@ -1369,7 +1369,6 @@ class RRasAdminConnectionEnumEx_Response(NDRPacket):
                 )
             ),
             size_is=lambda pkt: pkt.lpdwEntriesRead,
-            ptr_pack=True,
         ),
         NDRFullPointerField(NDRIntField("lpdwResumeHandle", 0)),
         NDRIntField("status", 0),
@@ -2195,7 +2194,7 @@ register_dcerpc_interface(
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -2251,7 +2250,7 @@ class GetAddressList_Response(NDRPacket):
             [],
             IPV6Address,
             size_is=lambda pkt: pkt.pdwNumAddresses,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]

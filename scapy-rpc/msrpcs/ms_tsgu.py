@@ -23,6 +23,8 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenFieldUtf16,
     NDRConfVarStrLenField,
     NDRConfVarStrLenFieldUtf16,
+    NDRConfVarStrNullField,
+    NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
     NDRFullEmbPointerField,
     NDRFullPointerField,
@@ -613,15 +615,19 @@ class PTSENDPOINTINFO(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
-                "resourceName", "", size_is=lambda pkt: pkt.numResourceNames
+            NDRConfFieldListField(
+                "resourceName",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+                size_is=lambda pkt: pkt.numResourceNames,
             )
         ),
         NDRIntField("numResourceNames", None, size_of="resourceName"),
         NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16(
+            NDRConfFieldListField(
                 "alternateResourceNames",
-                "",
+                [],
+                NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
                 size_is=lambda pkt: pkt.numAlternateResourceNames,
             )
         ),
@@ -672,7 +678,7 @@ class TsProxyCloseTunnel_Response(NDRPacket):
 class TsProxySetupReceivePipe_Request(NDRPacket):
     fields_desc = [
         NDRConfFieldListField(
-            "pRpcMessage", [], NDRSignedByteField("", 0), size_is=lambda pkt: 32767
+            "pRpcMessage", [], NDRSignedByteField("", 0), max_is=lambda pkt: 32767
         )
     ]
 
@@ -684,7 +690,7 @@ class TsProxySetupReceivePipe_Response(NDRPacket):
 class TsProxySendToServer_Request(NDRPacket):
     fields_desc = [
         NDRConfFieldListField(
-            "pRpcMessage", [], NDRSignedByteField("", 0), size_is=lambda pkt: 32767
+            "pRpcMessage", [], NDRSignedByteField("", 0), max_is=lambda pkt: 32767
         )
     ]
 

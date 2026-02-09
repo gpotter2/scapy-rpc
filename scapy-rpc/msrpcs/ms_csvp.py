@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-csvp] v33.0 (Mon, 16 Sep 2024)
+# [ms-csvp] v34.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -33,8 +33,6 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -85,7 +83,7 @@ class CPREP_DISKID(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRIntField("value", 0),
+                    NDRIntField("DiskId", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "DiskIdType", None)
@@ -95,7 +93,7 @@ class CPREP_DISKID(NDRPacket):
                     ),
                 ),
                 (
-                    NDRPacketField("value", GUID(), GUID),
+                    NDRPacketField("DiskId", GUID(), GUID),
                     (
                         (
                             lambda pkt: getattr(pkt, "DiskIdType", None)
@@ -105,7 +103,7 @@ class CPREP_DISKID(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("value", 0),
+                    NDRIntField("DiskId", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "DiskIdType", None)
@@ -115,7 +113,7 @@ class CPREP_DISKID(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("value", 0),
+                    NDRIntField("DiskId", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "DiskIdType", None)
@@ -125,7 +123,7 @@ class CPREP_DISKID(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("value", "", length=0),
+            StrFixedLenField("DiskId", "", length=0),
             align=(2, 4),
             switch_fmt=("H", "I"),
         ),
@@ -143,7 +141,6 @@ class CprepDiskGetUniqueIds3_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbDihSize,
-            ptr_pack=True,
         ),
         NDRIntField("pcbDihSize", None, size_of="ppbDeviceIdHeader"),
         NDRConfFieldListField(
@@ -151,7 +148,6 @@ class CprepDiskGetUniqueIds3_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbDdSize,
-            ptr_pack=True,
         ),
         NDRIntField("pcbDdSize", None, size_of="ppDeviceDescriptor"),
         NDRIntField("status", 0),
@@ -191,8 +187,13 @@ class CprepCreateNewSmbShares3_Request(NDRPacket):
 
 class CprepCreateNewSmbShares3_Response(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "ppwszSharePaths", "", size_is=lambda pkt: pkt.pdwNumberOfPaths
+        NDRConfFieldListField(
+            "ppwszSharePaths",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pdwNumberOfPaths,
         ),
         NDRIntField("pdwNumberOfPaths", None, size_of="ppwszSharePaths"),
         NDRIntField("status", 0),
@@ -201,8 +202,11 @@ class CprepCreateNewSmbShares3_Response(NDRPacket):
 
 class CprepConnectToNewSmbShares3_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrLenFieldUtf16(
-            "ppwszSharePaths", "", size_is=lambda pkt: pkt.dwNumberOfPaths
+        NDRConfFieldListField(
+            "ppwszSharePaths",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.dwNumberOfPaths,
         ),
         NDRIntField("dwNumberOfPaths", None, size_of="ppwszSharePaths"),
     ]
@@ -383,7 +387,7 @@ class ClusterLogExFlag(IntEnum):
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -462,9 +466,7 @@ class GenerateClusterNetworkhLog_Response(NDRPacket):
 class ExportClusterPerformanceHistory_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("Pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRFullPointerField(
-            NDRPacketField("StreamName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
-        ),
+        NDRPacketField("StreamName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
         NDRInt3264EnumField("flags", 0, ClusterLogExFlag),
     ]
 
@@ -521,7 +523,7 @@ class ClusterLogType(IntEnum):
     ClusterLogTypeHealth = 1
     ClusterLogTypeClusterSet = 2
     ClusterLogTypeNetwork = 3
-    ClusterLogTypeOther = 4
+    ClusterLogTypeNetft = 4
 
 
 class GenerateLogEx_Request(NDRPacket):

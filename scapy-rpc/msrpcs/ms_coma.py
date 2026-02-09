@@ -40,8 +40,6 @@ from scapy.layers.dcerpc import (
     NDRConfPacketListField,
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRFullEmbPointerField,
@@ -199,7 +197,6 @@ class GetClientTableInfo_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbReserved1,
-            ptr_pack=True,
         ),
         NDRIntField("pcbReserved1", None, size_of="ppReserved1"),
         NDRConfPacketListField(
@@ -207,7 +204,7 @@ class GetClientTableInfo_Response(NDRPacket):
             [],
             GUID,
             size_is=lambda pkt: pkt.pcAuxiliaryGuid,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcAuxiliaryGuid", None, size_of="ppAuxiliaryGuid"),
         NDRConfPacketListField(
@@ -215,7 +212,7 @@ class GetClientTableInfo_Response(NDRPacket):
             [],
             PropertyMeta,
             size_is=lambda pkt: pkt.pcProperties,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pcProperties", None, size_of="ppPropertyMeta"),
         NDRPacketField("piid", GUID(), GUID),
@@ -225,7 +222,6 @@ class GetClientTableInfo_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbReserved2,
-            ptr_pack=True,
         ),
         NDRIntField("pcbReserved2", None, size_of="ppReserved2"),
         NDRIntField("status", 0),
@@ -272,7 +268,6 @@ class ReadTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbTableDataFixed,
-            ptr_pack=True,
         ),
         NDRIntField("pcbTableDataFixed", None, size_of="ppTableDataFixed"),
         NDRConfFieldListField(
@@ -280,7 +275,6 @@ class ReadTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbTableDataVariable,
-            ptr_pack=True,
         ),
         NDRIntField("pcbTableDataVariable", None, size_of="ppTableDataVariable"),
         NDRConfFieldListField(
@@ -288,7 +282,6 @@ class ReadTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbTableDetailedErrors,
-            ptr_pack=True,
         ),
         NDRIntField("pcbTableDetailedErrors", None, size_of="ppTableDetailedErrors"),
         NDRConfFieldListField(
@@ -296,7 +289,6 @@ class ReadTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbReserved1,
-            ptr_pack=True,
         ),
         NDRIntField("pcbReserved1", None, size_of="ppReserved1"),
         NDRConfFieldListField(
@@ -304,7 +296,6 @@ class ReadTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbReserved2,
-            ptr_pack=True,
         ),
         NDRIntField("pcbReserved2", None, size_of="ppReserved2"),
         NDRIntField("status", 0),
@@ -365,7 +356,6 @@ class WriteTable_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbTableDetailedErrors,
-            ptr_pack=True,
         ),
         NDRIntField("pcbTableDetailedErrors", None, size_of="ppTableDetailedErrors"),
         NDRIntField("status", 0),
@@ -387,7 +377,12 @@ register_com_interface(
 class RegisterModule_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("ConglomerationIdentifier", GUID(), GUID),
-        NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.cModules),
+        NDRConfFieldListField(
+            "ppModules",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.cModules,
+        ),
         NDRIntField("cModules", None, size_of="ppModules"),
         NDRIntField("dwFlags", 0),
         NDRFullPointerField(
@@ -406,28 +401,30 @@ class RegisterModule_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.cModules,
-            ptr_pack=True,
         ),
         NDRIntField("pcResults", None, size_of="ppResultHRs"),
         NDRConfPacketListField(
-            "ppResultCLSIDs", [], GUID, size_is=lambda pkt: pkt.pcResults, ptr_pack=True
+            "ppResultCLSIDs", [], GUID, size_is=lambda pkt: pkt.pcResults, ptr_lvl=1
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "ppResultNames", "", size_is=lambda pkt: pkt.pcResults
+        NDRConfFieldListField(
+            "ppResultNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcResults,
         ),
         NDRConfFieldListField(
             "ppResultFlags",
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.pcResults,
-            ptr_pack=True,
         ),
         NDRConfFieldListField(
             "ppResultHRs",
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pcResults,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -493,7 +490,12 @@ class RegisterModule2_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("ConglomerationIdentifier", GUID(), GUID),
         NDRPacketField("PartitionIdentifier", GUID(), GUID),
-        NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.cModules),
+        NDRConfFieldListField(
+            "ppModules",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.cModules,
+        ),
         NDRIntField("cModules", None, size_of="ppModules"),
         NDRIntField("dwFlags", 0),
         NDRFullPointerField(
@@ -512,28 +514,30 @@ class RegisterModule2_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.cModules,
-            ptr_pack=True,
         ),
         NDRIntField("pcResults", None, size_of="ppResultHRs"),
         NDRConfPacketListField(
-            "ppResultCLSIDs", [], GUID, size_is=lambda pkt: pkt.pcResults, ptr_pack=True
+            "ppResultCLSIDs", [], GUID, size_is=lambda pkt: pkt.pcResults, ptr_lvl=1
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "ppResultNames", "", size_is=lambda pkt: pkt.pcResults
+        NDRConfFieldListField(
+            "ppResultNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcResults,
         ),
         NDRConfFieldListField(
             "ppResultFlags",
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.pcResults,
-            ptr_pack=True,
         ),
         NDRConfFieldListField(
             "ppResultHRs",
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pcResults,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -580,33 +584,38 @@ class ImportFromFile_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.pcModules,
-            ptr_pack=True,
         ),
-        NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.pcModules),
+        NDRConfFieldListField(
+            "ppModules",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcModules,
+        ),
         NDRIntField("pcComponents", None, size_of="ppResultHRs"),
         NDRConfPacketListField(
-            "ppResultCLSIDs",
-            [],
-            GUID,
-            size_is=lambda pkt: pkt.pcComponents,
-            ptr_pack=True,
+            "ppResultCLSIDs", [], GUID, size_is=lambda pkt: pkt.pcComponents, ptr_lvl=1
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "ppResultNames", "", size_is=lambda pkt: pkt.pcComponents
+        NDRConfFieldListField(
+            "ppResultNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcComponents,
         ),
         NDRConfFieldListField(
             "ppResultFlags",
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.pcComponents,
-            ptr_pack=True,
         ),
         NDRConfFieldListField(
             "ppResultHRs",
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pcComponents,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -619,16 +628,33 @@ class QueryFile_Request(NDRPacket):
 class QueryFile_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwConglomerations", None, size_of="ppDescriptions"),
-        NDRConfVarStrLenFieldUtf16(
-            "ppNames", "", size_is=lambda pkt: pkt.pdwConglomerations
+        NDRConfFieldListField(
+            "ppNames",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pdwConglomerations,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "ppDescriptions", "", size_is=lambda pkt: pkt.pdwConglomerations
+        NDRConfFieldListField(
+            "ppDescriptions",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pdwConglomerations,
         ),
         NDRIntField("pdwUsers", 0),
         NDRIntField("pdwIsProxy", 0),
         NDRIntField("pcModules", None, size_of="ppModules"),
-        NDRConfVarStrLenFieldUtf16("ppModules", "", size_is=lambda pkt: pkt.pcModules),
+        NDRConfFieldListField(
+            "ppModules",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcModules,
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -724,7 +750,7 @@ register_com_interface(
 
 
 class FLAGGED_WORD_BLOB(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
     DEPORTED_CONFORMANTS = ["asData"]
     fields_desc = [
         NDRIntField("cBytes", 0),
@@ -799,14 +825,29 @@ class GetEventClassesForIID_Request(NDRPacket):
 class GetEventClassesForIID_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcClasses", None, size_of="pawszDescriptions"),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszCLSIDs", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszCLSIDs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszProgIDs", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszProgIDs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszDescriptions", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszDescriptions",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
         NDRIntField("status", 0),
     ]
@@ -831,9 +872,10 @@ class CopyConglomerations_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("pwszSourcePartition", ""),
         NDRConfVarStrNullFieldUtf16("pwszDestPartition", ""),
         NDRIntField("cConglomerations", None, size_of="ppwszConglomerationNamesOrIds"),
-        NDRConfVarStrLenFieldUtf16(
+        NDRConfFieldListField(
             "ppwszConglomerationNamesOrIds",
-            "",
+            [],
+            NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", "")),
             size_is=lambda pkt: pkt.cConglomerations,
         ),
     ]
@@ -891,24 +933,43 @@ class GetEventClassesForIID2_Request(NDRPacket):
 class GetEventClassesForIID2_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pcClasses", None, size_of="padwIsPrivate"),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszCLSIDs", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszCLSIDs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszProgIDs", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszProgIDs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszDescriptions", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszDescriptions",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
-        NDRConfVarStrLenFieldUtf16(
-            "pawszConglomerationIDs", "", size_is=lambda pkt: pkt.pcClasses
+        NDRConfFieldListField(
+            "pawszConglomerationIDs",
+            [],
+            NDRFullPointerField(
+                NDRFullPointerField(NDRConfVarStrNullFieldUtf16("", ""))
+            ),
+            size_is=lambda pkt: pkt.pcClasses,
         ),
         NDRConfFieldListField(
             "padwIsPrivate",
             [],
             NDRFullPointerField(NDRIntField("", 0)),
             size_is=lambda pkt: pkt.pcClasses,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -946,11 +1007,7 @@ class EnumerateSRPLevels_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("cLevels", None, size_of="aSRPLevels"),
         NDRConfPacketListField(
-            "aSRPLevels",
-            [],
-            SRPLevelInfo,
-            size_is=lambda pkt: pkt.cLevels,
-            ptr_pack=True,
+            "aSRPLevels", [], SRPLevelInfo, size_is=lambda pkt: pkt.cLevels, ptr_lvl=1
         ),
         NDRIntField("status", 0),
     ]
@@ -964,32 +1021,26 @@ class GetComponentVersions_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pdwVersions", None, size_of="ppBitness"),
         NDRConfPacketListField(
-            "ppPartitionIDs",
-            [],
-            GUID,
-            size_is=lambda pkt: pkt.pdwVersions,
-            ptr_pack=True,
+            "ppPartitionIDs", [], GUID, size_is=lambda pkt: pkt.pdwVersions, ptr_lvl=1
         ),
         NDRConfPacketListField(
             "ppConglomerationIDs",
             [],
             GUID,
             size_is=lambda pkt: pkt.pdwVersions,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRConfFieldListField(
             "ppIsPrivate",
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pdwVersions,
-            ptr_pack=True,
         ),
         NDRConfFieldListField(
             "ppBitness",
             [],
             NDRFullPointerField(NDRSignedIntField("", 0)),
             size_is=lambda pkt: pkt.pdwVersions,
-            ptr_pack=True,
         ),
         NDRIntField("status", 0),
     ]
@@ -1184,7 +1235,7 @@ class GetRunningContainers_Response(NDRPacket):
             [],
             InstanceContainer,
             size_is=lambda pkt: pkt.pdwNumContainers,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -1292,7 +1343,6 @@ class QueryConglomerationPassword_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbPassword,
-            ptr_pack=True,
         ),
         NDRIntField("pcbPassword", None, size_of="ppvPassword"),
         NDRIntField("status", 0),

@@ -71,7 +71,7 @@ class LnkSearchMachine_Response(NDRPacket):
         NDRPacketField("pdroidBirthNext", CDomainRelativeObjId(), CDomainRelativeObjId),
         NDRPacketField("pdroidNext", CDomainRelativeObjId(), CDomainRelativeObjId),
         NDRPacketField("pmcidNext", CMachineId(), CMachineId),
-        NDRConfVarStrLenFieldUtf16("ptszPath", "", size_is=lambda pkt: 261),
+        NDRConfVarStrLenFieldUtf16("ptszPath", "", max_is=lambda pkt: 261),
         NDRIntField("status", 0),
     ]
 

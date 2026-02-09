@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-tsts] v31.0 (Fri, 23 May 2025)
+# [ms-tsts] v33.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -51,7 +51,6 @@ class RpcGetClientData_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pOutBuffByteLen,
-            ptr_pack=True,
         ),
         NDRIntField("pOutBuffByteLen", None, size_of="ppBuff"),
         NDRIntField("status", 0),
@@ -69,7 +68,6 @@ class RpcGetConfigData_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pOutBuffByteLen,
-            ptr_pack=True,
         ),
         NDRIntField("pOutBuffByteLen", None, size_of="ppBuff"),
         NDRIntField("status", 0),
@@ -95,7 +93,6 @@ class RpcGetProtocolStatus_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pcbProtoStatus,
-            ptr_pack=True,
         ),
         NDRIntField("pcbProtoStatus", None, size_of="ppProtoStatus"),
         NDRIntField("status", 0),
@@ -203,7 +200,7 @@ class RpcGetAllListeners_Response(NDRPacket):
             [],
             PLISTENERENUM,
             size_is=lambda pkt: pkt.pNumListeners,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("pNumListeners", None, size_of="ppListeners"),
         NDRIntField("status", 0),
@@ -224,7 +221,6 @@ class RpcGetSessionProtocolLastInputTime_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRByteField("", 0)),
             size_is=lambda pkt: pkt.pcbProtoStatus,
-            ptr_pack=True,
         ),
         NDRIntField("pcbProtoStatus", None, size_of="ppProtoStatus"),
         NDRSignedLongField("pLastInputTime", 0),
@@ -244,7 +240,6 @@ class RpcGetUserCertificates_Response(NDRPacket):
             [],
             NDRFullPointerField(NDRSignedByteField("", 0)),
             size_is=lambda pkt: pkt.pcbCerts,
-            ptr_pack=True,
         ),
         NDRIntField("pcbCerts", None, size_of="ppbCerts"),
         NDRIntField("status", 0),

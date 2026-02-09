@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-par] v18.0 (Mon, 16 Sep 2024)
+# [ms-par] v19.0 (Mon, 11 Aug 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -255,7 +255,6 @@ class RPC_SID_IDENTIFIER_AUTHORITY(NDRPacket):
 
 
 class PSID(NDRPacket):
-    ALIGNMENT = (4, 8)
     DEPORTED_CONFORMANTS = ["SubAuthority"]
     fields_desc = [
         NDRByteField("Revision", 0),
@@ -2948,7 +2947,7 @@ class RpcAsyncEnumJobNamedProperties_Response(NDRPacket):
             [],
             RPC_PrintNamedProperty,
             size_is=lambda pkt: pkt.pcProperties,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]

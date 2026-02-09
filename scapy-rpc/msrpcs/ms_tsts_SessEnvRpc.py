@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-tsts] v31.0 (Fri, 23 May 2025)
+# [ms-tsts] v33.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:

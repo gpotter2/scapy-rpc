@@ -3,7 +3,7 @@
 # See https://scapy.net/ for more information
 # Copyright (C) Gabriel Potter
 
-# [ms-mqrr] v28.0 (Tue, 09 Jul 2024)
+# [ms-mqrr] v29.0 (Fri, 21 Nov 2025)
 
 """
 RPC definitions for the following interfaces:
@@ -324,7 +324,7 @@ class R_StartReceive_Response(NDRPacket):
             [],
             SectionBuffer,
             size_is=lambda pkt: pkt.pdwNumberOfSections,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]
@@ -431,7 +431,7 @@ class R_StartTransactionalReceive_Response(NDRPacket):
             [],
             SectionBuffer,
             size_is=lambda pkt: pkt.pdwNumberOfSections,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
         NDRIntField("status", 0),
     ]

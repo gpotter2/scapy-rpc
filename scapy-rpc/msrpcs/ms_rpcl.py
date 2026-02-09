@@ -146,7 +146,7 @@ class NSI_UUID_VECTOR_T(NDRPacket):
             GUID,
             size_is=lambda pkt: pkt.count,
             conformant_in_struct=True,
-            ptr_pack=True,
+            ptr_lvl=1,
         ),
     ]
 
