@@ -494,11 +494,16 @@ class ScapyArrayField(ScapyField):
         length_is = _lkp(self.idl_attributes, "length_is")
         size_is = _lkp(self.idl_attributes, "size_is")
         max_is = _lkp(self.idl_attributes, "max_is")
+        range_is = _lkp(self.idl_attributes, "range")
         suffix = ""
         prefix = "NDR"
 
-        if size_is or max_is:
-            suffix += ", size_is=lambda pkt: " + res_size_is(size_is or max_is)
+        if size_is:
+            suffix += ", size_is=lambda pkt: " + res_size_is(size_is)
+        if range_is and not max_is:
+            max_is = [range_is[1]]
+        if max_is:
+            suffix += ", max_is=lambda pkt: " + res_size_is(max_is)
 
         if self.length is None or self.length == "*":
             # Conformant Array
@@ -540,18 +545,18 @@ class ScapyArrayField(ScapyField):
             # NDR defines a special representation for an array whose elements are strings.
             # Modified by [MS-RPCE] 2.2.4.4
             if self.length and self.length != "*":
-                # This is a Varying, non-conformant string. In this case, the length acts
+                # This is a varying, non-conformant string. In this case, the length acts
                 # as a 'Maximum Length'. Since we don't implement it... skip it.
                 if self.subtype.scapy_field in CHAR_TYPES:
-                    fld = f'{prefix}StrLenField("{self.name}", "")'
+                    fld = f'{prefix}StrNullField("{self.name}", "")'
                 elif self.subtype.scapy_field in WCHAR_TYPES:
-                    fld = f'{prefix}StrLenFieldUtf16("{self.name}", "")'
+                    fld = f'{prefix}StrNullFieldUtf16("{self.name}", "")'
                 else:
                     assert False, "Unknown string on %s" % self.subtype.scapy_field
             elif not size_is and not max_is:
                 assert False, "String array with no length ! %s" % self.name
             else:
-                # NDR string
+                # This is a varying and conformant string
                 if self.subtype.scapy_field in CHAR_TYPES:
                     fld = f'{prefix}StrLenField("{self.name}", ""{suffix})'
                 elif self.subtype.scapy_field in WCHAR_TYPES:
@@ -675,8 +680,10 @@ class ScapyStructField(ScapyField):
             if any(x in ["ptr", "unique"] for x in self.idl_attributes):
                 # suffix += ", ptr_pack=True"
                 pass
-            if size_is or max_is:
-                suffix += ", size_is=lambda pkt: " + res_size_is(size_is or max_is)
+            if size_is:
+                suffix += ", size_is=lambda pkt: " + res_size_is(size_is)
+            if max_is:
+                suffix += ", max_is=lambda pkt: " + res_size_is(max_is)
             if length_is:
                 suffix += ", length_is=lambda pkt: " + res_size_is(length_is)
             fld = f'{prefix}PacketListField("{self.name}", [], {self.struct_name}{suffix})'
