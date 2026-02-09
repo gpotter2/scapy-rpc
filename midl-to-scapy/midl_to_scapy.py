@@ -79,6 +79,8 @@ def get_base(out):
                         "NDRConfStrLenFieldUtf16",
                         "NDRVarStrLenField",
                         "NDRVarStrLenFieldUtf16",
+                        "NDRVarStrNullField",
+                        "NDRVarStrNullFieldUtf16",
                         "NDRConfVarStrLenField",
                         "NDRConfVarStrLenFieldUtf16",
                         "NDRConfVarStrNullField",

@@ -190,7 +190,12 @@ class Resolver:
         Resolve any global constants in an arithmetic value.
         """
         if isinstance(x, int):
+            # Variable is an int
             return x
+        if isinstance(x, CustomType):
+            # Variable is a redefinition of another int
+            # e.g. A = 1; B = A
+            return env[x.name]
         if x[0] in ["binop", "if"]:
             return x[:2] + (
                 self._resolve_arithm_values(x[2], env),
@@ -215,8 +220,8 @@ class Resolver:
                 return struct.calcsize(typ[0])
             else:
                 typ2 = self.resolve_type(typespec[-1], env)
-                if isinstance(typ2, CustomType):
-                    return typ2.sz * 8
+                if isinstance(typ2, ScapyField):
+                    return typ2.sz
                 else:
                     # FIXME for structures... I just hardcoded the few
                     if typ2.name == "BIND_INFO_BLOB":
@@ -243,19 +248,13 @@ class Resolver:
                     continue
                 res.append(attr[1])
             elif attr[0] == "call":
-                if attr[1] == "range":
-                    # Alias range to a max_is, only if it already has already
-                    # signs of a conformant value.
-                    if ("id", "string") in idl_attributes:
-                        attr = (attr[0], "max_is", attr[2][1:])
-                    else:
-                        continue
                 if attr[1] in [
                     "switch_is",
                     "length_is",
                     "max_is",
                     "size_is",
                     "case",
+                    "range",
                 ]:
                     assert isinstance(attr[2], list)
                     assert all(
@@ -280,7 +279,7 @@ class Resolver:
                                 ("arithm_expr", self._resolve_arithm_values(x, env))
                             )
                         elif x[0] == "id" and attr[1] != "case":
-                            if attr[1] in env:
+                            if x[1] in env:
                                 # In env: should be resolved and converted to an arithmetic value
                                 # (or operation)
                                 value.append(
