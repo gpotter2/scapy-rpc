@@ -397,9 +397,7 @@ class Resolver:
                 from midl_convert import ArrayType
 
                 # Create a dummy array of length * (conformant)
-                newarg = ArrayType(
-                    None, ("array", ("id", arg.name), "*"), None, []
-                )
+                newarg = ArrayType(None, ("array", ("id", arg.name), "*"), None, [])
 
                 # This will be a pointer to an array of whatever the type was
                 arg.ptr_lvl -= 1
