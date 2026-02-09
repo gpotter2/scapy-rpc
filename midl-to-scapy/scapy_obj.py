@@ -398,6 +398,8 @@ class ScapyField:
             lvl = self.ptr_lvl
         if not lvl:
             return fld
+        if lvl < 1:
+            assert False, "Pointer level got negative... what have you done"
         if "ref" in self.idl_attributes and not skipref:
             if toplevel:
                 # Top-level reference = no wrap. See C706 chap 14 - "Transfer Syntax NDR"
@@ -429,11 +431,11 @@ class ScapyField:
         elif any(x[0] in ["size_is", "max_is"] for x in self.idl_attributes):
             assert False, "This should have been detected as an array: " + self.name
         elif "string" in self.idl_attributes:
+            # Special case: Pointers with the string Attributs
             assert lvl >= 1, "String attribute with wrong pointer value? %s: %s" % (
                 self.name,
                 repr(self.ptr_lvl),
             )
-            # Special case: string attribute
             # [C706] 4.2.21.1 - "Such a string is equivalent to a conformant array"
             if self.scapy_field in CHAR_TYPES:
                 fld = f'NDRConfVarStrNullField("{self.name}", "")'
@@ -511,12 +513,14 @@ class ScapyArrayField(ScapyField):
                 suffix += ", conformant_in_struct=True"
 
         # When an array has the [string] tag, there are two cases:
-        # - either it's an array of a primitive type, in which case let's take it into account
-        # - or it's an array of pointers to a primitive type, in which case we let the children
-        # handle it and ignore it here.
-        is_string = (
-            "string" in self.subtype.idl_attributes and self.subtype.ptr_lvl == 0
-        ) or "string" in self.idl_attributes
+        if "string" in self.subtype.idl_attributes and self.subtype.ptr_lvl == 0:
+            # We're an array of a single 'string' primary type.
+            is_string = True
+        elif "string" in self.idl_attributes:
+            # We're a 'string' array of a primary type.
+            is_string = True
+        else:
+            is_string = False
 
         if length_is:
             # Varying arrays
@@ -558,20 +562,21 @@ class ScapyArrayField(ScapyField):
             self.length is None or self.length == "*"
         ):
             # Varying array or Conformant array (or both)
-            ptr_suffix = suffix
-            if (
-                any(x in ["ptr", "unique"] for x in self.subtype.idl_attributes)
-                and self.subtype.ptr_lvl >= 1
-            ):
-                ptr_suffix += ", ptr_pack=True"
             if length_is or size_is or max_is:
                 if self.scapy_field == "PacketListField":
+                    # Specifically for PacketListField, we propagate the ptr_lvl...
+                    if (
+                        any(x in ["ptr", "unique"] for x in self.subtype.idl_attributes)
+                        and self.subtype.ptr_lvl >= 1
+                    ):
+                        suffix += ", ptr_lvl=" + str(self.subtype.ptr_lvl)
+                    # Get the name of the sub packet
                     sub_name = (
                         self.subtype.subtype
                         and self.subtype.subtype.name
                         or self.subtype.struct_name
                     )
-                    fld = f'{prefix}{self.scapy_field}("{self.name}", [], {sub_name}{ptr_suffix})'
+                    fld = f'{prefix}{self.scapy_field}("{self.name}", [], {sub_name}{suffix})'
                 elif self.scapy_field == "FieldListField":
                     # Note: we freely abstract 1 level of pointer when the subtype is str or bytes,
                     # because it's more managable in python (even though it should technically be a real array of bytes).
@@ -598,7 +603,7 @@ class ScapyArrayField(ScapyField):
                     else:
                         subtype = copy.deepcopy(self.subtype)
                         subtype.name = ""
-                        fld = f'{prefix}{self.scapy_field}("{self.name}", [], {subtype.to_string(context, toplevel=toplevel)}{ptr_suffix})'
+                        fld = f'{prefix}{self.scapy_field}("{self.name}", [], {subtype.to_string(context, toplevel=toplevel)}{suffix})'
                 else:
                     assert False
             else:
