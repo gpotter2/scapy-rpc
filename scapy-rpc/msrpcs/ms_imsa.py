@@ -1012,7 +1012,9 @@ class EnumerateApplicationsInPool_Request(NDRPacket):
 class EnumerateApplicationsInPool_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("bstrBuffer", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("bstrBuffer", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1978,12 +1980,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1991,16 +1995,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2046,7 +2054,11 @@ class put_IIISCertObj_Opnum9NotUsedOnWire_Response(NDRPacket):
 
 
 class put_IIISCertObj_InstanceName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("newVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("newVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IIISCertObj_InstanceName_Response(NDRPacket):
@@ -2076,7 +2088,9 @@ class GetCertInfoRemote_Request(NDRPacket):
 class GetCertInfoRemote_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("BinaryVariant", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("BinaryVariant", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2084,8 +2098,12 @@ class GetCertInfoRemote_Response(NDRPacket):
 
 class ImportFromBlob_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedShortField("bInstallToMetabase", 0),
         NDRSignedShortField("bAllowExport", 0),
         NDRSignedShortField("bOverWriteExisting", 0),
@@ -2100,8 +2118,12 @@ class ImportFromBlob_Response(NDRPacket):
 
 class ImportFromBlobGetHash_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedShortField("bInstallToMetabase", 0),
         NDRSignedShortField("bAllowExport", 0),
         NDRSignedShortField("bOverWriteExisting", 0),
@@ -2120,8 +2142,12 @@ class ImportFromBlobGetHash_Response(NDRPacket):
 
 class ExportToBlob_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("InstanceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("Password", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedShortField("bPrivateKey", 0),
         NDRSignedShortField("bCertChain", 0),
         NDRIntField("pcbSize", 0),

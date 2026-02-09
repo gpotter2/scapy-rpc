@@ -408,12 +408,8 @@ class ApiCreateKey_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("lpSubKey", ""),
         NDRIntField("dwOptions", 0),
         NDRIntField("samDesired", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "lpSecurityAttributes",
-                PRPC_SECURITY_ATTRIBUTES(),
-                PRPC_SECURITY_ATTRIBUTES,
-            )
+        NDRPacketField(
+            "lpSecurityAttributes", PRPC_SECURITY_ATTRIBUTES(), PRPC_SECURITY_ATTRIBUTES
         ),
     ]
 
@@ -1896,12 +1892,10 @@ class PCLUSTER_CREATE_GROUP_INFO_RPC(NDRPacket):
 class ApiCreateGroupEx_Request(NDRPacket):
     fields_desc = [
         NDRConfVarStrNullFieldUtf16("lpszGroupName", ""),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pGroupInfo",
-                PCLUSTER_CREATE_GROUP_INFO_RPC(),
-                PCLUSTER_CREATE_GROUP_INFO_RPC,
-            )
+        NDRPacketField(
+            "pGroupInfo",
+            PCLUSTER_CREATE_GROUP_INFO_RPC(),
+            PCLUSTER_CREATE_GROUP_INFO_RPC,
         ),
     ]
 
@@ -2068,7 +2062,6 @@ class ApiGetNotifyV2_Response(NDRPacket):
             [],
             PNOTIFICATION_RPC,
             size_is=lambda pkt: pkt.dwNumNotifications,
-            ptr_pack=True,
         ),
         NDRIntField("dwNumNotifications", None, size_of="Notifications"),
         NDRIntField("status", 0),
@@ -2249,7 +2242,6 @@ class ApiGetNotifyAsync_Response(NDRPacket):
             [],
             PNOTIFICATION_DATA_ASYNC_RPC,
             size_is=lambda pkt: pkt.dwNumNotifications,
-            ptr_pack=True,
         ),
         NDRIntField("dwNumNotifications", None, size_of="Notifications"),
         NDRIntField("status", 0),

@@ -1016,12 +1016,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1029,16 +1031,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1079,7 +1085,9 @@ class get_IPCHCollection_Item_Request(NDRPacket):
 class get_IPCHCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("ppEntry", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("ppEntry", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1169,14 +1177,20 @@ class get_ISAFSession_DomainName_Request(NDRPacket):
 class get_ISAFSession_DomainName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ISAFSession_DomainName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_ISAFSession_DomainName_Response(NDRPacket):
@@ -1190,14 +1204,20 @@ class get_ISAFSession_UserName_Request(NDRPacket):
 class get_ISAFSession_UserName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_ISAFSession_UserName_Request(NDRPacket):
-    fields_desc = [NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("pVal", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_ISAFSession_UserName_Response(NDRPacket):

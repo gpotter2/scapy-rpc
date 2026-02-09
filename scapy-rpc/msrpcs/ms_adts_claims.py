@@ -29,6 +29,7 @@ from scapy.layers.dcerpc import (
     NDRIntField,
     NDRLongField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     NDRSignedLongField,
     NDRUnionField,
@@ -290,7 +291,7 @@ class CLAIMS_ARRAY(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("usClaimsSourceType", 0, CLAIMS_SOURCE_TYPE),
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ClaimEntries", [], PCLAIM_ENTRY, size_is=lambda pkt: pkt.ulClaimsCount
             )
@@ -303,7 +304,7 @@ class PCLAIMS_ARRAY(NDRPacket):
     fields_desc = [
         NDRInt3264EnumField("usClaimsSourceType", 0, CLAIMS_SOURCE_TYPE),
         NDRIntField("ulClaimsCount", None, size_of="ClaimEntries"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ClaimEntries", [], PCLAIM_ENTRY, size_is=lambda pkt: pkt.ulClaimsCount
             )
@@ -315,7 +316,7 @@ class CLAIMS_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsArrayCount", None, size_of="ClaimsArrays"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
                 [],
@@ -337,7 +338,7 @@ class PCLAIMS_SET(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
         NDRIntField("ulClaimsArrayCount", None, size_of="ClaimsArrays"),
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRConfPacketListField(
                 "ClaimsArrays",
                 [],

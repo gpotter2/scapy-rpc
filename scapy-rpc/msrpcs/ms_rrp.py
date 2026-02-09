@@ -27,6 +27,7 @@ from scapy.layers.dcerpc import (
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
+    NDRRefEmbPointerField,
     NDRShortField,
     register_dcerpc_interface,
 )
@@ -165,12 +166,8 @@ class BaseRegCreateKey_Request(NDRPacket):
         NDRPacketField("lpClass", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
         NDRIntField("dwOptions", 0),
         NDRIntField("samDesired", 0),
-        NDRFullPointerField(
-            NDRPacketField(
-                "lpSecurityAttributes",
-                PRPC_SECURITY_ATTRIBUTES(),
-                PRPC_SECURITY_ATTRIBUTES,
-            )
+        NDRPacketField(
+            "lpSecurityAttributes", PRPC_SECURITY_ATTRIBUTES(), PRPC_SECURITY_ATTRIBUTES
         ),
         NDRFullPointerField(NDRIntField("lpdwDisposition", 0)),
     ]
@@ -237,9 +234,7 @@ class BaseRegEnumKey_Request(NDRPacket):
         NDRFullPointerField(
             NDRPacketField("lpClassIn", RPC_UNICODE_STRING(), RPC_UNICODE_STRING)
         ),
-        NDRFullPointerField(
-            NDRPacketField("lpftLastWriteTime", PFILETIME(), PFILETIME)
-        ),
+        NDRPacketField("lpftLastWriteTime", PFILETIME(), PFILETIME),
     ]
 
 
@@ -249,9 +244,7 @@ class BaseRegEnumKey_Response(NDRPacket):
         NDRFullPointerField(
             NDRPacketField("lplpClassOut", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
-        NDRFullPointerField(
-            NDRPacketField("lpftLastWriteTime", PFILETIME(), PFILETIME)
-        ),
+        NDRPacketField("lpftLastWriteTime", PFILETIME(), PFILETIME),
         NDRIntField("status", 0),
     ]
 
@@ -454,12 +447,8 @@ class BaseRegSaveKey_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("lpFile", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pSecurityAttributes",
-                PRPC_SECURITY_ATTRIBUTES(),
-                PRPC_SECURITY_ATTRIBUTES,
-            )
+        NDRPacketField(
+            "pSecurityAttributes", PRPC_SECURITY_ATTRIBUTES(), PRPC_SECURITY_ATTRIBUTES
         ),
     ]
 
@@ -534,7 +523,7 @@ class OpenCurrentConfig_Response(NDRPacket):
 class PRVALENT(NDRPacket):
     ALIGNMENT = (4, 8)
     fields_desc = [
-        NDRFullEmbPointerField(
+        NDRRefEmbPointerField(
             NDRPacketField("ve_valuename", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
         ),
         NDRIntField("ve_valuelen", 0),
@@ -592,12 +581,8 @@ class BaseRegSaveKeyEx_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("hKey", NDRContextHandle(), NDRContextHandle),
         NDRPacketField("lpFile", RPC_UNICODE_STRING(), RPC_UNICODE_STRING),
-        NDRFullPointerField(
-            NDRPacketField(
-                "pSecurityAttributes",
-                PRPC_SECURITY_ATTRIBUTES(),
-                PRPC_SECURITY_ATTRIBUTES,
-            )
+        NDRPacketField(
+            "pSecurityAttributes", PRPC_SECURITY_ATTRIBUTES(), PRPC_SECURITY_ATTRIBUTES
         ),
         NDRIntField("Flags", 0),
     ]

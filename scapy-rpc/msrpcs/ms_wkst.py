@@ -513,8 +513,10 @@ class NetrWkstaTransportAdd_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRIntField("Level", 0),
-        NDRPacketField(
-            "TransportInfo", LPWKSTA_TRANSPORT_INFO_0(), LPWKSTA_TRANSPORT_INFO_0
+        NDRFullPointerField(
+            NDRPacketField(
+                "TransportInfo", LPWKSTA_TRANSPORT_INFO_0(), LPWKSTA_TRANSPORT_INFO_0
+            )
         ),
         NDRFullPointerField(NDRIntField("ErrorParameter", 0)),
     ]
@@ -916,12 +918,10 @@ class NetrJoinDomain2_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("DomainNameParam", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("MachineAccountOU", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Options", 0),
     ]
@@ -935,12 +935,10 @@ class NetrUnjoinDomain2_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Options", 0),
     ]
@@ -955,12 +953,10 @@ class NetrRenameMachineInDomain2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("MachineName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Options", 0),
     ]
@@ -984,12 +980,10 @@ class NetrValidateName2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRConfVarStrNullFieldUtf16("NameToValidate", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRInt3264EnumField("NameType", 0, NETSETUP_NAME_TYPE),
     ]
@@ -1004,12 +998,10 @@ class NetrGetJoinableOUs2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRConfVarStrNullFieldUtf16("DomainNameParam", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("OUCount", 0),
     ]
@@ -1028,12 +1020,10 @@ class NetrAddAlternateComputerName_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AlternateName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Reserved", 0),
     ]
@@ -1048,12 +1038,10 @@ class NetrRemoveAlternateComputerName_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AlternateName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Reserved", 0),
     ]
@@ -1068,12 +1056,10 @@ class NetrSetPrimaryComputerName_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("PrimaryName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Reserved", 0),
     ]
@@ -1157,12 +1143,10 @@ class NetrJoinDomain3_Request(NDRPacket):
         NDRConfVarStrNullFieldUtf16("DomainNameParam", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("MachineAccountOU", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
         ),
         NDRIntField("Options", 0),
     ]
@@ -1176,12 +1160,10 @@ class NetrUnjoinDomain3_Request(NDRPacket):
     fields_desc = [
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
         ),
         NDRIntField("Options", 0),
     ]
@@ -1196,12 +1178,10 @@ class NetrRenameMachineInDomain3_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("MachineName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Options", 0),
     ]
@@ -1216,12 +1196,10 @@ class NetrValidateName3_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRConfVarStrNullFieldUtf16("NameToValidate", ""),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AccountName", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "Password",
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
-            )
+        NDRPacketField(
+            "Password",
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
         ),
         NDRInt3264EnumField("NameType", 0, NETSETUP_NAME_TYPE),
     ]
@@ -1236,12 +1214,10 @@ class NetrAddAlternateComputerName2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AlternateName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
         ),
         NDRIntField("Reserved", 0),
     ]
@@ -1256,12 +1232,10 @@ class NetrRemoveAlternateComputerName2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("AlternateName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD_AES,
         ),
         NDRIntField("Reserved", 0),
     ]
@@ -1276,12 +1250,10 @@ class NetrSetPrimaryComputerName2_Request(NDRPacket):
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ServerName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("PrimaryName", "")),
         NDRFullPointerField(NDRConfVarStrNullFieldUtf16("DomainAccount", "")),
-        NDRFullPointerField(
-            NDRPacketField(
-                "EncryptedPassword",
-                PJOINPR_ENCRYPTED_USER_PASSWORD(),
-                PJOINPR_ENCRYPTED_USER_PASSWORD,
-            )
+        NDRPacketField(
+            "EncryptedPassword",
+            PJOINPR_ENCRYPTED_USER_PASSWORD(),
+            PJOINPR_ENCRYPTED_USER_PASSWORD,
         ),
         NDRIntField("Reserved", 0),
     ]

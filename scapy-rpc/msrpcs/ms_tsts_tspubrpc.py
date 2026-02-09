@@ -543,11 +543,7 @@ class RpcGetEnumResult_Request(NDRPacket):
 class RpcGetEnumResult_Response(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "ppSessionEnumResult",
-            [],
-            PSESSIONENUM,
-            size_is=lambda pkt: pkt.pEntries,
-            ptr_pack=True,
+            "ppSessionEnumResult", [], PSESSIONENUM, size_is=lambda pkt: pkt.pEntries
         ),
         NDRIntField("pEntries", None, size_of="ppSessionEnumResult"),
         NDRIntField("status", 0),
@@ -653,11 +649,7 @@ class RpcGetEnumResultEx_Request(NDRPacket):
 class RpcGetEnumResultEx_Response(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "ppSessionEnumResult",
-            [],
-            PSESSIONENUM_EX,
-            size_is=lambda pkt: pkt.pEntries,
-            ptr_pack=True,
+            "ppSessionEnumResult", [], PSESSIONENUM_EX, size_is=lambda pkt: pkt.pEntries
         ),
         NDRIntField("pEntries", None, size_of="ppSessionEnumResult"),
         NDRIntField("status", 0),
@@ -723,11 +715,7 @@ class RpcGetAllSessions_Response(NDRPacket):
     fields_desc = [
         NDRIntField("pLevel", 0),
         NDRConfPacketListField(
-            "ppSessionData",
-            [],
-            PEXECENVDATA,
-            size_is=lambda pkt: pkt.pcEntries,
-            ptr_pack=True,
+            "ppSessionData", [], PEXECENVDATA, size_is=lambda pkt: pkt.pcEntries
         ),
         NDRIntField("pcEntries", None, size_of="ppSessionData"),
         NDRIntField("status", 0),
@@ -788,11 +776,7 @@ class RpcGetAllSessionsEx_Request(NDRPacket):
 class RpcGetAllSessionsEx_Response(NDRPacket):
     fields_desc = [
         NDRConfPacketListField(
-            "ppSessionData",
-            [],
-            PEXECENVDATAEX,
-            size_is=lambda pkt: pkt.pcEntries,
-            ptr_pack=True,
+            "ppSessionData", [], PEXECENVDATAEX, size_is=lambda pkt: pkt.pcEntries
         ),
         NDRIntField("pcEntries", None, size_of="ppSessionData"),
         NDRIntField("status", 0),

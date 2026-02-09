@@ -1024,12 +1024,14 @@ class Invoke_Request(NDRPacket):
         NDRConfFieldListField(
             "rgVarRefIdx", [], NDRIntField("", 0), size_is=lambda pkt: pkt.cVarRef
         ),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
     ]
 
@@ -1037,16 +1039,20 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
-        NDRConfPacketListField(
-            "rgVarRef",
-            [],
-            wireVARIANTStr,
-            size_is=lambda pkt: pkt.cVarRef,
-            ptr_pack=True,
+        NDRFullPointerField(
+            NDRConfPacketListField(
+                "rgVarRef",
+                [],
+                wireVARIANTStr,
+                size_is=lambda pkt: pkt.cVarRef,
+                ptr_pack=True,
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1081,12 +1087,20 @@ class get_IEventObjectCollection__NewEnum_Response(NDRPacket):
 
 
 class get_IEventObjectCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class get_IEventObjectCollection_Item_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pItem", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pItem", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -1114,8 +1128,14 @@ class get_IEventObjectCollection_Count_Response(NDRPacket):
 
 class Add_Request(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("item", wireVARIANTStr(), wireVARIANTStr)),
-        NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("item", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1124,7 +1144,11 @@ class Add_Response(NDRPacket):
 
 
 class Remove_Request(NDRPacket):
-    fields_desc = [NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("objectID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class Remove_Response(NDRPacket):
@@ -1166,8 +1190,12 @@ register_com_interface(
 
 class Query_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1183,7 +1211,9 @@ class Query_Response(NDRPacket):
 
 class Store_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("ProgID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("ProgID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRPacketField("pInterface", MInterfacePointer(), MInterfacePointer),
     ]
 
@@ -1194,8 +1224,12 @@ class Store_Response(NDRPacket):
 
 class Remove_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1210,7 +1244,11 @@ class get_IEventSystem_EventObjectChangeEventClassID_Request(NDRPacket):
 class get_IEventSystem_EventObjectChangeEventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1218,8 +1256,12 @@ class get_IEventSystem_EventObjectChangeEventClassID_Response(NDRPacket):
 
 class QueryS_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1234,8 +1276,12 @@ class QueryS_Response(NDRPacket):
 
 class RemoveS_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("progID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("queryCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -1274,7 +1320,11 @@ class get_IEventClass_EventClassID_Request(NDRPacket):
 class get_IEventClass_EventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1282,7 +1332,9 @@ class get_IEventClass_EventClassID_Response(NDRPacket):
 
 class put_IEventClass_EventClassID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1297,8 +1349,10 @@ class get_IEventClass_EventClassName_Request(NDRPacket):
 class get_IEventClass_EventClassName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrEventClassName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1307,7 +1361,9 @@ class get_IEventClass_EventClassName_Response(NDRPacket):
 
 class put_IEventClass_EventClassName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrEventClassName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrEventClassName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1322,7 +1378,9 @@ class get_IEventClass_OwnerSID_Request(NDRPacket):
 class get_IEventClass_OwnerSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1330,7 +1388,9 @@ class get_IEventClass_OwnerSID_Response(NDRPacket):
 
 class put_IEventClass_OwnerSID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1345,8 +1405,10 @@ class get_IEventClass_FiringInterfaceID_Request(NDRPacket):
 class get_IEventClass_FiringInterfaceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrFiringInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrFiringInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1355,7 +1417,11 @@ class get_IEventClass_FiringInterfaceID_Response(NDRPacket):
 
 class put_IEventClass_FiringInterfaceID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrFiringInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrFiringInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1370,7 +1436,11 @@ class get_IEventClass_Description_Request(NDRPacket):
 class get_IEventClass_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1378,7 +1448,9 @@ class get_IEventClass_Description_Response(NDRPacket):
 
 class put_IEventClass_Description_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1393,7 +1465,9 @@ class get_IEventClass_TypeLib_Request(NDRPacket):
 class get_IEventClass_TypeLib_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1401,7 +1475,9 @@ class get_IEventClass_TypeLib_Response(NDRPacket):
 
 class put_IEventClass_TypeLib_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrTypeLib", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1463,7 +1539,11 @@ class get_IEventClass2_PublisherID_Request(NDRPacket):
 class get_IEventClass2_PublisherID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1471,7 +1551,9 @@ class get_IEventClass2_PublisherID_Response(NDRPacket):
 
 class put_IEventClass2_PublisherID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1486,7 +1568,11 @@ class get_IEventClass2_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
 class get_IEventClass2_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1494,7 +1580,9 @@ class get_IEventClass2_MultiInterfacePublisherFilterCLSID_Response(NDRPacket):
 
 class put_IEventClass2_MultiInterfacePublisherFilterCLSID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPubFilCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1684,8 +1772,10 @@ class get_IEventSubscription_SubscriptionID_Request(NDRPacket):
 class get_IEventSubscription_SubscriptionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSubscriptionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSubscriptionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1694,7 +1784,9 @@ class get_IEventSubscription_SubscriptionID_Response(NDRPacket):
 
 class put_IEventSubscription_SubscriptionID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSubscriptionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSubscriptionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1709,8 +1801,10 @@ class get_IEventSubscription_SubscriptionName_Request(NDRPacket):
 class get_IEventSubscription_SubscriptionName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSubscriptionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSubscriptionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1719,7 +1813,11 @@ class get_IEventSubscription_SubscriptionName_Response(NDRPacket):
 
 class put_IEventSubscription_SubscriptionName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSubscriptionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrSubscriptionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1734,7 +1832,11 @@ class get_IEventSubscription_PublisherID_Request(NDRPacket):
 class get_IEventSubscription_PublisherID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1742,7 +1844,9 @@ class get_IEventSubscription_PublisherID_Response(NDRPacket):
 
 class put_IEventSubscription_PublisherID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPublisherID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1757,7 +1861,11 @@ class get_IEventSubscription_EventClassID_Request(NDRPacket):
 class get_IEventSubscription_EventClassID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1765,7 +1873,9 @@ class get_IEventSubscription_EventClassID_Response(NDRPacket):
 
 class put_IEventSubscription_EventClassID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrEventClassID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1780,7 +1890,11 @@ class get_IEventSubscription_MethodName_Request(NDRPacket):
 class get_IEventSubscription_MethodName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1788,7 +1902,9 @@ class get_IEventSubscription_MethodName_Response(NDRPacket):
 
 class put_IEventSubscription_MethodName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMethodName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1803,8 +1919,10 @@ class get_IEventSubscription_SubscriberCLSID_Request(NDRPacket):
 class get_IEventSubscription_SubscriberCLSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSubscriberCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSubscriberCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1813,7 +1931,11 @@ class get_IEventSubscription_SubscriberCLSID_Response(NDRPacket):
 
 class put_IEventSubscription_SubscriberCLSID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSubscriberCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrSubscriberCLSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -1869,7 +1991,9 @@ class get_IEventSubscription_OwnerSID_Request(NDRPacket):
 class get_IEventSubscription_OwnerSID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1877,7 +2001,9 @@ class get_IEventSubscription_OwnerSID_Response(NDRPacket):
 
 class put_IEventSubscription_OwnerSID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrOwnerSID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1908,7 +2034,11 @@ class get_IEventSubscription_Description_Request(NDRPacket):
 class get_IEventSubscription_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1916,7 +2046,9 @@ class get_IEventSubscription_Description_Response(NDRPacket):
 
 class put_IEventSubscription_Description_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrDescription", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1931,7 +2063,11 @@ class get_IEventSubscription_MachineName_Request(NDRPacket):
 class get_IEventSubscription_MachineName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1939,7 +2075,9 @@ class get_IEventSubscription_MachineName_Response(NDRPacket):
 
 class put_IEventSubscription_MachineName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMachineName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1949,14 +2087,18 @@ class put_IEventSubscription_MachineName_Response(NDRPacket):
 
 class GetPublisherProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetPublisherProperty_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1964,9 +2106,13 @@ class GetPublisherProperty_Response(NDRPacket):
 
 class PutPublisherProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
         NDRFullPointerField(
-            NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1977,7 +2123,9 @@ class PutPublisherProperty_Response(NDRPacket):
 
 class RemovePublisherProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2000,14 +2148,18 @@ class GetPublisherPropertyCollection_Response(NDRPacket):
 
 class GetSubscriberProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetSubscriberProperty_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2015,9 +2167,13 @@ class GetSubscriberProperty_Response(NDRPacket):
 
 class PutSubscriberProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
         NDRFullPointerField(
-            NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("propertyValue", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -2028,7 +2184,9 @@ class PutSubscriberProperty_Response(NDRPacket):
 
 class RemoveSubscriberProperty_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrPropertyName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2056,7 +2214,11 @@ class get_IEventSubscription_InterfaceID_Request(NDRPacket):
 class get_IEventSubscription_InterfaceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2064,7 +2226,9 @@ class get_IEventSubscription_InterfaceID_Response(NDRPacket):
 
 class put_IEventSubscription_InterfaceID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrInterfaceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2207,8 +2371,10 @@ class get_IEventSubscription2_FilterCriteria_Request(NDRPacket):
 class get_IEventSubscription2_FilterCriteria_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrFilterCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrFilterCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2217,7 +2383,9 @@ class get_IEventSubscription2_FilterCriteria_Response(NDRPacket):
 
 class put_IEventSubscription2_FilterCriteria_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrFilterCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrFilterCriteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2232,7 +2400,9 @@ class get_IEventSubscription2_SubscriberMoniker_Request(NDRPacket):
 class get_IEventSubscription2_SubscriberMoniker_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2240,7 +2410,9 @@ class get_IEventSubscription2_SubscriberMoniker_Response(NDRPacket):
 
 class put_IEventSubscription2_SubscriberMoniker_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMoniker", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2399,8 +2571,10 @@ class get_IEventClass3_EventClassPartitionID_Request(NDRPacket):
 class get_IEventClass3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2409,8 +2583,10 @@ class get_IEventClass3_EventClassPartitionID_Response(NDRPacket):
 
 class put_IEventClass3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2426,8 +2602,12 @@ class get_IEventClass3_EventClassApplicationID_Request(NDRPacket):
 class get_IEventClass3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassApplicationID",
+                    FLAGGED_WORD_BLOB(),
+                    FLAGGED_WORD_BLOB,
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2436,8 +2616,10 @@ class get_IEventClass3_EventClassApplicationID_Response(NDRPacket):
 
 class put_IEventClass3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2546,8 +2728,10 @@ class get_IEventSubscription3_EventClassPartitionID_Request(NDRPacket):
 class get_IEventSubscription3_EventClassPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2556,8 +2740,10 @@ class get_IEventSubscription3_EventClassPartitionID_Response(NDRPacket):
 
 class put_IEventSubscription3_EventClassPartitionID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrEventClassPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2573,8 +2759,12 @@ class get_IEventSubscription3_EventClassApplicationID_Request(NDRPacket):
 class get_IEventSubscription3_EventClassApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrEventClassApplicationID",
+                    FLAGGED_WORD_BLOB(),
+                    FLAGGED_WORD_BLOB,
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2583,8 +2773,10 @@ class get_IEventSubscription3_EventClassApplicationID_Response(NDRPacket):
 
 class put_IEventSubscription3_EventClassApplicationID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrEventClassApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2600,8 +2792,10 @@ class get_IEventSubscription3_SubscriberPartitionID_Request(NDRPacket):
 class get_IEventSubscription3_SubscriberPartitionID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSubscriberPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSubscriberPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2610,8 +2804,10 @@ class get_IEventSubscription3_SubscriberPartitionID_Response(NDRPacket):
 
 class put_IEventSubscription3_SubscriberPartitionID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrSubscriberPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrSubscriberPartitionID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2627,8 +2823,12 @@ class get_IEventSubscription3_SubscriberApplicationID_Request(NDRPacket):
 class get_IEventSubscription3_SubscriberApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrSubscriberApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrSubscriberApplicationID",
+                    FLAGGED_WORD_BLOB(),
+                    FLAGGED_WORD_BLOB,
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2637,8 +2837,10 @@ class get_IEventSubscription3_SubscriberApplicationID_Response(NDRPacket):
 
 class put_IEventSubscription3_SubscriberApplicationID_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrSubscriberApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrSubscriberApplicationID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 

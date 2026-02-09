@@ -3303,7 +3303,6 @@ class QueryReparsePoints_Response(NDRPacket):
             [],
             PVDS_REPARSE_POINT_PROP,
             size_is=lambda pkt: pkt.plNumberOfReparsePointProps,
-            ptr_pack=True,
         ),
         NDRSignedIntField(
             "plNumberOfReparsePointProps", None, size_of="ppReparsePointProps"

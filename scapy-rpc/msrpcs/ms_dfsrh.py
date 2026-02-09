@@ -921,11 +921,19 @@ class SAFEARRAY(NDRPacket):
 
 class CreateObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(NDRPacketField("attributes", SAFEARRAY(), SAFEARRAY)),
-        NDRPacketField(
-            "verifyNameDomainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "verifyNameDomainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -936,8 +944,14 @@ class CreateObject_Response(NDRPacket):
 
 class DeleteObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -947,8 +961,14 @@ class DeleteObject_Response(NDRPacket):
 
 class ModifyObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(NDRPacketField("attributes", SAFEARRAY(), SAFEARRAY)),
     ]
 
@@ -973,14 +993,24 @@ register_com_interface(
 
 class CreateObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRFullPointerField(NDRPacketField("attributes", SAFEARRAY(), SAFEARRAY)),
-        NDRPacketField(
-            "verifyNameDomainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
-        NDRPacketField(
-            "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("attributes", SAFEARRAY(), SAFEARRAY)),
+        NDRFullPointerField(
+            NDRPacketField(
+                "verifyNameDomainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -991,10 +1021,18 @@ class CreateObject_Response(NDRPacket):
 
 class DeleteObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField(
-            "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -1005,11 +1043,19 @@ class DeleteObject_Response(NDRPacket):
 
 class ModifyObject_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "domainControllerName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
+        NDRFullPointerField(
+            NDRPacketField("distinguishedName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(NDRPacketField("attributes", SAFEARRAY(), SAFEARRAY)),
-        NDRPacketField(
-            "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "networkNameResourceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -1038,7 +1084,9 @@ register_com_interface(
 class GetReport_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("replicationGroupGuid", GUID(), GUID),
-        NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("referenceVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
@@ -1052,7 +1100,9 @@ class GetReport_Response(NDRPacket):
             NDRPacketField("memberVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
         NDRFullPointerField(
-            NDRPacketField("reportXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("reportXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1061,7 +1111,9 @@ class GetReport_Response(NDRPacket):
 class GetCompressedReport_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("replicationGroupGuid", GUID(), GUID),
-        NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("referenceVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
@@ -1075,7 +1127,11 @@ class GetCompressedReport_Response(NDRPacket):
             NDRPacketField("memberVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
         NDRFullPointerField(
-            NDRPacketField("reportCompressed", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "reportCompressed", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRSignedIntField("uncompressedReportSize", 0),
         NDRIntField("status", 0),
@@ -1146,8 +1202,12 @@ register_com_interface(
 class GetReport_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("replicationGroupGuid", GUID(), GUID),
-        NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("serverName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("serverName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("referenceVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
@@ -1161,7 +1221,9 @@ class GetReport_Response(NDRPacket):
             NDRPacketField("memberVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
         NDRFullPointerField(
-            NDRPacketField("reportXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("reportXML", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1170,8 +1232,12 @@ class GetReport_Response(NDRPacket):
 class GetCompressedReport_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("replicationGroupGuid", GUID(), GUID),
-        NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("serverName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("referenceMember", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("serverName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRFullPointerField(
             NDRPacketField("referenceVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
@@ -1185,7 +1251,11 @@ class GetCompressedReport_Response(NDRPacket):
             NDRPacketField("memberVersionVectors", SAFEARRAY(), SAFEARRAY)
         ),
         NDRFullPointerField(
-            NDRPacketField("reportCompressed", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "reportCompressed", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRSignedIntField("uncompressedReportSize", 0),
         NDRIntField("status", 0),

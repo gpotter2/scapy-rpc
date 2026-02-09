@@ -104,7 +104,7 @@ class QueryVolumesSupportedForSnapshots_Response(NDRPacket):
 
 class QuerySnapshotsByVolume_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullFieldUtf16("pwszVolumeName", ""),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszVolumeName", "")),
         NDRPacketField("ProviderId", GUID(), GUID),
     ]
 
@@ -137,8 +137,8 @@ register_com_interface(
 
 class AddDiffArea_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullFieldUtf16("pwszVolumeName", ""),
-        NDRConfVarStrNullFieldUtf16("pwszDiffAreaVolumeName", ""),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszVolumeName", "")),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszDiffAreaVolumeName", "")),
         NDRSignedLongField("llMaximumDiffSpace", 0),
     ]
 
@@ -149,8 +149,8 @@ class AddDiffArea_Response(NDRPacket):
 
 class ChangeDiffAreaMaximumSize_Request(NDRPacket):
     fields_desc = [
-        NDRConfVarStrNullFieldUtf16("pwszVolumeName", ""),
-        NDRConfVarStrNullFieldUtf16("pwszDiffAreaVolumeName", ""),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszVolumeName", "")),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszDiffAreaVolumeName", "")),
         NDRSignedLongField("llMaximumDiffSpace", 0),
     ]
 
@@ -160,7 +160,9 @@ class ChangeDiffAreaMaximumSize_Response(NDRPacket):
 
 
 class QueryVolumesSupportedForDiffAreas_Request(NDRPacket):
-    fields_desc = [NDRConfVarStrNullFieldUtf16("pwszOriginalVolumeName", "")]
+    fields_desc = [
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszOriginalVolumeName", ""))
+    ]
 
 
 class QueryVolumesSupportedForDiffAreas_Response(NDRPacket):
@@ -173,7 +175,9 @@ class QueryVolumesSupportedForDiffAreas_Response(NDRPacket):
 
 
 class QueryDiffAreasForVolume_Request(NDRPacket):
-    fields_desc = [NDRConfVarStrNullFieldUtf16("pwszVolumeName", "")]
+    fields_desc = [
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszVolumeName", ""))
+    ]
 
 
 class QueryDiffAreasForVolume_Response(NDRPacket):
@@ -186,7 +190,9 @@ class QueryDiffAreasForVolume_Response(NDRPacket):
 
 
 class QueryDiffAreasOnVolume_Request(NDRPacket):
-    fields_desc = [NDRConfVarStrNullFieldUtf16("pwszVolumeName", "")]
+    fields_desc = [
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pwszVolumeName", ""))
+    ]
 
 
 class QueryDiffAreasOnVolume_Response(NDRPacket):

@@ -202,7 +202,7 @@ class ept_mgmt_delete_Request(NDRPacket):
     fields_desc = [
         NDRIntField("object_speced", 0),
         NDRPacketField("object", uuid_p_t(), uuid_p_t),
-        NDRPacketField("tower", twr_p_t(), twr_p_t),
+        NDRFullPointerField(NDRPacketField("tower", twr_p_t(), twr_p_t)),
     ]
 
 

@@ -55,9 +55,7 @@ class PRPC_UNICODE_STRING(NDRPacket):
 class ElfrClearELFW_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("LogHandle", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("BackupFileName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING)
-        ),
+        NDRPacketField("BackupFileName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
     ]
 
 
@@ -133,7 +131,7 @@ class ElfrChangeNotify_Response(NDRPacket):
 
 class ElfrOpenELW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("RegModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
@@ -150,7 +148,7 @@ class ElfrOpenELW_Response(NDRPacket):
 
 class ElfrRegisterEventSourceW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("RegModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
@@ -167,7 +165,7 @@ class ElfrRegisterEventSourceW_Response(NDRPacket):
 
 class ElfrOpenBELW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("BackupFileName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
         NDRIntField("MinorVersion", 0),
@@ -234,13 +232,9 @@ class ElfrReportEventW_Request(NDRPacket):
         NDRShortField("NumStrings", None, size_of="Strings"),
         NDRIntField("DataSize", None, size_of="Data"),
         NDRPacketField("ComputerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
+        NDRPacketField("UserSID", PRPC_SID(), PRPC_SID),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.NumStrings
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -273,9 +267,7 @@ class PRPC_STRING(NDRPacket):
 class ElfrClearELFA_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("LogHandle", NDRContextHandle(), NDRContextHandle),
-        NDRFullPointerField(
-            NDRPacketField("BackupFileName", PRPC_STRING(), PRPC_STRING)
-        ),
+        NDRPacketField("BackupFileName", PRPC_STRING(), PRPC_STRING),
     ]
 
 
@@ -296,7 +288,7 @@ class ElfrBackupELFA_Response(NDRPacket):
 
 class ElfrOpenELA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_STRING(), PRPC_STRING),
         NDRPacketField("RegModuleName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
@@ -313,7 +305,7 @@ class ElfrOpenELA_Response(NDRPacket):
 
 class ElfrRegisterEventSourceA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_STRING(), PRPC_STRING),
         NDRPacketField("RegModuleName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
@@ -330,7 +322,7 @@ class ElfrRegisterEventSourceA_Response(NDRPacket):
 
 class ElfrOpenBELA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("BackupFileName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
         NDRIntField("MinorVersion", 0),
@@ -372,13 +364,9 @@ class ElfrReportEventA_Request(NDRPacket):
         NDRShortField("NumStrings", None, size_of="Strings"),
         NDRIntField("DataSize", None, size_of="Data"),
         NDRPacketField("ComputerName", PRPC_STRING(), PRPC_STRING),
-        NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
+        NDRPacketField("UserSID", PRPC_SID(), PRPC_SID),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_STRING, size_is=lambda pkt: pkt.NumStrings
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -424,13 +412,9 @@ class ElfrReportEventAndSourceW_Request(NDRPacket):
         NDRShortField("NumStrings", None, size_of="Strings"),
         NDRIntField("DataSize", None, size_of="Data"),
         NDRPacketField("ComputerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
+        NDRPacketField("UserSID", PRPC_SID(), PRPC_SID),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.NumStrings
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -464,13 +448,9 @@ class ElfrReportEventExW_Request(NDRPacket):
         NDRShortField("NumStrings", None, size_of="Strings"),
         NDRIntField("DataSize", None, size_of="Data"),
         NDRPacketField("ComputerName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
-        NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
+        NDRPacketField("UserSID", PRPC_SID(), PRPC_SID),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_UNICODE_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_UNICODE_STRING, size_is=lambda pkt: pkt.NumStrings
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
@@ -497,13 +477,9 @@ class ElfrReportEventExA_Request(NDRPacket):
         NDRShortField("NumStrings", None, size_of="Strings"),
         NDRIntField("DataSize", None, size_of="Data"),
         NDRPacketField("ComputerName", PRPC_STRING(), PRPC_STRING),
-        NDRFullPointerField(NDRPacketField("UserSID", PRPC_SID(), PRPC_SID)),
+        NDRPacketField("UserSID", PRPC_SID(), PRPC_SID),
         NDRConfPacketListField(
-            "Strings",
-            [],
-            PRPC_STRING,
-            size_is=lambda pkt: pkt.NumStrings,
-            ptr_pack=True,
+            "Strings", [], PRPC_STRING, size_is=lambda pkt: pkt.NumStrings
         ),
         NDRFullPointerField(
             NDRConfStrLenField("Data", "", size_is=lambda pkt: pkt.DataSize)
