@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scapy-rpc"
-version = "0.0.4"
+version = "0.0.5"
 dynamic = ["readme"]
 authors = [
     { name="Gabriel POTTER" },
@@ -19,7 +19,6 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -36,5 +35,5 @@ include = [
 
 [tool.black]
 line-length = 88
-target-version = ['py37']
+target-version = ['py39']
 extend-exclude = "ply/*"
