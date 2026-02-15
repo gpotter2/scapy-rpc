@@ -2212,7 +2212,9 @@ class GetStringFromId_Request(NDRPacket):
 class GetStringFromId_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]

@@ -133,7 +133,7 @@ class ElfrChangeNotify_Response(NDRPacket):
 
 class ElfrOpenELW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("RegModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
@@ -150,7 +150,7 @@ class ElfrOpenELW_Response(NDRPacket):
 
 class ElfrRegisterEventSourceW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRPacketField("RegModuleName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
@@ -167,7 +167,7 @@ class ElfrRegisterEventSourceW_Response(NDRPacket):
 
 class ElfrOpenBELW_Request(NDRPacket):
     fields_desc = [
-        NDRShortField("UNCServerName", 0),
+        NDRFullPointerField(NDRShortField("UNCServerName", 0)),
         NDRPacketField("BackupFileName", PRPC_UNICODE_STRING(), PRPC_UNICODE_STRING),
         NDRIntField("MajorVersion", 0),
         NDRIntField("MinorVersion", 0),
@@ -295,7 +295,7 @@ class ElfrBackupELFA_Response(NDRPacket):
 
 class ElfrOpenELA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_STRING(), PRPC_STRING),
         NDRPacketField("RegModuleName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
@@ -312,7 +312,7 @@ class ElfrOpenELA_Response(NDRPacket):
 
 class ElfrRegisterEventSourceA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("ModuleName", PRPC_STRING(), PRPC_STRING),
         NDRPacketField("RegModuleName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
@@ -329,7 +329,7 @@ class ElfrRegisterEventSourceA_Response(NDRPacket):
 
 class ElfrOpenBELA_Request(NDRPacket):
     fields_desc = [
-        NDRSignedByteField("UNCServerName", 0),
+        NDRFullPointerField(NDRSignedByteField("UNCServerName", 0)),
         NDRPacketField("BackupFileName", PRPC_STRING(), PRPC_STRING),
         NDRIntField("MajorVersion", 0),
         NDRIntField("MinorVersion", 0),

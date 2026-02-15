@@ -764,12 +764,22 @@ class FLAGGED_WORD_BLOB(NDRPacket):
 class CreateConfiguration_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("ConglomerationIdentifier", GUID(), GUID),
-        NDRPacketField("bstrConfigurationName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrConfigurationName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRIntField("dwStartType", 0),
         NDRIntField("dwErrorControl", 0),
-        NDRPacketField("bstrDependencies", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrRunAs", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPassword", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrDependencies", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrRunAs", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPassword", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedShortField("bDesktopOk", 0),
     ]
 
@@ -976,7 +986,11 @@ class GetEventClassesForIID2_Response(NDRPacket):
 
 
 class IsSafeToDelete_Request(NDRPacket):
-    fields_desc = [NDRPacketField("bstrFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("bstrFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class IsSafeToDelete_Response(NDRPacket):
@@ -1248,7 +1262,11 @@ class GetContainerIDFromProcessID_Request(NDRPacket):
 class GetContainerIDFromProcessID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrContainerID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrContainerID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]

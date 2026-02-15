@@ -1014,7 +1014,9 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
