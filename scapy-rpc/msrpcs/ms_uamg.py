@@ -1058,7 +1058,9 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
@@ -1273,7 +1275,9 @@ class get_IUpdate_Title_Request(NDRPacket):
 class get_IUpdate_Title_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1327,7 +1331,11 @@ class get_IUpdate_Deadline_Request(NDRPacket):
 
 class get_IUpdate_Deadline_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -1355,7 +1363,9 @@ class get_IUpdate_Description_Request(NDRPacket):
 class get_IUpdate_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1376,7 +1386,9 @@ class get_IUpdate_EulaText_Request(NDRPacket):
 class get_IUpdate_EulaText_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1389,7 +1401,9 @@ class get_IUpdate_HandlerID_Request(NDRPacket):
 class get_IUpdate_HandlerID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1545,7 +1559,9 @@ class get_IUpdate_MsrcSeverity_Request(NDRPacket):
 class get_IUpdate_MsrcSeverity_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1582,7 +1598,9 @@ class get_IUpdate_ReleaseNotes_Request(NDRPacket):
 class get_IUpdate_ReleaseNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1621,7 +1639,9 @@ class get_IUpdate_SupportUrl_Request(NDRPacket):
 class get_IUpdate_SupportUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1647,7 +1667,9 @@ class get_IUpdate_UninstallationNotes_Request(NDRPacket):
 class get_IUpdate_UninstallationNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1869,7 +1891,11 @@ class get_IUpdateServiceManager_Services_Response(NDRPacket):
 
 
 class RegisterServiceWithAU_Request(NDRPacket):
-    fields_desc = [NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class RegisterServiceWithAU_Response(NDRPacket):
@@ -1877,7 +1903,11 @@ class RegisterServiceWithAU_Response(NDRPacket):
 
 
 class RemoveService_Request(NDRPacket):
-    fields_desc = [NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class RemoveService_Response(NDRPacket):
@@ -1886,8 +1916,12 @@ class RemoveService_Response(NDRPacket):
 
 class AddScanPackageService_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("serviceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("scanFileLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("serviceName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("scanFileLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("flags", 0),
     ]
 
@@ -1903,8 +1937,12 @@ class AddScanPackageService_Response(NDRPacket):
 
 class SetOption_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("optionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("optionValue", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("optionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("optionValue", wireVARIANTStr(), wireVARIANTStr)
+        ),
     ]
 
 
@@ -1944,14 +1982,20 @@ class get_IUpdateServiceManager2_ClientApplicationID_Request(NDRPacket):
 class get_IUpdateServiceManager2_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IUpdateServiceManager2_ClientApplicationID_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IUpdateServiceManager2_ClientApplicationID_Response(NDRPacket):
@@ -1959,7 +2003,11 @@ class put_IUpdateServiceManager2_ClientApplicationID_Response(NDRPacket):
 
 
 class QueryServiceRegistration_Request(NDRPacket):
-    fields_desc = [NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class QueryServiceRegistration_Response(NDRPacket):
@@ -1973,9 +2021,15 @@ class QueryServiceRegistration_Response(NDRPacket):
 
 class AddService2_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("serviceID", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("flags", 0),
-        NDRPacketField("authorizationCabPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "authorizationCabPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
     ]
 
 
@@ -2030,7 +2084,9 @@ class get_IStringCollection_Item_Request(NDRPacket):
 class get_IStringCollection_Item_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2039,7 +2095,9 @@ class get_IStringCollection_Item_Response(NDRPacket):
 class put_IStringCollection_Item_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("index", 0),
-        NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2077,7 +2135,11 @@ class get_IStringCollection_ReadOnly_Response(NDRPacket):
 
 
 class Add_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class Add_Response(NDRPacket):
@@ -2108,7 +2170,9 @@ class Copy_Response(NDRPacket):
 class Insert_Request(NDRPacket):
     fields_desc = [
         NDRSignedIntField("index", 0),
-        NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -2161,13 +2225,19 @@ register_com_interface(
 
 class GetInfo_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("varInfoIdentifier", wireVARIANTStr(), wireVARIANTStr)
+        NDRFullPointerField(
+            NDRPacketField("varInfoIdentifier", wireVARIANTStr(), wireVARIANTStr)
+        )
     ]
 
 
 class GetInfo_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2194,7 +2264,11 @@ class get_IAutomaticUpdatesResults_LastSearchSuccessDate_Request(NDRPacket):
 
 class get_IAutomaticUpdatesResults_LastSearchSuccessDate_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2205,7 +2279,11 @@ class get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Request(NDRPacket
 
 class get_IAutomaticUpdatesResults_LastInstallationSuccessDate_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2316,7 +2394,9 @@ class get_IUpdateIdentity_UpdateID_Request(NDRPacket):
 class get_IUpdateIdentity_UpdateID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2351,7 +2431,9 @@ class get_IImageInformation_AltText_Request(NDRPacket):
 class get_IImageInformation_AltText_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2372,7 +2454,9 @@ class get_IImageInformation_Source_Request(NDRPacket):
 class get_IImageInformation_Source_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2420,7 +2504,9 @@ class get_ICategory_Name_Request(NDRPacket):
 class get_ICategory_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2433,7 +2519,9 @@ class get_ICategory_CategoryID_Request(NDRPacket):
 class get_ICategory_CategoryID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2459,7 +2547,9 @@ class get_ICategory_Description_Request(NDRPacket):
 class get_ICategory_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2506,7 +2596,9 @@ class get_ICategory_Type_Request(NDRPacket):
 class get_ICategory_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2637,7 +2729,9 @@ class get_IUpdateDownloadContent_DownloadUrl_Request(NDRPacket):
 class get_IUpdateDownloadContent_DownloadUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2761,7 +2855,9 @@ class get_IWindowsDriverUpdate_DriverClass_Request(NDRPacket):
 class get_IWindowsDriverUpdate_DriverClass_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2774,7 +2870,9 @@ class get_IWindowsDriverUpdate_DriverHardwareID_Request(NDRPacket):
 class get_IWindowsDriverUpdate_DriverHardwareID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2787,7 +2885,9 @@ class get_IWindowsDriverUpdate_DriverManufacturer_Request(NDRPacket):
 class get_IWindowsDriverUpdate_DriverManufacturer_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2800,7 +2900,9 @@ class get_IWindowsDriverUpdate_DriverModel_Request(NDRPacket):
 class get_IWindowsDriverUpdate_DriverModel_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2813,7 +2915,9 @@ class get_IWindowsDriverUpdate_DriverProvider_Request(NDRPacket):
 class get_IWindowsDriverUpdate_DriverProvider_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3565,7 +3669,9 @@ class get_IWindowsDriverUpdateEntry_DriverClass_Request(NDRPacket):
 class get_IWindowsDriverUpdateEntry_DriverClass_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3578,7 +3684,9 @@ class get_IWindowsDriverUpdateEntry_DriverHardwareID_Request(NDRPacket):
 class get_IWindowsDriverUpdateEntry_DriverHardwareID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3591,7 +3699,9 @@ class get_IWindowsDriverUpdateEntry_DriverManufacturer_Request(NDRPacket):
 class get_IWindowsDriverUpdateEntry_DriverManufacturer_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3604,7 +3714,9 @@ class get_IWindowsDriverUpdateEntry_DriverModel_Request(NDRPacket):
 class get_IWindowsDriverUpdateEntry_DriverModel_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3617,7 +3729,9 @@ class get_IWindowsDriverUpdateEntry_DriverProvider_Request(NDRPacket):
 class get_IWindowsDriverUpdateEntry_DriverProvider_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4514,7 +4628,9 @@ class get_IUpdateException_Message_Request(NDRPacket):
 class get_IUpdateException_Message_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4778,7 +4894,9 @@ class get_IUpdateHistoryEntry_Title_Request(NDRPacket):
 class get_IUpdateHistoryEntry_Title_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4791,7 +4909,9 @@ class get_IUpdateHistoryEntry_Description_Request(NDRPacket):
 class get_IUpdateHistoryEntry_Description_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4812,7 +4932,9 @@ class get_IUpdateHistoryEntry_ClientApplicationID_Request(NDRPacket):
 class get_IUpdateHistoryEntry_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4843,7 +4965,9 @@ class get_IUpdateHistoryEntry_ServiceID_Request(NDRPacket):
 class get_IUpdateHistoryEntry_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4869,7 +4993,9 @@ class get_IUpdateHistoryEntry_UninstallationNotes_Request(NDRPacket):
 class get_IUpdateHistoryEntry_UninstallationNotes_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -4882,7 +5008,9 @@ class get_IUpdateHistoryEntry_SupportUrl_Request(NDRPacket):
 class get_IUpdateHistoryEntry_SupportUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5127,14 +5255,20 @@ class get_IUpdateSearcher_ClientApplicationID_Request(NDRPacket):
 class get_IUpdateSearcher_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IUpdateSearcher_ClientApplicationID_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IUpdateSearcher_ClientApplicationID_Response(NDRPacket):
@@ -5177,13 +5311,19 @@ class put_IUpdateSearcher_ServerSelection_Response(NDRPacket):
 
 
 class EscapeString_Request(NDRPacket):
-    fields_desc = [NDRPacketField("unescaped", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("unescaped", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class EscapeString_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5203,7 +5343,11 @@ class QueryHistory_Response(NDRPacket):
 
 
 class Search_Request(NDRPacket):
-    fields_desc = [NDRPacketField("criteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("criteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class Search_Response(NDRPacket):
@@ -5246,14 +5390,20 @@ class get_IUpdateSearcher_ServiceID_Request(NDRPacket):
 class get_IUpdateSearcher_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IUpdateSearcher_ServiceID_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IUpdateSearcher_ServiceID_Response(NDRPacket):
@@ -5527,14 +5677,20 @@ class get_IUpdateSession_ClientApplicationID_Request(NDRPacket):
 class get_IUpdateSession_ClientApplicationID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IUpdateSession_ClientApplicationID_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("value", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IUpdateSession_ClientApplicationID_Response(NDRPacket):
@@ -5661,7 +5817,9 @@ class CreateUpdateServiceManager_Response(NDRPacket):
 
 class QueryHistory_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("criteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("criteria", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRSignedIntField("startIndex", 0),
         NDRSignedIntField("count", 0),
     ]
@@ -5724,7 +5882,9 @@ class get_IUpdateService_Name_Request(NDRPacket):
 class get_IUpdateService_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5736,7 +5896,11 @@ class get_IUpdateService_ContentValidationCert_Request(NDRPacket):
 
 class get_IUpdateService_ContentValidationCert_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("retval", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -5801,7 +5965,9 @@ class get_IUpdateService_ServiceID_Request(NDRPacket):
 class get_IUpdateService_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5830,7 +5996,9 @@ class get_IUpdateService_ServiceUrl_Request(NDRPacket):
 class get_IUpdateService_ServiceUrl_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -5843,7 +6011,9 @@ class get_IUpdateService_SetupPrefix_Request(NDRPacket):
 class get_IUpdateService_SetupPrefix_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -6064,7 +6234,9 @@ class get_IUpdateServiceRegistration_ServiceID_Request(NDRPacket):
 class get_IUpdateServiceRegistration_ServiceID_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("retval", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]

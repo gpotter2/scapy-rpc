@@ -1014,7 +1014,9 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
@@ -1047,7 +1049,9 @@ class GetTelnetSessions_Request(NDRPacket):
 class GetTelnetSessions_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pszSessionData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pszSessionData", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1064,7 +1068,9 @@ class TerminateSession_Response(NDRPacket):
 class SendMsgToASession_Request(NDRPacket):
     fields_desc = [
         NDRIntField("dwUniqueId", 0),
-        NDRPacketField("szMsg", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("szMsg", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 

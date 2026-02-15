@@ -100,7 +100,9 @@ class get_IAppHostMethod_Name_Request(NDRPacket):
 class get_IAppHostMethod_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1022,21 +1024,29 @@ class wireVARIANTStr(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class SetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)),
     ]
 
 
@@ -1073,7 +1083,9 @@ class get_IAppHostElement_Name_Request(NDRPacket):
 class get_IAppHostElement_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1120,21 +1132,29 @@ class get_IAppHostElement_ChildElements_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class SetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)),
     ]
 
 
@@ -1157,7 +1177,9 @@ class get_IAppHostElement_Schema_Response(NDRPacket):
 
 class GetElementByName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSubName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSubName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1172,7 +1194,9 @@ class GetElementByName_Response(NDRPacket):
 
 class GetPropertyByName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSubName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSubName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1246,7 +1270,9 @@ class get_IAppHostProperty_Name_Request(NDRPacket):
 class get_IAppHostProperty_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1259,14 +1285,18 @@ class get_IAppHostProperty_Value_Request(NDRPacket):
 class get_IAppHostProperty_Value_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVariant", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVariant", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAppHostProperty_Value_Request(NDRPacket):
-    fields_desc = [NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class put_IAppHostProperty_Value_Response(NDRPacket):
@@ -1288,7 +1318,9 @@ class get_IAppHostProperty_StringValue_Request(NDRPacket):
 class get_IAppHostProperty_StringValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1309,21 +1341,29 @@ class get_IAppHostProperty_Exception_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class SetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)),
     ]
 
 
@@ -1382,7 +1422,11 @@ class get_IAppHostConfigLocation_Path_Request(NDRPacket):
 class get_IAppHostConfigLocation_Path_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrLocationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrLocationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1397,7 +1441,9 @@ class get_IAppHostConfigLocation_Count_Response(NDRPacket):
 
 
 class get_IAppHostConfigLocation_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostConfigLocation_Item_Response(NDRPacket):
@@ -1411,7 +1457,9 @@ class get_IAppHostConfigLocation_Item_Response(NDRPacket):
 
 class AddConfigSection_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1425,7 +1473,9 @@ class AddConfigSection_Response(NDRPacket):
 
 
 class DeleteConfigSection_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class DeleteConfigSection_Response(NDRPacket):
@@ -1464,7 +1514,9 @@ class get_IAppHostElementSchema_Name_Request(NDRPacket):
 class get_IAppHostElementSchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1483,13 +1535,19 @@ class get_IAppHostElementSchema_DoesAllowUnschematizedProperties_Response(NDRPac
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -1586,7 +1644,9 @@ class get_IAppHostPropertySchema_Name_Request(NDRPacket):
 class get_IAppHostPropertySchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1599,7 +1659,9 @@ class get_IAppHostPropertySchema_Type_Request(NDRPacket):
 class get_IAppHostPropertySchema_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1612,7 +1674,9 @@ class get_IAppHostPropertySchema_DefaultValue_Request(NDRPacket):
 class get_IAppHostPropertySchema_DefaultValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pDefaultValue", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pDefaultValue", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1657,8 +1721,10 @@ class get_IAppHostPropertySchema_ValidationType_Request(NDRPacket):
 class get_IAppHostPropertySchema_ValidationType_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrValidationType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrValidationType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1672,8 +1738,10 @@ class get_IAppHostPropertySchema_ValidationParameter_Request(NDRPacket):
 class get_IAppHostPropertySchema_ValidationParameter_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrValidationParameter", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrValidationParameter", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1682,13 +1750,19 @@ class get_IAppHostPropertySchema_ValidationParameter_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -1740,8 +1814,10 @@ class get_IAppHostPropertySchema_TimeSpanFormat_Request(NDRPacket):
 class get_IAppHostPropertySchema_TimeSpanFormat_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrTimeSpanFormat", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrTimeSpanFormat", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -1823,7 +1899,9 @@ class get_IAppHostConstantValue_Name_Request(NDRPacket):
 class get_IAppHostConstantValue_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1857,7 +1935,9 @@ register_com_interface(
 
 class GetConfigFile_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1872,14 +1952,20 @@ class GetConfigFile_Response(NDRPacket):
 
 class GetUniqueConfigPath_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetUniqueConfigPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrUniquePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrUniquePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1905,7 +1991,9 @@ class GetSiteNameFromSiteId_Request(NDRPacket):
 class GetSiteNameFromSiteId_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1913,7 +2001,9 @@ class GetSiteNameFromSiteId_Response(NDRPacket):
 
 class GetSiteIdFromSiteName_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -1936,15 +2026,23 @@ class GetSiteElementFromSiteId_Response(NDRPacket):
 
 class MapPath_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrVirtualPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrSiteName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrVirtualPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
 class MapPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRFullPointerField(
             NDRPacketField(
@@ -1984,7 +2082,9 @@ class get_IAppHostChildElementCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostChildElementCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostChildElementCollection_Item_Response(NDRPacket):
@@ -2024,7 +2124,9 @@ class get_IAppHostPropertyCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostPropertyCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostPropertyCollection_Item_Response(NDRPacket):
@@ -2064,7 +2166,11 @@ class get_IAppHostConfigLocationCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostConfigLocationCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class get_IAppHostConfigLocationCollection_Item_Response(NDRPacket):
@@ -2078,7 +2184,9 @@ class get_IAppHostConfigLocationCollection_Item_Response(NDRPacket):
 
 class AddLocation_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrLocationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrLocationPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2092,7 +2200,9 @@ class AddLocation_Response(NDRPacket):
 
 
 class DeleteLocation_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class DeleteLocation_Response(NDRPacket):
@@ -2129,7 +2239,9 @@ class get_IAppHostMethodCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostMethodCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostMethodCollection_Item_Response(NDRPacket):
@@ -2169,7 +2281,9 @@ class get_IAppHostElementSchemaCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostElementSchemaCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostElementSchemaCollection_Item_Response(NDRPacket):
@@ -2209,7 +2323,9 @@ class get_IAppHostPropertySchemaCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostPropertySchemaCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostPropertySchemaCollection_Item_Response(NDRPacket):
@@ -2249,7 +2365,9 @@ class get_IAppHostConstantValueCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostConstantValueCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostConstantValueCollection_Item_Response(NDRPacket):
@@ -2287,7 +2405,11 @@ class get_IAppHostCollectionSchema_AddElementNames_Request(NDRPacket):
 class get_IAppHostCollectionSchema_AddElementNames_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2295,7 +2417,9 @@ class get_IAppHostCollectionSchema_AddElementNames_Response(NDRPacket):
 
 class GetAddElementSchema_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2344,13 +2468,19 @@ class get_IAppHostCollectionSchema_IsMergeAppend_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2406,7 +2536,9 @@ class get_IAppHostMethodSchema_Name_Request(NDRPacket):
 class get_IAppHostMethodSchema_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2440,13 +2572,19 @@ class get_IAppHostMethodSchema_OutputSchema_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2489,7 +2627,9 @@ class get_IAppHostConfigException_FileName_Request(NDRPacket):
 class get_IAppHostConfigException_FileName_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrFileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrFileName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2502,7 +2642,11 @@ class get_IAppHostConfigException_ConfigPath_Request(NDRPacket):
 class get_IAppHostConfigException_ConfigPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2515,7 +2659,9 @@ class get_IAppHostConfigException_ErrorLine_Request(NDRPacket):
 class get_IAppHostConfigException_ErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2528,7 +2674,11 @@ class get_IAppHostConfigException_PreErrorLine_Request(NDRPacket):
 class get_IAppHostConfigException_PreErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPreErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPreErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2541,7 +2691,11 @@ class get_IAppHostConfigException_PostErrorLine_Request(NDRPacket):
 class get_IAppHostConfigException_PostErrorLine_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrPostErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrPostErrorLine", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2554,7 +2708,11 @@ class get_IAppHostConfigException_ErrorString_Request(NDRPacket):
 class get_IAppHostConfigException_ErrorString_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrErrorString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrErrorString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2606,7 +2764,9 @@ class get_IAppHostPropertyException_InvalidValue_Request(NDRPacket):
 class get_IAppHostPropertyException_InvalidValue_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrValue", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2619,8 +2779,10 @@ class get_IAppHostPropertyException_ValidationFailureReason_Request(NDRPacket):
 class get_IAppHostPropertyException_ValidationFailureReason_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrValidationReason", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrValidationReason", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2698,7 +2860,9 @@ class get_IAppHostElementCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostElementCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class get_IAppHostElementCollection_Item_Response(NDRPacket):
@@ -2722,7 +2886,9 @@ class AddElement_Response(NDRPacket):
 
 
 class DeleteElement_Request(NDRPacket):
-    fields_desc = [NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(NDRPacketField("cIndex", wireVARIANTStr(), wireVARIANTStr))
+    ]
 
 
 class DeleteElement_Response(NDRPacket):
@@ -2739,7 +2905,9 @@ class Clear_Response(NDRPacket):
 
 class CreateNewElement_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrElementName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2799,7 +2967,9 @@ class get_IAppHostSectionDefinition_Name_Request(NDRPacket):
 class get_IAppHostSectionDefinition_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2812,14 +2982,20 @@ class get_IAppHostSectionDefinition_Type_Request(NDRPacket):
 class get_IAppHostSectionDefinition_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAppHostSectionDefinition_Type_Request(NDRPacket):
-    fields_desc = [NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAppHostSectionDefinition_Type_Response(NDRPacket):
@@ -2833,8 +3009,10 @@ class get_IAppHostSectionDefinition_OverrideModeDefault_Request(NDRPacket):
 class get_IAppHostSectionDefinition_OverrideModeDefault_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrOverrideModeDefault", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrOverrideModeDefault", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2843,8 +3021,10 @@ class get_IAppHostSectionDefinition_OverrideModeDefault_Response(NDRPacket):
 
 class put_IAppHostSectionDefinition_OverrideModeDefault_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField(
-            "bstrOverrideModeDefault", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrOverrideModeDefault", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         )
     ]
 
@@ -2860,8 +3040,10 @@ class get_IAppHostSectionDefinition_AllowDefinition_Request(NDRPacket):
 class get_IAppHostSectionDefinition_AllowDefinition_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrAllowDefinition", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrAllowDefinition", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -2870,7 +3052,11 @@ class get_IAppHostSectionDefinition_AllowDefinition_Response(NDRPacket):
 
 class put_IAppHostSectionDefinition_AllowDefinition_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrAllowDefinition", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrAllowDefinition", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -2885,7 +3071,11 @@ class get_IAppHostSectionDefinition_AllowLocation_Request(NDRPacket):
 class get_IAppHostSectionDefinition_AllowLocation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2893,7 +3083,9 @@ class get_IAppHostSectionDefinition_AllowLocation_Response(NDRPacket):
 
 class put_IAppHostSectionDefinition_AllowLocation_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrAllowLocation", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2957,7 +3149,11 @@ class get_IAppHostSectionDefinitionCollection_Count_Response(NDRPacket):
 
 
 class get_IAppHostSectionDefinitionCollection_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class get_IAppHostSectionDefinitionCollection_Item_Response(NDRPacket):
@@ -2971,7 +3167,9 @@ class get_IAppHostSectionDefinitionCollection_Item_Response(NDRPacket):
 
 class AddSection_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
@@ -2985,7 +3183,11 @@ class AddSection_Response(NDRPacket):
 
 
 class DeleteSection_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class DeleteSection_Response(NDRPacket):
@@ -3022,7 +3224,11 @@ class get_IAppHostSectionGroup_Count_Response(NDRPacket):
 
 
 class get_IAppHostSectionGroup_Item_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class get_IAppHostSectionGroup_Item_Response(NDRPacket):
@@ -3049,7 +3255,11 @@ class get_IAppHostSectionGroup_Sections_Response(NDRPacket):
 
 class AddSectionGroup_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrSectionGroupName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        )
     ]
 
 
@@ -3063,7 +3273,11 @@ class AddSectionGroup_Response(NDRPacket):
 
 
 class DeleteSectionGroup_Request(NDRPacket):
-    fields_desc = [NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("varIndex", wireVARIANTStr(), wireVARIANTStr)
+        )
+    ]
 
 
 class DeleteSectionGroup_Response(NDRPacket):
@@ -3077,7 +3291,9 @@ class get_IAppHostSectionGroup_Name_Request(NDRPacket):
 class get_IAppHostSectionGroup_Name_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3090,14 +3306,20 @@ class get_IAppHostSectionGroup_Type_Request(NDRPacket):
 class get_IAppHostSectionGroup_Type_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
 
 
 class put_IAppHostSectionGroup_Type_Request(NDRPacket):
-    fields_desc = [NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)]
+    fields_desc = [
+        NDRFullPointerField(
+            NDRPacketField("bstrType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
+    ]
 
 
 class put_IAppHostSectionGroup_Type_Response(NDRPacket):
@@ -3143,7 +3365,11 @@ class get_IAppHostConfigFile_ConfigPath_Request(NDRPacket):
 class get_IAppHostConfigFile_ConfigPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3156,7 +3382,9 @@ class get_IAppHostConfigFile_FilePath_Request(NDRPacket):
 class get_IAppHostConfigFile_FilePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pbstrFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3177,8 +3405,12 @@ class get_IAppHostConfigFile_Locations_Response(NDRPacket):
 
 class GetAdminSection_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -3193,21 +3425,29 @@ class GetAdminSection_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class SetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)),
     ]
 
 
@@ -3269,9 +3509,13 @@ register_com_interface(
 
 class MapPath_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField(
-            "bstrMappedPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+        NDRFullPointerField(
+            NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrMappedPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
         ),
     ]
 
@@ -3279,8 +3523,10 @@ class MapPath_Request(NDRPacket):
 class MapPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "pbstrNewPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrNewPhysicalPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
             )
         ),
         NDRIntField("status", 0),
@@ -3301,8 +3547,12 @@ register_com_interface(
 
 class OnSectionChanges_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrConfigPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -3324,8 +3574,12 @@ register_com_interface(
 
 class GetAdminSection_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("bstrPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("bstrSectionName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("bstrPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
     ]
 
 
@@ -3340,21 +3594,29 @@ class GetAdminSection_Response(NDRPacket):
 
 class GetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 
 class GetMetadata_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pValue", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
 
 class SetMetadata_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr),
+        NDRFullPointerField(
+            NDRPacketField("bstrMetadataType", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(NDRPacketField("value", wireVARIANTStr(), wireVARIANTStr)),
     ]
 
 
@@ -3408,7 +3670,11 @@ class get_IAppHostWritableAdminManager_CommitPath_Request(NDRPacket):
 class get_IAppHostWritableAdminManager_CommitPath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -3416,7 +3682,9 @@ class get_IAppHostWritableAdminManager_CommitPath_Response(NDRPacket):
 
 class put_IAppHostWritableAdminManager_CommitPath_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        NDRFullPointerField(
+            NDRPacketField("bstrCommitPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        )
     ]
 
 

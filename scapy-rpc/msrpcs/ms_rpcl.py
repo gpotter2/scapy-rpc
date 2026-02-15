@@ -56,7 +56,7 @@ class RPC_SYNTAX_IDENTIFIER(NDRPacket):
 class I_nsi_lookup_begin_Request(NDRPacket):
     fields_desc = [
         NDRIntField("entry_name_syntax", 0),
-        NDRConfVarStrNullFieldUtf16("entry_name", ""),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("entry_name", "")),
         NDRFullPointerField(
             NDRPacketField(
                 "interfaceid", RPC_SYNTAX_IDENTIFIER(), RPC_SYNTAX_IDENTIFIER
@@ -65,7 +65,7 @@ class I_nsi_lookup_begin_Request(NDRPacket):
         NDRFullPointerField(
             NDRPacketField("xfersyntax", RPC_SYNTAX_IDENTIFIER(), RPC_SYNTAX_IDENTIFIER)
         ),
-        NDRPacketField("obj_uuid", GUID(), GUID),
+        NDRFullPointerField(NDRPacketField("obj_uuid", GUID(), GUID)),
         NDRIntField("binding_max_count", 0),
         NDRIntField("MaxCacheAge", 0),
     ]
@@ -126,8 +126,10 @@ class I_nsi_lookup_next_Request(NDRPacket):
 class I_nsi_lookup_next_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField(
-                "binding_vector", NSI_BINDING_VECTOR_T(), NSI_BINDING_VECTOR_T
+            NDRFullPointerField(
+                NDRPacketField(
+                    "binding_vector", NSI_BINDING_VECTOR_T(), NSI_BINDING_VECTOR_T
+                )
             )
         ),
         NDRShortField("status", 0),
@@ -158,7 +160,9 @@ class I_nsi_entry_object_inq_next_Request(NDRPacket):
 class I_nsi_entry_object_inq_next_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("uuid_vec", NSI_UUID_VECTOR_T(), NSI_UUID_VECTOR_T)
+            NDRFullPointerField(
+                NDRPacketField("uuid_vec", NSI_UUID_VECTOR_T(), NSI_UUID_VECTOR_T)
+            )
         ),
         NDRShortField("status", 0),
         NDRIntField("comm_status", 0),
@@ -188,7 +192,7 @@ class I_nsi_entry_object_inq_done_Response(NDRPacket):
 class I_nsi_entry_object_inq_begin_Request(NDRPacket):
     fields_desc = [
         NDRIntField("EntryNameSyntax", 0),
-        NDRConfVarStrNullFieldUtf16("EntryName", ""),
+        NDRFullPointerField(NDRConfVarStrNullFieldUtf16("EntryName", "")),
     ]
 
 

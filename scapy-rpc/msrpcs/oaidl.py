@@ -1404,7 +1404,9 @@ class SetCustData_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1418,7 +1420,9 @@ class SetFuncCustData_Request(NDRPacket):
         NDRIntField("index", 0),
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1433,7 +1437,9 @@ class SetParamCustData_Request(NDRPacket):
         NDRIntField("indexParam", 0),
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1447,7 +1453,9 @@ class SetVarCustData_Request(NDRPacket):
         NDRIntField("index", 0),
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1461,7 +1469,9 @@ class SetImplTypeCustData_Request(NDRPacket):
         NDRIntField("index", 0),
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -1691,7 +1701,9 @@ class SetCustData_Request(NDRPacket):
     fields_desc = [
         NDRPacketField("guid", GUID(), GUID),
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -2100,7 +2112,9 @@ class GetField_Request(NDRPacket):
 class GetField_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2116,7 +2130,9 @@ class GetFieldNoCopy_Request(NDRPacket):
 class GetFieldNoCopy_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         StrFixedLenField("ppvDataCArray", "", length=0),
         NDRIntField("status", 0),
@@ -2129,7 +2145,9 @@ class PutField_Request(NDRPacket):
         StrFixedLenField("pvData", "", length=0),
         NDRConfVarStrNullFieldUtf16("szFieldName", ""),
         NDRFullPointerField(
-            NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -2144,7 +2162,9 @@ class PutFieldNoCopy_Request(NDRPacket):
         StrFixedLenField("pvData", "", length=0),
         NDRConfVarStrNullFieldUtf16("szFieldName", ""),
         NDRFullPointerField(
-            NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pvarField", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
     ]
 
@@ -2273,7 +2293,11 @@ register_com_interface(
 class Read_Request(NDRPacket):
     fields_desc = [
         NDRConfVarStrNullFieldUtf16("pszPropName", ""),
-        NDRFullPointerField(NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRFullPointerField(
             NDRPacketField("pErrorLog", MInterfacePointer(), MInterfacePointer)
         ),
@@ -2282,7 +2306,11 @@ class Read_Request(NDRPacket):
 
 class Read_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2300,7 +2328,11 @@ class RemoteRead_Request(NDRPacket):
 
 class RemoteRead_Response(NDRPacket):
     fields_desc = [
-        NDRFullPointerField(NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
         NDRIntField("status", 0),
     ]
 
@@ -2308,7 +2340,11 @@ class RemoteRead_Response(NDRPacket):
 class Write_Request(NDRPacket):
     fields_desc = [
         NDRConfVarStrNullFieldUtf16("pszPropName", ""),
-        NDRFullPointerField(NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)),
+        NDRFullPointerField(
+            NDRFullPointerField(
+                NDRPacketField("pVar", wireVARIANTStr(), wireVARIANTStr)
+            )
+        ),
     ]
 
 

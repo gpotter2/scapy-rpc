@@ -408,7 +408,9 @@ class GenerateClusterLog_Request(NDRPacket):
 class GenerateClusterLog_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -424,7 +426,9 @@ class GenerateClusterHealthLog_Request(NDRPacket):
 class GenerateClusterHealthLog_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -440,7 +444,9 @@ class GenerateClusterSetLog_Request(NDRPacket):
 class GenerateClusterSetLog_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -457,7 +463,9 @@ class GenerateClusterNetworkhLog_Request(NDRPacket):
 class GenerateClusterNetworkhLog_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -465,8 +473,12 @@ class GenerateClusterNetworkhLog_Response(NDRPacket):
 
 class ExportClusterPerformanceHistory_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("Pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
-        NDRPacketField("StreamName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField("Pattern", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
+        NDRFullPointerField(
+            NDRPacketField("StreamName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+        ),
         NDRInt3264EnumField("flags", 0, ClusterLogExFlag),
     ]
 
@@ -474,7 +486,9 @@ class ExportClusterPerformanceHistory_Request(NDRPacket):
 class ExportClusterPerformanceHistory_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -490,7 +504,9 @@ class GenerateNetftLog_Request(NDRPacket):
 class GenerateNetftLog_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -538,7 +554,9 @@ class GenerateLogEx_Request(NDRPacket):
 class GenerateLogEx_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -559,7 +577,9 @@ class GetLogFilePath_Request(NDRPacket):
 class GetLogFilePath_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LogFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -602,11 +622,17 @@ class GenerateLogEx2_Request(NDRPacket):
 class GenerateLogEx2_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("LongFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("LongFilePath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField(
-                "SemicolonSeperatedLogFilesPath", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            NDRFullPointerField(
+                NDRPacketField(
+                    "SemicolonSeperatedLogFilesPath",
+                    FLAGGED_WORD_BLOB(),
+                    FLAGGED_WORD_BLOB,
+                )
             )
         ),
         NDRIntField("status", 0),

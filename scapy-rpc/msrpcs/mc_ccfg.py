@@ -1014,7 +1014,9 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
@@ -1042,7 +1044,11 @@ register_com_interface(
 
 class CleanupNode_Request(NDRPacket):
     fields_desc = [
-        NDRPacketField("bstrEvictedNodeNameIn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB),
+        NDRFullPointerField(
+            NDRPacketField(
+                "bstrEvictedNodeNameIn", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+            )
+        ),
         NDRSignedIntField("nDelayIn", 0),
         NDRSignedIntField("nTimeoutIn", 0),
     ]

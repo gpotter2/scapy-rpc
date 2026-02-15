@@ -1022,7 +1022,9 @@ class Invoke_Request(NDRPacket):
 class Invoke_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarResult", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRPacketField("pExcepInfo", EXCEPINFO(), EXCEPINFO),
         NDRIntField("pArgErr", 0),
@@ -1150,14 +1152,20 @@ class GetDocumentation_Request(NDRPacket):
 class GetDocumentation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pBstrDocString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrDocString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("pdwHelpContext", 0),
         NDRFullPointerField(
-            NDRPacketField("pBstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1174,7 +1182,11 @@ class IsName_Response(NDRPacket):
     fields_desc = [
         NDRSignedIntField("pfName", 0),
         NDRFullPointerField(
-            NDRPacketField("pBstrNameInLibrary", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pBstrNameInLibrary", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1207,7 +1219,11 @@ class FindName_Response(NDRPacket):
         ),
         NDRShortField("pcFound", None, size_of="rgMemId"),
         NDRFullPointerField(
-            NDRPacketField("pBstrNameInLibrary", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pBstrNameInLibrary", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1550,14 +1566,20 @@ class GetDocumentation_Request(NDRPacket):
 class GetDocumentation_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pBstrDocString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrDocString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("pdwHelpContext", 0),
         NDRFullPointerField(
-            NDRPacketField("pBstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrHelpFile", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1574,10 +1596,14 @@ class GetDllEntry_Request(NDRPacket):
 class GetDllEntry_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBstrDllName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrDllName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRFullPointerField(
-            NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrName", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRShortField("pwOrdinal", 0),
         NDRIntField("status", 0),
@@ -1617,7 +1643,9 @@ class GetMops_Request(NDRPacket):
 class GetMops_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pBstrMops", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField("pBstrMops", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1833,7 +1861,9 @@ class GetCustData_Request(NDRPacket):
 class GetCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1846,7 +1876,9 @@ class GetFuncCustData_Request(NDRPacket):
 class GetFuncCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1863,7 +1895,9 @@ class GetParamCustData_Request(NDRPacket):
 class GetParamCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1876,7 +1910,9 @@ class GetVarCustData_Request(NDRPacket):
 class GetVarCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1889,7 +1925,9 @@ class GetImplTypeCustData_Request(NDRPacket):
 class GetImplTypeCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -1906,11 +1944,19 @@ class GetDocumentation2_Request(NDRPacket):
 class GetDocumentation2_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrHelpString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrHelpString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("pdwHelpStringContext", 0),
         NDRFullPointerField(
-            NDRPacketField("pbstrHelpStringDll", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrHelpStringDll", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2045,7 +2091,9 @@ class GetCustData_Request(NDRPacket):
 class GetCustData_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            NDRFullPointerField(
+                NDRPacketField("pVarVal", wireVARIANTStr(), wireVARIANTStr)
+            )
         ),
         NDRIntField("status", 0),
     ]
@@ -2074,11 +2122,19 @@ class GetDocumentation2_Request(NDRPacket):
 class GetDocumentation2_Response(NDRPacket):
     fields_desc = [
         NDRFullPointerField(
-            NDRPacketField("pbstrHelpString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrHelpString", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("pdwHelpStringContext", 0),
         NDRFullPointerField(
-            NDRPacketField("pbstrHelpStringDll", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB)
+            NDRFullPointerField(
+                NDRPacketField(
+                    "pbstrHelpStringDll", FLAGGED_WORD_BLOB(), FLAGGED_WORD_BLOB
+                )
+            )
         ),
         NDRIntField("status", 0),
     ]
