@@ -367,6 +367,7 @@ class Resolver:
             )
         arg = arg.copy()
         idl_attributes = self.resolve_idl_attributes(arg.idl_attributes, env)
+        ptr_default_applied = False
         # Special checks for BUILTIN and CUSTOM
         if arg.TYPE in [Types.BUILTIN, Types.CUSTOM]:
             new_ptr_lvl = arg.ptr_lvl
@@ -375,12 +376,11 @@ class Resolver:
                 new_arg = self.resolve_type(
                     arg.type, env, toplevel=toplevel, strct_types=strct_types
                 )
+                # Propagate the IDL attributes of the type we are referncing.
+                # Do not propagate the pointer types because we are handling those below.
                 idl_attributes += [
                     x
                     for x in new_arg.idl_attributes
-                    # The fact that we remove all pointer attributes from children is technically
-                    # slightly broken. We should ideally remove them only if they we added because
-                    # they were the default value, and also not store default values in the environment.
                     if x not in idl_attributes and x not in ("ref", "unique", "ptr")
                 ]
                 new_ptr_lvl += new_arg.ptr_lvl
@@ -435,21 +435,40 @@ class Resolver:
                 newarg.subtype = arg
                 arg = newarg
             arg.ptr_lvl = new_ptr_lvl
-        # Apply default pointer policies
+
+        # Apply pointer type policies
         if arg.ptr_lvl and not any(
             x in ("ref", "unique", "ptr") for x in idl_attributes
         ):
-            if toplevel:
-                # [C706] 4.2.20.3 - Pointer Attributes on Parameters
-                # By default, the first indirection operator (an *, asterisk) in a parameter declaration is treated as a
-                # reference pointer.
-                idl_attributes.append("ref")
+            # There is no pointer type defined.
+            if (
+                arg.TYPE == Types.CUSTOM
+                and not new_arg.ptr_default_applied
+                and any(x in ("ref", "unique", "ptr") for x in new_arg.idl_attributes)
+            ):
+                # If the type we're referencing has a pointer type, and it's not the one it got by default, then propagate it
+                idl_attributes.append(
+                    next(
+                        x
+                        for x in new_arg.idl_attributes
+                        if x in ("ref", "unique", "ptr")
+                    )
+                )
             else:
-                # Elsewhere, use interface <ptr_attr>
-                if self.current_interface:
-                    idl_attributes.append(self.current_interface.pointer_default)
+                # Apply the default pointer
+                ptr_default_applied = True
+                if toplevel:
+                    # [C706] 4.2.20.3 - Pointer Attributes on Parameters
+                    # By default, the first indirection operator (an *, asterisk) in a parameter declaration is treated as a
+                    # reference pointer.
+                    idl_attributes.append("ref")
                 else:
-                    idl_attributes.append("unique")
+                    # Elsewhere, use interface <ptr_attr>
+                    if self.current_interface:
+                        idl_attributes.append(self.current_interface.pointer_default)
+                    else:
+                        idl_attributes.append("unique")
+
         # Build field
         if arg.TYPE == Types.BUILTIN:
             return ScapyField(
@@ -458,6 +477,7 @@ class Resolver:
                 SCAPY_FIELDS[arg.fmt],
                 arg.type,
                 idl_attributes=idl_attributes,
+                ptr_default_applied=ptr_default_applied,
             )
         elif arg.TYPE == Types.CUSTOM:
             if isinstance(new_arg, ScapyStructField):
@@ -467,6 +487,7 @@ class Resolver:
                     new_arg.subtype,
                     new_arg.subtype.name,
                     idl_attributes=idl_attributes,
+                    ptr_default_applied=ptr_default_applied,
                 )
             elif isinstance(new_arg, ScapyUnion):
                 return ScapyUnion(
@@ -475,6 +496,7 @@ class Resolver:
                     new_arg.fields,
                     idl_attributes=idl_attributes,
                     struct_name=new_arg.struct_name,
+                    ptr_default_applied=ptr_default_applied,
                 )
             elif isinstance(new_arg, ScapyStruct):
                 return ScapyStructField(
@@ -483,6 +505,7 @@ class Resolver:
                     new_arg,
                     new_arg.name,
                     idl_attributes=idl_attributes,
+                    ptr_default_applied=ptr_default_applied,
                 )
             elif isinstance(new_arg, ScapyField):
                 return ScapyField(
@@ -491,6 +514,7 @@ class Resolver:
                     new_arg.scapy_field,
                     arg.type,
                     idl_attributes=idl_attributes,
+                    ptr_default_applied=ptr_default_applied,
                 )
             else:
                 assert False, "Unimplemented Custom->%s" % repr(arg.type)
@@ -516,6 +540,7 @@ class Resolver:
                 sub_arg,
                 arg.array_length,
                 idl_attributes=idl_attributes,
+                ptr_default_applied=ptr_default_applied,
             )
         elif arg.TYPE == Types.STRUCT:
             if arg.struct_name in strct_types:
@@ -529,6 +554,7 @@ class Resolver:
                     struct_name=arg.struct_name,
                     # Recursive flag: it's a virtual struct. Don't actually print it.
                     recursive=True,
+                    ptr_default_applied=ptr_default_applied,
                 )
 
             def proc_f(v):
@@ -558,6 +584,7 @@ class Resolver:
                 fields,
                 idl_attributes=idl_attributes,
                 struct_name=arg.struct_name,
+                ptr_default_applied=ptr_default_applied,
             )
         elif arg.TYPE == Types.UNION:
 
@@ -612,6 +639,7 @@ class Resolver:
                 fields,
                 idl_attributes=idl_attributes,
                 struct_name=arg.struct_name,
+                ptr_default_applied=ptr_default_applied,
             )
         elif arg.TYPE == Types.ENUM:
             enums = {}
@@ -645,6 +673,7 @@ class Resolver:
                 enums,
                 idl_attributes=idl_attributes,
                 struct_name=arg.enum_name,
+                ptr_default_applied=ptr_default_applied,
             )
         else:
             assert False, "What is this? %s" % arg.TYPE
