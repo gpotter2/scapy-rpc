@@ -10,7 +10,7 @@ import importlib
 import importlib.machinery
 import pathlib
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 
 def scapy_ext(plg):
