@@ -189,7 +189,9 @@ class ArrayType(Type):
     TYPE = Types.ARRAY
 
     def __init__(self, c, decl, typespec, idl_attributes):
-        super(ArrayType, self).__init__(decl[1], idl_attributes)
+        # It's always an array of things. If we have a "ptr" in the declaration,
+        # it means it's an array of pointers, not a pointer to an array.
+        super(ArrayType, self).__init__(("id", decl[1][1]), idl_attributes)
         self.array_length = decl[2]
         if typespec is not None:
             if is_builtin(typespec):
