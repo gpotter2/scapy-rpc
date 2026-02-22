@@ -368,22 +368,25 @@ class Resolver:
         arg = arg.copy()
         idl_attributes = self.resolve_idl_attributes(arg.idl_attributes, env)
         ptr_default_applied = False
+        override_ptr_lvl = None
+
         # Special checks for BUILTIN and CUSTOM
         if arg.TYPE in [Types.BUILTIN, Types.CUSTOM]:
             new_ptr_lvl = arg.ptr_lvl
             if arg.TYPE == Types.CUSTOM:
                 # Do the resolution for CUSTOM fields
-                new_arg = self.resolve_type(
+                custom_new_arg = self.resolve_type(
                     arg.type, env, toplevel=toplevel, strct_types=strct_types
                 )
                 # Propagate the IDL attributes of the type we are referncing.
                 # Do not propagate the pointer types because we are handling those below.
                 idl_attributes += [
                     x
-                    for x in new_arg.idl_attributes
+                    for x in custom_new_arg.idl_attributes
                     if x not in idl_attributes and x not in ("ref", "unique", "ptr")
                 ]
-                new_ptr_lvl += new_arg.ptr_lvl
+                new_ptr_lvl += custom_new_arg.ptr_lvl
+
             # Welcome to [C706] 4.2.21. IF, <BUNCH OF CONDITIONS>
             if (
                 not subfld
@@ -399,10 +402,6 @@ class Resolver:
                 # Create a dummy array of length * (conformant)
                 newarg = ArrayType(None, ("array", ("id", arg.name), "*"), None, [])
 
-                # This will be a pointer to an array of whatever the type was
-                arg.ptr_lvl -= 1
-                new_ptr_lvl = 1
-
                 # The attributes to keep in the parent (the array)
                 idl_attributes = [
                     x
@@ -412,7 +411,7 @@ class Resolver:
                     or x in ("ref", "unique", "ptr")
                 ]
 
-                # The child attributes
+                # The attributes to propagate to the child
                 arg.idl_attributes = [
                     x
                     for x in arg.idl_attributes
@@ -434,6 +433,12 @@ class Resolver:
                 # Set the child subtype
                 newarg.subtype = arg
                 arg = newarg
+
+                # This will be a pointer to an array of whatever the type was.
+                # i.e. the outer pointer takes 1 level, and the underlayer the rest
+                override_ptr_lvl = new_ptr_lvl - 1
+                new_ptr_lvl = 1
+
             arg.ptr_lvl = new_ptr_lvl
 
         # Apply pointer type policies
@@ -443,14 +448,16 @@ class Resolver:
             # There is no pointer type defined.
             if (
                 arg.TYPE == Types.CUSTOM
-                and not new_arg.ptr_default_applied
-                and any(x in ("ref", "unique", "ptr") for x in new_arg.idl_attributes)
+                and not custom_new_arg.ptr_default_applied
+                and any(
+                    x in ("ref", "unique", "ptr") for x in custom_new_arg.idl_attributes
+                )
             ):
                 # If the type we're referencing has a pointer type, and it's not the one it got by default, then propagate it
                 idl_attributes.append(
                     next(
                         x
-                        for x in new_arg.idl_attributes
+                        for x in custom_new_arg.idl_attributes
                         if x in ("ref", "unique", "ptr")
                     )
                 )
@@ -480,38 +487,38 @@ class Resolver:
                 ptr_default_applied=ptr_default_applied,
             )
         elif arg.TYPE == Types.CUSTOM:
-            if isinstance(new_arg, ScapyStructField):
+            if isinstance(custom_new_arg, ScapyStructField):
                 return ScapyStructField(
                     arg.name,
                     arg.ptr_lvl,
-                    new_arg.subtype,
-                    new_arg.subtype.name,
+                    custom_new_arg.subtype,
+                    custom_new_arg.subtype.name,
                     idl_attributes=idl_attributes,
                     ptr_default_applied=ptr_default_applied,
                 )
-            elif isinstance(new_arg, ScapyUnion):
+            elif isinstance(custom_new_arg, ScapyUnion):
                 return ScapyUnion(
                     arg.name,
                     arg.ptr_lvl,
-                    new_arg.fields,
+                    custom_new_arg.fields,
                     idl_attributes=idl_attributes,
-                    struct_name=new_arg.struct_name,
+                    struct_name=custom_new_arg.struct_name,
                     ptr_default_applied=ptr_default_applied,
                 )
-            elif isinstance(new_arg, ScapyStruct):
+            elif isinstance(custom_new_arg, ScapyStruct):
                 return ScapyStructField(
                     arg.name,
                     arg.ptr_lvl,
-                    new_arg,
-                    new_arg.name,
+                    custom_new_arg,
+                    custom_new_arg.name,
                     idl_attributes=idl_attributes,
                     ptr_default_applied=ptr_default_applied,
                 )
-            elif isinstance(new_arg, ScapyField):
+            elif isinstance(custom_new_arg, ScapyField):
                 return ScapyField(
                     arg.name,
                     arg.ptr_lvl,
-                    new_arg.scapy_field,
+                    custom_new_arg.scapy_field,
                     arg.type,
                     idl_attributes=idl_attributes,
                     ptr_default_applied=ptr_default_applied,
@@ -519,7 +526,18 @@ class Resolver:
             else:
                 assert False, "Unimplemented Custom->%s" % repr(arg.type)
         elif arg.TYPE == Types.ARRAY:
+            # If a string attribute is set on the array and the subtype is a pointer,
+            # it applies to the subtype.
+            if "string" in idl_attributes and arg.subtype.ptr_lvl:
+                idl_attributes.remove("string")
+                arg.subtype.idl_attributes.append(("id", "string"))
+
+            # Get the subtype of this array
             sub_arg = self.make_field(arg.subtype, env, subfld=True)
+
+            if override_ptr_lvl is not None:
+                sub_arg.ptr_lvl = override_ptr_lvl
+
             if arg.array_length and not isinstance(arg.array_length, int):
                 if arg.array_length == "*":
                     # Special case: conformant arrays. it's alright

@@ -450,7 +450,9 @@ class ScapyField:
                 self.name,
                 repr(self.ptr_lvl),
             )
-            # [C706] 4.2.21.1 - "Such a string is equivalent to a conformant array"
+            # [C706] 4.2.21.1 - "Its meaning is that the pointer is a pointer to a
+            # string of the base type. Such a string is equivalent to a conformant
+            # array"
             if self.scapy_field in CHAR_TYPES:
                 fld = f'NDRConfVarStrNullField("{self.name}", "")'
             elif self.scapy_field in WCHAR_TYPES:
@@ -594,7 +596,7 @@ class ScapyArrayField(ScapyField):
                         any(x in ["ptr", "unique"] for x in self.subtype.idl_attributes)
                         and self.subtype.ptr_lvl >= 1
                     ):
-                        suffix += ", ptr_lvl=" + str(self.subtype.ptr_lvl)
+                        suffix += ", ptr_lvl=%s" % str(self.subtype.ptr_lvl)
                     # Get the name of the sub packet
                     sub_name = (
                         self.subtype.subtype
@@ -642,14 +644,19 @@ class ScapyArrayField(ScapyField):
             if self.scapy_field == "PacketListField":
                 fld = f'{self.scapy_field}("{self.name}", [{self.subtype.subtype.name}()] * {self.length}, {self.subtype.subtype.name}, count_from=lambda _: {self.length})'
             elif self.scapy_field == "FieldListField":
-                if self.subtype.scapy_field in CHAR_TYPES:
-                    # Array of bytes
-                    fld = f'StrFixedLenField("{self.name}", "", length={self.length})'
-                elif self.subtype.scapy_field in WCHAR_TYPES:
-                    # Array of UTF16 (most likely)
-                    fld = f'StrFixedLenFieldUtf16("{self.name}", "", length={self.length} * 2)'
+                if not self.subtype.ptr_lvl:
+                    if self.subtype.scapy_field in CHAR_TYPES:
+                        # Array of bytes
+                        fld = (
+                            f'StrFixedLenField("{self.name}", "", length={self.length})'
+                        )
+                    elif self.subtype.scapy_field in WCHAR_TYPES:
+                        # Array of UTF16 (most likely)
+                        fld = f'StrFixedLenFieldUtf16("{self.name}", "", length={self.length} * 2)'
+                    else:
+                        fld = f'NDR{self.scapy_field}("{self.name}", [0] * {self.length}, {self.subtype.scapy_field}("", 0), length_is=lambda _: {self.length})'
                 else:
-                    fld = f'NDR{self.scapy_field}("{self.name}", [0] * {self.length}, {self.subtype.scapy_field}("", 0), length_is=lambda _: {self.length})'
+                    fld = f'NDR{self.scapy_field}("{self.name}", [], {self.subtype.to_string(context, toplevel=toplevel)}, count_from=lambda _: {self.length})'
             else:
                 assert False, "How did you get here?"
         return self.ptr_wrap(fld, toplevel=toplevel)
