@@ -22,8 +22,6 @@ from scapy.layers.dcerpc import (
     NDRConfStrLenField,
     NDRConfStrLenFieldUtf16,
     NDRConfVarFieldListField,
-    NDRConfVarStrLenField,
-    NDRConfVarStrLenFieldUtf16,
     NDRConfVarStrNullField,
     NDRConfVarStrNullFieldUtf16,
     NDRContextHandle,
@@ -838,11 +836,16 @@ class NspiResortRestriction_Response(NDRPacket):
 
 
 class StringsArray_r(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
+    DEPORTED_CONFORMANTS = ["Strings"]
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenField("Strings", "", size_is=lambda pkt: pkt.Count)
+        NDRConfFieldListField(
+            "Strings",
+            [],
+            NDRFullEmbPointerField(NDRConfVarStrNullField("", "")),
+            size_is=lambda pkt: pkt.Count,
+            conformant_in_struct=True,
         ),
     ]
 
@@ -1097,11 +1100,16 @@ class NspiResolveNames_Response(NDRPacket):
 
 
 class WStringsArray_r(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
+    DEPORTED_CONFORMANTS = ["Strings"]
     fields_desc = [
         NDRIntField("Count", None, size_of="Strings"),
-        NDRFullEmbPointerField(
-            NDRConfVarStrLenFieldUtf16("Strings", "", size_is=lambda pkt: pkt.Count)
+        NDRConfFieldListField(
+            "Strings",
+            [],
+            NDRFullEmbPointerField(NDRConfVarStrNullFieldUtf16("", "")),
+            size_is=lambda pkt: pkt.Count,
+            conformant_in_struct=True,
         ),
     ]
 

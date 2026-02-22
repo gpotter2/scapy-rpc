@@ -20,7 +20,6 @@ from scapy.layers.dcerpc import (
     NDRConfFieldListField,
     NDRConfPacketListField,
     NDRConfVarStrLenField,
-    NDRFullEmbPointerField,
     NDRFullPointerField,
     NDRIntField,
     NDRPacketField,
@@ -49,13 +48,17 @@ class RPC_IF_ID(NDRPacket):
 
 
 class rpc_if_id_vector_p_t(NDRPacket):
-    ALIGNMENT = (4, 8)
+    ALIGNMENT = (4, 4)
+    DEPORTED_CONFORMANTS = ["IfId"]
     fields_desc = [
         NDRIntField("Count", None, size_of="IfId"),
-        NDRFullEmbPointerField(
-            NDRConfPacketListField(
-                "IfId", [], RPC_IF_ID, size_is=lambda pkt: pkt.Count, ptr_lvl=1
-            )
+        NDRConfPacketListField(
+            "IfId",
+            [],
+            RPC_IF_ID,
+            size_is=lambda pkt: pkt.Count,
+            conformant_in_struct=True,
+            ptr_lvl=1,
         ),
     ]
 
