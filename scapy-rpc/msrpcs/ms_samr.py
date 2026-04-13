@@ -630,7 +630,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
             [
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         DOMAIN_PASSWORD_INFORMATION(),
                         DOMAIN_PASSWORD_INFORMATION,
                     ),
@@ -647,7 +647,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         SAMPR_DOMAIN_GENERAL_INFORMATION(),
                         SAMPR_DOMAIN_GENERAL_INFORMATION,
                     ),
@@ -664,7 +664,9 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer", DOMAIN_LOGOFF_INFORMATION(), DOMAIN_LOGOFF_INFORMATION
+                        "DomainInformation",
+                        DOMAIN_LOGOFF_INFORMATION(),
+                        DOMAIN_LOGOFF_INFORMATION,
                     ),
                     (
                         (
@@ -679,7 +681,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         SAMPR_DOMAIN_OEM_INFORMATION(),
                         SAMPR_DOMAIN_OEM_INFORMATION,
                     ),
@@ -696,7 +698,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         SAMPR_DOMAIN_NAME_INFORMATION(),
                         SAMPR_DOMAIN_NAME_INFORMATION,
                     ),
@@ -713,7 +715,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         DOMAIN_SERVER_ROLE_INFORMATION(),
                         DOMAIN_SERVER_ROLE_INFORMATION,
                     ),
@@ -731,7 +733,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "Buffer",
+                            "DomainInformation",
                             PSAMPR_DOMAIN_REPLICATION_INFORMATION(),
                             PSAMPR_DOMAIN_REPLICATION_INFORMATION,
                         )
@@ -749,7 +751,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         DOMAIN_MODIFIED_INFORMATION(),
                         DOMAIN_MODIFIED_INFORMATION,
                     ),
@@ -766,7 +768,9 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer", DOMAIN_STATE_INFORMATION(), DOMAIN_STATE_INFORMATION
+                        "DomainInformation",
+                        DOMAIN_STATE_INFORMATION(),
+                        DOMAIN_STATE_INFORMATION,
                     ),
                     (
                         (
@@ -781,7 +785,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         SAMPR_DOMAIN_GENERAL_INFORMATION2(),
                         SAMPR_DOMAIN_GENERAL_INFORMATION2,
                     ),
@@ -798,7 +802,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         SAMPR_DOMAIN_LOCKOUT_INFORMATION(),
                         SAMPR_DOMAIN_LOCKOUT_INFORMATION,
                     ),
@@ -815,7 +819,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                 ),
                 (
                     NDRPacketField(
-                        "Buffer",
+                        "DomainInformation",
                         DOMAIN_MODIFIED_INFORMATION2(),
                         DOMAIN_MODIFIED_INFORMATION2,
                     ),
@@ -831,7 +835,7 @@ class SamrSetInformationDomain_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("Buffer", "", length=0),
+            StrFixedLenField("DomainInformation", "", length=0),
             align=(2, 8),
             switch_fmt=("H", "I"),
         ),
@@ -4870,7 +4874,7 @@ class SamrConnect5_Request(NDRPacket):
             [
                 (
                     NDRPacketField(
-                        "OutRevisionInfo",
+                        "InRevisionInfo",
                         SAMPR_REVISION_INFO_V1(),
                         SAMPR_REVISION_INFO_V1,
                     ),
@@ -4880,7 +4884,7 @@ class SamrConnect5_Request(NDRPacket):
                     ),
                 )
             ],
-            StrFixedLenField("OutRevisionInfo", "", length=0),
+            StrFixedLenField("InRevisionInfo", "", length=0),
             align=(4, 4),
             switch_fmt=("L", "L"),
         ),

@@ -1567,7 +1567,7 @@ class R_DnssrvOperation_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pData", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -1577,7 +1577,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pData", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -1587,7 +1587,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -1597,7 +1597,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -1608,7 +1608,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pData", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -1620,7 +1620,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -1633,7 +1633,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -1648,7 +1648,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pData", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -1661,7 +1661,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
                         )
                     ),
                     (
@@ -1674,7 +1674,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField("pData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
                     ),
                     (
                         (
@@ -1687,7 +1687,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -1701,7 +1701,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -1720,7 +1720,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -1739,7 +1739,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -1755,7 +1755,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
                         )
                     ),
                     (
@@ -1769,7 +1769,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -1783,7 +1783,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -1802,7 +1802,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -1820,7 +1820,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -1833,7 +1833,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -1852,7 +1852,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -1871,7 +1871,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -1885,7 +1885,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -1904,7 +1904,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -1918,7 +1918,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -1933,7 +1933,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -1945,7 +1945,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -1957,7 +1957,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -1970,7 +1970,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -1984,7 +1984,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
                         )
                     ),
                     (
@@ -1998,7 +1998,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -2016,7 +2016,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -2029,7 +2029,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -2043,7 +2043,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -2059,7 +2059,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -2073,7 +2073,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -2092,7 +2092,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -2106,7 +2106,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -2120,7 +2120,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -2134,7 +2134,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -2153,7 +2153,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -2171,7 +2171,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -2183,7 +2183,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField("pData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
                     ),
                     (
                         (
@@ -2196,7 +2196,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -2210,7 +2210,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -2229,7 +2229,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -2248,7 +2248,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -2267,7 +2267,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -2286,7 +2286,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -2302,7 +2302,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -2316,7 +2316,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -2335,7 +2335,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -2351,7 +2351,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -2367,7 +2367,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -2385,7 +2385,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -2398,7 +2398,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -2412,7 +2412,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -2428,7 +2428,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -2442,7 +2442,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -2461,7 +2461,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -2480,7 +2480,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -2497,7 +2497,7 @@ class R_DnssrvOperation_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pData", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -3469,7 +3469,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pDataIn", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -3479,7 +3479,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pDataIn", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -3489,7 +3489,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -3499,7 +3499,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -3510,7 +3510,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pDataIn", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -3522,7 +3522,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pDataIn", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -3535,7 +3535,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -3550,7 +3550,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pDataIn", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -3563,7 +3563,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pDataIn",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -3576,7 +3578,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -3589,7 +3593,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pDataIn", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -3603,7 +3607,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -3622,7 +3626,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -3641,7 +3645,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -3657,7 +3661,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pDataIn",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -3671,7 +3677,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pDataIn", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -3685,7 +3691,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -3704,7 +3710,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -3722,7 +3728,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pDataIn", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -3735,7 +3741,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -3754,7 +3760,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -3773,7 +3779,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pDataIn", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -3787,7 +3793,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -3806,7 +3812,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pDataIn", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -3820,7 +3826,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -3835,7 +3841,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -3847,7 +3853,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -3859,7 +3865,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -3872,7 +3878,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pDataIn", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -3886,7 +3892,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pDataIn",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -3900,7 +3908,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -3918,7 +3926,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pDataIn", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -3931,7 +3939,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pDataIn", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -3945,7 +3953,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -3961,7 +3969,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pDataIn", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -3975,7 +3983,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -3994,7 +4002,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pDataIn", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -4008,7 +4016,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pDataIn", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -4022,7 +4030,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pDataIn", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -4036,7 +4044,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -4055,7 +4063,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -4073,7 +4081,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pDataIn", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -4085,7 +4093,9 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -4098,7 +4108,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pDataIn", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -4112,7 +4122,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -4131,7 +4141,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -4150,7 +4160,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -4169,7 +4179,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -4188,7 +4198,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -4204,7 +4214,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pDataIn", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -4218,7 +4228,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -4237,7 +4247,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -4253,7 +4263,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -4269,7 +4279,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -4287,7 +4297,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pDataIn", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -4300,7 +4310,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pDataIn", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -4314,7 +4324,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -4330,7 +4340,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pDataIn", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -4344,7 +4354,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -4363,7 +4373,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -4382,7 +4392,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -4399,7 +4409,7 @@ class R_DnssrvComplexOperation_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pDataIn", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -4412,7 +4422,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("ppDataOut", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -4422,7 +4432,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("ppDataOut", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -4432,7 +4442,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -4442,7 +4452,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -4453,7 +4463,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("ppDataOut", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -4465,7 +4475,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("ppDataOut", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -4478,7 +4488,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -4493,7 +4503,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("ppDataOut", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -4506,7 +4516,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "ppDataOut",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -4519,7 +4531,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -4532,7 +4546,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_INFO_W2K(),
+                            PDNS_RPC_ZONE_INFO_W2K,
                         )
                     ),
                     (
@@ -4546,7 +4562,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -4565,7 +4581,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -4584,7 +4600,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -4600,7 +4616,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "ppDataOut",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -4614,7 +4632,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_LIST_W2K(),
+                            PDNS_RPC_ZONE_LIST_W2K,
                         )
                     ),
                     (
@@ -4628,7 +4648,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -4647,7 +4667,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -4665,7 +4685,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("ppDataOut", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -4678,7 +4698,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -4697,7 +4717,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -4716,7 +4736,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_DATABASE(),
+                            PDNS_RPC_ZONE_DATABASE,
                         )
                     ),
                     (
@@ -4730,7 +4752,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -4749,7 +4771,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "ppDataOut", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -4763,7 +4785,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -4778,7 +4800,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO
+                        )
                     ),
                     (
                         (
@@ -4790,7 +4814,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM
+                        )
                     ),
                     (
                         (
@@ -4802,7 +4828,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST
+                        )
                     ),
                     (
                         (
@@ -4815,7 +4843,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "ppDataOut", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -4829,7 +4857,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -4843,7 +4873,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -4861,7 +4891,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("ppDataOut", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -4874,7 +4904,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "ppDataOut", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -4888,7 +4918,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -4904,7 +4934,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "ppDataOut", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -4918,7 +4948,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -4937,7 +4967,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "ppDataOut", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -4951,7 +4981,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "ppDataOut", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -4965,7 +4995,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "ppDataOut",
+                            PDNS_RPC_AUTOCONFIGURE(),
+                            PDNS_RPC_AUTOCONFIGURE,
                         )
                     ),
                     (
@@ -4979,7 +5011,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -4998,7 +5030,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -5016,7 +5048,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("ppDataOut", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -5028,7 +5060,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -5041,7 +5075,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "ppDataOut", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -5055,7 +5089,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -5074,7 +5108,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -5093,7 +5127,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -5112,7 +5146,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -5131,7 +5165,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -5147,7 +5181,9 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_STATS_V1(),
+                            PDNS_RPC_ZONE_STATS_V1,
                         )
                     ),
                     (
@@ -5161,7 +5197,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -5180,7 +5216,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -5196,7 +5232,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -5212,7 +5248,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -5230,7 +5266,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("ppDataOut", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -5243,7 +5279,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "ppDataOut", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -5257,7 +5293,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -5273,7 +5309,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "ppDataOut", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -5287,7 +5323,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -5306,7 +5342,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -5325,7 +5361,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -5342,7 +5378,7 @@ class R_DnssrvComplexOperation_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("ppDataOut", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -5423,7 +5459,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pData", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -5433,7 +5469,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pData", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -5443,7 +5479,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -5453,7 +5489,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -5464,7 +5500,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pData", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -5476,7 +5512,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -5489,7 +5525,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -5504,7 +5540,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pData", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -5517,7 +5553,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
                         )
                     ),
                     (
@@ -5530,7 +5566,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField("pData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
                     ),
                     (
                         (
@@ -5543,7 +5579,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -5557,7 +5593,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -5576,7 +5612,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -5595,7 +5631,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -5611,7 +5647,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
                         )
                     ),
                     (
@@ -5625,7 +5661,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -5639,7 +5675,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -5658,7 +5694,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -5676,7 +5712,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -5689,7 +5725,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -5708,7 +5744,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -5727,7 +5763,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -5741,7 +5777,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -5760,7 +5796,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -5774,7 +5810,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -5789,7 +5825,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -5801,7 +5837,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -5813,7 +5849,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -5826,7 +5862,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -5840,7 +5876,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
                         )
                     ),
                     (
@@ -5854,7 +5890,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -5872,7 +5908,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -5885,7 +5921,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -5899,7 +5935,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -5915,7 +5951,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -5929,7 +5965,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -5948,7 +5984,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -5962,7 +5998,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -5976,7 +6012,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -5990,7 +6026,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -6009,7 +6045,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -6027,7 +6063,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -6039,7 +6075,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField("pData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
                     ),
                     (
                         (
@@ -6052,7 +6088,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -6066,7 +6102,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -6085,7 +6121,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -6104,7 +6140,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -6123,7 +6159,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -6142,7 +6178,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -6158,7 +6194,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -6172,7 +6208,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -6191,7 +6227,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -6207,7 +6243,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -6223,7 +6259,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -6241,7 +6277,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -6254,7 +6290,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -6268,7 +6304,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -6284,7 +6320,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -6298,7 +6334,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -6317,7 +6353,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -6336,7 +6372,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -6353,7 +6389,7 @@ class R_DnssrvOperation2_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pData", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -7329,7 +7365,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pDataIn", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -7339,7 +7375,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pDataIn", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -7349,7 +7385,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -7359,7 +7395,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -7370,7 +7406,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pDataIn", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -7382,7 +7418,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pDataIn", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -7395,7 +7431,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -7410,7 +7446,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pDataIn", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -7423,7 +7459,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pDataIn",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -7436,7 +7474,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -7449,7 +7489,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pDataIn", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -7463,7 +7503,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -7482,7 +7522,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -7501,7 +7541,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -7517,7 +7557,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pDataIn",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -7531,7 +7573,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pDataIn", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -7545,7 +7587,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -7564,7 +7606,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -7582,7 +7624,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pDataIn", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -7595,7 +7637,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -7614,7 +7656,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -7633,7 +7675,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pDataIn", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -7647,7 +7689,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -7666,7 +7708,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pDataIn", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -7680,7 +7722,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -7695,7 +7737,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -7707,7 +7749,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -7719,7 +7761,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -7732,7 +7774,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pDataIn", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -7746,7 +7788,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pDataIn",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -7760,7 +7804,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -7778,7 +7822,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pDataIn", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -7791,7 +7835,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pDataIn", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -7805,7 +7849,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -7821,7 +7865,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pDataIn", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -7835,7 +7879,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -7854,7 +7898,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pDataIn", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -7868,7 +7912,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pDataIn", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -7882,7 +7926,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pDataIn", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -7896,7 +7940,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -7915,7 +7959,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -7933,7 +7977,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pDataIn", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -7945,7 +7989,9 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -7958,7 +8004,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pDataIn", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -7972,7 +8018,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -7991,7 +8037,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -8010,7 +8056,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -8029,7 +8075,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -8048,7 +8094,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -8064,7 +8110,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pDataIn", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -8078,7 +8124,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -8097,7 +8143,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -8113,7 +8159,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -8129,7 +8175,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -8147,7 +8193,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pDataIn", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -8160,7 +8206,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pDataIn", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -8174,7 +8220,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -8190,7 +8236,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pDataIn", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -8204,7 +8250,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -8223,7 +8269,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -8242,7 +8288,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -8259,7 +8305,7 @@ class R_DnssrvComplexOperation2_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pDataIn", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -8272,7 +8318,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("ppDataOut", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -8282,7 +8328,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("ppDataOut", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -8292,7 +8338,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -8302,7 +8348,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -8313,7 +8359,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("ppDataOut", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -8325,7 +8371,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("ppDataOut", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -8338,7 +8384,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -8353,7 +8399,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("ppDataOut", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -8366,7 +8412,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "ppDataOut",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -8379,7 +8427,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -8392,7 +8442,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_INFO_W2K(),
+                            PDNS_RPC_ZONE_INFO_W2K,
                         )
                     ),
                     (
@@ -8406,7 +8458,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -8425,7 +8477,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -8444,7 +8496,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -8460,7 +8512,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "ppDataOut",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -8474,7 +8528,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_LIST_W2K(),
+                            PDNS_RPC_ZONE_LIST_W2K,
                         )
                     ),
                     (
@@ -8488,7 +8544,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -8507,7 +8563,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -8525,7 +8581,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("ppDataOut", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -8538,7 +8594,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -8557,7 +8613,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -8576,7 +8632,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_DATABASE(),
+                            PDNS_RPC_ZONE_DATABASE,
                         )
                     ),
                     (
@@ -8590,7 +8648,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -8609,7 +8667,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "ppDataOut", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -8623,7 +8681,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -8638,7 +8696,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO
+                        )
                     ),
                     (
                         (
@@ -8650,7 +8710,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM
+                        )
                     ),
                     (
                         (
@@ -8662,7 +8724,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST
+                        )
                     ),
                     (
                         (
@@ -8675,7 +8739,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "ppDataOut", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -8689,7 +8753,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -8703,7 +8769,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -8721,7 +8787,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("ppDataOut", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -8734,7 +8800,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "ppDataOut", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -8748,7 +8814,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -8764,7 +8830,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "ppDataOut", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -8778,7 +8844,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -8797,7 +8863,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "ppDataOut", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -8811,7 +8877,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "ppDataOut", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -8825,7 +8891,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "ppDataOut",
+                            PDNS_RPC_AUTOCONFIGURE(),
+                            PDNS_RPC_AUTOCONFIGURE,
                         )
                     ),
                     (
@@ -8839,7 +8907,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -8858,7 +8926,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -8876,7 +8944,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("ppDataOut", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -8888,7 +8956,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -8901,7 +8971,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "ppDataOut", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -8915,7 +8985,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -8934,7 +9004,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -8953,7 +9023,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -8972,7 +9042,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -8991,7 +9061,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -9007,7 +9077,9 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_STATS_V1(),
+                            PDNS_RPC_ZONE_STATS_V1,
                         )
                     ),
                     (
@@ -9021,7 +9093,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -9040,7 +9112,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -9056,7 +9128,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -9072,7 +9144,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -9090,7 +9162,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("ppDataOut", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -9103,7 +9175,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "ppDataOut", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -9117,7 +9189,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -9133,7 +9205,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "ppDataOut", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -9147,7 +9219,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -9166,7 +9238,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -9185,7 +9257,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -9202,7 +9274,7 @@ class R_DnssrvComplexOperation2_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("ppDataOut", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -9321,7 +9393,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pData", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -9331,7 +9403,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pData", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -9341,7 +9413,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -9351,7 +9423,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -9362,7 +9434,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pData", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -9374,7 +9446,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -9387,7 +9459,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -9402,7 +9474,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pData", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -9415,7 +9487,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
                         )
                     ),
                     (
@@ -9428,7 +9500,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField("pData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
                     ),
                     (
                         (
@@ -9441,7 +9513,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -9455,7 +9527,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -9474,7 +9546,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -9493,7 +9565,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -9509,7 +9581,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
                         )
                     ),
                     (
@@ -9523,7 +9595,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -9537,7 +9609,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -9556,7 +9628,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -9574,7 +9646,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -9587,7 +9659,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -9606,7 +9678,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -9625,7 +9697,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -9639,7 +9711,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -9658,7 +9730,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -9672,7 +9744,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -9687,7 +9759,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -9699,7 +9771,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -9711,7 +9783,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -9724,7 +9796,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -9738,7 +9810,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
                         )
                     ),
                     (
@@ -9752,7 +9824,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -9770,7 +9842,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -9783,7 +9855,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -9797,7 +9869,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -9813,7 +9885,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -9827,7 +9899,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -9846,7 +9918,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -9860,7 +9932,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -9874,7 +9946,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -9888,7 +9960,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -9907,7 +9979,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -9925,7 +9997,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -9937,7 +10009,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField("pData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
                     ),
                     (
                         (
@@ -9950,7 +10022,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -9964,7 +10036,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -9983,7 +10055,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -10002,7 +10074,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -10021,7 +10093,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -10040,7 +10112,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -10056,7 +10128,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -10070,7 +10142,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -10089,7 +10161,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -10105,7 +10177,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -10121,7 +10193,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -10139,7 +10211,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -10152,7 +10224,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -10166,7 +10238,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -10182,7 +10254,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -10196,7 +10268,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -10215,7 +10287,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -10234,7 +10306,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -10251,7 +10323,7 @@ class R_DnssrvOperation3_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pData", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -11231,7 +11303,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pDataIn", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -11241,7 +11313,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pDataIn", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -11251,7 +11323,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -11261,7 +11333,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pDataIn", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeIn", None)
@@ -11272,7 +11344,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pDataIn", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -11284,7 +11356,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pDataIn", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -11297,7 +11369,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -11312,7 +11384,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pDataIn", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -11325,7 +11397,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pDataIn",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -11338,7 +11412,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -11351,7 +11427,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pDataIn", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -11365,7 +11441,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -11384,7 +11460,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -11403,7 +11479,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -11419,7 +11495,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pDataIn",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -11433,7 +11511,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pDataIn", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -11447,7 +11525,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -11466,7 +11544,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -11484,7 +11562,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pDataIn", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -11497,7 +11575,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -11516,7 +11594,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -11535,7 +11613,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pDataIn", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -11549,7 +11627,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -11568,7 +11646,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pDataIn", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -11582,7 +11660,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -11597,7 +11675,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -11609,7 +11687,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -11621,7 +11699,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pDataIn", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -11634,7 +11712,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pDataIn", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -11648,7 +11726,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pDataIn",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -11662,7 +11742,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -11680,7 +11760,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pDataIn", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -11693,7 +11773,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pDataIn", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -11707,7 +11787,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -11723,7 +11803,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pDataIn", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -11737,7 +11817,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -11756,7 +11836,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pDataIn", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -11770,7 +11850,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pDataIn", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -11784,7 +11864,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pDataIn", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -11798,7 +11878,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -11817,7 +11897,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -11835,7 +11915,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pDataIn", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -11847,7 +11927,9 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "pDataIn", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -11860,7 +11942,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pDataIn", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -11874,7 +11956,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -11893,7 +11975,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -11912,7 +11994,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -11931,7 +12013,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -11950,7 +12032,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -11966,7 +12048,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pDataIn", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -11980,7 +12062,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -11999,7 +12081,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -12015,7 +12097,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -12031,7 +12113,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -12049,7 +12131,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pDataIn", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -12062,7 +12144,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pDataIn", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -12076,7 +12158,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -12092,7 +12174,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pDataIn", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -12106,7 +12188,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -12125,7 +12207,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -12144,7 +12226,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pDataIn",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -12161,7 +12243,7 @@ class R_DnssrvComplexOperation3_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pDataIn", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -12174,7 +12256,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("ppDataOut", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -12184,7 +12266,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("ppDataOut", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -12194,7 +12276,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -12204,7 +12286,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppDataOut", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "pdwTypeOut", None)
@@ -12215,7 +12297,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("ppDataOut", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -12227,7 +12309,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("ppDataOut", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -12240,7 +12322,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -12255,7 +12337,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("ppDataOut", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -12268,7 +12350,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "ppDataOut",
+                            PDNS_RPC_FORWARDERS_W2K(),
+                            PDNS_RPC_FORWARDERS_W2K,
                         )
                     ),
                     (
@@ -12281,7 +12365,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K
+                        )
                     ),
                     (
                         (
@@ -12294,7 +12380,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_INFO_W2K(),
+                            PDNS_RPC_ZONE_INFO_W2K,
                         )
                     ),
                     (
@@ -12308,7 +12396,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -12327,7 +12415,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -12346,7 +12434,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -12362,7 +12450,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "ppDataOut",
+                            PDNS_RPC_NAME_AND_PARAM(),
+                            PDNS_RPC_NAME_AND_PARAM,
                         )
                     ),
                     (
@@ -12376,7 +12466,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_LIST_W2K(),
+                            PDNS_RPC_ZONE_LIST_W2K,
                         )
                     ),
                     (
@@ -12390,7 +12482,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -12409,7 +12501,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -12427,7 +12519,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("ppDataOut", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -12440,7 +12532,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -12459,7 +12551,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -12478,7 +12570,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_DATABASE(),
+                            PDNS_RPC_ZONE_DATABASE,
                         )
                     ),
                     (
@@ -12492,7 +12586,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -12511,7 +12605,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "ppDataOut", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -12525,7 +12619,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -12540,7 +12634,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO
+                        )
                     ),
                     (
                         (
@@ -12552,7 +12648,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM
+                        )
                     ),
                     (
                         (
@@ -12564,7 +12662,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST
+                        )
                     ),
                     (
                         (
@@ -12577,7 +12677,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "ppDataOut", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -12591,7 +12691,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_CHANGE_DP(),
+                            PDNS_RPC_ZONE_CHANGE_DP,
                         )
                     ),
                     (
@@ -12605,7 +12707,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -12623,7 +12725,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("ppDataOut", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -12636,7 +12738,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "ppDataOut", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -12650,7 +12752,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -12666,7 +12768,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "ppDataOut", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -12680,7 +12782,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -12699,7 +12801,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "ppDataOut", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -12713,7 +12815,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "ppDataOut", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -12727,7 +12829,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "ppDataOut",
+                            PDNS_RPC_AUTOCONFIGURE(),
+                            PDNS_RPC_AUTOCONFIGURE,
                         )
                     ),
                     (
@@ -12741,7 +12845,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -12760,7 +12864,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -12778,7 +12882,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("ppDataOut", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -12790,7 +12894,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField(
+                            "ppDataOut", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST
+                        )
                     ),
                     (
                         (
@@ -12803,7 +12909,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "ppDataOut", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -12817,7 +12923,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -12836,7 +12942,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -12855,7 +12961,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -12874,7 +12980,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -12893,7 +12999,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -12909,7 +13015,9 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "ppDataOut",
+                            PDNS_RPC_ZONE_STATS_V1(),
+                            PDNS_RPC_ZONE_STATS_V1,
                         )
                     ),
                     (
@@ -12923,7 +13031,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -12942,7 +13050,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -12958,7 +13066,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -12974,7 +13082,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -12992,7 +13100,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("ppDataOut", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -13005,7 +13113,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "ppDataOut", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -13019,7 +13127,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -13035,7 +13143,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "ppDataOut", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -13049,7 +13157,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -13068,7 +13176,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -13087,7 +13195,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "ppDataOut",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -13104,7 +13212,7 @@ class R_DnssrvComplexOperation3_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("ppDataOut", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -13128,7 +13236,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
         NDRUnionField(
             [
                 (
-                    NDRFullPointerField(NDRByteField("ppData", 0)),
+                    NDRFullPointerField(NDRByteField("pData", 0)),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -13138,7 +13246,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRIntField("ppData", 0),
+                    NDRIntField("pData", 0),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -13148,7 +13256,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullField("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullField("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -13158,7 +13266,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     ),
                 ),
                 (
-                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("ppData", "")),
+                    NDRFullPointerField(NDRConfVarStrNullFieldUtf16("pData", "")),
                     (
                         (
                             lambda pkt: getattr(pkt, "dwTypeId", None)
@@ -13169,7 +13277,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PIP4_ARRAY(), PIP4_ARRAY)
+                        NDRPacketField("pData", PIP4_ARRAY(), PIP4_ARRAY)
                     ),
                     (
                         (
@@ -13181,7 +13289,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
+                        NDRPacketField("pData", PDNS_RPC_BUFFER(), PDNS_RPC_BUFFER)
                     ),
                     (
                         (
@@ -13194,7 +13302,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_W2K(),
                             PDNS_RPC_SERVER_INFO_W2K,
                         )
@@ -13209,7 +13317,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNSSRV_STATS(), PDNSSRV_STATS)
+                        NDRPacketField("pData", PDNSSRV_STATS(), PDNSSRV_STATS)
                     ),
                     (
                         (
@@ -13222,7 +13330,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
+                            "pData", PDNS_RPC_FORWARDERS_W2K(), PDNS_RPC_FORWARDERS_W2K
                         )
                     ),
                     (
@@ -13235,7 +13343,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
+                        NDRPacketField("pData", PDNS_RPC_ZONE_W2K(), PDNS_RPC_ZONE_W2K)
                     ),
                     (
                         (
@@ -13248,7 +13356,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
+                            "pData", PDNS_RPC_ZONE_INFO_W2K(), PDNS_RPC_ZONE_INFO_W2K
                         )
                     ),
                     (
@@ -13262,7 +13370,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_W2K(),
                             PDNS_RPC_ZONE_SECONDARIES_W2K,
                         )
@@ -13281,7 +13389,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DATABASE_W2K(),
                             PDNS_RPC_ZONE_DATABASE_W2K,
                         )
@@ -13300,7 +13408,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_W2K(),
                             PDNS_RPC_ZONE_CREATE_INFO_W2K,
                         )
@@ -13316,7 +13424,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
+                            "pData", PDNS_RPC_NAME_AND_PARAM(), PDNS_RPC_NAME_AND_PARAM
                         )
                     ),
                     (
@@ -13330,7 +13438,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
+                            "pData", PDNS_RPC_ZONE_LIST_W2K(), PDNS_RPC_ZONE_LIST_W2K
                         )
                     ),
                     (
@@ -13344,7 +13452,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SERVER_INFO_DOTNET(),
                             PDNS_RPC_SERVER_INFO_DOTNET,
                         )
@@ -13363,7 +13471,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_FORWARDERS_DOTNET(),
                             PDNS_RPC_FORWARDERS_DOTNET,
                         )
@@ -13381,7 +13489,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
+                        NDRPacketField("pData", PDNS_RPC_ZONE(), PDNS_RPC_ZONE)
                     ),
                     (
                         (
@@ -13394,7 +13502,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_INFO_DOTNET,
                         )
@@ -13413,7 +13521,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET(),
                             PDNS_RPC_ZONE_SECONDARIES_DOTNET,
                         )
@@ -13432,7 +13540,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
+                            "pData", PDNS_RPC_ZONE_DATABASE(), PDNS_RPC_ZONE_DATABASE
                         )
                     ),
                     (
@@ -13446,7 +13554,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET(),
                             PDNS_RPC_ZONE_CREATE_INFO_DOTNET,
                         )
@@ -13465,7 +13573,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
+                            "pData", PDNS_RPC_ZONE_LIST(), PDNS_RPC_ZONE_LIST
                         )
                     ),
                     (
@@ -13479,7 +13587,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_EXPORT_INFO(),
                             PDNS_RPC_ZONE_EXPORT_INFO,
                         )
@@ -13494,7 +13602,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
+                        NDRPacketField("pData", PDNS_RPC_DP_INFO(), PDNS_RPC_DP_INFO)
                     ),
                     (
                         (
@@ -13506,7 +13614,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
+                        NDRPacketField("pData", PDNS_RPC_DP_ENUM(), PDNS_RPC_DP_ENUM)
                     ),
                     (
                         (
@@ -13518,7 +13626,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
+                        NDRPacketField("pData", PDNS_RPC_DP_LIST(), PDNS_RPC_DP_LIST)
                     ),
                     (
                         (
@@ -13531,7 +13639,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
+                            "pData", PDNS_RPC_ENLIST_DP(), PDNS_RPC_ENLIST_DP
                         )
                     ),
                     (
@@ -13545,7 +13653,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
+                            "pData", PDNS_RPC_ZONE_CHANGE_DP(), PDNS_RPC_ZONE_CHANGE_DP
                         )
                     ),
                     (
@@ -13559,7 +13667,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONES_FILTER(),
                             PDNS_RPC_ENUM_ZONES_FILTER,
                         )
@@ -13577,7 +13685,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
+                        NDRPacketField("pData", PDNS_ADDR_ARRAY(), PDNS_ADDR_ARRAY)
                     ),
                     (
                         (
@@ -13590,7 +13698,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
+                            "pData", PDNS_RPC_SERVER_INFO(), PDNS_RPC_SERVER_INFO
                         )
                     ),
                     (
@@ -13604,7 +13712,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_CREATE_INFO(),
                             PDNS_RPC_ZONE_CREATE_INFO,
                         )
@@ -13620,7 +13728,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
+                            "pData", PDNS_RPC_FORWARDERS(), PDNS_RPC_FORWARDERS
                         )
                     ),
                     (
@@ -13634,7 +13742,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SECONDARIES(),
                             PDNS_RPC_ZONE_SECONDARIES,
                         )
@@ -13653,7 +13761,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
+                            "pData", PDNS_RPC_IP_VALIDATE(), PDNS_RPC_IP_VALIDATE
                         )
                     ),
                     (
@@ -13667,7 +13775,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
+                            "pData", PDNS_RPC_ZONE_INFO(), PDNS_RPC_ZONE_INFO
                         )
                     ),
                     (
@@ -13681,7 +13789,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
+                            "pData", PDNS_RPC_AUTOCONFIGURE(), PDNS_RPC_AUTOCONFIGURE
                         )
                     ),
                     (
@@ -13695,7 +13803,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UTF8_STRING_LIST(),
                             PDNS_RPC_UTF8_STRING_LIST,
                         )
@@ -13714,7 +13822,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_UNICODE_STRING_LIST(),
                             PDNS_RPC_UNICODE_STRING_LIST,
                         )
@@ -13732,7 +13840,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
+                        NDRPacketField("pData", PDNS_RPC_SKD(), PDNS_RPC_SKD)
                     ),
                     (
                         (
@@ -13744,7 +13852,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
+                        NDRPacketField("pData", PDNS_RPC_SKD_LIST(), PDNS_RPC_SKD_LIST)
                     ),
                     (
                         (
@@ -13757,7 +13865,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
+                            "pData", PDNS_RPC_SKD_STATE(), PDNS_RPC_SKD_STATE
                         )
                     ),
                     (
@@ -13771,7 +13879,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_SIGNING_VALIDATION_ERROR(),
                             PDNS_RPC_SIGNING_VALIDATION_ERROR,
                         )
@@ -13790,7 +13898,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_POINT_LIST(),
                             PDNS_RPC_TRUST_POINT_LIST,
                         )
@@ -13809,7 +13917,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_TRUST_ANCHOR_LIST(),
                             PDNS_RPC_TRUST_ANCHOR_LIST,
                         )
@@ -13828,7 +13936,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS(),
                             PDNS_RPC_ZONE_DNSSEC_SETTINGS,
                         )
@@ -13847,7 +13955,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST(),
                             PDNS_RPC_ENUM_ZONE_SCOPE_LIST,
                         )
@@ -13863,7 +13971,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
+                            "pData", PDNS_RPC_ZONE_STATS_V1(), PDNS_RPC_ZONE_STATS_V1
                         )
                     ),
                     (
@@ -13877,7 +13985,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_CREATE_INFO_V1,
                         )
@@ -13896,7 +14004,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ZONE_SCOPE_INFO_V1(),
                             PDNS_RPC_ZONE_SCOPE_INFO_V1,
                         )
@@ -13912,7 +14020,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_SCOPE_LIST(),
                             PDNS_RPC_ENUM_SCOPE_LIST,
                         )
@@ -13928,7 +14036,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_CLIENT_SUBNET_RECORD(),
                             PDNS_RPC_CLIENT_SUBNET_RECORD,
                         )
@@ -13946,7 +14054,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ppData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
+                        NDRPacketField("pData", PDNS_RPC_POLICY(), PDNS_RPC_POLICY)
                     ),
                     (
                         (
@@ -13959,7 +14067,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
+                            "pData", PDNS_RPC_POLICY_NAME(), PDNS_RPC_POLICY_NAME
                         )
                     ),
                     (
@@ -13973,7 +14081,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUMERATE_POLICY_LIST(),
                             PDNS_RPC_ENUMERATE_POLICY_LIST,
                         )
@@ -13989,7 +14097,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
+                            "pData", PDNS_RPC_RRL_PARAMS(), PDNS_RPC_RRL_PARAMS
                         )
                     ),
                     (
@@ -14003,7 +14111,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_VIRTUALIZATION_INSTANCE(),
                             PDNS_RPC_VIRTUALIZATION_INSTANCE,
                         )
@@ -14022,7 +14130,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST(),
                             PDNS_RPC_ENUM_VIRTUALIZATION_INSTANCE_LIST,
                         )
@@ -14041,7 +14149,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ppData",
+                            "pData",
                             PDNS_RPC_ENCRYPTION_CONFIG(),
                             PDNS_RPC_ENCRYPTION_CONFIG,
                         )
@@ -14058,7 +14166,7 @@ class R_DnssrvOperation4_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ppData", "", length=0),
+            StrFixedLenField("pData", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),

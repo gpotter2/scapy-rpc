@@ -1356,14 +1356,12 @@ class RRasAdminConnectionEnumEx_Response(NDRPacket):
                     [
                         (
                             NDRPacketField(
-                                "pRasConnection",
-                                RAS_CONNECTION_EX_1_IDL(),
-                                RAS_CONNECTION_EX_1_IDL,
+                                "", RAS_CONNECTION_EX_1_IDL(), RAS_CONNECTION_EX_1_IDL
                             ),
                             ((lambda pkt: None == 1), (lambda _, val: val.tag == 1)),
                         )
                     ],
-                    StrFixedLenField("pRasConnection", "", length=0),
+                    StrFixedLenField("", "", length=0),
                     align=(4, 8),
                     switch_fmt=("I", "I"),
                 )

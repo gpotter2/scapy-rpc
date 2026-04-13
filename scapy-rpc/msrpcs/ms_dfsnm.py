@@ -371,7 +371,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
             [
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_1(), DFS_INFO_1)
+                        NDRPacketField("DfsInfo", DFS_INFO_1(), DFS_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -380,7 +380,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_2(), DFS_INFO_2)
+                        NDRPacketField("DfsInfo", DFS_INFO_2(), DFS_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -389,7 +389,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_3(), DFS_INFO_3)
+                        NDRPacketField("DfsInfo", DFS_INFO_3(), DFS_INFO_3)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -398,7 +398,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_4(), DFS_INFO_4)
+                        NDRPacketField("DfsInfo", DFS_INFO_4(), DFS_INFO_4)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -407,7 +407,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_5(), DFS_INFO_5)
+                        NDRPacketField("DfsInfo", DFS_INFO_5(), DFS_INFO_5)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 5),
@@ -416,7 +416,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_6(), DFS_INFO_6)
+                        NDRPacketField("DfsInfo", DFS_INFO_6(), DFS_INFO_6)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 6),
@@ -425,7 +425,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_7(), DFS_INFO_7)
+                        NDRPacketField("DfsInfo", DFS_INFO_7(), DFS_INFO_7)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 7),
@@ -434,7 +434,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_8(), DFS_INFO_8)
+                        NDRPacketField("DfsInfo", DFS_INFO_8(), DFS_INFO_8)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 8),
@@ -443,7 +443,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_9(), DFS_INFO_9)
+                        NDRPacketField("DfsInfo", DFS_INFO_9(), DFS_INFO_9)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 9),
@@ -452,7 +452,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_50(), DFS_INFO_50)
+                        NDRPacketField("DfsInfo", DFS_INFO_50(), DFS_INFO_50)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 50),
@@ -461,7 +461,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_100(), DFS_INFO_100)
+                        NDRPacketField("DfsInfo", DFS_INFO_100(), DFS_INFO_100)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 100),
@@ -470,7 +470,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_101(), DFS_INFO_101)
+                        NDRPacketField("DfsInfo", DFS_INFO_101(), DFS_INFO_101)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 101),
@@ -479,7 +479,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_102(), DFS_INFO_102)
+                        NDRPacketField("DfsInfo", DFS_INFO_102(), DFS_INFO_102)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 102),
@@ -488,7 +488,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_103(), DFS_INFO_103)
+                        NDRPacketField("DfsInfo", DFS_INFO_103(), DFS_INFO_103)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 103),
@@ -497,7 +497,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_104(), DFS_INFO_104)
+                        NDRPacketField("DfsInfo", DFS_INFO_104(), DFS_INFO_104)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 104),
@@ -506,7 +506,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_105(), DFS_INFO_105)
+                        NDRPacketField("DfsInfo", DFS_INFO_105(), DFS_INFO_105)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 105),
@@ -515,7 +515,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_106(), DFS_INFO_106)
+                        NDRPacketField("DfsInfo", DFS_INFO_106(), DFS_INFO_106)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 106),
@@ -524,7 +524,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_107(), DFS_INFO_107)
+                        NDRPacketField("DfsInfo", DFS_INFO_107(), DFS_INFO_107)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 107),
@@ -533,7 +533,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_150(), DFS_INFO_150)
+                        NDRPacketField("DfsInfo", DFS_INFO_150(), DFS_INFO_150)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 150),
@@ -541,7 +541,7 @@ class NetrDfsSetInfo_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("pDfsInfo", "", length=0),
+            StrFixedLenField("DfsInfo", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -567,7 +567,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
             [
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_1(), DFS_INFO_1)
+                        NDRPacketField("DfsInfo", DFS_INFO_1(), DFS_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -576,7 +576,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_2(), DFS_INFO_2)
+                        NDRPacketField("DfsInfo", DFS_INFO_2(), DFS_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -585,7 +585,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_3(), DFS_INFO_3)
+                        NDRPacketField("DfsInfo", DFS_INFO_3(), DFS_INFO_3)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 3),
@@ -594,7 +594,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_4(), DFS_INFO_4)
+                        NDRPacketField("DfsInfo", DFS_INFO_4(), DFS_INFO_4)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 4),
@@ -603,7 +603,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_5(), DFS_INFO_5)
+                        NDRPacketField("DfsInfo", DFS_INFO_5(), DFS_INFO_5)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 5),
@@ -612,7 +612,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_6(), DFS_INFO_6)
+                        NDRPacketField("DfsInfo", DFS_INFO_6(), DFS_INFO_6)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 6),
@@ -621,7 +621,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_7(), DFS_INFO_7)
+                        NDRPacketField("DfsInfo", DFS_INFO_7(), DFS_INFO_7)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 7),
@@ -630,7 +630,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_8(), DFS_INFO_8)
+                        NDRPacketField("DfsInfo", DFS_INFO_8(), DFS_INFO_8)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 8),
@@ -639,7 +639,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_9(), DFS_INFO_9)
+                        NDRPacketField("DfsInfo", DFS_INFO_9(), DFS_INFO_9)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 9),
@@ -648,7 +648,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_50(), DFS_INFO_50)
+                        NDRPacketField("DfsInfo", DFS_INFO_50(), DFS_INFO_50)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 50),
@@ -657,7 +657,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_100(), DFS_INFO_100)
+                        NDRPacketField("DfsInfo", DFS_INFO_100(), DFS_INFO_100)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 100),
@@ -666,7 +666,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_101(), DFS_INFO_101)
+                        NDRPacketField("DfsInfo", DFS_INFO_101(), DFS_INFO_101)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 101),
@@ -675,7 +675,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_102(), DFS_INFO_102)
+                        NDRPacketField("DfsInfo", DFS_INFO_102(), DFS_INFO_102)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 102),
@@ -684,7 +684,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_103(), DFS_INFO_103)
+                        NDRPacketField("DfsInfo", DFS_INFO_103(), DFS_INFO_103)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 103),
@@ -693,7 +693,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_104(), DFS_INFO_104)
+                        NDRPacketField("DfsInfo", DFS_INFO_104(), DFS_INFO_104)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 104),
@@ -702,7 +702,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_105(), DFS_INFO_105)
+                        NDRPacketField("DfsInfo", DFS_INFO_105(), DFS_INFO_105)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 105),
@@ -711,7 +711,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_106(), DFS_INFO_106)
+                        NDRPacketField("DfsInfo", DFS_INFO_106(), DFS_INFO_106)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 106),
@@ -720,7 +720,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_107(), DFS_INFO_107)
+                        NDRPacketField("DfsInfo", DFS_INFO_107(), DFS_INFO_107)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 107),
@@ -729,7 +729,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("pDfsInfo", DFS_INFO_150(), DFS_INFO_150)
+                        NDRPacketField("DfsInfo", DFS_INFO_150(), DFS_INFO_150)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 150),
@@ -737,7 +737,7 @@ class NetrDfsGetInfo_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("pDfsInfo", "", length=0),
+            StrFixedLenField("DfsInfo", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),

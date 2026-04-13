@@ -636,7 +636,7 @@ class NetrShareAdd_Request(NDRPacket):
             [
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_0(), LPSHARE_INFO_0)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_0(), LPSHARE_INFO_0)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -645,7 +645,7 @@ class NetrShareAdd_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_1(), LPSHARE_INFO_1)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_1(), LPSHARE_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -654,7 +654,7 @@ class NetrShareAdd_Request(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_2(), LPSHARE_INFO_2)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_2(), LPSHARE_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -664,7 +664,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_502_I(), LPSHARE_INFO_502_I
+                            "InfoStruct", LPSHARE_INFO_502_I(), LPSHARE_INFO_502_I
                         )
                     ),
                     (
@@ -675,7 +675,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1004(), LPSHARE_INFO_1004
+                            "InfoStruct", LPSHARE_INFO_1004(), LPSHARE_INFO_1004
                         )
                     ),
                     (
@@ -686,7 +686,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1006(), LPSHARE_INFO_1006
+                            "InfoStruct", LPSHARE_INFO_1006(), LPSHARE_INFO_1006
                         )
                     ),
                     (
@@ -697,7 +697,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1501_I(), LPSHARE_INFO_1501_I
+                            "InfoStruct", LPSHARE_INFO_1501_I(), LPSHARE_INFO_1501_I
                         )
                     ),
                     (
@@ -708,7 +708,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1005(), LPSHARE_INFO_1005
+                            "InfoStruct", LPSHARE_INFO_1005(), LPSHARE_INFO_1005
                         )
                     ),
                     (
@@ -719,7 +719,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_501(), LPSHARE_INFO_501
+                            "InfoStruct", LPSHARE_INFO_501(), LPSHARE_INFO_501
                         )
                     ),
                     (
@@ -730,7 +730,7 @@ class NetrShareAdd_Request(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_503_I(), LPSHARE_INFO_503_I
+                            "InfoStruct", LPSHARE_INFO_503_I(), LPSHARE_INFO_503_I
                         )
                     ),
                     (
@@ -739,7 +739,7 @@ class NetrShareAdd_Request(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ShareInfo", "", length=0),
+            StrFixedLenField("InfoStruct", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -950,7 +950,7 @@ class NetrShareGetInfo_Response(NDRPacket):
             [
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_0(), LPSHARE_INFO_0)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_0(), LPSHARE_INFO_0)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 0),
@@ -959,7 +959,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_1(), LPSHARE_INFO_1)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_1(), LPSHARE_INFO_1)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 1),
@@ -968,7 +968,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 ),
                 (
                     NDRFullPointerField(
-                        NDRPacketField("ShareInfo", LPSHARE_INFO_2(), LPSHARE_INFO_2)
+                        NDRPacketField("InfoStruct", LPSHARE_INFO_2(), LPSHARE_INFO_2)
                     ),
                     (
                         (lambda pkt: getattr(pkt, "Level", None) == 2),
@@ -978,7 +978,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_502_I(), LPSHARE_INFO_502_I
+                            "InfoStruct", LPSHARE_INFO_502_I(), LPSHARE_INFO_502_I
                         )
                     ),
                     (
@@ -989,7 +989,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1004(), LPSHARE_INFO_1004
+                            "InfoStruct", LPSHARE_INFO_1004(), LPSHARE_INFO_1004
                         )
                     ),
                     (
@@ -1000,7 +1000,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1006(), LPSHARE_INFO_1006
+                            "InfoStruct", LPSHARE_INFO_1006(), LPSHARE_INFO_1006
                         )
                     ),
                     (
@@ -1011,7 +1011,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1501_I(), LPSHARE_INFO_1501_I
+                            "InfoStruct", LPSHARE_INFO_1501_I(), LPSHARE_INFO_1501_I
                         )
                     ),
                     (
@@ -1022,7 +1022,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_1005(), LPSHARE_INFO_1005
+                            "InfoStruct", LPSHARE_INFO_1005(), LPSHARE_INFO_1005
                         )
                     ),
                     (
@@ -1033,7 +1033,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_501(), LPSHARE_INFO_501
+                            "InfoStruct", LPSHARE_INFO_501(), LPSHARE_INFO_501
                         )
                     ),
                     (
@@ -1044,7 +1044,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ShareInfo", LPSHARE_INFO_503_I(), LPSHARE_INFO_503_I
+                            "InfoStruct", LPSHARE_INFO_503_I(), LPSHARE_INFO_503_I
                         )
                     ),
                     (
@@ -1053,7 +1053,7 @@ class NetrShareGetInfo_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ShareInfo", "", length=0),
+            StrFixedLenField("InfoStruct", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),
@@ -1652,7 +1652,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_100(), LPSERVER_INFO_100
+                            "InfoStruct", LPSERVER_INFO_100(), LPSERVER_INFO_100
                         )
                     ),
                     (
@@ -1663,7 +1663,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_101(), LPSERVER_INFO_101
+                            "InfoStruct", LPSERVER_INFO_101(), LPSERVER_INFO_101
                         )
                     ),
                     (
@@ -1674,7 +1674,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_102(), LPSERVER_INFO_102
+                            "InfoStruct", LPSERVER_INFO_102(), LPSERVER_INFO_102
                         )
                     ),
                     (
@@ -1685,7 +1685,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_103(), LPSERVER_INFO_103
+                            "InfoStruct", LPSERVER_INFO_103(), LPSERVER_INFO_103
                         )
                     ),
                     (
@@ -1696,7 +1696,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_502(), LPSERVER_INFO_502
+                            "InfoStruct", LPSERVER_INFO_502(), LPSERVER_INFO_502
                         )
                     ),
                     (
@@ -1707,7 +1707,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_503(), LPSERVER_INFO_503
+                            "InfoStruct", LPSERVER_INFO_503(), LPSERVER_INFO_503
                         )
                     ),
                     (
@@ -1718,7 +1718,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_599(), LPSERVER_INFO_599
+                            "InfoStruct", LPSERVER_INFO_599(), LPSERVER_INFO_599
                         )
                     ),
                     (
@@ -1729,7 +1729,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1005(), LPSERVER_INFO_1005
+                            "InfoStruct", LPSERVER_INFO_1005(), LPSERVER_INFO_1005
                         )
                     ),
                     (
@@ -1740,7 +1740,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1107(), LPSERVER_INFO_1107
+                            "InfoStruct", LPSERVER_INFO_1107(), LPSERVER_INFO_1107
                         )
                     ),
                     (
@@ -1751,7 +1751,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1010(), LPSERVER_INFO_1010
+                            "InfoStruct", LPSERVER_INFO_1010(), LPSERVER_INFO_1010
                         )
                     ),
                     (
@@ -1762,7 +1762,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1016(), LPSERVER_INFO_1016
+                            "InfoStruct", LPSERVER_INFO_1016(), LPSERVER_INFO_1016
                         )
                     ),
                     (
@@ -1773,7 +1773,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1017(), LPSERVER_INFO_1017
+                            "InfoStruct", LPSERVER_INFO_1017(), LPSERVER_INFO_1017
                         )
                     ),
                     (
@@ -1784,7 +1784,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1018(), LPSERVER_INFO_1018
+                            "InfoStruct", LPSERVER_INFO_1018(), LPSERVER_INFO_1018
                         )
                     ),
                     (
@@ -1795,7 +1795,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1501(), LPSERVER_INFO_1501
+                            "InfoStruct", LPSERVER_INFO_1501(), LPSERVER_INFO_1501
                         )
                     ),
                     (
@@ -1806,7 +1806,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1502(), LPSERVER_INFO_1502
+                            "InfoStruct", LPSERVER_INFO_1502(), LPSERVER_INFO_1502
                         )
                     ),
                     (
@@ -1817,7 +1817,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1503(), LPSERVER_INFO_1503
+                            "InfoStruct", LPSERVER_INFO_1503(), LPSERVER_INFO_1503
                         )
                     ),
                     (
@@ -1828,7 +1828,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1506(), LPSERVER_INFO_1506
+                            "InfoStruct", LPSERVER_INFO_1506(), LPSERVER_INFO_1506
                         )
                     ),
                     (
@@ -1839,7 +1839,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1510(), LPSERVER_INFO_1510
+                            "InfoStruct", LPSERVER_INFO_1510(), LPSERVER_INFO_1510
                         )
                     ),
                     (
@@ -1850,7 +1850,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1511(), LPSERVER_INFO_1511
+                            "InfoStruct", LPSERVER_INFO_1511(), LPSERVER_INFO_1511
                         )
                     ),
                     (
@@ -1861,7 +1861,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1512(), LPSERVER_INFO_1512
+                            "InfoStruct", LPSERVER_INFO_1512(), LPSERVER_INFO_1512
                         )
                     ),
                     (
@@ -1872,7 +1872,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1513(), LPSERVER_INFO_1513
+                            "InfoStruct", LPSERVER_INFO_1513(), LPSERVER_INFO_1513
                         )
                     ),
                     (
@@ -1883,7 +1883,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1514(), LPSERVER_INFO_1514
+                            "InfoStruct", LPSERVER_INFO_1514(), LPSERVER_INFO_1514
                         )
                     ),
                     (
@@ -1894,7 +1894,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1515(), LPSERVER_INFO_1515
+                            "InfoStruct", LPSERVER_INFO_1515(), LPSERVER_INFO_1515
                         )
                     ),
                     (
@@ -1905,7 +1905,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1516(), LPSERVER_INFO_1516
+                            "InfoStruct", LPSERVER_INFO_1516(), LPSERVER_INFO_1516
                         )
                     ),
                     (
@@ -1916,7 +1916,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1518(), LPSERVER_INFO_1518
+                            "InfoStruct", LPSERVER_INFO_1518(), LPSERVER_INFO_1518
                         )
                     ),
                     (
@@ -1927,7 +1927,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1523(), LPSERVER_INFO_1523
+                            "InfoStruct", LPSERVER_INFO_1523(), LPSERVER_INFO_1523
                         )
                     ),
                     (
@@ -1938,7 +1938,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1528(), LPSERVER_INFO_1528
+                            "InfoStruct", LPSERVER_INFO_1528(), LPSERVER_INFO_1528
                         )
                     ),
                     (
@@ -1949,7 +1949,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1529(), LPSERVER_INFO_1529
+                            "InfoStruct", LPSERVER_INFO_1529(), LPSERVER_INFO_1529
                         )
                     ),
                     (
@@ -1960,7 +1960,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1530(), LPSERVER_INFO_1530
+                            "InfoStruct", LPSERVER_INFO_1530(), LPSERVER_INFO_1530
                         )
                     ),
                     (
@@ -1971,7 +1971,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1533(), LPSERVER_INFO_1533
+                            "InfoStruct", LPSERVER_INFO_1533(), LPSERVER_INFO_1533
                         )
                     ),
                     (
@@ -1982,7 +1982,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1534(), LPSERVER_INFO_1534
+                            "InfoStruct", LPSERVER_INFO_1534(), LPSERVER_INFO_1534
                         )
                     ),
                     (
@@ -1993,7 +1993,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1535(), LPSERVER_INFO_1535
+                            "InfoStruct", LPSERVER_INFO_1535(), LPSERVER_INFO_1535
                         )
                     ),
                     (
@@ -2004,7 +2004,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1536(), LPSERVER_INFO_1536
+                            "InfoStruct", LPSERVER_INFO_1536(), LPSERVER_INFO_1536
                         )
                     ),
                     (
@@ -2015,7 +2015,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1538(), LPSERVER_INFO_1538
+                            "InfoStruct", LPSERVER_INFO_1538(), LPSERVER_INFO_1538
                         )
                     ),
                     (
@@ -2026,7 +2026,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1539(), LPSERVER_INFO_1539
+                            "InfoStruct", LPSERVER_INFO_1539(), LPSERVER_INFO_1539
                         )
                     ),
                     (
@@ -2037,7 +2037,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1540(), LPSERVER_INFO_1540
+                            "InfoStruct", LPSERVER_INFO_1540(), LPSERVER_INFO_1540
                         )
                     ),
                     (
@@ -2048,7 +2048,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1541(), LPSERVER_INFO_1541
+                            "InfoStruct", LPSERVER_INFO_1541(), LPSERVER_INFO_1541
                         )
                     ),
                     (
@@ -2059,7 +2059,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1542(), LPSERVER_INFO_1542
+                            "InfoStruct", LPSERVER_INFO_1542(), LPSERVER_INFO_1542
                         )
                     ),
                     (
@@ -2070,7 +2070,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1543(), LPSERVER_INFO_1543
+                            "InfoStruct", LPSERVER_INFO_1543(), LPSERVER_INFO_1543
                         )
                     ),
                     (
@@ -2081,7 +2081,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1544(), LPSERVER_INFO_1544
+                            "InfoStruct", LPSERVER_INFO_1544(), LPSERVER_INFO_1544
                         )
                     ),
                     (
@@ -2092,7 +2092,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1545(), LPSERVER_INFO_1545
+                            "InfoStruct", LPSERVER_INFO_1545(), LPSERVER_INFO_1545
                         )
                     ),
                     (
@@ -2103,7 +2103,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1546(), LPSERVER_INFO_1546
+                            "InfoStruct", LPSERVER_INFO_1546(), LPSERVER_INFO_1546
                         )
                     ),
                     (
@@ -2114,7 +2114,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1547(), LPSERVER_INFO_1547
+                            "InfoStruct", LPSERVER_INFO_1547(), LPSERVER_INFO_1547
                         )
                     ),
                     (
@@ -2125,7 +2125,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1548(), LPSERVER_INFO_1548
+                            "InfoStruct", LPSERVER_INFO_1548(), LPSERVER_INFO_1548
                         )
                     ),
                     (
@@ -2136,7 +2136,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1549(), LPSERVER_INFO_1549
+                            "InfoStruct", LPSERVER_INFO_1549(), LPSERVER_INFO_1549
                         )
                     ),
                     (
@@ -2147,7 +2147,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1550(), LPSERVER_INFO_1550
+                            "InfoStruct", LPSERVER_INFO_1550(), LPSERVER_INFO_1550
                         )
                     ),
                     (
@@ -2158,7 +2158,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1552(), LPSERVER_INFO_1552
+                            "InfoStruct", LPSERVER_INFO_1552(), LPSERVER_INFO_1552
                         )
                     ),
                     (
@@ -2169,7 +2169,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1553(), LPSERVER_INFO_1553
+                            "InfoStruct", LPSERVER_INFO_1553(), LPSERVER_INFO_1553
                         )
                     ),
                     (
@@ -2180,7 +2180,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1554(), LPSERVER_INFO_1554
+                            "InfoStruct", LPSERVER_INFO_1554(), LPSERVER_INFO_1554
                         )
                     ),
                     (
@@ -2191,7 +2191,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1555(), LPSERVER_INFO_1555
+                            "InfoStruct", LPSERVER_INFO_1555(), LPSERVER_INFO_1555
                         )
                     ),
                     (
@@ -2202,7 +2202,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                 (
                     NDRFullPointerField(
                         NDRPacketField(
-                            "ServerInfo", LPSERVER_INFO_1556(), LPSERVER_INFO_1556
+                            "InfoStruct", LPSERVER_INFO_1556(), LPSERVER_INFO_1556
                         )
                     ),
                     (
@@ -2211,7 +2211,7 @@ class NetrServerGetInfo_Response(NDRPacket):
                     ),
                 ),
             ],
-            StrFixedLenField("ServerInfo", "", length=0),
+            StrFixedLenField("InfoStruct", "", length=0),
             align=(4, 8),
             switch_fmt=("L", "L"),
         ),

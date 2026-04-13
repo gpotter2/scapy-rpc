@@ -4538,7 +4538,7 @@ class LsarOpenPolicy3_Request(NDRPacket):
             [
                 (
                     NDRPacketField(
-                        "OutRevisionInfo",
+                        "InRevisionInfo",
                         LSAPR_REVISION_INFO_V1(),
                         LSAPR_REVISION_INFO_V1,
                     ),
@@ -4548,7 +4548,7 @@ class LsarOpenPolicy3_Request(NDRPacket):
                     ),
                 )
             ],
-            StrFixedLenField("OutRevisionInfo", "", length=0),
+            StrFixedLenField("InRevisionInfo", "", length=0),
             align=(4, 4),
             switch_fmt=("L", "L"),
         ),
@@ -4744,7 +4744,7 @@ class LsarOpenPolicyWithCreds_Request(NDRPacket):
             [
                 (
                     NDRPacketField(
-                        "OutRevisionInfo",
+                        "InRevisionInfo",
                         LSAPR_REVISION_INFO_V1(),
                         LSAPR_REVISION_INFO_V1,
                     ),
@@ -4754,7 +4754,7 @@ class LsarOpenPolicyWithCreds_Request(NDRPacket):
                     ),
                 )
             ],
-            StrFixedLenField("OutRevisionInfo", "", length=0),
+            StrFixedLenField("InRevisionInfo", "", length=0),
             align=(4, 4),
             switch_fmt=("L", "L"),
         ),
