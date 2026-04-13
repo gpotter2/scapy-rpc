@@ -867,8 +867,6 @@ class ScapyUnion(ScapyStruct, ScapyField):
             **kwargs,
         )
         self.field_type = name
-        for f in self.fields:
-            f.name = self.name
 
     def __repr__(self):
         return (Colors.RED + "<ScapyUnion %s=[%s]>" + Colors.RESET) % (
@@ -877,6 +875,8 @@ class ScapyUnion(ScapyStruct, ScapyField):
         )
 
     def to_string(self, context, toplevel=False):
+        for f in self.fields:
+            f.name = self.name
         switch_type = _lkp(self.idl_attributes, "switch_type")
         switch_is = _lkp(self.idl_attributes, "switch_is")
         if switch_is:
